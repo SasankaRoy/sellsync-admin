@@ -155,6 +155,7 @@ export const AdminDashboard = () => {
           </div>
         </div>
         <div className="w-[27%] shrink-0">
+        
           <div className="flex justify-between items-center">
             <h3 className="text-[1.1dvw] font-semibold text-[var(--mainText-color)]">
               Top Selling Items
@@ -235,7 +236,7 @@ export const AdminDashboard = () => {
             </div>
           </div>
 
-          
+
         </div>
       </div>
     </Layout>

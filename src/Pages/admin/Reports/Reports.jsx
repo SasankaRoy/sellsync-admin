@@ -1,21 +1,20 @@
 import React, { useMemo, useState } from "react";
 import { Layout } from "../../../components/common/Layout/Layout";
-import { Overviewcards } from "../../../components/common/Overviewcards/Overviewcards";
+import { Linechart } from "../../../components/common/charts/Linechart";
 import {
   BuyPriceIcon,
   DeleteIcon,
   FilterIcon,
-  LowStockIcon,
-  OutOfStockIcon,
-  SellPriceIcon,
+  NetsaleAmountIcon,
+  OverviewCardIcon1,
+  ProfitIcon,
+  RefundIcon,
   SortIcon,
-  TotalInventoryIcon,
 } from "../../../assets/Svgs/AllSvgs";
-import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
-// Core CSS
-import ProductImg1 from "../../../assets/images/ProductImg1.png";
-import { AgGridReact } from "ag-grid-react";
+import { Overviewcards } from "../../../components/common/Overviewcards/Overviewcards";
 import { Doughtchart } from "../../../components/common/charts/Doughtchart";
+import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
+import { AgGridReact } from "ag-grid-react";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -57,78 +56,70 @@ const saleData = [
   },
 ];
 
-export const Inventory = () => {
+export const Reports = () => {
   const [rowData, setRowData] = useState([
     {
       Products: "Lorem ipsum dolor sit consectetur.",
-      Category: "Beer",
-      UpdateDate: "3 April 2025 7:40 PM",
-      Stock: "230",
-      Buy: "$1.80",
-      Sell: "$2.20",
+      Reason: "Expired Item",
+      Date: "03-03-25",
+      Status: "Completed",
+      Amount: "$4.00",
       Action: "View",
     },
     {
       Products: "Lorem ipsum dolor sit consectetur.",
-      Category: "Beer",
-      UpdateDate: "3 April 2025 7:40 PM",
-      Stock: "230",
-      Buy: "$1.80",
-      Sell: "$2.20",
+      Reason: "Expired Item",
+      Date: "03-03-25",
+      Status: "Completed",
+      Amount: "$4.00",
       Action: "View",
     },
     {
       Products: "Lorem ipsum dolor sit consectetur.",
-      Category: "Beer",
-      UpdateDate: "3 April 2025 7:40 PM",
-      Stock: "230",
-      Buy: "$1.80",
-      Sell: "$2.20",
+      Reason: "Expired Item",
+      Date: "03-03-25",
+      Status: "Completed",
+      Amount: "$4.00",
       Action: "View",
     },
     {
       Products: "Lorem ipsum dolor sit consectetur.",
-      Category: "Beer",
-      UpdateDate: "3 April 2025 7:40 PM",
-      Stock: "230",
-      Buy: "$1.80",
-      Sell: "$2.20",
+      Reason: "Expired Item",
+      Date: "03-03-25",
+      Status: "Completed",
+      Amount: "$4.00",
       Action: "View",
     },
     {
       Products: "Lorem ipsum dolor sit consectetur.",
-      Category: "Beer",
-      UpdateDate: "3 April 2025 7:40 PM",
-      Stock: "230",
-      Buy: "$1.80",
-      Sell: "$2.20",
+      Reason: "Expired Item",
+      Date: "03-03-25",
+      Status: "Completed",
+      Amount: "$4.00",
       Action: "View",
     },
     {
       Products: "Lorem ipsum dolor sit consectetur.",
-      Category: "Beer",
-      UpdateDate: "3 April 2025 7:40 PM",
-      Stock: "230",
-      Buy: "$1.80",
-      Sell: "$2.20",
+      Reason: "Expired Item",
+      Date: "03-03-25",
+      Status: "Completed",
+      Amount: "$4.00",
       Action: "View",
     },
     {
       Products: "Lorem ipsum dolor sit consectetur.",
-      Category: "Beer",
-      UpdateDate: "3 April 2025 7:40 PM",
-      Stock: "230",
-      Buy: "$1.80",
-      Sell: "$2.20",
+      Reason: "Expired Item",
+      Date: "03-03-25",
+      Status: "Completed",
+      Amount: "$4.00",
       Action: "View",
     },
     {
       Products: "Lorem ipsum dolor sit consectetur.",
-      Category: "Beer",
-      UpdateDate: "3 April 2025 7:40 PM",
-      Stock: "230",
-      Buy: "$1.80",
-      Sell: "$2.20",
+      Reason: "Expired Item",
+      Date: "03-03-25",
+      Status: "Completed",
+      Amount: "$4.00",
       Action: "View",
     },
   ]);
@@ -136,11 +127,10 @@ export const Inventory = () => {
   // Column Definitions: Defines & controls grid columns.
   const [colDefs, setColDefs] = useState([
     { field: "Products" },
-    { field: "Category" },
-    { field: "UpdateDate" },
-    { field: "Stock" },
-    { field: "Buy" },
-    { field: "Sell" },
+    { field: "Reason" },
+    { field: "Date" },
+    { field: "Status" },
+    { field: "Amount" },
     { field: "Action" },
   ]);
 
@@ -153,43 +143,49 @@ export const Inventory = () => {
   }, []);
   return (
     <Layout>
-      <div className="flex justify-center w-full gap-5">
-        <div className="flex-1">
+      <div className="w-full flex justify-center gap-5">
+        <div className="flex-1 shrink-0">
           <div className="flex justify-between items-center">
             <h3 className="text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
-              Inventory
+              Reports & Analytics
             </h3>
+            <select className="px-4 py-1 bg-[var(--button-color2)] text-[var(--primary-color)] rounded-full font-[var(--paraFont)]">
+              <option>Weekly</option>
+              <option>1 week</option>
+              <option>2 week</option>
+              <option>3 week</option>
+              <option>4 week</option>
+            </select>
           </div>
-
           <div className="grid grid-cols-3 gap-2 w-full my-6">
             <Overviewcards
-              cardTitle="Total Inventory"
-              cardValue="12,500"
-              percent="View"
-              icon={<TotalInventoryIcon />}
+              cardTitle="Net Sales Amount"
+              cardValue="$35,456"
+              percent="+14"
+              icon={<NetsaleAmountIcon />}
             />
             <Overviewcards
               cardTitle="Buy Price"
               cardValue="$25,000"
-              percent="View"
+              percent="-2"
               icon={<BuyPriceIcon />}
             />
             <Overviewcards
-              cardTitle="Sell Price"
-              cardValue="$46,800"
-              percent="View"
-              icon={<SellPriceIcon />}
+              cardTitle="Profit"
+              cardValue="$8,240"
+              percent="+4"
+              icon={<ProfitIcon />}
             />
+          </div>
+
+          <div className="w-full h-[30dvh] flex justify-center items-center overflow-x-hidden">
+            <Linechart aspectRatio={4} />
           </div>
 
           <div className="w-full flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-[65dvh]">
             <div className="flex justify-between items-center py-1.5 shrink-0">
               <div className="flex justify-center items-center gap-3">
-                <select className="font-[500] mainFont px-4 border-none outline-none">
-                  <option>All Products</option>
-                  <option>All Products</option>
-                  <option>All Products</option>
-                </select>
+                <h3 className="text-[1.2dvw] font-[500]">Refund</h3>
                 <p className="px-3 text-[1dvw] py-.5 bg-[#F8A61B] rounded-2xl font-[500] border-none text-white">
                   242
                 </p>
@@ -222,16 +218,57 @@ export const Inventory = () => {
             </div>
           </div>
         </div>
+
         <div className="w-[26%] shrink-0">
           <div className="flex justify-between items-center">
-            <h3 className="text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
-              Stats
+            <h3 className="text-[1.1dvw] font-semibold text-[var(--mainText-color)]">
+              Top Selling Items
             </h3>
+            <button className="cursor-pointer bg-[var(--button-color2)] text-white px-4 py-1 rounded-full text-[1dvw] font-[var(--paraFont)] font-medium">
+              See all
+            </button>
+          </div>
+
+          <div className="w-full my-6 rounded-lg overflow-hidden border border-[#D4D4D4] bg-white">
+            <div className="bg-[var(--button-color2)] text-white flex justify-center">
+              <div className="flex-1 p-2 flex justify-start items-center ">
+                <p>Product Name</p>
+              </div>
+              <div className="min-w-[20.5%] p-2 flex justify-center items-center border-r border-l border-[#D4D4D4]">
+                <p>Quantity</p>
+              </div>
+              <div className="min-w-[20.5%] p-2 flex justify-center items-center">
+                <p>Value</p>
+              </div>
+            </div>
+
+            {[1, 2, 3, 4, 5].map((cur, id) => (
+              <div
+                key={id}
+                className="w-full flex justify-center border-b border-[#D4D4D4]"
+              >
+                <div className="flex-1 p-2 flex justify-start items-center ">
+                  <p className="text-[1.05dvw] line-clamp-2 text-[#7F7F7F] font-[var(--paraFont)]">
+                    Budwiser Magnum 750ML
+                  </p>
+                </div>
+                <div className="min-w-[25%]  flex justify-center items-center border-r border-l border-[#D4D4D4]">
+                  <p className="font-semibold text-[#7F7F7F] font-[var(--paraFont)] text-[1.2dvw]">
+                    12
+                  </p>
+                </div>
+                <div className="min-w-[20%]  flex justify-center items-center">
+                  <p className="font-semibold text-[#7F7F7F] font-[var(--paraFont)] text-[1.2dvw]">
+                    $52
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
 
           <div className="my-5 bg-white rounded-md p-3">
             <div className="flex justify-between items-center">
-              <h3 className="text-[1dvw] font-[500]">Inventory Stats</h3>
+              <h3 className="text-[1dvw] font-[500]">Most Sold Category</h3>
               <button className="bg-[#333333] text-white px-3 text-[.9dvw] cursor-pointer py-1 rounded-full">
                 See all
               </button>
@@ -265,62 +302,6 @@ export const Inventory = () => {
                   ))}
                 </div>
               </div>
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-4 w-full my-4 p-1">
-            <div className="flex justify-between items-center bg-[#E72C1B] p-2 rounded-md">
-              <div className="px-1.5">
-                <p className="text-white font-semibold text-[1dvw]">Out Of Stock</p>
-                <h3 className="text-white font-semibold text-[2dvw]">01</h3>
-              </div>
-              <div>
-                <OutOfStockIcon />
-              </div>
-            </div>
-
-            <div className="flex justify-between items-center bg-[#fff] p-2 rounded-md">
-              <div className="px-1.5">
-                <p className="text-black font-semibold text-[1dvw]">Low Stock</p>
-                <h3 className="text-black font-semibold text-[2dvw]">03</h3>
-              </div>
-              <div>
-                <LowStockIcon />
-              </div>
-            </div>
-          </div>
-
-          <div className="border border-[#D4D4D4] rounded-md p-3 bg-white">
-            <div className="flex justify-between items-center">
-              <h3 className="font-semibold text-[1.1dvw]">Low Stocks</h3>
-              <button className="cursor-pointer bg-[var(--button-color2)] text-white px-4 py-1 rounded-full text-[1dvw] font-[var(--paraFont)] font-medium">
-                See all
-              </button>
-            </div>
-
-            <div className="flex flex-col gap-3 my-3">
-              {[1, 2, 3].map((cur, id) => (
-                <div
-                  key={id}
-                  className="w-full flex justify-start items-center gap-3"
-                >
-                  <div className="w-[3dvw] h-[3dvw]">
-                    <img
-                      className="w-full h-full object-cover"
-                      src={ProductImg1}
-                      alt="sellsync.com"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="font-semibold font-[var(--paraFont)] text-[1dvw]">
-                      Budwiser Magnum 750ML
-                    </h4>
-                    <p className="text-[.9dvw] font-medium text-[#333333] font-[var(--paraFont)]">
-                      Out Of Stock
-                    </p>
-                  </div>
-                </div>
-              ))}
             </div>
           </div>
         </div>
