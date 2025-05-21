@@ -119,7 +119,7 @@ export const Sale = () => {
     <Layout>
       <div className="pb-14 w-full">
 
-      
+
         <div className="w-full">
           <div className="flex justify-between items-center">
             <h3 className="text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
@@ -202,6 +202,8 @@ export const Sale = () => {
             />
           </div>
         </div>
+
+        
       </div>
     </Layout>
   );

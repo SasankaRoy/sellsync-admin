@@ -4,6 +4,7 @@ import { Sale } from "./Pages/admin/sales/Sale";
 import { Inventory } from "./Pages/admin/Inventory/Inventory";
 import { Reports } from "./Pages/admin/Reports/Reports";
 import { Users } from "./Pages/admin/Users/Users";
+import { POS } from "./Pages/admin/Pos/POS";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path="/admin/inventory" element={<Inventory />} exact />
           <Route path="/admin/reports" element={<Reports />} exact />
           <Route path="/admin/users" element={<Users />} exact />
+          <Route path="/admin/pos" element={<POS />} exact />
         </Routes>
       </BrowserRouter>
     </>
