@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+* {
+  box-sizing: border-box;
+  
+}
+
+:root {
+  /* all colors.... */
+  --primary-color: #fff;
+  --secondary-color: #f4f5f7;
+  --sideMenu-color: #0043a7;
+  --sideMenuLink-color: #f4f5f7;
+  --mainText-color: #000000;
+  --paraText-color: #4d4d4d;
+  --button-color1: #0052cc;
+  --button-color2: #333333;
+  --button-color3: #7f7f7f;
+  --button-color4: #7f7f7f;
+  --button-color5: #1c6506;
+  --button-color6: #2d3289;
+  --chart-color1: #529aed;
+  --linear-gradient-color1: linear-gradient(90deg, #76a13d 0%, #396400 100%);
+  --activeTab-color: #76a13d;
+  --border-color: #d4d4d4;
+  --Negative-color: #dc2020;
+  --Positive-color: #80c02a;
+
+  /* fonts ... */
+  --mainFont: "Orbitron", sans-serif;
+  --paraFont: "Rubik", sans-serif;
+}
+h1,
+h2,
+h3,
+h5,
+h6,.mainFont {
+  font-family: var(--mainFont);
+}
