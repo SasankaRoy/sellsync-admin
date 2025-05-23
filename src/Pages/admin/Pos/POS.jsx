@@ -14,99 +14,114 @@ const rowSelection = {
 };
 
 export const POS = () => {
-    const [rowData, setRowData] = useState([
-        {
-          Products: "Lorem ipsum dolor sit consectetur.",
-          Category: "Beer",
-          Customer: "Jack Smith",
-          PaymentStatus: "Complete",
-          Items: "12",
-          Date: "5 April 2025 8:20 PM",
-          Total: "$50",
-        },
-        {
-          Products: "Lorem ipsum dolor sit consectetur.",
-          Category: "Beer",
-          Customer: "Jack Smith",
-          PaymentStatus: "Complete",
-          Items: "12",
-          Date: "5 April 2025 8:20 PM",
-          Total: "$50",
-        },
-        {
-          Products: "Lorem ipsum dolor sit consectetur.",
-          Category: "Beer",
-          Customer: "Jack Smith",
-          PaymentStatus: "Complete",
-          Items: "12",
-          Date: "5 April 2025 8:20 PM",
-          Total: "$50",
-        },
-        {
-          Products: "Lorem ipsum dolor sit consectetur.",
-          Category: "Beer",
-          Customer: "Jack Smith",
-          PaymentStatus: "Complete",
-          Items: "12",
-          Date: "5 April 2025 8:20 PM",
-          Total: "$50",
-        },
-        {
-          Products: "Lorem ipsum dolor sit consectetur.",
-          Category: "Beer",
-          Customer: "Jack Smith",
-          PaymentStatus: "Complete",
-          Items: "12",
-          Date: "5 April 2025 8:20 PM",
-          Total: "$50",
-        },
-        {
-          Products: "Lorem ipsum dolor sit consectetur.",
-          Category: "Beer",
-          Customer: "Jack Smith",
-          PaymentStatus: "Complete",
-          Items: "12",
-          Date: "5 April 2025 8:20 PM",
-          Total: "$50",
-        },
-        {
-          Products: "Lorem ipsum dolor sit consectetur.",
-          Category: "Beer",
-          Customer: "Jack Smith",
-          PaymentStatus: "Complete",
-          Items: "12",
-          Date: "5 April 2025 8:20 PM",
-          Total: "$50",
-        },
-        {
-          Products: "Lorem ipsum dolor sit consectetur.",
-          Category: "Beer",
-          Customer: "Jack Smith",
-          PaymentStatus: "Complete",
-          Items: "12",
-          Date: "5 April 2025 8:20 PM",
-          Total: "$50",
-        },
-      ]);
-    
-      // Column Definitions: Defines & controls grid columns.
-      const [colDefs, setColDefs] = useState([
-        { field: "Products" },
-        { field: "Category" },
-        { field: "Customer" },
-        { field: "PaymentStatus" },
-        { field: "Items" },
-        { field: "Date" },
-        { field: "Total" },
-      ]);
-    
-      // Apply settings across all columns
-      const defaultColDef = useMemo(() => {
-        return {
-          filter: true,
-          editable: true,
-        };
-      }, []);
+  const [rowData, setRowData] = useState([
+    {
+      AllUser: "Michael Carter",
+      'Date&Time': "5 April 2025 8:20 PM",
+      Status: "Sale Complete",
+      TransactionID: "#TXN-926585890000DRG",
+      Amount: "$ 241.33",
+      Actions: "View",     
+    },    
+    {
+      AllUser: "Michael Carter",
+      'Date&Time': "5 April 2025 8:20 PM",
+      Status: "Sale Complete",
+      TransactionID: "#TXN-926585890000DRG",
+      Amount: "$ 241.33",
+      Actions: "View",     
+    },    
+    {
+      AllUser: "Michael Carter",
+      'Date&Time': "5 April 2025 8:20 PM",
+      Status: "Sale Complete",
+      TransactionID: "#TXN-926585890000DRG",
+      Amount: "$ 241.33",
+      Actions: "View",     
+    },    
+    {
+      AllUser: "Michael Carter",
+      'Date&Time': "5 April 2025 8:20 PM",
+      Status: "Sale Complete",
+      TransactionID: "#TXN-926585890000DRG",
+      Amount: "$ 241.33",
+      Actions: "View",     
+    },    
+    {
+      AllUser: "Michael Carter",
+      'Date&Time': "5 April 2025 8:20 PM",
+      Status: "Sale Complete",
+      TransactionID: "#TXN-926585890000DRG",
+      Amount: "$ 241.33",
+      Actions: "View",     
+    },    
+    {
+      AllUser: "Michael Carter",
+      'Date&Time': "5 April 2025 8:20 PM",
+      Status: "Sale Complete",
+      TransactionID: "#TXN-926585890000DRG",
+      Amount: "$ 241.33",
+      Actions: "View",     
+    },    
+    {
+      AllUser: "Michael Carter",
+      'Date&Time': "5 April 2025 8:20 PM",
+      Status: "Sale Complete",
+      TransactionID: "#TXN-926585890000DRG",
+      Amount: "$ 241.33",
+      Actions: "View",     
+    },    
+    {
+      AllUser: "Michael Carter",
+      'Date&Time': "5 April 2025 8:20 PM",
+      Status: "Sale Complete",
+      TransactionID: "#TXN-926585890000DRG",
+      Amount: "$ 241.33",
+      Actions: "View",     
+    },    
+    {
+      AllUser: "Michael Carter",
+      'Date&Time': "5 April 2025 8:20 PM",
+      Status: "Sale Complete",
+      TransactionID: "#TXN-926585890000DRG",
+      Amount: "$ 241.33",
+      Actions: "View",     
+    },    
+    {
+      AllUser: "Michael Carter",
+      'Date&Time': "5 April 2025 8:20 PM",
+      Status: "Sale Complete",
+      TransactionID: "#TXN-926585890000DRG",
+      Amount: "$ 241.33",
+      Actions: "View",     
+    },    
+    {
+      AllUser: "Michael Carter",
+      'Date&Time': "5 April 2025 8:20 PM",
+      Status: "Sale Complete",
+      TransactionID: "#TXN-926585890000DRG",
+      Amount: "$ 241.33",
+      Actions: "View",     
+    },    
+  ]);
+
+  // Column Definitions: Defines & controls grid columns.
+  const [colDefs, setColDefs] = useState([
+    { field: "AllUser" },
+    { field: "Date&Time" },
+    { field: "Status" },
+    { field: "TransactionID" },
+    { field: "Amount" },
+    { field: "Actions" },
+  ]);
+
+  // Apply settings across all columns
+  const defaultColDef = useMemo(() => {
+    return {
+      filter: true,
+      editable: true,
+    };
+  }, []);
   return (
     <Layout>
       <div className="w-full">
@@ -118,7 +133,7 @@ export const POS = () => {
           </div>
         </div>
 
-        <div className="bg-[#E6E6E6] p-2 rounded-full w-auto my-5 flex gap-3">
+        <div className="bg-[#E6E6E6] p-2 rounded-full w-auto my-5 inline-flex gap-3">
           <button className="bg-white border-none outline-none px-8 py-1 text-[.9dvw] cursor-pointer rounded-full font-semibold">
             Journal
           </button>
@@ -142,7 +157,6 @@ export const POS = () => {
             Vendors
           </button>
         </div>
-
 
         <div className="w-full flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-[60dvh]">
           <div className="flex justify-between items-center py-1.5 shrink-0">
