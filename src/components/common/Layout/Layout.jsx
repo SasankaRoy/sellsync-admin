@@ -18,8 +18,9 @@ import {
   UsersIcon,
 } from "../../../assets/Svgs/AllSvgs";
 import { Avatar } from "@mui/material";
+import { Link, NavLink } from "react-router-dom";
 
-export const Layout = ({children}) => {
+export const Layout = ({ children }) => {
   return (
     <div className="layout__OuterMainWrapper">
       <div className="layout__sideMenuMainWrapper shrink-0">
@@ -28,46 +29,77 @@ export const Layout = ({children}) => {
         </div>
         <div className="sideMenu__wrapper w-full">
           <ul className="w-[80%] py-5 mx-auto">
-            <li className="flex justify-start items-center gap-4 activeLink">
+            <NavLink
+              to="/"
+              
+              className={({isActive})=>isActive?"flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 activeLink":"flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"}
+            >
               <DashboardIcon />
               Dashboard
-            </li>
-            <li className="flex justify-start items-center gap-4">
+            </NavLink>
+            <NavLink
+              to="/admin/sale"
+              className={({isActive})=>isActive ? "flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 activeLink":"flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"}
+            >
               <SalesIcon />
               Sales
-            </li>
-            <li className="flex justify-start items-center gap-4">
+            </NavLink>
+            <NavLink
+              to="/admin/inventory"
+              className={({isActive})=>isActive?"flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 activeLink":"flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"}
+            >
               <InventoryIcon />
               Inventory
-            </li>
-            <li className="flex justify-start items-center gap-4">
+            </NavLink>
+            <NavLink
+              to="/admin/reports"
+              className={({isActive})=>isActive?"flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 activeLink":"flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"}
+            >
               <ReportsIcon />
               Reports
-            </li>
-            <li className="flex justify-start items-center gap-4">
+            </NavLink>
+            <NavLink
+              to="/admin/users"
+              className={({isActive})=>isActive?"flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 activeLink":"flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"}
+            >
               <UsersIcon />
               Users
-            </li>
-            <li className="flex justify-start items-center gap-4">
+            </NavLink>
+            <NavLink
+              to="/admin/pos"
+              className={({isActive})=>isActive?"flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 activeLink":"flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"}
+            >
               <POSIcon />
               POS
-            </li>
-            <li className="flex justify-start items-center gap-4">
+            </NavLink>
+            <NavLink
+              to="/admin/rewards"
+              className={({isActive})=>isActive?"flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 activeLink":"flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"}
+            >
               <RewardIcon />
               Reward
-            </li>
-            <li className="flex justify-start items-center gap-4">
+            </NavLink>
+            <NavLink
+              to="/admin/settings"
+              className={({isActive})=>isActive?"flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 activeLink":"flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"}
+            >
               <SettingsIcon />
               Settings
-            </li>
-            <li className="flex justify-start items-center gap-4">
+            </NavLink>
+            <NavLink
+              to="/admin/help"
+              className={({isActive})=>isActive?"flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 activeLink":"flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"}
+            >
               <HelpIcon />
               Help
-            </li>
-            <li className="flex justify-start items-center gap-4">
+            </NavLink>
+            <NavLink
+              to="/admin/payroll"
+              className={({isActive})=>isActive?"flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 activeLink":"flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"}
+            >
               <PayrollIcon />
               Payroll
-            </li>
+            </NavLink>
             <button className="bg-[#E74C3C] py-2 px-6 gap-4 font-[var(--paraFont)] cursor-pointer text-[var(--primary-color)] rounded-full flex justify-start items-center mt-[10%] text-[1.1dvw]">
               <LogooutIcon />
               Logout
@@ -97,9 +129,7 @@ export const Layout = ({children}) => {
           </div>
         </nav>
         <div className="w-full p-4 h-[87%] overflow-y-auto overflow-x-hidden">
-          {
-            children
-          }
+          {children}
         </div>
       </div>
     </div>

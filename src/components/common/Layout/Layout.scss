@@ -52,6 +52,18 @@
         .activeLink {
           color: var(--sideMenu-color);
           background: var(--secondary-color);
+
+          svg path{
+            fill:var(--sideMenu-color) !important;
+          }
+        }
+        .deActiveLink {
+          color: var(--secondary-color);
+          background: transparent;
+
+          svg path{
+            fill:var(--secondary-color) !important;
+          }
         }
       }
     }

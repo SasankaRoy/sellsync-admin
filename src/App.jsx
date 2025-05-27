@@ -7,6 +7,8 @@ import { Users } from "./Pages/admin/Users/Users";
 import { POS } from "./Pages/admin/Pos/POS";
 import { Settings } from "./Pages/admin/Settings/Settings";
 import { Help } from "./Pages/admin/Help/Help";
+import { Rewards } from "./Pages/admin/Rewards/Rewards";
+import { Payroll } from "./Pages/admin/Payroll/Payroll";
 
 function App() {
   return (
@@ -21,6 +23,8 @@ function App() {
           <Route path="/admin/pos" element={<POS />} exact />
           <Route path="/admin/settings" element={<Settings />} exact />
           <Route path="/admin/help" element={<Help />} exact />
+          <Route path="/admin/rewards" element={<Rewards />} exact />
+          <Route path="/admin/payroll" element={<Payroll />} exact />
         </Routes>
       </BrowserRouter>
     </>

@@ -37,3 +37,6 @@ h5,
 h6,.mainFont {
   font-family: var(--mainFont);
 }
+.paraFont{
+  font-family: var(--paraFont);
+}
