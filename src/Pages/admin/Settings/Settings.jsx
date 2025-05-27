@@ -1015,7 +1015,7 @@ export const Settings = () => {
           </div>
         </div>
 
-        <div className="bg-[#E6E6E6] p-2 rounded-full w-auto  my-5 inline-flex gap-3">
+        <div className="bg-[#E6E6E6]  p-2 rounded-full w-auto  my-5 inline-flex gap-3">
           <button
             onClick={() => handleChangeTab("Genral")}
             className={` ${

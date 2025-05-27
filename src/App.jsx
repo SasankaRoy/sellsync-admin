@@ -6,6 +6,7 @@ import { Reports } from "./Pages/admin/Reports/Reports";
 import { Users } from "./Pages/admin/Users/Users";
 import { POS } from "./Pages/admin/Pos/POS";
 import { Settings } from "./Pages/admin/Settings/Settings";
+import { Help } from "./Pages/admin/Help/Help";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/admin/users" element={<Users />} exact />
           <Route path="/admin/pos" element={<POS />} exact />
           <Route path="/admin/settings" element={<Settings />} exact />
+          <Route path="/admin/help" element={<Help />} exact />
         </Routes>
       </BrowserRouter>
     </>
