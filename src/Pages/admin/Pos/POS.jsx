@@ -5,6 +5,9 @@ import { DeleteIcon, FilterIcon, SortIcon } from "../../../assets/Svgs/AllSvgs";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 // Core CSS
 import { AgGridReact } from "ag-grid-react";
+import { Edit, Trash } from "lucide-react";
+import { DeleteModel } from "../../../components/common/Models/DeleteMode";
+import { POSEditModel } from "../../../components/common/Models/POSEditModel";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -13,106 +16,261 @@ const rowSelection = {
   headerCheckbox: false,
 };
 
+const ActionBtns = (props) => {
+  const { onEdit, onDelete } = props;
+  const { data } = props;
+
+  const handleEdit = () => {
+    onEdit(data);
+  };
+
+  const handleDelete = () => {
+    onDelete(data);
+  };
+
+  return (
+    <>
+      <div className="w-full flex gap-4 py-2 justify-center items-center">
+        <button
+          className="font-semibold font-[var(--paraFont)] bg-[var(--button-color1)] text-white p-1.5 rounded-full border-none cursor-pointer"
+          onClick={handleEdit}
+        >
+          <Edit size={18} />
+        </button>
+
+        <button
+          className="font-semibold font-[var(--paraFont)] bg-[var(--Negative-color)] text-white p-1.5 rounded-full border-none cursor-pointer"
+          onClick={handleDelete}
+        >
+          <Trash size={18} />
+        </button>
+      </div>
+    </>
+  );
+};
+
 const JournalTab = () => {
+  const [deleteModel, setDeleteModel] = useState({
+    state: false,
+    productId: null,
+  });
+  const [editModel, setEditModel] = useState({
+    state: false,
+    productData: null,
+  });
   const [rowData, setRowData] = useState([
     {
-      AllUser: "Michael Carter",
-      "Date&Time": "5 April 2025 8:20 PM",
-      Status: "Sale Complete",
-      TransactionID: "#TXN-926585890000DRG",
-      Amount: "$ 241.33",
-      Actions: "View",
+      ID: "1",
+      Ref: "779",
+      User: "Malay",
+      "Device/Location": "Register1 / Inventory",
+      Items: "1",
+      ProccessDt: "2025-05-27 07:32:15",
+      Total: "$6.89",
+      Status: "Completed",
+      Actions: ActionBtns,
     },
     {
-      AllUser: "Michael Carter",
-      "Date&Time": "5 April 2025 8:20 PM",
-      Status: "Sale Complete",
-      TransactionID: "#TXN-926585890000DRG",
-      Amount: "$ 241.33",
-      Actions: "View",
+      ID: "1",
+      Ref: "779",
+      User: "Malay",
+      "Device/Location": "Register1 / Inventory",
+      Items: "1",
+      ProccessDt: "2025-05-27 07:32:15",
+      Total: "$6.89",
+      Status: "Completed",
+      Actions: ActionBtns,
     },
     {
-      AllUser: "Michael Carter",
-      "Date&Time": "5 April 2025 8:20 PM",
-      Status: "Sale Complete",
-      TransactionID: "#TXN-926585890000DRG",
-      Amount: "$ 241.33",
-      Actions: "View",
+      ID: "1",
+      Ref: "779",
+      User: "Malay",
+      "Device/Location": "Register1 / Inventory",
+      Items: "1",
+      ProccessDt: "2025-05-27 07:32:15",
+      Total: "$6.89",
+      Status: "Completed",
+      Actions: ActionBtns,
     },
     {
-      AllUser: "Michael Carter",
-      "Date&Time": "5 April 2025 8:20 PM",
-      Status: "Sale Complete",
-      TransactionID: "#TXN-926585890000DRG",
-      Amount: "$ 241.33",
-      Actions: "View",
+      ID: "1",
+      Ref: "779",
+      User: "Malay",
+      "Device/Location": "Register1 / Inventory",
+      Items: "1",
+      ProccessDt: "2025-05-27 07:32:15",
+      Total: "$6.89",
+      Status: "Completed",
+      Actions: ActionBtns,
     },
     {
-      AllUser: "Michael Carter",
-      "Date&Time": "5 April 2025 8:20 PM",
-      Status: "Sale Complete",
-      TransactionID: "#TXN-926585890000DRG",
-      Amount: "$ 241.33",
-      Actions: "View",
+      ID: "1",
+      Ref: "779",
+      User: "Malay",
+      "Device/Location": "Register1 / Inventory",
+      Items: "1",
+      ProccessDt: "2025-05-27 07:32:15",
+      Total: "$6.89",
+      Status: "Completed",
+      Actions: ActionBtns,
     },
     {
-      AllUser: "Michael Carter",
-      "Date&Time": "5 April 2025 8:20 PM",
-      Status: "Sale Complete",
-      TransactionID: "#TXN-926585890000DRG",
-      Amount: "$ 241.33",
-      Actions: "View",
+      ID: "1",
+      Ref: "779",
+      User: "Malay",
+      "Device/Location": "Register1 / Inventory",
+      Items: "1",
+      ProccessDt: "2025-05-27 07:32:15",
+      Total: "$6.89",
+      Status: "Completed",
+      Actions: ActionBtns,
     },
     {
-      AllUser: "Michael Carter",
-      "Date&Time": "5 April 2025 8:20 PM",
-      Status: "Sale Complete",
-      TransactionID: "#TXN-926585890000DRG",
-      Amount: "$ 241.33",
-      Actions: "View",
+      ID: "1",
+      Ref: "779",
+      User: "Malay",
+      "Device/Location": "Register1 / Inventory",
+      Items: "1",
+      ProccessDt: "2025-05-27 07:32:15",
+      Total: "$6.89",
+      Status: "Completed",
+      Actions: ActionBtns,
     },
     {
-      AllUser: "Michael Carter",
-      "Date&Time": "5 April 2025 8:20 PM",
-      Status: "Sale Complete",
-      TransactionID: "#TXN-926585890000DRG",
-      Amount: "$ 241.33",
-      Actions: "View",
+      ID: "1",
+      Ref: "779",
+      User: "Malay",
+      "Device/Location": "Register1 / Inventory",
+      Items: "1",
+      ProccessDt: "2025-05-27 07:32:15",
+      Total: "$6.89",
+      Status: "Completed",
+      Actions: ActionBtns,
     },
     {
-      AllUser: "Michael Carter",
-      "Date&Time": "5 April 2025 8:20 PM",
-      Status: "Sale Complete",
-      TransactionID: "#TXN-926585890000DRG",
-      Amount: "$ 241.33",
-      Actions: "View",
+      ID: "1",
+      Ref: "779",
+      User: "Malay",
+      "Device/Location": "Register1 / Inventory",
+      Items: "1",
+      ProccessDt: "2025-05-27 07:32:15",
+      Total: "$6.89",
+      Status: "Completed",
+      Actions: ActionBtns,
     },
     {
-      AllUser: "Michael Carter",
-      "Date&Time": "5 April 2025 8:20 PM",
-      Status: "Sale Complete",
-      TransactionID: "#TXN-926585890000DRG",
-      Amount: "$ 241.33",
-      Actions: "View",
+      ID: "1",
+      Ref: "779",
+      User: "Malay",
+      "Device/Location": "Register1 / Inventory",
+      Items: "1",
+      ProccessDt: "2025-05-27 07:32:15",
+      Total: "$6.89",
+      Status: "Completed",
+      Actions: ActionBtns,
     },
     {
-      AllUser: "Michael Carter",
-      "Date&Time": "5 April 2025 8:20 PM",
-      Status: "Sale Complete",
-      TransactionID: "#TXN-926585890000DRG",
-      Amount: "$ 241.33",
-      Actions: "View",
+      ID: "1",
+      Ref: "779",
+      User: "Malay",
+      "Device/Location": "Register1 / Inventory",
+      Items: "1",
+      ProccessDt: "2025-05-27 07:32:15",
+      Total: "$6.89",
+      Status: "Completed",
+      Actions: ActionBtns,
+    },
+    {
+      ID: "1",
+      Ref: "779",
+      User: "Malay",
+      "Device/Location": "Register1 / Inventory",
+      Items: "1",
+      ProccessDt: "2025-05-27 07:32:15",
+      Total: "$6.89",
+      Status: "Completed",
+      Actions: ActionBtns,
+    },
+    {
+      ID: "1",
+      Ref: "779",
+      User: "Malay",
+      "Device/Location": "Register1 / Inventory",
+      Items: "1",
+      ProccessDt: "2025-05-27 07:32:15",
+      Total: "$6.89",
+      Status: "Completed",
+      Actions: ActionBtns,
+    },
+    {
+      ID: "1",
+      Ref: "779",
+      User: "Malay",
+      "Device/Location": "Register1 / Inventory",
+      Items: "1",
+      ProccessDt: "2025-05-27 07:32:15",
+      Total: "$6.89",
+      Status: "Completed",
+      Actions: ActionBtns,
+    },
+    {
+      ID: "1",
+      Ref: "779",
+      User: "Malay",
+      "Device/Location": "Register1 / Inventory",
+      Items: "1",
+      ProccessDt: "2025-05-27 07:32:15",
+      Total: "$6.89",
+      Status: "Completed",
+      Actions: ActionBtns,
+    },
+    {
+      ID: "1",
+      Ref: "779",
+      User: "Malay",
+      "Device/Location": "Register1 / Inventory",
+      Items: "1",
+      ProccessDt: "2025-05-27 07:32:15",
+      Total: "$6.89",
+      Status: "Completed",
+      Actions: ActionBtns,
     },
   ]);
+  const onEdit = (products) => {
+    console.log("Edit Button Clicked");
+    setEditModel({
+      state: true,
+      productData: products,
+    });
+  };
+  const onDelete = (products) => {
+    console.log(products, "delete");
+    setDeleteModel({
+      state: true,
+      productId: products.ID,
+    });
+  };
 
   // Column Definitions: Defines & controls grid columns.
   const [colDefs, setColDefs] = useState([
-    { field: "AllUser" },
-    { field: "Date&Time" },
+    { field: "ID" },
+    { field: "Ref" },
+    { field: "User" },
+    { field: "Device/Location" },
+    { field: "Items" },
+    { field: "ProccessDt" },
+    { field: "Total" },
     { field: "Status" },
-    { field: "TransactionID" },
-    { field: "Amount" },
-    { field: "Actions" },
+    {
+      headerName: "Actions",
+      field: "actions",
+      cellRenderer: ActionBtns,
+      cellRendererParams: {
+        onEdit,
+        onDelete,
+        skinSafe: true,
+      },
+    },
   ]);
 
   // Apply settings across all columns
@@ -164,6 +322,20 @@ const JournalTab = () => {
           />
         </div>
       </div>
+
+      {deleteModel.state && deleteModel.productId && (
+        <DeleteModel
+          setDeleteModel={setDeleteModel}
+          productId={deleteModel.productId}
+        />
+      )}
+
+      {editModel.state && editModel.productData && (
+        <POSEditModel
+          setEditModel={setEditModel}
+          productData={editModel.productData}
+        />
+      )}
     </>
   );
 };
@@ -341,66 +513,66 @@ export const POS = () => {
     }
   };
   return (
-    <Layout>
-      <div className="w-full">
+    <>
+      <Layout>
         <div className="w-full">
-          <div className="flex justify-between items-center">
-            <h3 className="text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
-              POS
-            </h3>
+          <div className="w-full">
+            <div className="flex justify-between items-center">
+              <h3 className="text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
+                POS
+              </h3>
+            </div>
           </div>
+
+          <div className="bg-[#E6E6E6] p-2 rounded-full w-auto my-5 inline-flex gap-3">
+            <button
+              onClick={() => handleTabChange("Journal")}
+              className="bg-white border-none outline-none px-8 py-1 text-[.9dvw] cursor-pointer rounded-full font-semibold"
+            >
+              Journal
+            </button>
+
+            <button
+              onClick={() => handleTabChange("Deals")}
+              className="bg-transparent text-[#333333]/70 border-none outline-none px-8 py-1 text-[.9dvw] cursor-pointer rounded-full font-semibold"
+            >
+              Deals
+            </button>
+            <button
+              onClick={() => handleTabChange("ReceiptSettings")}
+              className="bg-transparent text-[#333333]/70 border-none outline-none px-8 py-1 text-[.9dvw] cursor-pointer rounded-full font-semibold"
+            >
+              Receipt Settings
+            </button>
+            <button
+              onClick={() => handleTabChange("CustomerDisplaySetting")}
+              className="bg-transparent text-[#333333]/70 border-none outline-none px-8 py-1 text-[.9dvw] cursor-pointer rounded-full font-semibold"
+            >
+              Customer Display Setting
+            </button>
+            <button
+              onClick={() => handleTabChange("EDIFile")}
+              className="bg-transparent text-[#333333]/70 border-none outline-none px-8 py-1 text-[.9dvw] cursor-pointer rounded-full font-semibold"
+            >
+              EDI File
+            </button>
+            <button
+              onClick={() => handleTabChange("CategorriesForThePOS")}
+              className="bg-transparent text-[#333333]/70 border-none outline-none px-8 py-1 text-[.9dvw] cursor-pointer rounded-full font-semibold"
+            >
+              Categorries For The POS
+            </button>
+            <button
+              onClick={() => handleTabChange("Vendors")}
+              className="bg-transparent text-[#333333]/70 border-none outline-none px-8 py-1 text-[.9dvw] cursor-pointer rounded-full font-semibold"
+            >
+              Vendors
+            </button>
+          </div>
+
+          {handleCheckRender()}
         </div>
-
-        <div className="bg-[#E6E6E6] p-2 rounded-full w-auto my-5 inline-flex gap-3">
-          <button
-            onClick={() => handleTabChange("Journal")}
-            className="bg-white border-none outline-none px-8 py-1 text-[.9dvw] cursor-pointer rounded-full font-semibold"
-          >
-            Journal
-          </button>
-
-          <button
-            onClick={() => handleTabChange("Deals")}
-            className="bg-transparent text-[#333333]/70 border-none outline-none px-8 py-1 text-[.9dvw] cursor-pointer rounded-full font-semibold"
-          >
-            Deals
-          </button>
-          <button
-            onClick={() => handleTabChange("ReceiptSettings")}
-            className="bg-transparent text-[#333333]/70 border-none outline-none px-8 py-1 text-[.9dvw] cursor-pointer rounded-full font-semibold"
-          >
-            Receipt Settings
-          </button>
-          <button
-            onClick={() => handleTabChange("CustomerDisplaySetting")}
-            className="bg-transparent text-[#333333]/70 border-none outline-none px-8 py-1 text-[.9dvw] cursor-pointer rounded-full font-semibold"
-          >
-            Customer Display Setting
-          </button>
-          <button
-            onClick={() => handleTabChange("EDIFile")}
-            className="bg-transparent text-[#333333]/70 border-none outline-none px-8 py-1 text-[.9dvw] cursor-pointer rounded-full font-semibold"
-          >
-            EDI File
-          </button>
-          <button
-            onClick={() => handleTabChange("CategorriesForThePOS")}
-            className="bg-transparent text-[#333333]/70 border-none outline-none px-8 py-1 text-[.9dvw] cursor-pointer rounded-full font-semibold"
-          >
-            Categorries For The POS
-          </button>
-          <button
-            onClick={() => handleTabChange("Vendors")}
-            className="bg-transparent text-[#333333]/70 border-none outline-none px-8 py-1 text-[.9dvw] cursor-pointer rounded-full font-semibold"
-          >
-            Vendors
-          </button>
-        </div>
-
-        {handleCheckRender()}
-
-        
-      </div>
-    </Layout>
+      </Layout>
+    </>
   );
 };

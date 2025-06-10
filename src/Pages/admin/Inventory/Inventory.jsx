@@ -102,82 +102,118 @@ const ActionBtns = (props) => {
 export const Inventory = () => {
   const [rowData, setRowData] = useState([
     {
-      Products: "Lorem ipsum dolor sit consectetur.",
-      Category: "Beer",
-      UpdateDate: "3 April 2025 7:40 PM",
-      Stock: "230",
-      Buy: "$1.80",
-      Sell: "$2.20",
+      ID: "1279",
+      ProductName: "AW ROOR BEER 2LITER BTL",
+      Rank: "C",
+      QtyInHand: "-8",
+      OfDaysSupply: "0",
+      Cost: "$1.52",
+      Price: "$3.99",
+      StockCode: "YELLOWSMALLPIPE",
+      ReorderPoint: "0",
+      ReorderValue: "0",
       Action: ActionBtns,
     },
     {
-      Products: "Lorem ipsum dolor sit consectetur.",
-      Category: "Beer",
-      UpdateDate: "3 April 2025 7:40 PM",
-      Stock: "230",
-      Buy: "$1.80",
-      Sell: "$2.20",
-      Action: "View",
+      ID: "1279",
+      ProductName: "AW ROOR BEER 2LITER BTL",
+      Rank: "C",
+      QtyInHand: "-8",
+      OfDaysSupply: "0",
+      Cost: "$1.52",
+      Price: "$3.99",
+      StockCode: "YELLOWSMALLPIPE",
+      ReorderPoint: "0",
+      ReorderValue: "0",
+      Action: ActionBtns,
     },
     {
-      Products: "Lorem ipsum dolor sit consectetur.",
-      Category: "Beer",
-      UpdateDate: "3 April 2025 7:40 PM",
-      Stock: "230",
-      Buy: "$1.80",
-      Sell: "$2.20",
-      Action: "View",
+      ID: "1279",
+      ProductName: "AW ROOR BEER 2LITER BTL",
+      Rank: "C",
+      QtyInHand: "-8",
+      OfDaysSupply: "0",
+      Cost: "$1.52",
+      Price: "$3.99",
+      StockCode: "YELLOWSMALLPIPE",
+      ReorderPoint: "0",
+      ReorderValue: "0",
+      Action: ActionBtns,
     },
     {
-      Products: "Lorem ipsum dolor sit consectetur.",
-      Category: "Beer",
-      UpdateDate: "3 April 2025 7:40 PM",
-      Stock: "230",
-      Buy: "$1.80",
-      Sell: "$2.20",
-      Action: "View",
+      ID: "1279",
+      ProductName: "AW ROOR BEER 2LITER BTL",
+      Rank: "C",
+      QtyInHand: "-8",
+      OfDaysSupply: "0",
+      Cost: "$1.52",
+      Price: "$3.99",
+      StockCode: "YELLOWSMALLPIPE",
+      ReorderPoint: "0",
+      ReorderValue: "0",
+      Action: ActionBtns,
     },
     {
-      Products: "Lorem ipsum dolor sit consectetur.",
-      Category: "Beer",
-      UpdateDate: "3 April 2025 7:40 PM",
-      Stock: "230",
-      Buy: "$1.80",
-      Sell: "$2.20",
-      Action: "View",
+      ID: "1279",
+      ProductName: "AW ROOR BEER 2LITER BTL",
+      Rank: "C",
+      QtyInHand: "-8",
+      OfDaysSupply: "0",
+      Cost: "$1.52",
+      Price: "$3.99",
+      StockCode: "YELLOWSMALLPIPE",
+      ReorderPoint: "0",
+      ReorderValue: "0",
+      Action: ActionBtns,
     },
     {
-      Products: "Lorem ipsum dolor sit consectetur.",
-      Category: "Beer",
-      UpdateDate: "3 April 2025 7:40 PM",
-      Stock: "230",
-      Buy: "$1.80",
-      Sell: "$2.20",
-      Action: "View",
+      ID: "1279",
+      ProductName: "AW ROOR BEER 2LITER BTL",
+      Rank: "C",
+      QtyInHand: "-8",
+      OfDaysSupply: "0",
+      Cost: "$1.52",
+      Price: "$3.99",
+      StockCode: "YELLOWSMALLPIPE",
+      ReorderPoint: "0",
+      ReorderValue: "0",
+      Action: ActionBtns,
     },
     {
-      Products: "Lorem ipsum dolor sit consectetur.",
-      Category: "Beer",
-      UpdateDate: "3 April 2025 7:40 PM",
-      Stock: "230",
-      Buy: "$1.80",
-      Sell: "$2.20",
-      Action: "View",
+      ID: "1279",
+      ProductName: "AW ROOR BEER 2LITER BTL",
+      Rank: "C",
+      QtyInHand: "-8",
+      OfDaysSupply: "0",
+      Cost: "$1.52",
+      Price: "$3.99",
+      StockCode: "YELLOWSMALLPIPE",
+      ReorderPoint: "0",
+      ReorderValue: "0",
+      Action: ActionBtns,
     },
     {
-      Products: "Lorem ipsum dolor sit consectetur.",
-      Category: "Beer",
-      UpdateDate: "3 April 2025 7:40 PM",
-      Stock: "230",
-      Buy: "$1.80",
-      Sell: "$2.20",
-      Action: "View",
+      ID: "1279",
+      ProductName: "AW ROOR BEER 2LITER BTL",
+      Rank: "C",
+      QtyInHand: "-8",
+      OfDaysSupply: "0",
+      Cost: "$1.52",
+      Price: "$3.99",
+      StockCode: "YELLOWSMALLPIPE",
+      ReorderPoint: "0",
+      ReorderValue: "0",
+      Action: ActionBtns,
     },
   ]);
   const [showModel, setShowModel] = useState({
     state: false,
     productData: null,
     actionType: "",
+  });
+  const [deleteModel, setDeleteModel] = useState({
+    state: false,
+    productId: null,
   });
 
   const onEdit = (product) => {
@@ -194,17 +230,25 @@ export const Inventory = () => {
     console.log(product, "view");
   };
   const onDelete = (product) => {
-    console.log(product, "delete");
+    console.log(product, "delete 201");
+    setDeleteModel({
+      state: true,
+      productId: product.ID,
+    });
   };
 
   // Column Definitions: Defines & controls grid columns.
   const [colDefs, setColDefs] = useState([
-    { field: "Products" },
-    { field: "Category" },
-    { field: "UpdateDate" },
-    { field: "Stock" },
-    { field: "Buy" },
-    { field: "Sell" },
+    { field: "ID" },
+    { field: "ProductName" },
+    { field: "Rank" },
+    { field: "QtyInHand" },
+    { field: "OfDaysSupply" },
+    { field: "Cost" },
+    { field: "Price" },
+    { field: "StockCode" },
+    { field: "ReorderPoint" },
+    { field: "ReorderValue" },
     {
       headerName: "Actions",
       field: "actions",
@@ -411,6 +455,12 @@ export const Inventory = () => {
           productData={showModel.productData}
           setShowModel={setShowModel}
           actionType={showModel.actionType}
+        />
+      )}
+      {deleteModel.state && deleteModel.productId && (
+        <DeleteModel
+          setDeleteModel={setDeleteModel}
+          productId={deleteModel.productId}
         />
       )}
     </>
@@ -807,6 +857,8 @@ const OptionsTab = () => {
   return (
     <>
       <div className="w-full p-2">
+
+
         <div className="grid grid-cols-2 w-full gap-2">
           <div className="flex justify-start items-center gap-3">
             <input
@@ -926,6 +978,8 @@ const OptionsTab = () => {
             </label>
           </div>
         </div>
+
+
         <div className="grid grid-cols-2 gap-3 w-full">
           <div className="w-full my-4 flex flex-col gap-2">
             <label className="text-[1dvw] font-normal paraFont">
@@ -939,7 +993,7 @@ const OptionsTab = () => {
           </div>
           <div className="w-full my-4 flex flex-col gap-2">
             <label className="text-[1dvw] font-normal paraFont">
-            Min Price
+              Min Price
             </label>
             <input
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
@@ -950,23 +1004,94 @@ const OptionsTab = () => {
 
           <div className="w-full my-4 flex flex-col gap-2">
             <label className="text-[1dvw] font-normal paraFont">
-            Remind Date
+              Remind Date
             </label>
             <input
               className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="date"
-              
             />
           </div>
           <div className="w-full my-4 flex flex-col gap-2">
             <label className="text-[1dvw] font-normal paraFont">
-            Vendor Item Name
+              Vendor Item Name
             </label>
             <input
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="type"
-              
             />
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2 w-full my-4">
+          <label className="text-[1dvw] font-normal paraFont">Notes</label>
+          <textarea
+            className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+            rows={5}
+            placeholder="Enter Notes..."
+          ></textarea>
+        </div>
+
+        <div className="flex flex-col gap-2 w-full my-4">
+          <label className="text-[1dvw] font-normal paraFont">Tags</label>
+          <input
+            className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+            type="type"
+            placeholder="Tags"
+          />
+        </div>
+
+        <div className="grid grid-cols-2 w-full gap-4">
+          <div className="flex flex-col gap-2 w-full my-4">
+            <label className="text-[1dvw] font-normal paraFont">
+              Points Multiplier
+            </label>
+            <select
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              type="type"
+              placeholder="Tags"
+            >
+              <option>Select Multiplier</option>
+              <option>1x</option>
+              <option>2x</option>
+              <option>3x</option>
+              <option>4x</option>
+              <option>5x</option>
+            </select>
+          </div>
+          <div className="flex flex-col gap-2 w-full my-4">
+            <label className="text-[1dvw] font-normal paraFont">
+              Points Required
+            </label>
+            <input
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              type="type"
+              placeholder="Enter points"
+            />
+          </div>
+          <div className="flex flex-col gap-2 w-full my-4">
+            <label className="text-[1dvw] font-normal paraFont">
+              Item Type
+            </label>
+            <select
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              type="type"
+              placeholder="Tags"
+            >
+              <option>Select Item Type</option>
+              <option>Inventory Item</option>
+              <option>Free Item</option>
+              <option>Negative Item</option>
+              <option>Lotto Sale</option>
+              <option>Lotto Payout</option>
+              <option>Deposit Return</option>
+              <option>Gift Item</option>
+              <option>Online Lottery</option>
+              <option>Online Payout</option>
+              <option>Mannual Item</option>
+              <option>House Pay</option>
+              <option>Coupon ($)</option>
+              <option>Coupon (%)</option>
+            </select>
           </div>
         </div>
       </div>
@@ -974,9 +1099,114 @@ const OptionsTab = () => {
   );
 };
 const PromotionsTab = () => {
+  const [rowData, setRowData] = useState([
+    {
+      ID: "1",
+      Name: "Beer",
+      Status: "Enable",
+    },
+    {
+      ID: "2",
+      Name: "Beer",
+      Status: "Enable",
+    },
+    {
+      ID: "3",
+      Name: "Beer",
+      Status: "Enable",
+    },
+  ]);
+  const [colDefs, setColDefs] = useState([
+    { field: "ID" },
+    { field: "Name" },
+    { field: "Status" },
+  ]);
+
+  // Apply settings across all columns
+  const defaultColDef = useMemo(() => {
+    return {
+      filter: true,
+      editable: true,
+    };
+  }, []);
   return (
     <>
-      <div>the Promotions tab</div>
+      <div className="w-full p-2">
+        <div className="flex flex-col gap-2 w-full my-4">
+          <label className="text-[1dvw] font-normal paraFont" F>
+            Search Items
+          </label>
+          <input
+            placeholder="Enter items ..."
+            className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+            type="text"
+          />
+        </div>
+        <div className="h-[40vh] w-full">
+          <div className="h-full w-full">
+            <AgGridReact
+              rowData={rowData}
+              columnDefs={colDefs}
+              // loading={loading}
+              defaultColDef={defaultColDef}
+              pagination={true}
+              rowSelection={rowSelection}
+              onSelectionChanged={(event) => console.log("Row Selected!")}
+              onCellValueChanged={(event) =>
+                console.log(`New Cell Value: ${event.value}`)
+              }
+            />
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+
+const DeleteModel = ({ setDeleteModel, productId }) => {
+  return (
+    <>
+      <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center">
+        <div className="w-[50%] p-5 bg-white rounded-xl shadow-md flex flex-col gap-4">
+          <div className="flex justify-between items-center w-full p-1">
+            <h3 className="text-[1.5dvw] font-semibold">Delete Item</h3>
+            <button
+              onClick={() => {
+                setDeleteModel({
+                  state: false,
+                  productId: null,
+                });
+              }}
+              className="hover:text-[var(--Negative-color)] transition-all duration-300 ease-linear cursor-pointer"
+            >
+              <CircleX size={30} />
+            </button>
+          </div>
+          <p className="text-[1.2dvw] font-semibold font-[var(--paraFont)]">
+            Product Id <span className="italic">"{productId}"</span> will be{" "}
+            <span className="text-[var(--Negative-color)] font-bold font-[var(--paraFont)] text-[1.3dvw]">
+              Removed
+            </span>{" "}
+            from the Inventory.
+          </p>
+          <div className="flex justify-end items-center gap-4">
+            <button
+              onClick={() => {
+                setDeleteModel({
+                  showDeleteModel: false,
+                  productId: null,
+                });
+              }}
+              className="bg-[var(--button-color4)] text-white px-5 py-1.5 rounded-md flex justify-center items-center font-semibold text-[1.1dvw] cursor-pointer"
+            >
+              Cancel
+            </button>
+            <button className="bg-[var(--Negative-color)] text-white px-5 py-1.5 rounded-md flex justify-center items-center font-semibold text-[1.1dvw] cursor-pointer">
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
     </>
   );
 };
