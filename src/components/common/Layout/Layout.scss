@@ -29,13 +29,18 @@
 
     .sideMenu__wrapper {
       flex: 1;
+      padding: 5px 0px;
       background: var(--sideMenu-color);
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: start;
+      overflow-y: auto;
+      &::-webkit-scrollbar {
+        display: none;
+      }
 
       ul {
-        margin: 0 auto !important;
+        margin: 0px auto !important;
         display: flex;
         flex-direction: column;
         gap: 10px;
@@ -53,16 +58,16 @@
           color: var(--sideMenu-color);
           background: var(--secondary-color);
 
-          svg path{
-            fill:var(--sideMenu-color) !important;
+          svg path {
+            fill: var(--sideMenu-color) !important;
           }
         }
         .deActiveLink {
           color: var(--secondary-color);
           background: transparent;
 
-          svg path{
-            fill:var(--secondary-color) !important;
+          svg path {
+            fill: var(--secondary-color) !important;
           }
         }
       }

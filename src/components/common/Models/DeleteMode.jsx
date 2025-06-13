@@ -6,7 +6,7 @@ export const DeleteModel = ({ setDeleteModel, productId }) => {
     <>
       <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center">
         <div className="w-[50%] p-5 bg-white rounded-xl shadow-md flex flex-col gap-4">
-          <div className="flex justify-between items-center w-full p-1">
+          <div className="flex justify-between items-center w-full p-3 rounded-md text-white bg-[var(--sideMenu-color)]">
             <h3 className="text-[1.5dvw] font-semibold">Delete Item</h3>
             <button
               onClick={() => {

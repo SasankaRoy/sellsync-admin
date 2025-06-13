@@ -7,6 +7,7 @@ import {
   DeleteIcon,
   FilterIcon,
   InventoryManagerIcon,
+  PluseIcon,
   SellPriceIcon,
   SortIcon,
   StoreManagerIcon,
@@ -62,16 +63,101 @@ const ActionBtns = (props) => {
   );
 };
 
-export const Users = () => {
+export const Customer = () => {
   const [editUserModel, setEditUserModel] = useState({
     state: false,
     userData: null,
+    forState: null,
   });
   const [deleteModel, setDeleteModel] = useState({
     state: false,
     userData: null,
   });
   const [rowData, setRowData] = useState([
+    {
+      ID: "1",
+      Name: "John Doe",
+      EmailID: "john@example.com",
+      PhoneNumber: "1234567890",
+      DOB: "09/17/1990",
+      Zipcode: "09/17/1990",
+      Points: "09/17/1990",
+      OfSales: "0",
+      SMSPromotions: "Disable",
+      Actions: ActionBtns,
+    },
+    {
+      ID: "1",
+      Name: "John Doe",
+      EmailID: "john@example.com",
+      PhoneNumber: "1234567890",
+      DOB: "09/17/1990",
+      Zipcode: "09/17/1990",
+      Points: "09/17/1990",
+      OfSales: "0",
+      SMSPromotions: "Disable",
+      Actions: ActionBtns,
+    },
+    {
+      ID: "1",
+      Name: "John Doe",
+      EmailID: "john@example.com",
+      PhoneNumber: "1234567890",
+      DOB: "09/17/1990",
+      Zipcode: "09/17/1990",
+      Points: "09/17/1990",
+      OfSales: "0",
+      SMSPromotions: "Disable",
+      Actions: ActionBtns,
+    },
+    {
+      ID: "1",
+      Name: "John Doe",
+      EmailID: "john@example.com",
+      PhoneNumber: "1234567890",
+      DOB: "09/17/1990",
+      Zipcode: "09/17/1990",
+      Points: "09/17/1990",
+      OfSales: "0",
+      SMSPromotions: "Disable",
+      Actions: ActionBtns,
+    },
+    {
+      ID: "1",
+      Name: "John Doe",
+      EmailID: "john@example.com",
+      PhoneNumber: "1234567890",
+      DOB: "09/17/1990",
+      Zipcode: "09/17/1990",
+      Points: "09/17/1990",
+      OfSales: "0",
+      SMSPromotions: "Disable",
+      Actions: ActionBtns,
+    },
+    {
+      ID: "1",
+      Name: "John Doe",
+      EmailID: "john@example.com",
+      PhoneNumber: "1234567890",
+      DOB: "09/17/1990",
+      Zipcode: "09/17/1990",
+      Points: "09/17/1990",
+      OfSales: "0",
+      SMSPromotions: "Disable",
+      Actions: ActionBtns,
+    },
+    {
+      ID: "1",
+      Name: "John Doe",
+      EmailID: "john@example.com",
+      PhoneNumber: "1234567890",
+      DOB: "09/17/1990",
+      Zipcode: "09/17/1990",
+      Points: "09/17/1990",
+      OfSales: "0",
+      SMSPromotions: "Disable",
+      Actions: ActionBtns,
+    },
     {
       ID: "1",
       Name: "John Doe",
@@ -93,6 +179,7 @@ export const Users = () => {
     setEditUserModel({
       state: true,
       userData: user,
+      forState: "Edit",
     });
   };
   const onDelete = (user) => {
@@ -141,32 +228,44 @@ export const Users = () => {
           <div className="w-full">
             <div className="flex justify-between items-center">
               <h3 className="text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
-                Users & Roles
+                Customers
               </h3>
+              <button
+                onClick={() => {
+                  setEditUserModel({
+                    state: true,
+                    userData: "23",
+                    forState: "Add",
+                  });
+                }}
+                className="px-5 py-1.5 rounded-full bg-[var(--button-color1)] flex justify-center items-center gap-4 text-white mainFont font-[500] cursor-pointer text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
+              >
+                Add Customer <PluseIcon />
+              </button>
             </div>
           </div>
 
           <div className="grid grid-cols-4 gap-2 w-full my-6">
             <Overviewcards
-              cardTitle="Store Manager"
+              cardTitle="Active Customers"
               cardValue="2"
               percent="View"
               icon={<StoreManagerIcon />}
             />
             <Overviewcards
-              cardTitle="No.of Cashier"
+              cardTitle="Inactive Customers"
               cardValue="8"
               percent="View"
               icon={<CashierIcon />}
             />
             <Overviewcards
-              cardTitle="Inventory Manager"
+              cardTitle="Customers with Promotions"
               cardValue="4"
               percent="View"
               icon={<InventoryManagerIcon />}
             />
             <Overviewcards
-              cardTitle="Registered Uses"
+              cardTitle="Total Customers"
               cardValue="8,593"
               percent="View"
               icon={<UsersIcon2 />}
@@ -177,9 +276,9 @@ export const Users = () => {
             <div className="flex justify-between items-center py-1.5 shrink-0">
               <div className="flex justify-center items-center gap-3">
                 <select className="font-[500] mainFont px-4 border-none outline-none">
-                  <option>All Users</option>
-                  <option>All Users</option>
-                  <option>All Users</option>
+                  <option>All Customers</option>
+                  <option>All Customer</option>
+                  <option>All Customer</option>
                 </select>
                 <p className="px-3 text-[1dvw] py-.5 bg-[#F8A61B] rounded-2xl font-[500] border-none text-white">
                   242
@@ -212,13 +311,16 @@ export const Users = () => {
               />
             </div>
           </div>
+
+          
         </div>
       </Layout>
 
-      {editUserModel.state && editUserModel.userData && (
+      {editUserModel.state && editUserModel.userData && editUserModel.forState && (
         <EditUserModel
           setEditUserModel={setEditUserModel}
           userData={editUserModel.userData}
+          forState={editUserModel.forState}
         />
       )}
 
@@ -232,13 +334,13 @@ export const Users = () => {
   );
 };
 
-const EditUserModel = ({ setEditUserModel, userData }) => {
+const EditUserModel = ({ setEditUserModel, userData, forState }) => {
   return (
     <>
       <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center">
         <div className="bg-white w-[50%] p-5 rounded-lg shadow-md">
-          <div className="flex justify-between items-center w-full p-1">
-            <h3 className="text-[1.5dvw] font-semibold">Edit User</h3>
+          <div className="flex justify-between items-center w-full p-2.5 rounded-md bg-[var(--sideMenu-color)] text-white">
+            <h3 className="text-[1.5dvw] font-semibold">{forState} User</h3>
             <button
               onClick={() => {
                 setEditUserModel({
@@ -252,7 +354,7 @@ const EditUserModel = ({ setEditUserModel, userData }) => {
             </button>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 w-full">
+          <div className="grid grid-cols-2 gap-3 w-full p-3">
             <div className="w-full my-4 flex flex-col gap-2">
               <label className="text-[1dvw] font-normal paraFont">Name</label>
               <input
@@ -307,6 +409,7 @@ const EditUserModel = ({ setEditUserModel, userData }) => {
                 placeholder="Enter Zipcode..."
               />
             </div>
+
             <div className="w-full my-4 flex flex-col gap-2">
               <label className="text-[1dvw] font-normal paraFont">Points</label>
               <input
@@ -315,6 +418,7 @@ const EditUserModel = ({ setEditUserModel, userData }) => {
                 placeholder="Enter Points..."
               />
             </div>
+
             <div className="w-full my-4 flex flex-col gap-2">
               <label className="text-[1dvw] font-normal paraFont">
                 SMS & Email Promotions
@@ -323,27 +427,6 @@ const EditUserModel = ({ setEditUserModel, userData }) => {
                 className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                 type="type"
                 placeholder="Enter Points..."
-              />
-            </div>
-            <div className="w-full my-4 flex flex-col gap-2">
-              <label className="text-[1dvw] font-normal paraFont">
-                House Acc Eligible
-              </label>
-              <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                type="type"
-                placeholder="Enter House Acc
-              Eligible..."
-              />
-            </div>
-            <div className="w-full my-4 flex flex-col gap-2">
-              <label className="text-[1dvw] font-normal paraFont">
-                Max $ Amount of Balance
-              </label>
-              <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                type="type"
-                placeholder="Enter Balance..."
               />
             </div>
           </div>
