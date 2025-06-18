@@ -13,6 +13,8 @@ import { Employee } from "./Pages/admin/Employee/Employee";
 import { ItemsList } from "./Pages/admin/ItemsList/ItemsList";
 import { Category } from "./Pages/admin/Category/Category";
 import { Supplier } from "./Pages/admin/Suppliers/Supplier";
+import { Orders } from "./Pages/admin/Orders/Orders";
+import { Receive } from "./Pages/admin/Receive/Receive";
 
 function App() {
   return (
@@ -25,6 +27,8 @@ function App() {
           <Route path="/admin/inventory/item-lists" element={<ItemsList />} exact />
           <Route path="/admin/inventory/category" element={<Category />} exact />
           <Route path="/admin/inventory/suppliers" element={<Supplier />} exact />
+          <Route path="/admin/inventory/receive" element={<Receive />} exact />
+          <Route path="/admin/inventory/order" element={<Orders />} exact />
           <Route path="/admin/reports" element={<Reports />} exact />
           <Route path="/admin/customers" element={<Customer />} exact />
           <Route path="/admin/employees" element={<Employee />} exact />

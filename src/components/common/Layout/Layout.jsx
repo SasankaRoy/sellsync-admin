@@ -75,7 +75,7 @@ export const Layout = ({ children }) => {
               <div
                 className={`bg-[#0052cc]/50 w-[80%] mx-auto  rounded-md flex flex-col gap-2 ${
                   subMenuState
-                    ? "h-[32vh] opacity-100 p-2"
+                    ? "h-[40vh] opacity-100 p-2"
                     : "h-[0vh] opacity-0 p-0 "
                 } transition-all duration-300 ease-linear  overflow-hidden`}
               >
@@ -133,7 +133,7 @@ export const Layout = ({ children }) => {
                   Suppliers
                 </NavLink>
                 <NavLink
-                  to="/admin/inventory/recieve"
+                  to="/admin/inventory/receive"
                   className={({ isActive }) => {
                     isActive && setSubMenuState(true);
                     return isActive
@@ -141,10 +141,10 @@ export const Layout = ({ children }) => {
                       : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink";
                   }}
                 >
-                  Recieve
+                  Receive
                 </NavLink>
                 <NavLink
-                  to="/admin/inventory/orders"
+                  to="/admin/inventory/order"
                   className={({ isActive }) => {
                     isActive && setSubMenuState(true);
                     return isActive
@@ -152,7 +152,7 @@ export const Layout = ({ children }) => {
                       : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink";
                   }}
                 >
-                  Order
+                  Orders
                 </NavLink>
               </div>
             </div>
