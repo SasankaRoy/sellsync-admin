@@ -17,6 +17,7 @@ const rowSelection = {
 };
 
 export const ItemsList = () => {
+  const [selectedRowData, setSelectedRowData] = useState([]);
   const [rowData, setRowData] = useState([
     {
       ID: "1279",
@@ -322,6 +323,18 @@ export const ItemsList = () => {
                 </p>
               </div>
               <div className="flex gap-4 justify-center items-center">
+                <button
+                  onClick={() => {
+                    setShowModel({
+                      state: true,
+                      productData: "product",
+                      actionType: "Edit",
+                    });
+                  }}
+                  className="flex justify-center items-center gap-2 px-4 py-1 text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC]"
+                >
+                  <Edit size={16} /> Edit
+                </button>
                 <button className="flex justify-center items-center gap-2 px-4 py-1 text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-[600]">
                   Sort <SortIcon />
                 </button>
@@ -341,7 +354,12 @@ export const ItemsList = () => {
                 defaultColDef={defaultColDef}
                 pagination={true}
                 rowSelection={rowSelection}
-                onSelectionChanged={(event) => console.log("Row Selected!")}
+                onSelectionChanged={(event) => {
+                  event.selectedNodes.forEach((item, id) => {
+                    console.log("Row Selected!", event);
+                    setSelectedRowData([item.data]);
+                  });
+                }}
                 onCellValueChanged={(event) =>
                   console.log(`New Cell Value: ${event.value}`)
                 }
@@ -351,9 +369,6 @@ export const ItemsList = () => {
         </div>
       </Layout>
 
-
-
-      
       {showModel.state && showModel.productData && (
         <EditAndViewModel
           productData={showModel.productData}

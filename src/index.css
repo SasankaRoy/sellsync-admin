@@ -2,7 +2,6 @@
 
 * {
   box-sizing: border-box;
-  
 }
 
 :root {
@@ -34,9 +33,14 @@ h1,
 h2,
 h3,
 h5,
-h6,.mainFont {
+h6,
+.mainFont {
   font-family: var(--mainFont);
 }
-.paraFont{
+.paraFont {
   font-family: var(--paraFont);
+}
+
+.clipPathEffect {
+  clip-path: circle(65% at 80% 50%);
 }
