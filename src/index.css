@@ -29,6 +29,9 @@
   --mainFont: "Orbitron", sans-serif;
   --paraFont: "Rubik", sans-serif;
 }
+body {
+  overflow-x: hidden;
+}
 h1,
 h2,
 h3,

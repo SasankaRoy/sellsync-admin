@@ -19,12 +19,15 @@ import {
 } from "../../../assets/Svgs/AllSvgs";
 import { Avatar } from "@mui/material";
 import { Link, NavLink } from "react-router-dom";
-import { ChevronDown, Contact } from "lucide-react";
+import { Amphora, ChevronDown, Contact, Network } from "lucide-react";
 
 export const Layout = ({ children }) => {
   const [subMenuStateInventory, setSubMenuStateInventory] = useState(false);
   const [subMenuStateUser, setSubMenuStateUser] = useState(false);
   const [subMenuStatePos, setSunMenuStatePos] = useState(false);
+  const [subMenuStateLottery,setSubMenuStateLottery] = useState(false);
+
+
   return (
     <div className="layout__OuterMainWrapper">
       <div className="layout__sideMenuMainWrapper shrink-0">
@@ -248,7 +251,7 @@ export const Layout = ({ children }) => {
               <div
                 className={`bg-[#0052cc]/50 w-[80%] mx-auto  rounded-md flex flex-col gap-2 ${
                   subMenuStatePos
-                    ? "h-[50vh] opacity-100 p-2"
+                    ? "h-[55vh] opacity-100 p-2"
                     : "h-[0vh] opacity-0 p-0 "
                 } transition-all duration-300 ease-linear  overflow-hidden`}
               >
@@ -351,11 +354,12 @@ export const Layout = ({ children }) => {
                 >
                   Vendors
                 </NavLink>
+
                 <NavLink
                   onClick={(e) => {
                     e.stopPropagation();
                   }}
-                  to="/admin/pos/fules"
+                  to="/admin/pos/fuels"
                   className={({ isActive }) => {
                     isActive && setSunMenuStatePos(true);
                     return isActive
@@ -363,22 +367,96 @@ export const Layout = ({ children }) => {
                       : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink line-clamp-1";
                   }}
                 >
-                  Fules
+                  Fuels
+                </NavLink>
+
+                <NavLink
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                  to="/admin/pos/device-and-location"
+                  className={({ isActive }) => {
+                    isActive && setSunMenuStatePos(true);
+                    return isActive
+                      ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink line-clamp-1"
+                      : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink line-clamp-1";
+                  }}
+                >
+                  Device & Location
                 </NavLink>
               </div>
             </div>
 
-            <NavLink
-              to="/admin/pos"
-              className={({ isActive }) =>
-                isActive
-                  ? "flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 activeLink"
-                  : "flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"
-              }
-            >
-              <POSIcon />
-              POS
-            </NavLink>
+            <div className="w-full flex flex-col gap-2">
+              <div
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSubMenuStateLottery(!subMenuStateLottery);
+                }}
+                className={
+                  "flex py-2 px-5 rounded-full cursor-pointer font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"
+                }
+              >
+                <Amphora  />
+                Lottery
+                <ChevronDown
+                  className={`ml-auto ${
+                    subMenuStateLottery ? "rotate-180" : "rotate-0"
+                  } transition-all duration-300 ease-linear`}
+                />
+              </div>
+
+              <div
+                className={`bg-[#0052cc]/50 w-[80%] mx-auto  rounded-md flex flex-col gap-2 ${
+                  subMenuStateLottery
+                    ? "h-[20vh] opacity-100 p-2"
+                    : "h-[0vh] opacity-0 p-0 "
+                } transition-all duration-300 ease-linear  overflow-hidden`}
+              >
+                <NavLink
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                  to="/admin/lottery/inventory"
+                  className={({ isActive }) => {
+                    isActive && setSubMenuStateLottery(true);
+                    return isActive
+                      ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink"
+                      : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink";
+                  }}
+                >
+                  Inventory
+                </NavLink>
+                <NavLink
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                  to="/admin/lottery/instant-scan-tickets"
+                  className={({ isActive }) => {
+                    isActive && setSubMenuStateLottery(true);
+                    return isActive
+                      ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink"
+                      : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink";
+                  }}
+                >
+                  Ticket Scan
+                </NavLink>
+                <NavLink
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                  to="/admin/lottery/sale-report"
+                  className={({ isActive }) => {
+                    isActive && setSubMenuStateLottery(true);
+                    return isActive
+                      ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink"
+                      : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink";
+                  }}
+                >
+                  Sales Reports
+                </NavLink>
+              </div>
+            </div>
 
             <NavLink
               to="/admin/rewards"
@@ -423,6 +501,17 @@ export const Layout = ({ children }) => {
             >
               <PayrollIcon />
               Payroll
+            </NavLink>
+            <NavLink
+              to="/admin/tasks"
+              className={({ isActive }) =>
+                isActive
+                  ? "flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 activeLink"
+                  : "flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"
+              }
+            >
+              <Network />
+              Tasks
             </NavLink>
             <button className="bg-[#E74C3C] py-2 px-6 gap-4 font-[var(--paraFont)] cursor-pointer text-[var(--primary-color)] rounded-full flex justify-start items-center mt-[10%] text-[1.1dvw]">
               <LogooutIcon />

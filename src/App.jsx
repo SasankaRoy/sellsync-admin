@@ -26,6 +26,12 @@ import { EDIFile } from "./Pages/admin/Pos/EDIFile";
 import { CategoriesPOS } from "./Pages/admin/Pos/POSCategories";
 import { Vendors } from "./Pages/admin/Pos/Vendors";
 import { Fule } from "./Pages/admin/Pos/Fule";
+import { DeviceAndLocation } from "./Pages/admin/Pos/DeviceAndLocation";
+import { Task } from "./Pages/admin/Tasks/Task";
+import { ViewTask } from "./Pages/admin/Tasks/ViewTask";
+import { InventoryLottery } from "./Pages/admin/Lottery/InventoryLottery";
+import { ScanTickets } from "./Pages/admin/Lottery/ScanTickets";
+import { SalesReport } from "./Pages/admin/Lottery/SalesReport";
 
 function App() {
   return (
@@ -69,7 +75,13 @@ function App() {
           <Route path="/admin/pos/edi-file" element={<EDIFile />} exact />
           <Route path="/admin/pos/pos-categorries" element={<CategoriesPOS />} exact />
           <Route path="/admin/pos/vendors" element={<Vendors />} exact />
-          <Route path="/admin/pos/fules" element={<Fule />} exact />
+          <Route path="/admin/pos/fuels" element={<Fule />} exact />
+          <Route path="/admin/pos/device-and-location" element={<DeviceAndLocation />} exact />
+          <Route path="/admin/tasks" element={<Task />} exact />
+          <Route path="/admin/tasks/task-details/:tid" element={<ViewTask />} exact />
+          <Route path="/admin/lottery/inventory" element={<InventoryLottery />} exact />
+          <Route path="/admin/lottery/instant-scan-tickets" element={<ScanTickets />} exact />
+          <Route path="/admin/lottery/sale-report" element={<SalesReport />} exact />
 
 
 
