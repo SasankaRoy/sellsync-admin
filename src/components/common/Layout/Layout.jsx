@@ -19,14 +19,14 @@ import {
 } from "../../../assets/Svgs/AllSvgs";
 import { Avatar } from "@mui/material";
 import { Link, NavLink } from "react-router-dom";
-import { Amphora, ChevronDown, Contact, Network } from "lucide-react";
+import { Amphora, BadgeDollarSign, ChevronDown, Contact, Network } from "lucide-react";
 
 export const Layout = ({ children }) => {
   const [subMenuStateInventory, setSubMenuStateInventory] = useState(false);
   const [subMenuStateUser, setSubMenuStateUser] = useState(false);
   const [subMenuStatePos, setSunMenuStatePos] = useState(false);
-  const [subMenuStateLottery,setSubMenuStateLottery] = useState(false);
-
+  const [subMenuStateLottery, setSubMenuStateLottery] = useState(false);
+  const [subMenuStateLoyalty, setSubMenuStateLoyalty] = useState(false);
 
   return (
     <div className="layout__OuterMainWrapper">
@@ -397,7 +397,7 @@ export const Layout = ({ children }) => {
                   "flex py-2 px-5 rounded-full cursor-pointer font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"
                 }
               >
-                <Amphora  />
+                <Amphora />
                 Lottery
                 <ChevronDown
                   className={`ml-auto ${
@@ -454,6 +454,63 @@ export const Layout = ({ children }) => {
                   }}
                 >
                   Sales Reports
+                </NavLink>
+              </div>
+            </div>
+
+            <div className="w-full flex flex-col gap-2">
+              <div
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSubMenuStateLoyalty(!subMenuStateLoyalty);
+                }}
+                className={
+                  "flex py-2 px-5 rounded-full cursor-pointer font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"
+                }
+              >
+                <BadgeDollarSign  />
+                Loyalty
+                <ChevronDown
+                  className={`ml-auto ${
+                    subMenuStateLoyalty ? "rotate-180" : "rotate-0"
+                  } transition-all duration-300 ease-linear`}
+                />
+              </div>
+
+              <div
+                className={`bg-[#0052cc]/50 w-[80%] mx-auto  rounded-md flex flex-col gap-2 ${
+                  subMenuStateLoyalty
+                    ? "h-[15vh] opacity-100 p-2"
+                    : "h-[0vh] opacity-0 p-0 "
+                } transition-all duration-300 ease-linear  overflow-hidden`}
+              >
+                <NavLink
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                  to="/admin/lottery/inventory"
+                  className={({ isActive }) => {
+                    isActive && setSubMenuStateLoyalty(true);
+                    return isActive
+                      ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink"
+                      : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink";
+                  }}
+                >
+                  Reports
+                </NavLink>
+                <NavLink
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                  to="/admin/loyalty/deals"
+                  className={({ isActive }) => {
+                    isActive && setSubMenuStateLoyalty(true);
+                    return isActive
+                      ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink"
+                      : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink";
+                  }}
+                >
+                  Loyalty Deals
                 </NavLink>
               </div>
             </div>
@@ -520,6 +577,7 @@ export const Layout = ({ children }) => {
           </ul>
         </div>
       </div>
+
       <div className="layout__mainContentWrapper flex flex-col jus  shrink-0 flex-1 w-full  overflow-x-hidden">
         <nav className="topNavbar__mainWrapper ">
           <div className="topNav__leftWrapper px-3">

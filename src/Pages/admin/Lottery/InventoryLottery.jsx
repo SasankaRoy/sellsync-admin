@@ -223,21 +223,61 @@ const AddSignleTicket = ({ setShowAddTicket }) => {
             </button>
           </div>
 
-          <div className="flex flex-col gap-4">
-            <div className="flex justify-between items-center">
-              <div className="flex flex-col">
-                <label>
+          <div className="flex flex-col gap-4 my-8">
+            <div className="flex justify-between items-center gap-5">
+              <div className="flex flex-col gap-2 w-full ">
+                <label className="text-[1dvw] font-normal paraFont">
                   Created By
                 </label>
-                <input className="" type="text" placeholder="Enter name.." />
-              </div>
-              <div>
-                <label>
-                  Created By
-                </label>
-                <input className="" type="text" placeholder="Enter name.." />
+                <input
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  type="text"
+                  placeholder="Enter name.."
+                />
               </div>
             </div>
+            <div className="flex justify-between items-center gap-5">
+              <div className="flex flex-col gap-2 w-full ">
+                <label className="text-[1dvw] font-normal paraFont">
+                  Items
+                </label>
+                <input
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  type="text"
+                  placeholder="Enter name.."
+                />
+              </div>
+              <div className="flex flex-col gap-2 w-full ">
+                <label className="text-[1dvw] font-normal paraFont">
+                  Lotteries
+                </label>
+                <input
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] appearance-none focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  type="number"
+                  placeholder="Enter items.."
+                />
+              </div>
+            </div>
+            <div className="flex justify-between items-center gap-5">
+              <div className="flex flex-col gap-2 w-full ">
+                <label className="text-[1dvw] font-normal paraFont">
+                  Date & Time
+                </label>
+                <input
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  type="datetime-local"
+                  placeholder="Enter name.."
+                />
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-end items-center gap-5">
+            <button className="bg-[var(--button-color5)] cursor-pointer px-5 mainFont font-[500] py-1.5 rounded-md text-white">
+              Save
+            </button>
+            <button className="bg-[var(--button-color3)] cursor-pointer px-5 mainFont font-[500] py-1.5 rounded-md text-white">
+              Cancel
+            </button>
           </div>
         </div>
       </div>

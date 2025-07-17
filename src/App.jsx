@@ -32,6 +32,7 @@ import { ViewTask } from "./Pages/admin/Tasks/ViewTask";
 import { InventoryLottery } from "./Pages/admin/Lottery/InventoryLottery";
 import { ScanTickets } from "./Pages/admin/Lottery/ScanTickets";
 import { SalesReport } from "./Pages/admin/Lottery/SalesReport";
+import { LoyaltyDeals } from "./Pages/admin/Loyalty/LoyaltyDeals";
 
 function App() {
   return (
@@ -82,6 +83,7 @@ function App() {
           <Route path="/admin/lottery/inventory" element={<InventoryLottery />} exact />
           <Route path="/admin/lottery/instant-scan-tickets" element={<ScanTickets />} exact />
           <Route path="/admin/lottery/sale-report" element={<SalesReport />} exact />
+          <Route path="/admin/loyalty/deals" element={<LoyaltyDeals />} exact />
 
 
 
