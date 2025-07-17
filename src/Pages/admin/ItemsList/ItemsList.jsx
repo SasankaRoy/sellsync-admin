@@ -240,6 +240,26 @@ export const ItemsList = () => {
     productId: null,
   });
 
+  const onAddItem = () => {
+    setShowModel({
+      state: true,
+      productData: {
+        ID: "",
+        ProductName: "",
+        Rank: "",
+        Category: "",
+        Stock: "",
+        OfDaysSupply: "",
+        BuyPrice: "",
+        SellPrice: "",
+        StockCode: "",
+        SupplierID: "",
+        SupplierName: "",
+      },
+      actionType: "Add",
+    });
+  };
+
   const onEdit = (product) => {
     console.log(product, "edit");
     if (product) {
@@ -301,7 +321,10 @@ export const ItemsList = () => {
             Item Lists
           </h3>
           <div className="flex justify-center items-center gap-5">
-            <button className="px-5 py-1.5 rounded-full bg-[var(--button-color1)] flex justify-center items-center gap-4 text-white mainFont font-[500] cursor-pointer text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
+            <button
+              onClick={onAddItem}
+              className="px-5 py-1.5 rounded-full bg-[var(--button-color1)] flex justify-center items-center gap-4 text-white mainFont font-[500] cursor-pointer text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
+            >
               Add Items <PluseIcon />
             </button>
             <button className="px-5 py-1.5 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-4 text-white mainFont font-[500] cursor-pointer text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
@@ -437,12 +460,15 @@ const EditAndViewModel = ({ productData, setShowModel, actionType }) => {
     });
   };
   const handleChangeTab = (currentTab) => {
+    if (actionType === "Add" && currentTab !== "Details") {
+      return; // Prevent changing tabs when actionType is "Add"
+    }
     setCurrentActiveTab(currentTab);
   };
 
   const handleRenderTab = (currentTab) => {
     switch (currentTab) {
-      case "Dtails":
+      case "Details":
         return <DetailsTab />;
       case "Options":
         return <OptionsTab />;
@@ -459,7 +485,7 @@ const EditAndViewModel = ({ productData, setShowModel, actionType }) => {
         <div className="bg-white rounded-md shadow p-5 w-[60%] max-h-[95%] overflow-auto">
           <div className="w-full bg-[var(--sideMenu-color)] flex justify-between items-center px-3 py-1.5 text-white rounded-md">
             <h3 className="font-semibold text-[1.8dvw]">
-              {actionType} Product
+              {actionType === "Add" ? "Add Items" : `${actionType} Product`}
             </h3>
             <button
               onClick={handleCloseModle}
@@ -469,7 +495,7 @@ const EditAndViewModel = ({ productData, setShowModel, actionType }) => {
             </button>
           </div>
 
-          <div className="bg-[#E6E6E6] p-2 rounded-full w-auto  my-5 inline-flex gap-3">
+          <div className="bg-[#E6E6E6] p-2 rounded-full w-auto my-5 inline-flex gap-3">
             <button
               onClick={() => handleChangeTab("Details")}
               className={` ${
@@ -480,26 +506,30 @@ const EditAndViewModel = ({ productData, setShowModel, actionType }) => {
             >
               Details
             </button>
-            <button
-              onClick={() => handleChangeTab("Options")}
-              className={` ${
-                currentActiveTab === "Options"
-                  ? "bg-[var(--sideMenu-color)] text-white"
-                  : "bg-transparent text-[#333333]/70"
-              } border-none outline-none px-8 py-1 text-[.9dvw] cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
-            >
-              Options
-            </button>
-            <button
-              onClick={() => handleChangeTab("Promotions")}
-              className={` ${
-                currentActiveTab === "Promotions"
-                  ? "bg-[var(--sideMenu-color)] text-white"
-                  : "bg-transparent text-[#333333]/70"
-              } border-none outline-none px-8 py-1 text-[.9dvw] cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
-            >
-              Promotions
-            </button>
+            {actionType !== "Add" && (
+              <>
+                <button
+                  onClick={() => handleChangeTab("Options")}
+                  className={` ${
+                    currentActiveTab === "Options"
+                      ? "bg-[var(--sideMenu-color)] text-white"
+                      : "bg-transparent text-[#333333]/70"
+                  } border-none outline-none px-8 py-1 text-[.9dvw] cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
+                >
+                  Options
+                </button>
+                <button
+                  onClick={() => handleChangeTab("Promotions")}
+                  className={` ${
+                    currentActiveTab === "Promotions"
+                      ? "bg-[var(--sideMenu-color)] text-white"
+                      : "bg-transparent text-[#333333]/70"
+                  } border-none outline-none px-8 py-1 text-[.9dvw] cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
+                >
+                  Promotions
+                </button>
+              </>
+            )}
           </div>
 
           <div className="w-full p-2 border border-[var(--border-color)] rounded-md">

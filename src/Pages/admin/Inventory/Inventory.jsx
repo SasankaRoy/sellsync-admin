@@ -12,11 +12,10 @@ import {
   TotalInventoryIcon,
 } from "../../../assets/Svgs/AllSvgs";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
-// Core CSS
 import { AgGridReact } from "ag-grid-react";
 import ProductImg1 from "../../../assets/images/ProductImg1.png";
 import { Doughtchart } from "../../../components/common/charts/Doughtchart";
-import { CircleX, Edit, Eye, Plus, PlusCircle, Trash } from "lucide-react";
+import { CircleX, Edit, Eye, Plus, Trash } from "lucide-react";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -216,6 +215,25 @@ export const Inventory = () => {
     productId: null,
   });
 
+  const onAddProduct = () => {
+    setShowModel({
+      state: true,
+      productData: {
+        ID: "",
+        ProductName: "",
+        Rank: "",
+        QtyInHand: "",
+        OfDaysSupply: "",
+        Cost: "",
+        Price: "",
+        StockCode: "",
+        ReorderPoint: "",
+        ReorderValue: "",
+      },
+      actionType: "Add",
+    });
+  };
+
   const onEdit = (product) => {
     console.log(product, "edit");
     if (product) {
@@ -228,9 +246,14 @@ export const Inventory = () => {
   };
   const onView = (product) => {
     console.log(product, "view");
+    setShowModel({
+      state: true,
+      productData: product,
+      actionType: "View",
+    });
   };
   const onDelete = (product) => {
-    console.log(product, "delete 201");
+    console.log(product, "delete");
     setDeleteModel({
       state: true,
       productId: product.ID,
@@ -269,9 +292,10 @@ export const Inventory = () => {
       editable: true,
     };
   }, []);
+
   return (
     <>
-      <Layout>
+      <Layout onAddProduct={onAddProduct}>
         <div className="flex justify-center w-full gap-5">
           <div className="flex-1">
             <div className="flex justify-between items-center">
@@ -329,7 +353,6 @@ export const Inventory = () => {
                 <AgGridReact
                   rowData={rowData}
                   columnDefs={colDefs}
-                  // loading={loading}
                   defaultColDef={defaultColDef}
                   pagination={true}
                   rowSelection={rowSelection}
@@ -341,9 +364,6 @@ export const Inventory = () => {
               </div>
             </div>
           </div>
-
-
-          
           <div className="w-[26%] shrink-0">
             <div className="flex justify-between items-center">
               <h3 className="text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
@@ -363,18 +383,18 @@ export const Inventory = () => {
                   <Doughtchart aspectRatio={1.5} />
                 </div>
                 <div>
-                  <div className="flex-1 shrink-0 flex flex-col gap-3 justify-center items-start  rounded-md bg-[var(--primary-color)] py-6 px-2 ">
+                  <div className="flex-1 shrink-0 flex flex-col gap-3 justify-center items-start rounded-md bg-[var(--primary-color)] py-6 px-2 ">
                     {saleData.map((cur, id) => (
                       <div
                         key={id}
-                        className="flex  justify-between items-center w-[95%]"
+                        className="flex justify-between items-center w-[95%]"
                       >
                         <div className="flex justify-start gap-4 items-center">
                           <div
                             style={{
                               background: cur.color,
                             }}
-                            className="w-[1dvw] h-[1dvw]  rounded-full"
+                            className="w-[1dvw] h-[1dvw] rounded-full"
                           />
                           <p className="font-semibold font-[var(--paraFont)] text-[1dvw] text-[var(--paraText-color)]">
                             {cur.name}
@@ -480,12 +500,15 @@ const EditAndViewModel = ({ productData, setShowModel, actionType }) => {
     });
   };
   const handleChangeTab = (currentTab) => {
+    if (actionType === "Add" && currentTab !== "Details") {
+      return; // Prevent changing tabs when actionType is "Add"
+    }
     setCurrentActiveTab(currentTab);
   };
 
   const handleRenderTab = (currentTab) => {
     switch (currentTab) {
-      case "Dtails":
+      case "Details":
         return <DetailsTab />;
       case "Options":
         return <OptionsTab />;
@@ -512,7 +535,7 @@ const EditAndViewModel = ({ productData, setShowModel, actionType }) => {
             </button>
           </div>
 
-          <div className="bg-[#E6E6E6] p-2 rounded-full w-auto  my-5 inline-flex gap-3">
+          <div className="bg-[#E6E6E6] p-2 rounded-full w-auto my-5 inline-flex gap-3">
             <button
               onClick={() => handleChangeTab("Details")}
               className={` ${
@@ -523,26 +546,30 @@ const EditAndViewModel = ({ productData, setShowModel, actionType }) => {
             >
               Details
             </button>
-            <button
-              onClick={() => handleChangeTab("Options")}
-              className={` ${
-                currentActiveTab === "Options"
-                  ? "bg-[var(--sideMenu-color)] text-white"
-                  : "bg-transparent text-[#333333]/70"
-              } border-none outline-none px-8 py-1 text-[.9dvw] cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
-            >
-              Options
-            </button>
-            <button
-              onClick={() => handleChangeTab("Promotions")}
-              className={` ${
-                currentActiveTab === "Promotions"
-                  ? "bg-[var(--sideMenu-color)] text-white"
-                  : "bg-transparent text-[#333333]/70"
-              } border-none outline-none px-8 py-1 text-[.9dvw] cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
-            >
-              Promotions
-            </button>
+            {actionType !== "Add" && (
+              <>
+                <button
+                  onClick={() => handleChangeTab("Options")}
+                  className={` ${
+                    currentActiveTab === "Options"
+                      ? "bg-[var(--sideMenu-color)] text-white"
+                      : "bg-transparent text-[#333333]/70"
+                  } border-none outline-none px-8 py-1 text-[.9dvw] cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
+                >
+                  Options
+                </button>
+                <button
+                  onClick={() => handleChangeTab("Promotions")}
+                  className={` ${
+                    currentActiveTab === "Promotions"
+                      ? "bg-[var(--sideMenu-color)] text-white"
+                      : "bg-transparent text-[#333333]/70"
+                  } border-none outline-none px-8 py-1 text-[.9dvw] cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
+                >
+                  Promotions
+                </button>
+              </>
+            )}
           </div>
 
           <div className="w-full p-2 border border-[var(--border-color)] rounded-md">
@@ -580,7 +607,7 @@ const DetailsTab = () => {
           <div className="flex flex-col gap-2 w-full">
             <label className="text-[1dvw] font-normal paraFont">
               Stockcode
-              <span className="text-[var(--Negative-color)] text-[.9dvw]">
+              <span className="text-[.9dvw] text-[var(--Negative-color)]">
                 *
               </span>
             </label>
@@ -588,7 +615,7 @@ const DetailsTab = () => {
           <div className="flex flex-col gap-2 w-full">
             <label className="text-[1dvw] font-normal paraFont">
               Qty on Hand:
-              <span className="text-[var(--Negative-color)] text-[.9dvw]">
+              <span className="text-[.9dvw] text-[var(--Negative-color)]">
                 *
               </span>
             </label>
@@ -596,7 +623,7 @@ const DetailsTab = () => {
           <div className="flex flex-col gap-2 w-full">
             <label className="text-[1dvw] font-normal paraFont">
               Qty on Hand:
-              <span className="text-[var(--Negative-color)] text-[.9dvw]">
+              <span className="text-[.9dvw] text-[var(--Negative-color)]">
                 *
               </span>
             </label>
@@ -605,21 +632,21 @@ const DetailsTab = () => {
             <>
               <div className="flex flex-col gap-2 w-full">
                 <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                   placeholder="78440005246"
                   type="text"
                 />
               </div>
               <div className="flex flex-col gap-2 w-full">
                 <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                   placeholder="Items"
                   type="number"
                 />
               </div>
               <div className="flex flex-col gap-2 w-full">
                 <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                   placeholder="Cases"
                   type="number"
                 />
@@ -634,7 +661,7 @@ const DetailsTab = () => {
             <span className="text-[.9dvw] text-[var(--Negative-color)]">*</span>
           </label>
           <input
-            className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+            className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
             type="text"
             placeholder="Enter Product Name..."
           />
@@ -694,45 +721,45 @@ const DetailsTab = () => {
             <>
               <div className="w-full flex flex-col gap-1.5">
                 <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                   type="number"
                 />
               </div>
               <div className="w-full flex flex-col gap-1.5">
                 <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                   type="number"
                 />
               </div>
               <div className="w-full flex flex-col gap-1.5">
                 <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                  type="number"
-                />
-              </div>
-
-              <div className="w-full flex flex-col gap-1.5">
-                <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                  type="number"
-                />
-              </div>
-              <div className="w-full flex flex-col gap-1.5">
-                <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                   type="number"
                 />
               </div>
 
               <div className="w-full flex flex-col gap-1.5">
                 <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                   type="number"
                 />
               </div>
               <div className="w-full flex flex-col gap-1.5">
                 <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  type="number"
+                />
+              </div>
+
+              <div className="w-full flex flex-col gap-1.5">
+                <input
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  type="number"
+                />
+              </div>
+              <div className="w-full flex flex-col gap-1.5">
+                <input
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                   type="number"
                 />
               </div>
@@ -744,7 +771,7 @@ const DetailsTab = () => {
           <div className="flex flex-col gap-2">
             <label className="text-[1dvw] font-normal paraFont">Size</label>
             <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
             />
           </div>
@@ -753,7 +780,7 @@ const DetailsTab = () => {
               Vendor Item No
             </label>
             <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
             />
           </div>
@@ -761,7 +788,7 @@ const DetailsTab = () => {
 
         <div className="w-full flex flex-col gap-2 my-4">
           <label className="text-[1dvw] font-normal paraFont">Category</label>
-          <select className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3">
+          <select className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3">
             <option>Select Category</option>
             <option>Select Category</option>
             <option>Select Category</option>
@@ -776,7 +803,7 @@ const DetailsTab = () => {
         <div className="grid grid-cols-2 gap-2 w-full my-4">
           <div className="w-full flex flex-col gap-2">
             <label className="text-[1dvw] font-normal paraFont">Supplier</label>
-            <select className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3">
+            <select className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3">
               <option>Select Supplier</option>
               <option>Select Supplier</option>
               <option>Select Supplier</option>
@@ -793,7 +820,7 @@ const DetailsTab = () => {
           <div className="w-full flex flex-col gap-2">
             <label className="text-[1dvw] font-normal paraFont">SKU</label>
             <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
             />
           </div>
@@ -805,7 +832,7 @@ const DetailsTab = () => {
               Units Per Case
             </label>
             <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
             />
           </div>
@@ -814,14 +841,14 @@ const DetailsTab = () => {
               Case Cost Total
             </label>
             <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
             />
           </div>
           <div className="w-full flex flex-col gap-2">
             <label className="text-[1dvw] font-normal paraFont">Tax</label>
             <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
             />
           </div>
@@ -831,7 +858,7 @@ const DetailsTab = () => {
               Reorder Point
             </label>
             <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
             />
           </div>
@@ -840,14 +867,14 @@ const DetailsTab = () => {
               Reorder Value
             </label>
             <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
             />
           </div>
           <div className="w-full flex flex-col gap-2">
             <label className="text-[1dvw] font-normal paraFont">Rank</label>
             <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
             />
           </div>
@@ -856,12 +883,11 @@ const DetailsTab = () => {
     </>
   );
 };
+
 const OptionsTab = () => {
   return (
     <>
       <div className="w-full p-2">
-
-
         <div className="grid grid-cols-2 w-full gap-2">
           <div className="flex justify-start items-center gap-3">
             <input
@@ -982,14 +1008,13 @@ const OptionsTab = () => {
           </div>
         </div>
 
-
         <div className="grid grid-cols-2 gap-3 w-full">
           <div className="w-full my-4 flex flex-col gap-2">
             <label className="text-[1dvw] font-normal paraFont">
               Default Qty
             </label>
             <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
               placeholder="Enter Quantity..."
             />
@@ -999,7 +1024,7 @@ const OptionsTab = () => {
               Min Price
             </label>
             <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="number"
               placeholder="Min Price..."
             />
@@ -1010,7 +1035,7 @@ const OptionsTab = () => {
               Remind Date
             </label>
             <input
-              className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="date"
             />
           </div>
@@ -1019,7 +1044,7 @@ const OptionsTab = () => {
               Vendor Item Name
             </label>
             <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="type"
             />
           </div>
@@ -1028,7 +1053,7 @@ const OptionsTab = () => {
         <div className="flex flex-col gap-2 w-full my-4">
           <label className="text-[1dvw] font-normal paraFont">Notes</label>
           <textarea
-            className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+            className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
             rows={5}
             placeholder="Enter Notes..."
           ></textarea>
@@ -1037,7 +1062,7 @@ const OptionsTab = () => {
         <div className="flex flex-col gap-2 w-full my-4">
           <label className="text-[1dvw] font-normal paraFont">Tags</label>
           <input
-            className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+            className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
             type="type"
             placeholder="Tags"
           />
@@ -1049,7 +1074,7 @@ const OptionsTab = () => {
               Points Multiplier
             </label>
             <select
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="type"
               placeholder="Tags"
             >
@@ -1066,7 +1091,7 @@ const OptionsTab = () => {
               Points Required
             </label>
             <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="type"
               placeholder="Enter points"
             />
@@ -1076,24 +1101,14 @@ const OptionsTab = () => {
               Item Type
             </label>
             <select
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="type"
               placeholder="Tags"
             >
               <option>Select Item Type</option>
-              <option>Inventory Item</option>
-              <option>Free Item</option>
-              <option>Negative Item</option>
-              <option>Lotto Sale</option>
-              <option>Lotto Payout</option>
-              <option>Deposit Return</option>
-              <option>Gift Item</option>
-              <option>Online Lottery</option>
-              <option>Online Payout</option>
-              <option>Mannual Item</option>
-              <option>House Pay</option>
-              <option>Coupon ($)</option>
-              <option>Coupon (%)</option>
+              <option>Item Type 1</option>
+              <option>Item Type 2</option>
+              <option>Item Type 3</option>
             </select>
           </div>
         </div>
@@ -1101,72 +1116,18 @@ const OptionsTab = () => {
     </>
   );
 };
-const PromotionsTab = () => {
-  const [rowData, setRowData] = useState([
-    {
-      ID: "1",
-      Name: "Beer",
-      Status: "Enable",
-    },
-    {
-      ID: "2",
-      Name: "Beer",
-      Status: "Enable",
-    },
-    {
-      ID: "3",
-      Name: "Beer",
-      Status: "Enable",
-    },
-  ]);
-  const [colDefs, setColDefs] = useState([
-    { field: "ID" },
-    { field: "Name" },
-    { field: "Status" },
-  ]);
 
-  // Apply settings across all columns
-  const defaultColDef = useMemo(() => {
-    return {
-      filter: true,
-      editable: true,
-    };
-  }, []);
+const PromotionsTab = () => {
   return (
     <>
       <div className="w-full p-2">
-        <div className="flex flex-col gap-2 w-full my-4">
-          <label className="text-[1dvw] font-normal paraFont" F>
-            Search Items
-          </label>
-          <input
-            placeholder="Enter items ..."
-            className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-            type="text"
-          />
-        </div>
-        <div className="h-[40vh] w-full">
-          <div className="h-full w-full">
-            <AgGridReact
-              rowData={rowData}
-              columnDefs={colDefs}
-              // loading={loading}
-              defaultColDef={defaultColDef}
-              pagination={true}
-              rowSelection={rowSelection}
-              onSelectionChanged={(event) => console.log("Row Selected!")}
-              onCellValueChanged={(event) =>
-                console.log(`New Cell Value: ${event.value}`)
-              }
-            />
-          </div>
-        </div>
+        <p>Promotions content goes here</p>
       </div>
     </>
   );
 };
 
-const DeleteModel = ({ setDeleteModel, productId }) => {
+const DeleteModel = () => {
   return (
     <>
       <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center">
@@ -1187,25 +1148,25 @@ const DeleteModel = ({ setDeleteModel, productId }) => {
           </div>
           <p className="text-[1.2dvw] font-semibold font-[var(--paraFont)]">
             Product Id <span className="italic">"{productId}"</span> will be{" "}
-            <span className="text-[var(--Negative-color)] font-bold font-[var(--paraFont)] text-[1.3dvw]">
-              Removed
-            </span>{" "}
-            from the Inventory.
+            <span className="text-[var(--Negative-color)] font-bold">
+              deleted permanently
+            </span>
+            , are you sure?
           </p>
-          <div className="flex justify-end items-center gap-4">
+          <div className="flex gap-4 justify-end items-center">
+            <button className="px-4 py-1.5 bg-[var(--Negative-color)] cursor-pointer text-white paraFont rounded-md">
+              Delete
+            </button>
             <button
               onClick={() => {
                 setDeleteModel({
-                  showDeleteModel: false,
+                  state: false,
                   productId: null,
                 });
               }}
-              className="bg-[var(--button-color4)] text-white px-5 py-1.5 rounded-md flex justify-center items-center font-semibold text-[1.1dvw] cursor-pointer"
+              className="px-4 py-1.5 bg-[var(--button-color4)] cursor-pointer text-white paraFont rounded-md"
             >
               Cancel
-            </button>
-            <button className="bg-[var(--Negative-color)] text-white px-5 py-1.5 rounded-md flex justify-center items-center font-semibold text-[1.1dvw] cursor-pointer">
-              Delete
             </button>
           </div>
         </div>
