@@ -21,12 +21,13 @@ import { Avatar } from "@mui/material";
 import { Link, NavLink } from "react-router-dom";
 import { Amphora, BadgeDollarSign, ChevronDown, Contact, Network } from "lucide-react";
 
-export const Layout = ({ children }) => {
+export const Layout = ({ children, onAddProduct }) => {
   const [subMenuStateInventory, setSubMenuStateInventory] = useState(false);
   const [subMenuStateUser, setSubMenuStateUser] = useState(false);
   const [subMenuStatePos, setSunMenuStatePos] = useState(false);
-  const [subMenuStateLottery, setSubMenuStateLottery] = useState(false);
-  const [subMenuStateLoyalty, setSubMenuStateLoyalty] = useState(false);
+  const [subMenuStateLottery,setSubMenuStateLottery] = useState(false);
+  const [subMenuStateLoyalty,setSubMenuStateLoyalty] = useState(false);
+
 
   return (
     <div className="layout__OuterMainWrapper">
@@ -78,11 +79,11 @@ export const Layout = ({ children }) => {
               </div>
 
               <div
-                className={`bg-[#0052cc]/50 w-[80%] mx-auto  rounded-md flex flex-col gap-2 ${
+                className={`bg-[#0052cc]/50 w-[80%] mx-auto rounded-md flex flex-col gap-2 ${
                   subMenuStateInventory
                     ? "h-[40vh] opacity-100 p-2"
                     : "h-[0vh] opacity-0 p-0 "
-                } transition-all duration-300 ease-linear  overflow-hidden`}
+                } transition-all duration-300 ease-linear overflow-hidden`}
               >
                 <NavLink
                   onClick={(e) => {
@@ -112,7 +113,6 @@ export const Layout = ({ children }) => {
                 >
                   Items List
                 </NavLink>
-
                 <NavLink
                   to="/admin/inventory/category"
                   className={({ isActive }) => {
@@ -171,7 +171,6 @@ export const Layout = ({ children }) => {
               <ReportsIcon />
               Reports
             </NavLink>
-
             <div className="w-full flex flex-col gap-2">
               <div
                 onClick={(e) => {
@@ -190,13 +189,12 @@ export const Layout = ({ children }) => {
                   } transition-all duration-300 ease-linear`}
                 />
               </div>
-
               <div
-                className={`bg-[#0052cc]/50 w-[80%] mx-auto  rounded-md flex flex-col gap-2 ${
+                className={`bg-[#0052cc]/50 w-[80%] mx-auto rounded-md flex flex-col gap-2 ${
                   subMenuStateUser
                     ? "h-[15vh] opacity-100 p-2"
                     : "h-[0vh] opacity-0 p-0 "
-                } transition-all duration-300 ease-linear  overflow-hidden`}
+                } transition-all duration-300 ease-linear overflow-hidden`}
               >
                 <NavLink
                   onClick={(e) => {
@@ -228,7 +226,6 @@ export const Layout = ({ children }) => {
                 </NavLink>
               </div>
             </div>
-
             <div className="w-full flex flex-col gap-2">
               <div
                 onClick={(e) => {
@@ -247,13 +244,12 @@ export const Layout = ({ children }) => {
                   } transition-all duration-300 ease-linear`}
                 />
               </div>
-
               <div
-                className={`bg-[#0052cc]/50 w-[80%] mx-auto  rounded-md flex flex-col gap-2 ${
+                className={`bg-[#0052cc]/50 w-[80%] mx-auto rounded-md flex flex-col gap-2 ${
                   subMenuStatePos
                     ? "h-[55vh] opacity-100 p-2"
                     : "h-[0vh] opacity-0 p-0 "
-                } transition-all duration-300 ease-linear  overflow-hidden`}
+                } transition-all duration-300 ease-linear overflow-hidden`}
               >
                 <NavLink
                   onClick={(e) => {
@@ -263,8 +259,8 @@ export const Layout = ({ children }) => {
                   className={({ isActive }) => {
                     isActive && setSunMenuStatePos(true);
                     return isActive
-                      ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink"
-                      : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink";
+                      ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink line-clamp-1"
+                      : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink line-clamp-1";
                   }}
                 >
                   Journal
@@ -277,8 +273,8 @@ export const Layout = ({ children }) => {
                   className={({ isActive }) => {
                     isActive && setSunMenuStatePos(true);
                     return isActive
-                      ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink"
-                      : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink";
+                      ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink line-clamp-1"
+                      : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink line-clamp-1";
                   }}
                 >
                   Deals
@@ -291,13 +287,12 @@ export const Layout = ({ children }) => {
                   className={({ isActive }) => {
                     isActive && setSunMenuStatePos(true);
                     return isActive
-                      ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink"
-                      : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink";
+                      ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink line-clamp-1"
+                      : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink line-clamp-1";
                   }}
                 >
                   Receipt Settings
                 </NavLink>
-
                 <NavLink
                   onClick={(e) => {
                     e.stopPropagation();
@@ -354,7 +349,6 @@ export const Layout = ({ children }) => {
                 >
                   Vendors
                 </NavLink>
-
                 <NavLink
                   onClick={(e) => {
                     e.stopPropagation();
@@ -369,7 +363,6 @@ export const Layout = ({ children }) => {
                 >
                   Fuels
                 </NavLink>
-
                 <NavLink
                   onClick={(e) => {
                     e.stopPropagation();
@@ -386,7 +379,6 @@ export const Layout = ({ children }) => {
                 </NavLink>
               </div>
             </div>
-
             <div className="w-full flex flex-col gap-2">
               <div
                 onClick={(e) => {
@@ -405,13 +397,12 @@ export const Layout = ({ children }) => {
                   } transition-all duration-300 ease-linear`}
                 />
               </div>
-
               <div
-                className={`bg-[#0052cc]/50 w-[80%] mx-auto  rounded-md flex flex-col gap-2 ${
+                className={`bg-[#0052cc]/50 w-[80%] mx-auto rounded-md flex flex-col gap-2 ${
                   subMenuStateLottery
                     ? "h-[20vh] opacity-100 p-2"
                     : "h-[0vh] opacity-0 p-0 "
-                } transition-all duration-300 ease-linear  overflow-hidden`}
+                } transition-all duration-300 ease-linear overflow-hidden`}
               >
                 <NavLink
                   onClick={(e) => {
@@ -457,7 +448,6 @@ export const Layout = ({ children }) => {
                 </NavLink>
               </div>
             </div>
-
             <div className="w-full flex flex-col gap-2">
               <div
                 onClick={(e) => {
@@ -577,7 +567,6 @@ export const Layout = ({ children }) => {
           </ul>
         </div>
       </div>
-
       <div className="layout__mainContentWrapper flex flex-col jus  shrink-0 flex-1 w-full  overflow-x-hidden">
         <nav className="topNavbar__mainWrapper ">
           <div className="topNav__leftWrapper px-3">
@@ -591,7 +580,7 @@ export const Layout = ({ children }) => {
             <button>
               <NotificationIcon />
             </button>
-            <button className="addProduct__BTN">
+            <button className="addProduct__BTN" onClick={onAddProduct}>
               Add Product <PluseIcon />
             </button>
             <button>

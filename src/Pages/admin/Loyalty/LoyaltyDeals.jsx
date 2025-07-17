@@ -504,7 +504,7 @@ const EditAndAddModel = ({ showModel, setShowModel }) => {
           </div>
 
           <div className="my-8 flex flex-col gap-3">
-            <div>
+            <div className="flex flex-col justify-center items-center gap-5">
               <div className="flex flex-col gap-2 w-full">
                 <label
                   htmlFor="itemsDeal"
@@ -525,6 +525,125 @@ const EditAndAddModel = ({ showModel, setShowModel }) => {
                   <option>Deal Item 6</option>
                 </select>
               </div>
+
+              <div className="flex flex-col gap-2 w-full">
+                <label
+                  htmlFor="promoCode"
+                  className="text-[1dvw] font-normal paraFont"
+                >
+                  Promocode
+                </label>
+                <input
+                  id="promoCode"
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] appearance-none focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  type="number"
+                  placeholder="Enter code..."
+                />
+              </div>
+
+              <div className="flex justify-between items-center w-full gap-5">
+                <div className="flex flex-col gap-2 w-full">
+                  <label
+                    htmlFor="offAmount"
+                    className="text-[1dvw] font-normal paraFont"
+                  >
+                    Amount Off
+                  </label>
+                  <input
+                    id="offAmount"
+                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] appearance-none focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                    type="number"
+                    placeholder="Enter off amount..."
+                  />
+                </div>
+                <div className="flex flex-col gap-2 w-full">
+                  <label
+                    htmlFor="minQty"
+                    className="text-[1dvw] font-normal paraFont"
+                  >
+                    Min Quantity
+                  </label>
+                  <input
+                    id="minQty"
+                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] appearance-none focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                    type="number"
+                    placeholder="Enter min quantity..."
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center w-full gap-5">
+                <div className="flex flex-col gap-2 w-full">
+                  <label
+                    htmlFor="offAmount"
+                    className="text-[1dvw] font-normal paraFont"
+                  >
+                    Max Quantity
+                  </label>
+                  <input
+                    id="offAmount"
+                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] appearance-none focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                    type="number"
+                    placeholder="Enter max quantity..."
+                  />
+                </div>
+                <div className="flex flex-col gap-2 w-full">
+                  <label
+                    htmlFor="status"
+                    className="text-[1dvw] font-normal paraFont"
+                  >
+                    Status
+                  </label>
+                  <select
+                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] appearance-none focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                    id="status"
+                  >
+                    <option>-- Select Status --</option>
+                    <option>Active</option>
+                    <option>De-Active</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center w-full gap-5">
+                <div className="flex flex-col gap-2 w-full">
+                  <label
+                    htmlFor="from"
+                    className="text-[1dvw] font-normal paraFont"
+                  >
+                    From
+                  </label>
+                  <input
+                    id="from"
+                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] appearance-none focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                    type="date"
+                    placeholder="Enter max quantity..."
+                  />
+                </div>
+                <div className="flex flex-col gap-2 w-full">
+                  <label
+                    htmlFor="to"
+                    className="text-[1dvw] font-normal paraFont"
+                  >
+                    To
+                  </label>
+                  <input
+                    id="to"
+                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] appearance-none focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                    type="date"
+                    placeholder="Enter max quantity..."
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end items-center gap-5 mt-5">
+              <button className="px-4 py-1.5 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md">
+                Add
+              </button>
+              <button className="px-4 py-1.5 bg-[var(--button-color4)] cursor-pointer text-white paraFont rounded-md">
+                Cancel
+              </button>
             </div>
           </div>
         </div>
