@@ -39,62 +39,58 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<AdminDashboard />} exact />
-          <Route path="/admin/sale" element={<Sale />} exact />
+          <Route path="/" element={<AdminDashboard />} />
+          <Route path="/admin/sale" element={<Sale />} />
           <Route
             path="/admin/inventory/overview"
             element={<Inventory />}
-            exact
           />
           <Route
             path="/admin/inventory/item-lists"
             element={<ItemsList />}
-            exact
           />
           <Route
             path="/admin/inventory/category"
             element={<Category />}
-            exact
           />
           <Route
             path="/admin/inventory/suppliers"
             element={<Supplier />}
-            exact
           />
-          <Route path="/admin/inventory/receive" element={<Receive />} exact />
-          <Route path="/admin/inventory/order" element={<Orders />} exact />
-          <Route path="/admin/reports" element={<Reports />} exact />
-          <Route path="/admin/customers" element={<Customer />} exact />
-          <Route path="/admin/employees" element={<Employee />} exact />
+          <Route path="/admin/inventory/receive" element={<Receive />} />
+          <Route path="/admin/inventory/order" element={<Orders />} />
+          <Route path="/admin/reports" element={<Reports />} />
+          <Route path="/admin/customers" element={<Customer />} />
+          <Route path="/admin/employees" element={<Employee />} />
 
+          <Route path="/admin/pos" element={<POS />} />
+          <Route path="/admin/pos/journals" element={<Journal />} />
+          <Route path="/admin/pos/deals" element={<Deals />} />
+          <Route path="/admin/pos/receipt-settings" element={<ReceiptSettings />} />
+          <Route path="/admin/pos/customer-display-setting" element={<CustomerDisplaySetting />} />
+          <Route path="/admin/pos/edi-file" element={<EDIFile />} />
+          <Route path="/admin/pos/pos-categorries" element={<CategoriesPOS />} />
+          <Route path="/admin/pos/vendors" element={<Vendors />} />
+          <Route path="/admin/pos/fuels" element={<Fule />} />
+          <Route path="/admin/pos/device-and-location" element={<DeviceAndLocation />} />
+          
+          {/* Task Routes */}
+          <Route path="/admin/tasks" element={<Task />} />
+          <Route path="/admin/tasks/task-details/:tid" element={<ViewTask />} />
+          
+          <Route path="/admin/lottery/inventory" element={<InventoryLottery />} />
+          <Route path="/admin/lottery/instant-scan-tickets" element={<ScanTickets />} />
+          <Route path="/admin/lottery/sale-report" element={<SalesReport />} />
+          <Route path="/admin/loyalty/deals" element={<LoyaltyDeals />} />
 
-          <Route path="/admin/pos" element={<POS />} exact />
-          <Route path="/admin/pos/journals" element={<Journal />} exact />
-          <Route path="/admin/pos/deals" element={<Deals />} exact />
-          <Route path="/admin/pos/receipt-settings" element={<ReceiptSettings />} exact />
-          <Route path="/admin/pos/customer-display-setting" element={<CustomerDisplaySetting />} exact />
-          <Route path="/admin/pos/edi-file" element={<EDIFile />} exact />
-          <Route path="/admin/pos/pos-categorries" element={<CategoriesPOS />} exact />
-          <Route path="/admin/pos/vendors" element={<Vendors />} exact />
-          <Route path="/admin/pos/fuels" element={<Fule />} exact />
-          <Route path="/admin/pos/device-and-location" element={<DeviceAndLocation />} exact />
-          <Route path="/admin/tasks" element={<Task />} exact />
-          <Route path="/admin/tasks/task-details/:tid" element={<ViewTask />} exact />
-          <Route path="/admin/lottery/inventory" element={<InventoryLottery />} exact />
-          <Route path="/admin/lottery/instant-scan-tickets" element={<ScanTickets />} exact />
-          <Route path="/admin/lottery/sale-report" element={<SalesReport />} exact />
-          <Route path="/admin/loyalty/deals" element={<LoyaltyDeals />} exact />
+          <Route path="/admin/settings" element={<Settings />} />
+          <Route path="/admin/help" element={<Help />} />
+          <Route path="/admin/rewards" element={<Rewards />} />
+          <Route path="/admin/payroll" element={<Payroll />} />
+          <Route path="/admin/item-report/:id" element={<ItemReport />} />
 
-
-
-          <Route path="/admin/settings" element={<Settings />} exact />
-          <Route path="/admin/help" element={<Help />} exact />
-          <Route path="/admin/rewards" element={<Rewards />} exact />
-          <Route path="/admin/payroll" element={<Payroll />} exact />
-          <Route path="/admin/item-report/:id" element={<ItemReport />} exact />
-
-          <Route path="/auth/login" element={<Login />} exact />
-          <Route path="/auth/register" element={<Register />} exact />
+          <Route path="/auth/login" element={<Login />} />
+          <Route path="/auth/register" element={<Register />} />
         </Routes>
       </BrowserRouter>
     </>

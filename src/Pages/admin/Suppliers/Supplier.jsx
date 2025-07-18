@@ -251,6 +251,8 @@ const ActionBtns = (props) => {
 };
 
 const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowData, rowData }) => {
+  const [showNewSupplierInput, setShowNewSupplierInput] = useState(false);
+  const [showNewCategoryInput, setShowNewCategoryInput] = useState(false);
   const [supplierFields, setSupplierFields] = useState([
     {
       id: 1,
@@ -276,23 +278,19 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
     "Spirits",
   ]);
 
-  const [itemsOptions, setItemsOptions] = useState([
-    "100",
-    "200",
-    "300",
-    "400",
-    "500",
-    "600",
-    "700",
-  ]);
+  // Items is now a number input, so we don't need predefined options
 
-  const [dateOptions, setDateOptions] = useState([
-    "12/05/2025",
-    "12/06/2025",
-    "12/07/2025",
-    "12/08/2025",
-    "12/09/2025",
-  ]);
+  const formatDateForInput = (dateString) => {
+    if (!dateString) return '';
+    const [month, day, year] = dateString.split('/');
+    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+  };
+
+  const formatDateForDisplay = (dateString) => {
+    if (!dateString) return '';
+    const [year, month, day] = dateString.split('-');
+    return `${month}/${day}/${year}`;
+  };
 
   const handleCloseModel = () => {
     setShowModel({
@@ -378,16 +376,6 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
           </button>
         </div>
 
-        <div className="flex justify-end mb-2 px-3">
-          <button
-            onClick={handleAddField}
-            className="p-1 flex justify-center items-center bg-[var(--button-color1)] text-white rounded-full cursor-pointer hover:bg-[#F8A61B] transition-all duration-300"
-            title="Add More Fields"
-          >
-            <Plus size={20} />
-          </button>
-        </div>
-
         <div className="w-full p-3 space-y-6">
           {supplierFields.map((field, index) => (
             <div
@@ -408,101 +396,142 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
                   <label className="text-[1dvw] font-normal paraFont">
                     Supplier Name
                   </label>
-                  <select
-                    value={field.SupplierName}
-                    onChange={(e) =>
-                      handleSelectChange(
-                        index,
-                        "SupplierName",
-                        e.target.value,
-                        setSupplierOptions,
-                        supplierOptions
-                      )
-                    }
-                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                  >
-                    <option value="">Select Supplier Name</option>
-                    {supplierOptions.map((option, optIndex) => (
-                      <option key={optIndex} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                    <option value="custom">➕ Add New Supplier</option>
-                  </select>
+                  {showNewSupplierInput ? (
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={field.SupplierName}
+                        onChange={(e) => handleFieldChange(index, 'SupplierName', e.target.value)}
+                        className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                        placeholder="Enter supplier name"
+                        autoFocus
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (field.SupplierName.trim()) {
+                            setSupplierOptions(prev => [...new Set([...prev, field.SupplierName.trim()])]);
+                          }
+                          setShowNewSupplierInput(false);
+                        }}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-blue-500 hover:text-blue-700"
+                        title="Save new supplier"
+                      >
+                        Save
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="relative">
+                      <select
+                        value={field.SupplierName}
+                        onChange={(e) => {
+                          if (e.target.value === 'custom') {
+                            setShowNewSupplierInput(true);
+                            handleFieldChange(index, 'SupplierName', '');
+                          } else {
+                            handleSelectChange(index, 'SupplierName', e.target.value, setSupplierOptions, supplierOptions);
+                          }
+                        }}
+                        className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 pl-3 pr-8 appearance-none"
+                      >
+                        <option value="">Select Supplier Name</option>
+                        {supplierOptions.map((option, optIndex) => (
+                          <option key={optIndex} value={option}>
+                            {option}
+                          </option>
+                        ))}
+                        <option value="custom" className="text-blue-500">➕ Add New Supplier</option>
+                      </select>
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                        <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                          <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <div className="w-full flex flex-col gap-2">
                   <label className="text-[1dvw] font-normal paraFont">
                     Category
                   </label>
-                  <select
-                    value={field.Category}
-                    onChange={(e) =>
-                      handleSelectChange(
-                        index,
-                        "Category",
-                        e.target.value,
-                        setCategoryOptions,
-                        categoryOptions
-                      )
-                    }
-                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                  >
-                    <option value="">Select Category</option>
-                    {categoryOptions.map((option, optIndex) => (
-                      <option key={optIndex} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                    <option value="custom">➕ Add New Category</option>
-                  </select>
+                  {showNewCategoryInput ? (
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={field.Category}
+                        onChange={(e) => handleFieldChange(index, 'Category', e.target.value)}
+                        className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                        placeholder="Enter category name"
+                        autoFocus
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (field.Category.trim()) {
+                            setCategoryOptions(prev => [...new Set([...prev, field.Category.trim()])]);
+                          }
+                          setShowNewCategoryInput(false);
+                        }}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-blue-500 hover:text-blue-700"
+                        title="Save new category"
+                      >
+                        Save
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="relative">
+                      <select
+                        value={field.Category}
+                        onChange={(e) => {
+                          if (e.target.value === 'custom') {
+                            setShowNewCategoryInput(true);
+                            handleFieldChange(index, 'Category', '');
+                          } else {
+                            handleSelectChange(index, 'Category', e.target.value, setCategoryOptions, categoryOptions);
+                          }
+                        }}
+                        className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 pl-3 pr-8 appearance-none"
+                      >
+                        <option value="">Select Category</option>
+                        {categoryOptions.map((option, optIndex) => (
+                          <option key={optIndex} value={option}>
+                            {option}
+                          </option>
+                        ))}
+                        <option value="custom" className="text-blue-500">➕ Add New Category</option>
+                      </select>
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                        <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                          <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <div className="w-full flex flex-col gap-2">
                   <label className="text-[1dvw] font-normal paraFont">Items</label>
-                  <select
+                  <input
+                    type="text"
                     value={field.Items}
-                    onChange={(e) =>
-                      handleSelectChange(
-                        index,
-                        "Items",
-                        e.target.value,
-                        setItemsOptions,
-                        itemsOptions
-                      )
-                    }
+                    onChange={(e) => {
+                      handleFieldChange(index, 'Items', e.target.value);
+                    }}
                     className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                  >
-                    <option value="">Select Items</option>
-                    {itemsOptions.map((option, optIndex) => (
-                      <option key={optIndex} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                    <option value="custom">➕ Add New Items</option>
-                  </select>
+                    placeholder="Enter items"
+                  />
                 </div>
                 <div className="w-full flex flex-col gap-2">
                   <label className="text-[1dvw] font-normal paraFont">Date</label>
-                  <select
-                    value={field.Date}
-                    onChange={(e) =>
-                      handleSelectChange(
-                        index,
-                        "Date",
-                        e.target.value,
-                        setDateOptions,
-                        dateOptions
-                      )
-                    }
+                  <input
+                    type="date"
+                    value={formatDateForInput(field.Date)}
+                    onChange={(e) => {
+                      const formattedDate = formatDateForDisplay(e.target.value);
+                      handleFieldChange(index, 'Date', formattedDate);
+                    }}
                     className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                  >
-                    <option value="">Select Date</option>
-                    {dateOptions.map((option, optIndex) => (
-                      <option key={optIndex} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                    <option value="custom">➕ Add New Date</option>
-                  </select>
+                    required
+                  />
                 </div>
               </div>
             </div>
