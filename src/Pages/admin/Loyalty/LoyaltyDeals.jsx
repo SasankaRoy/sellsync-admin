@@ -377,6 +377,8 @@ export const LoyaltyDeals = () => {
       editable: true,
     };
   }, []);
+
+
   return (
     <>
       <Layout>
@@ -396,7 +398,7 @@ export const LoyaltyDeals = () => {
           </button>
         </div>
 
-        <div className="bg-white border border-[var(--border-color)] my-5 p-5 rounded-md">
+        <div className="bg-white border border-[var(--border-color)] mt-5 p-5 rounded-md">
           <h3 className="text-[1.3dvw] font-[600] ">Active Deals</h3>
           <div className="h-[70vh] w-full my-5">
             <div className="h-full w-full">
@@ -416,9 +418,9 @@ export const LoyaltyDeals = () => {
           </div>
         </div>
 
-        <div className="bg-white border border-[var(--border-color)] my-5 p-5 rounded-md">
+        <div className="bg-white border border-[var(--border-color)] p-5 rounded-md">
           <h3 className="text-[1.3dvw] font-[600] ">Previous Deals</h3>
-          <div className="h-[70vh] w-full my-5">
+          <div className="h-[50vh] w-full mt-5">
             <div className="h-full w-full">
               <AgGridReact
                 rowData={rowData}
