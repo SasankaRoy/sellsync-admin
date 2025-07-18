@@ -110,14 +110,6 @@ export const ViewTask = () => {
         </button>
         <h3 className="text-[1.3dvw] font-[500]">Task Details</h3>
       </div>
-      
-      {/* Debug Information */}
-      <div className="w-full p-3 rounded-lg border border-yellow-300 bg-yellow-50 my-4">
-        <h4 className="text-[1dvw] font-[500] text-yellow-800">Debug Info:</h4>
-        <p className="text-[0.9dvw] text-yellow-700">Task ID from URL: {tid}</p>
-        <p className="text-[0.9dvw] text-yellow-700">Has State Data: {location.state ? 'Yes' : 'No'}</p>
-        <p className="text-[0.9dvw] text-yellow-700">Task Title: {taskData?.TaskTitle}</p>
-      </div>
 
       <div className="w-full p-5 rounded-lg border border-[#d4d4d4] bg-white my-8">
         <h5 className="font-[500] text-[1dvw] text-gray-500 tracking-wide flex justify-start items-center gap-4">
