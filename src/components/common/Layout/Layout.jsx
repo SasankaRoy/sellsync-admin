@@ -19,7 +19,15 @@ import {
   UsersIcon,
 } from "../../../assets/Svgs/AllSvgs";
 import { Avatar } from "@mui/material";
-import { Amphora, BadgeDollarSign, ChevronDown, CircleX, Network, Plus } from "lucide-react";
+import {
+  Amphora,
+  BadgeDollarSign,
+  ChevronDown,
+  CircleX,
+  Network,
+  Plus,
+  Calendar,
+} from "lucide-react";
 
 export const Layout = ({ children }) => {
   const [subMenuStateInventory, setSubMenuStateInventory] = useState(false);
@@ -27,6 +35,7 @@ export const Layout = ({ children }) => {
   const [subMenuStatePos, setSunMenuStatePos] = useState(false);
   const [subMenuStateLottery, setSubMenuStateLottery] = useState(false);
   const [subMenuStateLoyalty, setSubMenuStateLoyalty] = useState(false);
+  const [subMenuStateDaily, setSubMenuStateDaily] = useState(false);
   const [showProductModel, setShowProductModel] = useState(false);
   const navigate = useNavigate();
 
@@ -50,13 +59,40 @@ export const Layout = ({ children }) => {
     }
   };
 
-  const DetailsTab = ({ stockFields, setStockFields, quantityFields, setQuantityFields, productDetails, setProductDetails }) => {
+  const DetailsTab = ({
+    stockFields,
+    setStockFields,
+    quantityFields,
+    setQuantityFields,
+    productDetails,
+    setProductDetails,
+  }) => {
     const handleAddStockField = () => {
-      setStockFields([...stockFields, { id: stockFields.length + 1, stockCode: "", qtyItems: "", qtyCases: "" }]);
+      setStockFields([
+        ...stockFields,
+        {
+          id: stockFields.length + 1,
+          stockCode: "",
+          qtyItems: "",
+          qtyCases: "",
+        },
+      ]);
     };
 
     const handleAddQuantityField = () => {
-      setQuantityFields([...quantityFields, { id: quantityFields.length + 1, qty: "", price: "", avgCost: "", margin: "", markup: "", latestCost: "", qty2: "" }]);
+      setQuantityFields([
+        ...quantityFields,
+        {
+          id: quantityFields.length + 1,
+          qty: "",
+          price: "",
+          avgCost: "",
+          margin: "",
+          markup: "",
+          latestCost: "",
+          qty2: "",
+        },
+      ]);
     };
 
     const handleStockFieldChange = (index, field, value) => {
@@ -74,7 +110,7 @@ export const Layout = ({ children }) => {
     };
 
     const handleProductDetailChange = (field, value) => {
-      setProductDetails(prev => ({ ...prev, [field]: value }));
+      setProductDetails((prev) => ({ ...prev, [field]: value }));
     };
 
     return (
@@ -89,19 +125,25 @@ export const Layout = ({ children }) => {
           <div className="flex flex-col gap-2 w-full">
             <label className="text-[1dvw] font-normal paraFont">
               Stockcode
-              <span className="text-[.9dvw] text-[var(--Negative-color)]">*</span>
+              <span className="text-[.9dvw] text-[var(--Negative-color)]">
+                *
+              </span>
             </label>
           </div>
           <div className="flex flex-col gap-2 w-full">
             <label className="text-[1dvw] font-normal paraFont">
               Qty on Hand:
-              <span className="text-[.9dvw] text-[var(--Negative-color)]">*</span>
+              <span className="text-[.9dvw] text-[var(--Negative-color)]">
+                *
+              </span>
             </label>
           </div>
           <div className="flex flex-col gap-2 w-full">
             <label className="text-[1dvw] font-normal paraFont">
               Qty on Hand:
-              <span className="text-[.9dvw] text-[var(--Negative-color)]">*</span>
+              <span className="text-[.9dvw] text-[var(--Negative-color)]">
+                *
+              </span>
             </label>
           </div>
           {stockFields.map((field, index) => (
@@ -112,7 +154,9 @@ export const Layout = ({ children }) => {
                   placeholder="78440005246"
                   type="text"
                   value={field.stockCode}
-                  onChange={(e) => handleStockFieldChange(index, 'stockCode', e.target.value)}
+                  onChange={(e) =>
+                    handleStockFieldChange(index, "stockCode", e.target.value)
+                  }
                 />
               </div>
               <div className="flex flex-col gap-2 w-full">
@@ -121,7 +165,9 @@ export const Layout = ({ children }) => {
                   placeholder="Items"
                   type="number"
                   value={field.qtyItems}
-                  onChange={(e) => handleStockFieldChange(index, 'qtyItems', e.target.value)}
+                  onChange={(e) =>
+                    handleStockFieldChange(index, "qtyItems", e.target.value)
+                  }
                 />
               </div>
               <div className="flex flex-col gap-2 w-full">
@@ -130,7 +176,9 @@ export const Layout = ({ children }) => {
                   placeholder="Cases"
                   type="number"
                   value={field.qtyCases}
-                  onChange={(e) => handleStockFieldChange(index, 'qtyCases', e.target.value)}
+                  onChange={(e) =>
+                    handleStockFieldChange(index, "qtyCases", e.target.value)
+                  }
                 />
               </div>
             </React.Fragment>
@@ -147,7 +195,7 @@ export const Layout = ({ children }) => {
             type="text"
             placeholder="Enter Product Name..."
             value={productDetails.name}
-            onChange={(e) => handleProductDetailChange('name', e.target.value)}
+            onChange={(e) => handleProductDetailChange("name", e.target.value)}
           />
         </div>
 
@@ -161,19 +209,25 @@ export const Layout = ({ children }) => {
           <div className="w-full flex flex-col gap-1.5">
             <label className="text-[1dvw] font-normal paraFont">
               Qty
-              <span className="text-[.9dvw] text-[var(--Negative-color)]">*</span>
+              <span className="text-[.9dvw] text-[var(--Negative-color)]">
+                *
+              </span>
             </label>
           </div>
           <div className="w-full flex flex-col gap-1.5">
             <label className="text-[1dvw] font-normal paraFont">
               Price
-              <span className="text-[.9dvw] text-[var(--Negative-color)]">*</span>
+              <span className="text-[.9dvw] text-[var(--Negative-color)]">
+                *
+              </span>
             </label>
           </div>
           <div className="w-full flex flex-col gap-1.5">
             <label className="text-[1dvw] font-normal paraFont">
               Avg Cost
-              <span className="text-[.9dvw] text-[var(--Negative-color)]">*</span>
+              <span className="text-[.9dvw] text-[var(--Negative-color)]">
+                *
+              </span>
             </label>
           </div>
           <div className="w-full flex flex-col gap-1.5">
@@ -183,7 +237,9 @@ export const Layout = ({ children }) => {
             <label className="text-[1dvw] font-normal paraFont">Markup</label>
           </div>
           <div className="w-full flex flex-col gap-1.5">
-            <label className="text-[1dvw] font-normal paraFont">Latest Cost</label>
+            <label className="text-[1dvw] font-normal paraFont">
+              Latest Cost
+            </label>
           </div>
           <div className="w-full flex flex-col gap-1.5">
             <label className="text-[1dvw] font-normal paraFont">Qty</label>
@@ -195,7 +251,9 @@ export const Layout = ({ children }) => {
                   className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                   type="number"
                   value={field.qty}
-                  onChange={(e) => handleQuantityFieldChange(index, 'qty', e.target.value)}
+                  onChange={(e) =>
+                    handleQuantityFieldChange(index, "qty", e.target.value)
+                  }
                 />
               </div>
               <div className="w-full flex flex-col gap-1.5">
@@ -203,7 +261,9 @@ export const Layout = ({ children }) => {
                   className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                   type="number"
                   value={field.price}
-                  onChange={(e) => handleQuantityFieldChange(index, 'price', e.target.value)}
+                  onChange={(e) =>
+                    handleQuantityFieldChange(index, "price", e.target.value)
+                  }
                 />
               </div>
               <div className="w-full flex flex-col gap-1.5">
@@ -211,7 +271,9 @@ export const Layout = ({ children }) => {
                   className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                   type="number"
                   value={field.avgCost}
-                  onChange={(e) => handleQuantityFieldChange(index, 'avgCost', e.target.value)}
+                  onChange={(e) =>
+                    handleQuantityFieldChange(index, "avgCost", e.target.value)
+                  }
                 />
               </div>
               <div className="w-full flex flex-col gap-1.5">
@@ -219,7 +281,9 @@ export const Layout = ({ children }) => {
                   className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                   type="number"
                   value={field.margin}
-                  onChange={(e) => handleQuantityFieldChange(index, 'margin', e.target.value)}
+                  onChange={(e) =>
+                    handleQuantityFieldChange(index, "margin", e.target.value)
+                  }
                 />
               </div>
               <div className="w-full flex flex-col gap-1.5">
@@ -227,7 +291,9 @@ export const Layout = ({ children }) => {
                   className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                   type="number"
                   value={field.markup}
-                  onChange={(e) => handleQuantityFieldChange(index, 'markup', e.target.value)}
+                  onChange={(e) =>
+                    handleQuantityFieldChange(index, "markup", e.target.value)
+                  }
                 />
               </div>
               <div className="w-full flex flex-col gap-1.5">
@@ -235,7 +301,13 @@ export const Layout = ({ children }) => {
                   className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                   type="number"
                   value={field.latestCost}
-                  onChange={(e) => handleQuantityFieldChange(index, 'latestCost', e.target.value)}
+                  onChange={(e) =>
+                    handleQuantityFieldChange(
+                      index,
+                      "latestCost",
+                      e.target.value
+                    )
+                  }
                 />
               </div>
               <div className="w-full flex flex-col gap-1.5">
@@ -243,7 +315,9 @@ export const Layout = ({ children }) => {
                   className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                   type="number"
                   value={field.qty2}
-                  onChange={(e) => handleQuantityFieldChange(index, 'qty2', e.target.value)}
+                  onChange={(e) =>
+                    handleQuantityFieldChange(index, "qty2", e.target.value)
+                  }
                 />
               </div>
             </React.Fragment>
@@ -257,7 +331,9 @@ export const Layout = ({ children }) => {
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
               value={productDetails.size}
-              onChange={(e) => handleProductDetailChange('size', e.target.value)}
+              onChange={(e) =>
+                handleProductDetailChange("size", e.target.value)
+              }
             />
           </div>
           <div className="flex flex-col gap-2">
@@ -268,7 +344,9 @@ export const Layout = ({ children }) => {
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
               value={productDetails.vendorItemNo}
-              onChange={(e) => handleProductDetailChange('vendorItemNo', e.target.value)}
+              onChange={(e) =>
+                handleProductDetailChange("vendorItemNo", e.target.value)
+              }
             />
           </div>
         </div>
@@ -278,7 +356,9 @@ export const Layout = ({ children }) => {
           <select
             className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
             value={productDetails.category}
-            onChange={(e) => handleProductDetailChange('category', e.target.value)}
+            onChange={(e) =>
+              handleProductDetailChange("category", e.target.value)
+            }
           >
             <option>Select Category</option>
             <option>Beer</option>
@@ -293,7 +373,9 @@ export const Layout = ({ children }) => {
             <select
               className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               value={productDetails.supplier}
-              onChange={(e) => handleProductDetailChange('supplier', e.target.value)}
+              onChange={(e) =>
+                handleProductDetailChange("supplier", e.target.value)
+              }
             >
               <option>Select Supplier</option>
               <option>Rahul Doe</option>
@@ -310,7 +392,7 @@ export const Layout = ({ children }) => {
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
               value={productDetails.sku}
-              onChange={(e) => handleProductDetailChange('sku', e.target.value)}
+              onChange={(e) => handleProductDetailChange("sku", e.target.value)}
             />
           </div>
         </div>
@@ -324,7 +406,9 @@ export const Layout = ({ children }) => {
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
               value={productDetails.unitsPerCase}
-              onChange={(e) => handleProductDetailChange('unitsPerCase', e.target.value)}
+              onChange={(e) =>
+                handleProductDetailChange("unitsPerCase", e.target.value)
+              }
             />
           </div>
           <div className="w-full flex flex-col gap-2">
@@ -335,7 +419,9 @@ export const Layout = ({ children }) => {
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
               value={productDetails.caseCostTotal}
-              onChange={(e) => handleProductDetailChange('caseCostTotal', e.target.value)}
+              onChange={(e) =>
+                handleProductDetailChange("caseCostTotal", e.target.value)
+              }
             />
           </div>
           <div className="w-full flex flex-col gap-2">
@@ -344,7 +430,7 @@ export const Layout = ({ children }) => {
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
               value={productDetails.tax}
-              onChange={(e) => handleProductDetailChange('tax', e.target.value)}
+              onChange={(e) => handleProductDetailChange("tax", e.target.value)}
             />
           </div>
           <div className="w-full flex flex-col gap-2">
@@ -355,7 +441,9 @@ export const Layout = ({ children }) => {
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
               value={productDetails.reorderPoint}
-              onChange={(e) => handleProductDetailChange('reorderPoint', e.target.value)}
+              onChange={(e) =>
+                handleProductDetailChange("reorderPoint", e.target.value)
+              }
             />
           </div>
           <div className="w-full flex flex-col gap-2">
@@ -366,7 +454,9 @@ export const Layout = ({ children }) => {
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
               value={productDetails.reorderValue}
-              onChange={(e) => handleProductDetailChange('reorderValue', e.target.value)}
+              onChange={(e) =>
+                handleProductDetailChange("reorderValue", e.target.value)
+              }
             />
           </div>
           <div className="w-full flex flex-col gap-2">
@@ -375,7 +465,9 @@ export const Layout = ({ children }) => {
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
               value={productDetails.rank}
-              onChange={(e) => handleProductDetailChange('rank', e.target.value)}
+              onChange={(e) =>
+                handleProductDetailChange("rank", e.target.value)
+              }
             />
           </div>
         </div>
@@ -384,8 +476,21 @@ export const Layout = ({ children }) => {
   };
 
   const AddProductModel = () => {
-    const [stockFields, setStockFields] = useState([{ id: 1, stockCode: "", qtyItems: "", qtyCases: "" }]);
-    const [quantityFields, setQuantityFields] = useState([{ id: 1, qty: "", price: "", avgCost: "", margin: "", markup: "", latestCost: "", qty2: "" }]);
+    const [stockFields, setStockFields] = useState([
+      { id: 1, stockCode: "", qtyItems: "", qtyCases: "" },
+    ]);
+    const [quantityFields, setQuantityFields] = useState([
+      {
+        id: 1,
+        qty: "",
+        price: "",
+        avgCost: "",
+        margin: "",
+        markup: "",
+        latestCost: "",
+        qty2: "",
+      },
+    ]);
     const [productDetails, setProductDetails] = useState({
       name: "",
       size: "",
@@ -398,14 +503,25 @@ export const Layout = ({ children }) => {
       tax: "",
       reorderPoint: "",
       reorderValue: "",
-      rank: ""
+      rank: "",
     });
 
     const handleCloseModel = () => {
       setShowProductModel(false);
       // Reset state to avoid stale data
       setStockFields([{ id: 1, stockCode: "", qtyItems: "", qtyCases: "" }]);
-      setQuantityFields([{ id: 1, qty: "", price: "", avgCost: "", margin: "", markup: "", latestCost: "", qty2: "" }]);
+      setQuantityFields([
+        {
+          id: 1,
+          qty: "",
+          price: "",
+          avgCost: "",
+          margin: "",
+          markup: "",
+          latestCost: "",
+          qty2: "",
+        },
+      ]);
       setProductDetails({
         name: "",
         size: "",
@@ -418,12 +534,16 @@ export const Layout = ({ children }) => {
         tax: "",
         reorderPoint: "",
         reorderValue: "",
-        rank: ""
+        rank: "",
       });
     };
 
     const handleSubmit = () => {
-      console.log("Product Data:", { stockFields, quantityFields, productDetails });
+      console.log("Product Data:", {
+        stockFields,
+        quantityFields,
+        productDetails,
+      });
       handleCloseModel();
       // Optionally navigate to refresh the page
       navigate(window.location.pathname);
@@ -473,568 +593,649 @@ export const Layout = ({ children }) => {
   };
 
   return (
-    <div className="layout__OuterMainWrapper">
-      <div className="layout__sideMenuMainWrapper shrink-0">
-        <div className="sideMenu__logoWrapper">
-          <img alt="sellsync.com" src={SellsyncLogo} />
-        </div>
-        <div className="sideMenu__wrapper w-full">
-          <ul className="w-[80%] py-5 mx-auto">
-            <NavLink
-              to="/"
-              className={({ isActive }) =>
-                isActive
-                  ? "flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 activeLink"
-                  : "flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"
-              }
-              onClick={() => handleNavigation("/")}
-            >
-              <DashboardIcon />
-              Dashboard
-            </NavLink>
-            <NavLink
-              to="/admin/sale"
-              className={({ isActive }) =>
-                isActive
-                  ? "flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 activeLink"
-                  : "flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"
-              }
-              onClick={() => handleNavigation("/admin/sale")}
-            >
-              <SalesIcon />
-              Sales
-            </NavLink>
-            <div className="w-full flex flex-col gap-2">
-              <div
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSubMenuStateInventory(!subMenuStateInventory);
-                }}
-                className="flex py-2 px-5 rounded-full cursor-pointer font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"
-              >
-                <InventoryIcon />
-                Inventory
-                <ChevronDown
-                  className={`ml-auto ${subMenuStateInventory ? "rotate-180" : "rotate-0"} transition-all duration-300 ease-linear`}
-                />
-              </div>
-              <div
-                className={`bg-[#0052cc]/50 w-[80%] mx-auto rounded-md flex flex-col gap-2 ${
-                  subMenuStateInventory ? "h-[40vh] opacity-100 p-2" : "h-[0vh] opacity-0 p-0"
-                } transition-all duration-300 ease-linear overflow-hidden`}
-              >
-                <NavLink
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleNavigation("/admin/inventory/overview");
-                  }}
-                  to="/admin/inventory/overview"
-                  className={({ isActive }) => {
-                    isActive && setSubMenuStateInventory(true);
-                    return isActive
-                      ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink"
-                      : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink";
-                  }}
-                >
-                  Inventory
-                </NavLink>
-                <NavLink
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleNavigation("/admin/inventory/item-lists");
-                  }}
-                  to="/admin/inventory/item-lists"
-                  className={({ isActive }) => {
-                    isActive && setSubMenuStateInventory(true);
-                    return isActive
-                      ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink"
-                      : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink";
-                  }}
-                >
-                  Items List
-                </NavLink>
-                <NavLink
-                  to="/admin/inventory/category"
-                  className={({ isActive }) => {
-                    isActive && setSubMenuStateInventory(true);
-                    return isActive
-                      ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink"
-                      : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink";
-                  }}
-                  onClick={() => handleNavigation("/admin/inventory/category")}
-                >
-                  Category
-                </NavLink>
-                <NavLink
-                  to="/admin/inventory/suppliers"
-                  className={({ isActive }) => {
-                    isActive && setSubMenuStateInventory(true);
-                    return isActive
-                      ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink"
-                      : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink";
-                  }}
-                  onClick={() => handleNavigation("/admin/inventory/suppliers")}
-                >
-                  Suppliers
-                </NavLink>
-                <NavLink
-                  to="/admin/inventory/receive"
-                  className={({ isActive }) => {
-                    isActive && setSubMenuStateInventory(true);
-                    return isActive
-                      ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink"
-                      : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink";
-                  }}
-                  onClick={() => handleNavigation("/admin/inventory/receive")}
-                >
-                  Receive
-                </NavLink>
-                <NavLink
-                  to="/admin/inventory/order"
-                  className={({ isActive }) => {
-                    isActive && setSubMenuStateInventory(true);
-                    return isActive
-                      ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink"
-                      : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink";
-                  }}
-                  onClick={() => handleNavigation("/admin/inventory/order")}
-                >
-                  Orders
-                </NavLink>
-              </div>
-            </div>
-            <NavLink
-              to="/admin/reports"
-              className={({ isActive }) =>
-                isActive
-                  ? "flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 activeLink"
-                  : "flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"
-              }
-              onClick={() => handleNavigation("/admin/reports")}
-            >
-              <ReportsIcon />
-              Reports
-            </NavLink>
-            <div className="w-full flex flex-col gap-2">
-              <div
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSubMenuStateUser(!subMenuStateUser);
-                }}
-                className="flex py-2 px-5 rounded-full cursor-pointer font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"
-              >
-                <UsersIcon />
-                Users
-                <ChevronDown
-                  className={`ml-auto ${subMenuStateUser ? "rotate-180" : "rotate-0"} transition-all duration-300 ease-linear`}
-                />
-              </div>
-              <div
-                className={`bg-[#0052cc]/50 w-[80%] mx-auto rounded-md flex flex-col gap-2 ${
-                  subMenuStateUser ? "h-[15vh] opacity-100 p-2" : "h-[0vh] opacity-0 p-0"
-                } transition-all duration-300 ease-linear overflow-hidden`}
-              >
-                <NavLink
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleNavigation("/admin/customers");
-                  }}
-                  to="/admin/customers"
-                  className={({ isActive }) => {
-                    isActive && setSubMenuStateUser(true);
-                    return isActive
-                      ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink"
-                      : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink";
-                  }}
-                >
-                  Customers
-                </NavLink>
-                <NavLink
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleNavigation("/admin/employees");
-                  }}
-                  to="/admin/employees"
-                  className={({ isActive }) => {
-                    isActive && setSubMenuStateUser(true);
-                    return isActive
-                      ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink"
-                      : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink";
-                  }}
-                >
-                  Employees
-                </NavLink>
-              </div>
-            </div>
-            <div className="w-full flex flex-col gap-2">
-              <div
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSunMenuStatePos(!subMenuStatePos);
-                }}
-                className="flex py-2 px-5 rounded-full cursor-pointer font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"
-              >
-                <POSIcon />
-                POS
-                <ChevronDown
-                  className={`ml-auto ${subMenuStatePos ? "rotate-180" : "rotate-0"} transition-all duration-300 ease-linear`}
-                />
-              </div>
-              <div
-                className={`bg-[#0052cc]/50 w-[80%] mx-auto rounded-md flex flex-col gap-2 ${
-                  subMenuStatePos ? "h-[55vh] opacity-100 p-2" : "h-[0vh] opacity-0 p-0"
-                } transition-all duration-300 ease-linear overflow-hidden`}
-              >
-                <NavLink
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleNavigation("/admin/pos/journals");
-                  }}
-                  to="/admin/pos/journals"
-                  className={({ isActive }) => {
-                    isActive && setSunMenuStatePos(true);
-                    return isActive
-                      ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink line-clamp-1"
-                      : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink line-clamp-1";
-                  }}
-                >
-                  Journal
-                </NavLink>
-                <NavLink
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleNavigation("/admin/pos/deals");
-                  }}
-                  to="/admin/pos/deals"
-                  className={({ isActive }) => {
-                    isActive && setSunMenuStatePos(true);
-                    return isActive
-                      ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink line-clamp-1"
-                      : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink line-clamp-1";
-                  }}
-                >
-                  Deals
-                </NavLink>
-                <NavLink
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleNavigation("/admin/pos/receipt-settings");
-                  }}
-                  to="/admin/pos/receipt-settings"
-                  className={({ isActive }) => {
-                    isActive && setSunMenuStatePos(true);
-                    return isActive
-                      ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink line-clamp-1"
-                      : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink line-clamp-1";
-                  }}
-                >
-                  Receipt Settings
-                </NavLink>
-                <NavLink
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleNavigation("/admin/pos/customer-display-setting");
-                  }}
-                  to="/admin/pos/customer-display-setting"
-                  className={({ isActive }) => {
-                    isActive && setSunMenuStatePos(true);
-                    return isActive
-                      ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink line-clamp-1"
-                      : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink line-clamp-1";
-                  }}
-                >
-                  Customer Display
-                </NavLink>
-                <NavLink
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleNavigation("/admin/pos/edi-file");
-                  }}
-                  to="/admin/pos/edi-file"
-                  className={({ isActive }) => {
-                    isActive && setSunMenuStatePos(true);
-                    return isActive
-                      ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink line-clamp-1"
-                      : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink line-clamp-1";
-                  }}
-                >
-                  EDI File
-                </NavLink>
-                <NavLink
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleNavigation("/admin/pos/pos-categorries");
-                  }}
-                  to="/admin/pos/pos-categorries"
-                  className={({ isActive }) => {
-                    isActive && setSunMenuStatePos(true);
-                    return isActive
-                      ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink line-clamp-1"
-                      : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink line-clamp-1";
-                  }}
-                >
-                  POS Categorries
-                </NavLink>
-                <NavLink
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleNavigation("/admin/pos/vendors");
-                  }}
-                  to="/admin/pos/vendors"
-                  className={({ isActive }) => {
-                    isActive && setSunMenuStatePos(true);
-                    return isActive
-                      ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink line-clamp-1"
-                      : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink line-clamp-1";
-                  }}
-                >
-                  Vendors
-                </NavLink>
-                <NavLink
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleNavigation("/admin/pos/fuels");
-                  }}
-                  to="/admin/pos/fuels"
-                  className={({ isActive }) => {
-                    isActive && setSunMenuStatePos(true);
-                    return isActive
-                      ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink line-clamp-1"
-                      : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink line-clamp-1";
-                  }}
-                >
-                  Fuels
-                </NavLink>
-                <NavLink
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleNavigation("/admin/pos/device-and-location");
-                  }}
-                  to="/admin/pos/device-and-location"
-                  className={({ isActive }) => {
-                    isActive && setSunMenuStatePos(true);
-                    return isActive
-                      ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink line-clamp-1"
-                      : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink line-clamp-1";
-                  }}
-                >
-                  Device & Location
-                </NavLink>
-              </div>
-            </div>
-            <div className="w-full flex flex-col gap-2">
-              <div
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSubMenuStateLottery(!subMenuStateLottery);
-                }}
-                className="flex py-2 px-5 rounded-full cursor-pointer font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"
-              >
-                <Amphora />
-                Lottery
-                <ChevronDown
-                  className={`ml-auto ${subMenuStateLottery ? "rotate-180" : "rotate-0"} transition-all duration-300 ease-linear`}
-                />
-              </div>
-              <div
-                className={`bg-[#0052cc]/50 w-[80%] mx-auto rounded-md flex flex-col gap-2 ${
-                  subMenuStateLottery ? "h-[20vh] opacity-100 p-2" : "h-[0vh] opacity-0 p-0"
-                } transition-all duration-300 ease-linear overflow-hidden`}
-              >
-                <NavLink
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleNavigation("/admin/lottery/inventory");
-                  }}
-                  to="/admin/lottery/inventory"
-                  className={({ isActive }) => {
-                    isActive && setSubMenuStateLottery(true);
-                    return isActive
-                      ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink"
-                      : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink";
-                  }}
-                >
-                  Inventory
-                </NavLink>
-                <NavLink
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleNavigation("/admin/lottery/instant-scan-tickets");
-                  }}
-                  to="/admin/lottery/instant-scan-tickets"
-                  className={({ isActive }) => {
-                    isActive && setSubMenuStateLottery(true);
-                    return isActive
-                      ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink"
-                      : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink";
-                  }}
-                >
-                  Ticket Scan
-                </NavLink>
-                <NavLink
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleNavigation("/admin/lottery/sale-report");
-                  }}
-                  to="/admin/lottery/sale-report"
-                  className={({ isActive }) => {
-                    isActive && setSubMenuStateLottery(true);
-                    return isActive
-                      ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink"
-                      : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink";
-                  }}
-                >
-                  Sales Reports
-                </NavLink>
-              </div>
-            </div>
-            <div className="w-full flex flex-col gap-2">
-              <div
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSubMenuStateLoyalty(!subMenuStateLoyalty);
-                }}
-                className="flex py-2 px-5 rounded-full cursor-pointer font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"
-              >
-                <BadgeDollarSign />
-                Loyalty
-                <ChevronDown
-                  className={`ml-auto ${subMenuStateLoyalty ? "rotate-180" : "rotate-0"} transition-all duration-300 ease-linear`}
-                />
-              </div>
-              <div
-                className={`bg-[#0052cc]/50 w-[80%] mx-auto rounded-md flex flex-col gap-2 ${
-                  subMenuStateLoyalty ? "h-[15vh] opacity-100 p-2" : "h-[0vh] opacity-0 p-0"
-                } transition-all duration-300 ease-linear overflow-hidden`}
-              >
-                <NavLink
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleNavigation("/admin/loyalty/reports");
-                  }}
-                  to="/admin/loyalty/reports"
-                  className={({ isActive }) => {
-                    isActive && setSubMenuStateLoyalty(true);
-                    return isActive
-                      ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink"
-                      : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink";
-                  }}
-                >
-                  Reports
-                </NavLink>
-                <NavLink
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleNavigation("/admin/loyalty/deals");
-                  }}
-                  to="/admin/loyalty/deals"
-                  className={({ isActive }) => {
-                    isActive && setSubMenuStateLoyalty(true);
-                    return isActive
-                      ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink"
-                      : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink";
-                  }}
-                >
-                  Loyalty Deals
-                </NavLink>
-              </div>
-            </div>
-            <NavLink
-              to="/admin/rewards"
-              className={({ isActive }) =>
-                isActive
-                  ? "flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 activeLink"
-                  : "flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"
-              }
-              onClick={() => handleNavigation("/admin/rewards")}
-            >
-              <RewardIcon />
-              Reward
-            </NavLink>
-            <NavLink
-              to="/admin/settings"
-              className={({ isActive }) =>
-                isActive
-                  ? "flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 activeLink"
-                  : "flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"
-              }
-              onClick={() => handleNavigation("/admin/settings")}
-            >
-              <SettingsIcon />
-              Settings
-            </NavLink>
-            <NavLink
-              to="/admin/help"
-              className={({ isActive }) =>
-                isActive
-                  ? "flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 activeLink"
-                  : "flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"
-              }
-              onClick={() => handleNavigation("/admin/help")}
-            >
-              <HelpIcon />
-              Help
-            </NavLink>
-            <NavLink
-              to="/admin/payroll"
-              className={({ isActive }) =>
-                isActive
-                  ? "flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 activeLink"
-                  : "flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"
-              }
-              onClick={() => handleNavigation("/admin/payroll")}
-            >
-              <PayrollIcon />
-              Payroll
-            </NavLink>
-            <NavLink
-              to="/admin/tasks"
-              className={({ isActive }) =>
-                isActive
-                  ? "flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 activeLink"
-                  : "flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"
-              }
-              onClick={() => handleNavigation("/admin/tasks")}
-            >
-              <Network />
-              Tasks
-            </NavLink>
-            <button
-              className="bg-[#E74C3C] py-2 px-6 gap-4 font-[var(--paraFont)] cursor-pointer text-[var(--primary-color)] rounded-full flex justify-start items-center mt-[10%] text-[1.1dvw]"
-              onClick={() => handleNavigation("/logout")} // Assuming a logout route
-            >
-              <LogooutIcon />
-              Logout
-            </button>
-          </ul>
-        </div>
-      </div>
-      <div className="layout__mainContentWrapper flex flex-col shrink-0 flex-1 w-full overflow-x-hidden">
-        <nav className="topNavbar__mainWrapper">
-          <div className="topNav__leftWrapper px-3">
-            <h2>Good Morning, Eve</h2>
-            <p>Here is your daily preview</p>
+    <>
+      <div className="layout__OuterMainWrapper overflow-y-hidden">
+        <div className="layout__sideMenuMainWrapper shrink-0">
+          <div className="sideMenu__logoWrapper">
+            <img alt="sellsync.com" src={SellsyncLogo} />
           </div>
-          <div className="topNav__rightWrapper">
-            <button>
-              <SearchIcon />
-            </button>
-            <button>
-              <NotificationIcon />
-            </button>
-            <button className="addProduct__BTN" onClick={handleAddProduct}>
-              Add Product <PluseIcon />
-            </button>
-            <button>
-              <Avatar />
-            </button>
+          <div className="sideMenu__wrapper w-full">
+            <ul className="w-[80%] py-5 mx-auto">
+              <NavLink
+                to="/"
+                className={({ isActive }) =>
+                  isActive
+                    ? "flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 activeLink"
+                    : "flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"
+                }
+                onClick={() => handleNavigation("/")}
+              >
+                <DashboardIcon />
+                Dashboard
+              </NavLink>
+              <NavLink
+                to="/admin/sale"
+                className={({ isActive }) =>
+                  isActive
+                    ? "flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 activeLink"
+                    : "flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"
+                }
+                onClick={() => handleNavigation("/admin/sale")}
+              >
+                <SalesIcon />
+                Sales
+              </NavLink>
+              <div className="w-full flex flex-col gap-2">
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSubMenuStateDaily(!subMenuStateDaily);
+                  }}
+                  className="flex py-2 px-5 rounded-full cursor-pointer font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"
+                >
+                  <Calendar />
+                  Daily
+                  <ChevronDown
+                    className={`ml-auto ${
+                      subMenuStateDaily ? "rotate-180" : "rotate-0"
+                    } transition-all duration-300 ease-linear`}
+                  />
+                </div>
+                <div
+                  className={`bg-[#0052cc]/50 w-[80%] mx-auto rounded-md flex flex-col gap-2 ${
+                    subMenuStateDaily
+                      ? "h-[15vh] opacity-100 p-2"
+                      : "h-[0vh] opacity-0 p-0"
+                  } transition-all duration-300 ease-linear overflow-hidden`}
+                >
+                  <NavLink
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleNavigation("/admin/daily/purchase");
+                    }}
+                    to="/admin/daily/purchase"
+                    className={({ isActive }) => {
+                      isActive && setSubMenuStateDaily(true);
+                      return isActive
+                        ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink"
+                        : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink";
+                    }}
+                  >
+                    Purchase
+                  </NavLink>
+                  <NavLink
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleNavigation("/admin/daily/expense");
+                    }}
+                    to="/admin/daily/expense"
+                    className={({ isActive }) => {
+                      isActive && setSubMenuStateDaily(true);
+                      return isActive
+                        ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink"
+                        : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink";
+                    }}
+                  >
+                    Expense
+                  </NavLink>
+                </div>
+              </div>
+              <div className="w-full flex flex-col gap-2">
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSubMenuStateInventory(!subMenuStateInventory);
+                  }}
+                  className="flex py-2 px-5 rounded-full cursor-pointer font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"
+                >
+                  <InventoryIcon />
+                  Inventory
+                  <ChevronDown
+                    className={`ml-auto ${
+                      subMenuStateInventory ? "rotate-180" : "rotate-0"
+                    } transition-all duration-300 ease-linear`}
+                  />
+                </div>
+                <div
+                  className={`bg-[#0052cc]/50 w-[80%] mx-auto rounded-md flex flex-col gap-2 ${
+                    subMenuStateInventory
+                      ? "h-[40vh] opacity-100 p-2"
+                      : "h-[0vh] opacity-0 p-0"
+                  } transition-all duration-300 ease-linear overflow-hidden`}
+                >
+                  <NavLink
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleNavigation("/admin/inventory/overview");
+                    }}
+                    to="/admin/inventory/overview"
+                    className={({ isActive }) => {
+                      isActive && setSubMenuStateInventory(true);
+                      return isActive
+                        ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink"
+                        : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink";
+                    }}
+                  >
+                    Inventory
+                  </NavLink>
+                  <NavLink
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleNavigation("/admin/inventory/item-lists");
+                    }}
+                    to="/admin/inventory/item-lists"
+                    className={({ isActive }) => {
+                      isActive && setSubMenuStateInventory(true);
+                      return isActive
+                        ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink"
+                        : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink";
+                    }}
+                  >
+                    Items List
+                  </NavLink>
+                  <NavLink
+                    to="/admin/inventory/category"
+                    className={({ isActive }) => {
+                      isActive && setSubMenuStateInventory(true);
+                      return isActive
+                        ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink"
+                        : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink";
+                    }}
+                    onClick={() =>
+                      handleNavigation("/admin/inventory/category")
+                    }
+                  >
+                    Category
+                  </NavLink>
+                  <NavLink
+                    to="/admin/inventory/suppliers"
+                    className={({ isActive }) => {
+                      isActive && setSubMenuStateInventory(true);
+                      return isActive
+                        ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink"
+                        : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink";
+                    }}
+                    onClick={() =>
+                      handleNavigation("/admin/inventory/suppliers")
+                    }
+                  >
+                    Suppliers
+                  </NavLink>
+                  <NavLink
+                    to="/admin/inventory/receive"
+                    className={({ isActive }) => {
+                      isActive && setSubMenuStateInventory(true);
+                      return isActive
+                        ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink"
+                        : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink";
+                    }}
+                    onClick={() => handleNavigation("/admin/inventory/receive")}
+                  >
+                    Receive
+                  </NavLink>
+                  <NavLink
+                    to="/admin/inventory/order"
+                    className={({ isActive }) => {
+                      isActive && setSubMenuStateInventory(true);
+                      return isActive
+                        ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink"
+                        : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink";
+                    }}
+                    onClick={() => handleNavigation("/admin/inventory/order")}
+                  >
+                    Orders
+                  </NavLink>
+                </div>
+              </div>
+              <NavLink
+                to="/admin/reports"
+                className={({ isActive }) =>
+                  isActive
+                    ? "flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 activeLink"
+                    : "flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"
+                }
+                onClick={() => handleNavigation("/admin/reports")}
+              >
+                <ReportsIcon />
+                Reports
+              </NavLink>
+              <div className="w-full flex flex-col gap-2">
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSubMenuStateUser(!subMenuStateUser);
+                  }}
+                  className="flex py-2 px-5 rounded-full cursor-pointer font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"
+                >
+                  <UsersIcon />
+                  Users
+                  <ChevronDown
+                    className={`ml-auto ${
+                      subMenuStateUser ? "rotate-180" : "rotate-0"
+                    } transition-all duration-300 ease-linear`}
+                  />
+                </div>
+                <div
+                  className={`bg-[#0052cc]/50 w-[80%] mx-auto rounded-md flex flex-col gap-2 ${
+                    subMenuStateUser
+                      ? "h-[15vh] opacity-100 p-2"
+                      : "h-[0vh] opacity-0 p-0"
+                  } transition-all duration-300 ease-linear overflow-hidden`}
+                >
+                  <NavLink
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleNavigation("/admin/customers");
+                    }}
+                    to="/admin/customers"
+                    className={({ isActive }) => {
+                      isActive && setSubMenuStateUser(true);
+                      return isActive
+                        ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink"
+                        : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink";
+                    }}
+                  >
+                    Customers
+                  </NavLink>
+                  <NavLink
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleNavigation("/admin/employees");
+                    }}
+                    to="/admin/employees"
+                    className={({ isActive }) => {
+                      isActive && setSubMenuStateUser(true);
+                      return isActive
+                        ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink"
+                        : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink";
+                    }}
+                  >
+                    Employees
+                  </NavLink>
+                </div>
+              </div>
+              <div className="w-full flex flex-col gap-2">
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSunMenuStatePos(!subMenuStatePos);
+                  }}
+                  className="flex py-2 px-5 rounded-full cursor-pointer font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"
+                >
+                  <POSIcon />
+                  POS
+                  <ChevronDown
+                    className={`ml-auto ${
+                      subMenuStatePos ? "rotate-180" : "rotate-0"
+                    } transition-all duration-300 ease-linear`}
+                  />
+                </div>
+                <div
+                  className={`bg-[#0052cc]/50 w-[80%] mx-auto rounded-md flex flex-col gap-2 ${
+                    subMenuStatePos
+                      ? "h-[55vh] opacity-100 p-2"
+                      : "h-[0vh] opacity-0 p-0"
+                  } transition-all duration-300 ease-linear overflow-hidden`}
+                >
+                  <NavLink
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleNavigation("/admin/pos/journals");
+                    }}
+                    to="/admin/pos/journals"
+                    className={({ isActive }) => {
+                      isActive && setSunMenuStatePos(true);
+                      return isActive
+                        ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink line-clamp-1"
+                        : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink line-clamp-1";
+                    }}
+                  >
+                    Journal
+                  </NavLink>
+                  <NavLink
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleNavigation("/admin/pos/deals");
+                    }}
+                    to="/admin/pos/deals"
+                    className={({ isActive }) => {
+                      isActive && setSunMenuStatePos(true);
+                      return isActive
+                        ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink line-clamp-1"
+                        : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink line-clamp-1";
+                    }}
+                  >
+                    Deals
+                  </NavLink>
+                  <NavLink
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleNavigation("/admin/pos/receipt-settings");
+                    }}
+                    to="/admin/pos/receipt-settings"
+                    className={({ isActive }) => {
+                      isActive && setSunMenuStatePos(true);
+                      return isActive
+                        ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink line-clamp-1"
+                        : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink line-clamp-1";
+                    }}
+                  >
+                    Receipt Settings
+                  </NavLink>
+                  <NavLink
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleNavigation("/admin/pos/customer-display-setting");
+                    }}
+                    to="/admin/pos/customer-display-setting"
+                    className={({ isActive }) => {
+                      isActive && setSunMenuStatePos(true);
+                      return isActive
+                        ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink line-clamp-1"
+                        : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink line-clamp-1";
+                    }}
+                  >
+                    Customer Display
+                  </NavLink>
+                  <NavLink
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleNavigation("/admin/pos/edi-file");
+                    }}
+                    to="/admin/pos/edi-file"
+                    className={({ isActive }) => {
+                      isActive && setSunMenuStatePos(true);
+                      return isActive
+                        ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink line-clamp-1"
+                        : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink line-clamp-1";
+                    }}
+                  >
+                    EDI File
+                  </NavLink>
+                  <NavLink
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleNavigation("/admin/pos/pos-categorries");
+                    }}
+                    to="/admin/pos/pos-categorries"
+                    className={({ isActive }) => {
+                      isActive && setSunMenuStatePos(true);
+                      return isActive
+                        ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink line-clamp-1"
+                        : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink line-clamp-1";
+                    }}
+                  >
+                    POS Categorries
+                  </NavLink>
+                  <NavLink
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleNavigation("/admin/pos/vendors");
+                    }}
+                    to="/admin/pos/vendors"
+                    className={({ isActive }) => {
+                      isActive && setSunMenuStatePos(true);
+                      return isActive
+                        ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink line-clamp-1"
+                        : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink line-clamp-1";
+                    }}
+                  >
+                    Vendors
+                  </NavLink>
+                  <NavLink
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleNavigation("/admin/pos/fuels");
+                    }}
+                    to="/admin/pos/fuels"
+                    className={({ isActive }) => {
+                      isActive && setSunMenuStatePos(true);
+                      return isActive
+                        ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink line-clamp-1"
+                        : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink line-clamp-1";
+                    }}
+                  >
+                    Fuels
+                  </NavLink>
+                  <NavLink
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleNavigation("/admin/pos/device-and-location");
+                    }}
+                    to="/admin/pos/device-and-location"
+                    className={({ isActive }) => {
+                      isActive && setSunMenuStatePos(true);
+                      return isActive
+                        ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink line-clamp-1"
+                        : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink line-clamp-1";
+                    }}
+                  >
+                    Device & Location
+                  </NavLink>
+                </div>
+              </div>
+              <div className="w-full flex flex-col gap-2">
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSubMenuStateLottery(!subMenuStateLottery);
+                  }}
+                  className="flex py-2 px-5 rounded-full cursor-pointer font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"
+                >
+                  <Amphora />
+                  Lottery
+                  <ChevronDown
+                    className={`ml-auto ${
+                      subMenuStateLottery ? "rotate-180" : "rotate-0"
+                    } transition-all duration-300 ease-linear`}
+                  />
+                </div>
+                <div
+                  className={`bg-[#0052cc]/50 w-[80%] mx-auto rounded-md flex flex-col gap-2 ${
+                    subMenuStateLottery
+                      ? "h-[20vh] opacity-100 p-2"
+                      : "h-[0vh] opacity-0 p-0"
+                  } transition-all duration-300 ease-linear overflow-hidden`}
+                >
+                  <NavLink
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleNavigation("/admin/lottery/inventory");
+                    }}
+                    to="/admin/lottery/inventory"
+                    className={({ isActive }) => {
+                      isActive && setSubMenuStateLottery(true);
+                      return isActive
+                        ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink"
+                        : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink";
+                    }}
+                  >
+                    Inventory
+                  </NavLink>
+                  <NavLink
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleNavigation("/admin/lottery/instant-scan-tickets");
+                    }}
+                    to="/admin/lottery/instant-scan-tickets"
+                    className={({ isActive }) => {
+                      isActive && setSubMenuStateLottery(true);
+                      return isActive
+                        ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink"
+                        : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink";
+                    }}
+                  >
+                    Ticket Scan
+                  </NavLink>
+                  <NavLink
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleNavigation("/admin/lottery/sale-report");
+                    }}
+                    to="/admin/lottery/sale-report"
+                    className={({ isActive }) => {
+                      isActive && setSubMenuStateLottery(true);
+                      return isActive
+                        ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink"
+                        : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink";
+                    }}
+                  >
+                    Sales Reports
+                  </NavLink>
+                </div>
+              </div>
+              <div className="w-full flex flex-col gap-2">
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSubMenuStateLoyalty(!subMenuStateLoyalty);
+                  }}
+                  className="flex py-2 px-5 rounded-full cursor-pointer font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"
+                >
+                  <BadgeDollarSign />
+                  Loyalty
+                  <ChevronDown
+                    className={`ml-auto ${
+                      subMenuStateLoyalty ? "rotate-180" : "rotate-0"
+                    } transition-all duration-300 ease-linear`}
+                  />
+                </div>
+                <div
+                  className={`bg-[#0052cc]/50 w-[80%] mx-auto rounded-md flex flex-col gap-2 ${
+                    subMenuStateLoyalty
+                      ? "h-[15vh] opacity-100 p-2"
+                      : "h-[0vh] opacity-0 p-0"
+                  } transition-all duration-300 ease-linear overflow-hidden`}
+                >
+                  <NavLink
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleNavigation("/admin/loyalty/reports");
+                    }}
+                    to="/admin/loyalty/reports"
+                    className={({ isActive }) => {
+                      isActive && setSubMenuStateLoyalty(true);
+                      return isActive
+                        ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink"
+                        : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink";
+                    }}
+                  >
+                    Reports
+                  </NavLink>
+                  <NavLink
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleNavigation("/admin/loyalty/deals");
+                    }}
+                    to="/admin/loyalty/deals"
+                    className={({ isActive }) => {
+                      isActive && setSubMenuStateLoyalty(true);
+                      return isActive
+                        ? "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 activeLink"
+                        : "flex py-2 px-5 rounded-full font-[600] text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink";
+                    }}
+                  >
+                    Loyalty Deals
+                  </NavLink>
+                </div>
+              </div>
+              <NavLink
+                to="/admin/rewards"
+                className={({ isActive }) =>
+                  isActive
+                    ? "flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 activeLink"
+                    : "flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"
+                }
+                onClick={() => handleNavigation("/admin/rewards")}
+              >
+                <RewardIcon />
+                Reward
+              </NavLink>
+              <NavLink
+                to="/admin/settings"
+                className={({ isActive }) =>
+                  isActive
+                    ? "flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 activeLink"
+                    : "flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"
+                }
+                onClick={() => handleNavigation("/admin/settings")}
+              >
+                <SettingsIcon />
+                Settings
+              </NavLink>
+              <NavLink
+                to="/admin/help"
+                className={({ isActive }) =>
+                  isActive
+                    ? "flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 activeLink"
+                    : "flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"
+                }
+                onClick={() => handleNavigation("/admin/help")}
+              >
+                <HelpIcon />
+                Help
+              </NavLink>
+              <NavLink
+                to="/admin/payroll"
+                className={({ isActive }) =>
+                  isActive
+                    ? "flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 activeLink"
+                    : "flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"
+                }
+                onClick={() => handleNavigation("/admin/payroll")}
+              >
+                <PayrollIcon />
+                Payroll
+              </NavLink>
+              <NavLink
+                to="/admin/tasks"
+                className={({ isActive }) =>
+                  isActive
+                    ? "flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 activeLink"
+                    : "flex py-2 px-5 rounded-full font-[600] text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink"
+                }
+                onClick={() => handleNavigation("/admin/tasks")}
+              >
+                <Network />
+                Tasks
+              </NavLink>
+              <button
+                className="bg-[#E74C3C] py-2 px-6 gap-4 font-[var(--paraFont)] cursor-pointer text-[var(--primary-color)] rounded-full flex justify-start items-center mt-[10%] text-[1.1dvw]"
+                onClick={() => handleNavigation("/logout")} // Assuming a logout route
+              >
+                <LogooutIcon />
+                Logout
+              </button>
+            </ul>
           </div>
-        </nav>
-        <div className="w-full p-4 h-[87%] overflow-y-auto overflow-x-hidden">
-          <ErrorBoundary>{children}</ErrorBoundary>
+        </div>
+        <div className="layout__mainContentWrapper flex flex-col shrink-0 flex-1 w-full overflow-x-hidden">
+          <nav className="topNavbar__mainWrapper">
+            <div className="topNav__leftWrapper px-3">
+              <h2>Good Morning, Eve</h2>
+              <p>Here is your daily preview</p>
+            </div>
+            <div className="topNav__rightWrapper">
+              <button>
+                <SearchIcon />
+              </button>
+              <button>
+                <NotificationIcon />
+              </button>
+              <button className="addProduct__BTN" onClick={handleAddProduct}>
+                Add Product <PluseIcon />
+              </button>
+              <button>
+                <Avatar />
+              </button>
+            </div>
+          </nav>
+          <div className="w-full p-4 h-[87%] overflow-y-auto overflow-x-hidden">
+            <ErrorBoundary>{children}</ErrorBoundary>
+          </div>
         </div>
       </div>
       {showProductModel && <AddProductModel />}
-    </div>
+    </>
   );
 };

@@ -33,61 +33,81 @@ import { InventoryLottery } from "./Pages/admin/Lottery/InventoryLottery";
 import { ScanTickets } from "./Pages/admin/Lottery/ScanTickets";
 import { SalesReport } from "./Pages/admin/Lottery/SalesReport";
 import { LoyaltyDeals } from "./Pages/admin/Loyalty/LoyaltyDeals";
+import { Purchase } from "./Pages/admin/Daily/Purchase";
+import { ExpenseList } from "./Pages/admin/Daily/Expense";
+import RouteGuard from "./Pages/auth/RouteGuard";
 
 function App() {
   return (
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<AdminDashboard />} />
-          <Route path="/admin/sale" element={<Sale />} />
-          <Route
-            path="/admin/inventory/overview"
-            element={<Inventory />}
-          />
-          <Route
-            path="/admin/inventory/item-lists"
-            element={<ItemsList />}
-          />
-          <Route
-            path="/admin/inventory/category"
-            element={<Category />}
-          />
-          <Route
-            path="/admin/inventory/suppliers"
-            element={<Supplier />}
-          />
-          <Route path="/admin/inventory/receive" element={<Receive />} />
-          <Route path="/admin/inventory/order" element={<Orders />} />
-          <Route path="/admin/reports" element={<Reports />} />
-          <Route path="/admin/customers" element={<Customer />} />
-          <Route path="/admin/employees" element={<Employee />} />
+          <Route element={<RouteGuard />}>
+            <Route path="/" element={<AdminDashboard />} />
+            <Route path="/admin/sale" element={<Sale />} />
+            <Route path="/admin/inventory/overview" element={<Inventory />} />
+            <Route path="/admin/inventory/item-lists" element={<ItemsList />} />
+            <Route path="/admin/inventory/category" element={<Category />} />
+            <Route path="/admin/inventory/suppliers" element={<Supplier />} />
+            <Route path="/admin/inventory/receive" element={<Receive />} />
+            <Route path="/admin/inventory/order" element={<Orders />} />
+            <Route path="/admin/reports" element={<Reports />} />
+            <Route path="/admin/customers" element={<Customer />} />
+            <Route path="/admin/employees" element={<Employee />} />
 
-          <Route path="/admin/pos" element={<POS />} />
-          <Route path="/admin/pos/journals" element={<Journal />} />
-          <Route path="/admin/pos/deals" element={<Deals />} />
-          <Route path="/admin/pos/receipt-settings" element={<ReceiptSettings />} />
-          <Route path="/admin/pos/customer-display-setting" element={<CustomerDisplaySetting />} />
-          <Route path="/admin/pos/edi-file" element={<EDIFile />} />
-          <Route path="/admin/pos/pos-categorries" element={<CategoriesPOS />} />
-          <Route path="/admin/pos/vendors" element={<Vendors />} />
-          <Route path="/admin/pos/fuels" element={<Fule />} />
-          <Route path="/admin/pos/device-and-location" element={<DeviceAndLocation />} />
-          
-          {/* Task Routes */}
-          <Route path="/admin/tasks" element={<Task />} />
-          <Route path="/admin/tasks/task-details/:tid" element={<ViewTask />} />
-          
-          <Route path="/admin/lottery/inventory" element={<InventoryLottery />} />
-          <Route path="/admin/lottery/instant-scan-tickets" element={<ScanTickets />} />
-          <Route path="/admin/lottery/sale-report" element={<SalesReport />} />
-          <Route path="/admin/loyalty/deals" element={<LoyaltyDeals />} />
+            <Route path="/admin/pos" element={<POS />} />
+            <Route path="/admin/pos/journals" element={<Journal />} />
+            <Route path="/admin/pos/deals" element={<Deals />} />
+            <Route
+              path="/admin/pos/receipt-settings"
+              element={<ReceiptSettings />}
+            />
+            <Route
+              path="/admin/pos/customer-display-setting"
+              element={<CustomerDisplaySetting />}
+            />
+            <Route path="/admin/pos/edi-file" element={<EDIFile />} />
+            <Route
+              path="/admin/pos/pos-categorries"
+              element={<CategoriesPOS />}
+            />
+            <Route path="/admin/pos/vendors" element={<Vendors />} />
+            <Route path="/admin/pos/fuels" element={<Fule />} />
+            <Route
+              path="/admin/pos/device-and-location"
+              element={<DeviceAndLocation />}
+            />
 
-          <Route path="/admin/settings" element={<Settings />} />
-          <Route path="/admin/help" element={<Help />} />
-          <Route path="/admin/rewards" element={<Rewards />} />
-          <Route path="/admin/payroll" element={<Payroll />} />
-          <Route path="/admin/item-report/:id" element={<ItemReport />} />
+            {/* Task Routes */}
+            <Route path="/admin/tasks" element={<Task />} />
+            <Route
+              path="/admin/tasks/task-details/:tid"
+              element={<ViewTask />}
+            />
+
+            <Route path="/admin/daily/purchase" element={<Purchase />} />
+            <Route path="/admin/daily/expense" element={<ExpenseList />} />
+            
+            <Route
+              path="/admin/lottery/inventory"
+              element={<InventoryLottery />}
+            />
+            <Route
+              path="/admin/lottery/instant-scan-tickets"
+              element={<ScanTickets />}
+            />
+            <Route
+              path="/admin/lottery/sale-report"
+              element={<SalesReport />}
+            />
+            <Route path="/admin/loyalty/deals" element={<LoyaltyDeals />} />
+
+            <Route path="/admin/settings" element={<Settings />} />
+            <Route path="/admin/help" element={<Help />} />
+            <Route path="/admin/rewards" element={<Rewards />} />
+            <Route path="/admin/payroll" element={<Payroll />} />
+            <Route path="/admin/item-report/:id" element={<ItemReport />} />
+          </Route>
 
           <Route path="/auth/login" element={<Login />} />
           <Route path="/auth/register" element={<Register />} />

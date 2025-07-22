@@ -2,9 +2,14 @@ import React from "react";
 import LoginBg from "../../assets/images/LoginBg.jpg";
 import FullLogo from "../../assets/images/FullLogo.png";
 import WhiteTexture from "../../assets/images/WhiteTexture.jpg";
-
+// import { request } from "../../utils/axios-interceptor";
 
 export const Login = () => {
+  // const req = {
+  //   url: "/",
+  //   session:'session',
+  // };
+  // console.log(request(req));
   return (
     <div className="h-screen relative w-full">
       <div className="absolute top-0 left-0 w-full h-full">

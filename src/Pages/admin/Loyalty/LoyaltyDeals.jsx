@@ -378,62 +378,65 @@ export const LoyaltyDeals = () => {
     };
   }, []);
 
-
   return (
     <>
       <Layout>
-        <div className="flex justify-between items-center w-full">
-          <h3 className="text-[1.5dvw] font-[500] mainFont">Loyalty Ddeals</h3>
-          <button
-            onClick={() =>
-              setShowModel({
-                state: true,
-                actionType: "Add",
-                productData: null,
-              })
-            }
-            className="cursor-pointer px-5 py-2 bg-[var(--button-color1)] text-white mainFont rounded-full font-[500] flex justify-center items-center gap-3"
-          >
-            <PluseIcon /> Create New Deals
-          </button>
-        </div>
+        <div className="h-full flex flex-col gap-6">
+          <div className="flex justify-between items-center w-full">
+            <h3 className="text-[1.5dvw] font-[500] mainFont">
+              Loyalty Ddeals
+            </h3>
+            <button
+              onClick={() =>
+                setShowModel({
+                  state: true,
+                  actionType: "Add",
+                  productData: null,
+                })
+              }
+              className="cursor-pointer px-5 py-2 bg-[var(--button-color1)] text-white mainFont rounded-full font-[500] flex justify-center items-center gap-3"
+            >
+              <PluseIcon /> Create New Deals
+            </button>
+          </div>
 
-        <div className="bg-white border border-[var(--border-color)] mt-5 p-5 rounded-md">
-          <h3 className="text-[1.3dvw] font-[600] ">Active Deals</h3>
-          <div className="h-[70vh] w-full my-5">
-            <div className="h-full w-full">
-              <AgGridReact
-                rowData={rowData}
-                columnDefs={colDefs}
-                // loading={loading}
-                defaultColDef={defaultColDef}
-                pagination={true}
-                rowSelection={rowSelection}
-                onSelectionChanged={(event) => console.log("Row Selected!")}
-                onCellValueChanged={(event) =>
-                  console.log(`New Cell Value: ${event.value}`)
-                }
-              />
+          <div className="bg-white border border-[var(--border-color)] mt-5 p-5 rounded-md">
+            <h3 className="text-[1.3dvw] font-[600] ">Active Deals</h3>
+            <div className="h-[70vh] w-full my-5">
+              <div className="h-full w-full">
+                <AgGridReact
+                  rowData={rowData}
+                  columnDefs={colDefs}
+                  // loading={loading}
+                  defaultColDef={defaultColDef}
+                  pagination={true}
+                  rowSelection={rowSelection}
+                  onSelectionChanged={(event) => console.log("Row Selected!")}
+                  onCellValueChanged={(event) =>
+                    console.log(`New Cell Value: ${event.value}`)
+                  }
+                />
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="bg-white border border-[var(--border-color)] p-5 rounded-md">
-          <h3 className="text-[1.3dvw] font-[600] ">Previous Deals</h3>
-          <div className="h-[50vh] w-full mt-5">
-            <div className="h-full w-full">
-              <AgGridReact
-                rowData={rowData}
-                columnDefs={colDefs}
-                // loading={loading}
-                defaultColDef={defaultColDef}
-                pagination={true}
-                rowSelection={rowSelection}
-                onSelectionChanged={(event) => console.log("Row Selected!")}
-                onCellValueChanged={(event) =>
-                  console.log(`New Cell Value: ${event.value}`)
-                }
-              />
+          <div className="bg-white border border-[var(--border-color)] p-5 rounded-md bg-red-500">
+            <h3 className="text-[1.3dvw] font-[600] ">Previous Deals</h3>
+            <div className="h-[50vh] w-full mt-5">
+              <div className="h-full w-full">
+                <AgGridReact
+                  rowData={rowData}
+                  columnDefs={colDefs}
+                  // loading={loading}
+                  defaultColDef={defaultColDef}
+                  pagination={true}
+                  rowSelection={rowSelection}
+                  onSelectionChanged={(event) => console.log("Row Selected!")}
+                  onCellValueChanged={(event) =>
+                    console.log(`New Cell Value: ${event.value}`)
+                  }
+                />
+              </div>
             </div>
           </div>
         </div>
