@@ -302,6 +302,7 @@ const AddPurchaseModal = ({ purchaseData, setShowModel, actionType, setRowData, 
     "GHI Supplies",
     "JKL Trading"
   ]);
+  const [dragActive, setDragActive] = useState(false);
 
   // Update formData when purchaseData prop changes
   React.useEffect(() => {
@@ -320,6 +321,45 @@ const AddPurchaseModal = ({ purchaseData, setShowModel, actionType, setRowData, 
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  // Handle file upload
+  const handleFileUpload = (file) => {
+    if (file && file.type.startsWith('image/')) {
+      handleInputChange("InvoiceImage", file.name);
+      console.log("File uploaded:", file.name);
+    } else {
+      alert("Please select a valid image file");
+    }
+  };
+
+  // Handle drag events
+  const handleDrag = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
+  // Handle drop event
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleFileUpload(e.dataTransfer.files[0]);
+    }
+  };
+
+  // Handle file input change
+  const handleFileInputChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      handleFileUpload(e.target.files[0]);
+    }
   };
 
   const handleSubmit = () => {
@@ -482,32 +522,76 @@ const AddPurchaseModal = ({ purchaseData, setShowModel, actionType, setRowData, 
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4 w-full mt-4">
-            <div className="w-full flex flex-col gap-2">
-              <label className="text-[1dvw] font-normal paraFont">
-                Invoice Image
-              </label>
-              <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                type="file"
-                accept="image/*"
-                onChange={(e) => handleInputChange("InvoiceImage", e.target.files[0]?.name || "N/A")}
-                disabled={actionType === "View"}
-              />
-            </div>
-            <div className="w-full flex flex-col gap-2">
-              <label className="text-[1dvw] font-normal paraFont">
-                Payments
-                <span className="text-[.9dvw] text-[var(--Negative-color)]">*</span>
-              </label>
-              <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                type="text"
-                placeholder="Enter Payment Amount (e.g., $76.00)"
-                value={formData.Payments}
-                onChange={(e) => handleInputChange("Payments", e.target.value)}
-                disabled={actionType === "View"}
-              />
+          <div className="w-full flex flex-col gap-2 mt-4">
+            <label className="text-[1dvw] font-normal paraFont">
+              Payments
+              <span className="text-[.9dvw] text-[var(--Negative-color)]">*</span>
+            </label>
+            <input
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder="Enter Amount"
+              value={formData.Payments.replace(/[^0-9.]/g, '')}
+              onChange={(e) => {
+                const value = e.target.value.replace(/[^0-9.]/g, '');
+                handleInputChange("Payments", value);
+              }}
+              onKeyPress={(e) => {
+                // Allow numbers, single decimal point, and backspace
+                if (e.key === '.' && e.target.value.includes('.')) {
+                  e.preventDefault();
+                } else if (e.key !== '.' && isNaN(Number(e.key)) && e.key !== 'Backspace') {
+                  e.preventDefault();
+                }
+              }}
+              disabled={actionType === "View"}
+            />
+          </div>
+
+          <div className="w-full flex flex-col gap-2 mt-4">
+            <label className="text-[1dvw] font-normal paraFont">
+              Invoice Image
+            </label>
+            <div 
+              className={`w-full border-2 border-dashed rounded-lg p-4 text-center transition-colors duration-300 cursor-pointer ${
+                dragActive 
+                  ? 'border-blue-500 bg-blue-50' 
+                  : 'border-gray-300 bg-gray-50 hover:bg-gray-100'
+              } ${actionType === "View" ? 'opacity-50 pointer-events-none' : ''}`}
+              onDragEnter={actionType !== "View" ? handleDrag : undefined}
+              onDragLeave={actionType !== "View" ? handleDrag : undefined}
+              onDragOver={actionType !== "View" ? handleDrag : undefined}
+              onDrop={actionType !== "View" ? handleDrop : undefined}
+              onClick={actionType !== "View" ? () => document.getElementById('file-input').click() : undefined}
+            >
+              <div className="flex flex-col items-center justify-center space-y-2">
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                  <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-gray-600">
+                    {dragActive ? "Drop file here" : "Upload images"}
+                  </p>
+                </div>
+                {formData.InvoiceImage && formData.InvoiceImage !== "N/A" && (
+                  <div className="mt-1 text-sm text-green-600 font-medium">
+                    Selected: {formData.InvoiceImage}
+                  </div>
+                )}
+              </div>
+              {actionType !== "View" && (
+                <input
+                  id="file-input"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleFileInputChange}
+                />
+              )}
             </div>
           </div>
 

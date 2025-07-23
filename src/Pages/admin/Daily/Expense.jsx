@@ -61,11 +61,11 @@ const ActionBtns = (props) => {
 export const ExpenseList = () => {
   const [selectedRowData, setSelectedRowData] = useState([]);
   const [rowData, setRowData] = useState([
-    { key: "1", ID: "1279", ExpenseType: "Office Supplies", DueDate: "2025-07-29", Description: "Expense purchase", InvoiceImage: "N/A", AmountType: "Cash" },
-    { key: "2", ID: "1280", ExpenseType: "Utilities", DueDate: "2025-07-29", Description: "Expense purchase", InvoiceImage: "N/A", AmountType: "Credit Card" },
-    { key: "3", ID: "1281", ExpenseType: "Travel", DueDate: "2025-07-29", Description: "Expense purchase", InvoiceImage: "N/A", AmountType: "Bank Transfer" },
-    { key: "4", ID: "1282", ExpenseType: "Marketing", DueDate: "2025-07-29", Description: "Expense purchase", InvoiceImage: "N/A", AmountType: "Check" },
-    { key: "5", ID: "1283", ExpenseType: "Equipment", DueDate: "2025-07-29", Description: "Expense purchase", InvoiceImage: "N/A", AmountType: "Cash" },
+    { key: "1", ID: "1279", ExpenseType: "Office Supplies", DueDate: "2025-07-29", Description: "Expense purchase", InvoiceImage: "N/A", AmountType: "Cash", Amount: 0 },
+    { key: "2", ID: "1280", ExpenseType: "Utilities", DueDate: "2025-07-29", Description: "Expense purchase", InvoiceImage: "N/A", AmountType: "Credit Card", Amount: 0 },
+    { key: "3", ID: "1281", ExpenseType: "Travel", DueDate: "2025-07-29", Description: "Expense purchase", InvoiceImage: "N/A", AmountType: "Bank Transfer", Amount: 0 },
+    { key: "4", ID: "1282", ExpenseType: "Marketing", DueDate: "2025-07-29", Description: "Expense purchase", InvoiceImage: "N/A", AmountType: "Check", Amount: 0 },
+    { key: "5", ID: "1283", ExpenseType: "Equipment", DueDate: "2025-07-29", Description: "Expense purchase", InvoiceImage: "N/A", AmountType: "Cash", Amount: 0 },
   ]);
 
   const [showModel, setShowModel] = useState({
@@ -88,6 +88,7 @@ export const ExpenseList = () => {
         Description: "",
         InvoiceImage: "",
         AmountType: "",
+        Amount: 0,
       },
       actionType: "Add",
     });
@@ -125,6 +126,7 @@ export const ExpenseList = () => {
         Description: "",
         InvoiceImage: "",
         AmountType: "",
+        Amount: 0,
       },
       actionType: "Edit",
     });
@@ -137,6 +139,7 @@ export const ExpenseList = () => {
     { field: "Description", headerName: "Description", width: 200 },
     { field: "InvoiceImage", headerName: "Invoice Image", width: 150 },
     { field: "AmountType", headerName: "Amount Type", width: 120 },
+    { field: "Amount", headerName: "Amount", width: 120 },
     {
       headerName: "Actions",
       field: "actions",
@@ -259,6 +262,7 @@ const AddExpenseModal = ({ expenseData, setShowModel, actionType, setRowData, ro
     Description: "",
     InvoiceImage: "",
     AmountType: "",
+    Amount: 0,
   });
   const [showNewExpenseTypeInput, setShowNewExpenseTypeInput] = useState(false);
   const [expenseTypeOptions, setExpenseTypeOptions] = useState([
@@ -268,6 +272,7 @@ const AddExpenseModal = ({ expenseData, setShowModel, actionType, setRowData, ro
     "Marketing",
     "Equipment"
   ]);
+  const [dragActive, setDragActive] = useState(false);
 
   // Update formData when expenseData prop changes
   React.useEffect(() => {
@@ -285,7 +290,53 @@ const AddExpenseModal = ({ expenseData, setShowModel, actionType, setRowData, ro
   };
 
   const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    if (field === "Amount") {
+      const numericValue = value ? Number(value) : 0;
+      if (!isNaN(numericValue)) {
+        setFormData((prev) => ({ ...prev, [field]: numericValue }));
+      }
+    } else {
+      setFormData((prev) => ({ ...prev, [field]: value }));
+    }
+  };
+
+  // Handle file upload
+  const handleFileUpload = (file) => {
+    if (file && file.type.startsWith('image/')) {
+      handleInputChange("InvoiceImage", file.name);
+      console.log("File uploaded:", file.name);
+    } else {
+      alert("Please select a valid image file");
+    }
+  };
+
+  // Handle drag events
+  const handleDrag = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
+  // Handle drop event
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleFileUpload(e.dataTransfer.files[0]);
+    }
+  };
+
+  // Handle file input change
+  const handleFileInputChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      handleFileUpload(e.target.files[0]);
+    }
   };
 
   const handleSubmit = () => {
@@ -298,6 +349,7 @@ const AddExpenseModal = ({ expenseData, setShowModel, actionType, setRowData, ro
         Description: formData.Description,
         InvoiceImage: formData.InvoiceImage || "N/A",
         AmountType: formData.AmountType,
+        Amount: formData.Amount,
       };
       setRowData([...rowData, newExpense]);
     } else if (actionType === "Edit") {
@@ -430,17 +482,6 @@ const AddExpenseModal = ({ expenseData, setShowModel, actionType, setRowData, ro
           <div className="grid grid-cols-2 gap-4 w-full mt-4">
             <div className="w-full flex flex-col gap-2">
               <label className="text-[1dvw] font-normal paraFont">
-                Invoice Image
-              </label>
-              <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                type="file"
-                accept="image/*"
-                onChange={(e) => handleInputChange("InvoiceImage", e.target.files[0]?.name || "N/A")}
-              />
-            </div>
-            <div className="w-full flex flex-col gap-2">
-              <label className="text-[1dvw] font-normal paraFont">
                 Amount Type
                 <span className="text-[.9dvw] text-[var(--Negative-color)]">*</span>
               </label>
@@ -455,6 +496,62 @@ const AddExpenseModal = ({ expenseData, setShowModel, actionType, setRowData, ro
                 <option value="Bank Transfer">Bank Transfer</option>
                 <option value="Check">Check</option>
               </select>
+            </div>
+            <div className="w-full flex flex-col gap-2">
+              <label className="text-[1dvw] font-normal paraFont">
+                Amount
+                <span className="text-[.9dvw] text-[var(--Negative-color)]">*</span>
+              </label>
+              <input
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                type="number"
+                placeholder="Enter Amount"
+                value={formData.Amount}
+                onChange={(e) => handleInputChange("Amount", e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="w-full flex flex-col gap-2 mt-4">
+            <label className="text-[1dvw] font-normal paraFont">
+              Invoice Image
+            </label>
+            <div 
+              className={`w-full border-2 border-dashed rounded-lg p-4 text-center transition-colors duration-300 cursor-pointer ${
+                dragActive 
+                  ? 'border-blue-500 bg-blue-50' 
+                  : 'border-gray-300 bg-gray-50 hover:bg-gray-100'
+              }`}
+              onDragEnter={handleDrag}
+              onDragLeave={handleDrag}
+              onDragOver={handleDrag}
+              onDrop={handleDrop}
+              onClick={() => document.getElementById('file-input').click()}
+            >
+              <div className="flex flex-col items-center justify-center space-y-2">
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                  <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-gray-600">
+                    {dragActive ? "Drop file here" : "Upload images"}
+                  </p>
+                </div>
+                {formData.InvoiceImage && formData.InvoiceImage !== "N/A" && (
+                  <div className="mt-1 text-sm text-green-600 font-medium">
+                    Selected: {formData.InvoiceImage}
+                  </div>
+                )}
+              </div>
+              <input
+                id="file-input"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleFileInputChange}
+              />
             </div>
           </div>
 
