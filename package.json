@@ -27,6 +27,7 @@
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.0",
     "react-select-currency": "^1.0.7",
+    "react-toastify": "^11.0.5",
     "sass": "^1.89.0",
     "tailwindcss": "^4.1.6"
   },

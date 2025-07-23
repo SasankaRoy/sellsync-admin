@@ -1,15 +1,57 @@
-import React from "react";
+import React, { useState } from "react";
 import LoginBg from "../../assets/images/LoginBg.jpg";
 import FullLogo from "../../assets/images/FullLogo.png";
 import WhiteTexture from "../../assets/images/WhiteTexture.jpg";
-// import { request } from "../../utils/axios-interceptor";
+// import { useQuery } from "@tanstack/react-query";
+import axiosInstance from "../../utils/axios-interceptor";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookies";
 
 export const Login = () => {
-  // const req = {
-  //   url: "/",
-  //   session:'session',
-  // };
-  // console.log(request(req));
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useNavigate();
+  const [loginDetails, setLogoinDetails] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleOnChange = (e) => {
+    const { value, name } = e.target;
+    setLogoinDetails((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const loginHandler = async () => {
+    setIsLoading(true);
+    try {
+      const reqLogin = await axiosInstance.post("/api/v1/auth/login", {
+        email: loginDetails.email,
+        password: loginDetails.password,
+      });
+
+      if (reqLogin.status === 200 && reqLogin.data) {
+        toast.success("Login Success");
+        Cookies.setItem("authToken", reqLogin.data.token, {
+          expire: reqLogin.data.token_expiry,
+          path: "/",
+        });
+        router("/");
+        setIsLoading(false);
+      }
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.error.password ||
+          error?.response?.data?.error.email ||
+          "Login faild!"
+      );
+      setIsLoading(false);
+    }
+  };
+
+  // const { data, isLoading, error } = useQuery({
+  //   queryKey: ["login"],
+  //   queryFn: async () => {},
+  // });
   return (
     <div className="h-screen relative w-full">
       <div className="absolute top-0 left-0 w-full h-full">
@@ -53,6 +95,9 @@ export const Login = () => {
                   <input
                     type="email"
                     id="email"
+                    name="email"
+                    onChange={handleOnChange}
+                    value={loginDetails.email}
                     placeholder="Enter your email"
                     className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-2 px-3"
                   />
@@ -64,11 +109,17 @@ export const Login = () => {
                   <input
                     type="password"
                     id="password"
+                    name="password"
+                    onChange={handleOnChange}
+                    value={loginDetails.password}
                     placeholder="Enter password"
                     className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-2 px-3"
                   />
                 </div>
-                <button className="text-white mt-3 flex justify-center items-center py-3 bg-[var(--button-color2)] font-semibold paraFont w-full rounded-full cursor-pointer border border-[var(--button-color2)] hover:text-[var(--button-color2)] hover:bg-white transition-all duration-300 ease-linear">
+                <button
+                  onClick={loginHandler}
+                  className="text-white mt-3 flex justify-center items-center py-3 bg-[var(--button-color2)] font-semibold paraFont w-full rounded-full cursor-pointer border border-[var(--button-color2)] hover:text-[var(--button-color2)] hover:bg-white transition-all duration-300 ease-linear"
+                >
                   Login
                 </button>
 
