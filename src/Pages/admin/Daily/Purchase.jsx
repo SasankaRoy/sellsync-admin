@@ -152,7 +152,7 @@ export const Purchase = () => {
         InvoiceImage: "",
         Payments: "",
       },
-      actionType: "Edit", // Changed from "Add" to "Edit" to show "Edit Purchase" in header
+      actionType: "Edit",
     });
   };
 
@@ -278,6 +278,8 @@ export const Purchase = () => {
         <DeleteModel
           setDeleteModel={setDeleteModel}
           purchaseId={deleteModel.purchaseId}
+          setRowData={setRowData}
+          rowData={rowData}
         />
       )}
     </>
@@ -303,11 +305,13 @@ const AddPurchaseModal = ({ purchaseData, setShowModel, actionType, setRowData, 
     "JKL Trading"
   ]);
   const [dragActive, setDragActive] = useState(false);
+  const [imagePreview, setImagePreview] = useState(null);
 
   // Update formData when purchaseData prop changes
   React.useEffect(() => {
     if (purchaseData) {
       setFormData(purchaseData);
+      setImagePreview(null); // Reset preview on data change
     }
   }, [purchaseData]);
 
@@ -317,6 +321,7 @@ const AddPurchaseModal = ({ purchaseData, setShowModel, actionType, setRowData, 
       purchaseData: null,
       actionType: "",
     });
+    setImagePreview(null); // Clear preview on modal close
   };
 
   const handleInputChange = (field, value) => {
@@ -327,11 +332,33 @@ const AddPurchaseModal = ({ purchaseData, setShowModel, actionType, setRowData, 
   const handleFileUpload = (file) => {
     if (file && file.type.startsWith('image/')) {
       handleInputChange("InvoiceImage", file.name);
+      // Create a preview URL for the image
+      const previewUrl = URL.createObjectURL(file);
+      setImagePreview(previewUrl);
       console.log("File uploaded:", file.name);
     } else {
       alert("Please select a valid image file");
     }
   };
+
+  // Handle remove image
+  const handleRemoveImage = () => {
+    if (imagePreview) {
+      URL.revokeObjectURL(imagePreview);
+      setImagePreview(null);
+    }
+    handleInputChange("InvoiceImage", "");
+    document.getElementById('file-input').value = null; // Reset file input
+  };
+
+  // Clean up preview URL to prevent memory leaks
+  React.useEffect(() => {
+    return () => {
+      if (imagePreview) {
+        URL.revokeObjectURL(imagePreview);
+      }
+    };
+  }, [imagePreview]);
 
   // Handle drag events
   const handleDrag = (e) => {
@@ -539,7 +566,6 @@ const AddPurchaseModal = ({ purchaseData, setShowModel, actionType, setRowData, 
                 handleInputChange("Payments", value);
               }}
               onKeyPress={(e) => {
-                // Allow numbers, single decimal point, and backspace
                 if (e.key === '.' && e.target.value.includes('.')) {
                   e.preventDefault();
                 } else if (e.key !== '.' && isNaN(Number(e.key)) && e.key !== 'Backspace') {
@@ -555,7 +581,7 @@ const AddPurchaseModal = ({ purchaseData, setShowModel, actionType, setRowData, 
               Invoice Image
             </label>
             <div 
-              className={`w-full border-2 border-dashed rounded-lg p-4 text-center transition-colors duration-300 cursor-pointer ${
+              className={`w-full border-2 border-dashed rounded-lg p-4 transition-colors duration-300 cursor-pointer ${
                 dragActive 
                   ? 'border-blue-500 bg-blue-50' 
                   : 'border-gray-300 bg-gray-50 hover:bg-gray-100'
@@ -566,20 +592,35 @@ const AddPurchaseModal = ({ purchaseData, setShowModel, actionType, setRowData, 
               onDrop={actionType !== "View" ? handleDrop : undefined}
               onClick={actionType !== "View" ? () => document.getElementById('file-input').click() : undefined}
             >
-              <div className="flex flex-col items-center justify-center space-y-2">
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                  <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                  </svg>
+              <div className="flex items-center justify-center space-x-4">
+                <div className="flex flex-col items-center justify-center space-y-2">
+                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                    <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-gray-600">
+                      {dragActive ? "Drop file here" : "Upload images"}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-gray-600">
-                    {dragActive ? "Drop file here" : "Upload images"}
-                  </p>
-                </div>
-                {formData.InvoiceImage && formData.InvoiceImage !== "N/A" && (
-                  <div className="mt-1 text-sm text-green-600 font-medium">
-                    Selected: {formData.InvoiceImage}
+                {formData.InvoiceImage && formData.InvoiceImage !== "N/A" && imagePreview && (
+                  <div className="relative flex items-center space-x-2">
+                    <img
+                      src={imagePreview}
+                      alt="Invoice preview"
+                      className="w-16 h-16 object-cover rounded-md"
+                    />
+                    {actionType !== "View" && (
+                      <button
+                        onClick={handleRemoveImage}
+                        className="absolute -top-2 -right-2 bg-[var(--Negative-color)] text-white rounded-full p-1 hover:bg-red-700 transition-all duration-300"
+                        title="Remove image"
+                      >
+                        <CircleX size={16} />
+                      </button>
+                    )}
                   </div>
                 )}
               </div>
@@ -628,7 +669,15 @@ const AddPurchaseModal = ({ purchaseData, setShowModel, actionType, setRowData, 
   );
 };
 
-const DeleteModel = ({ setDeleteModel, purchaseId }) => {
+const DeleteModel = ({ setDeleteModel, purchaseId, setRowData, rowData }) => {
+  const handleDelete = () => {
+    setRowData(rowData.filter(item => item.ID !== purchaseId));
+    setDeleteModel({
+      state: false,
+      purchaseId: null,
+    });
+  };
+
   return (
     <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center">
       <div className="w-[50%] p-5 bg-white rounded-xl shadow-md flex flex-col gap-4">
@@ -665,10 +714,11 @@ const DeleteModel = ({ setDeleteModel, purchaseId }) => {
           >
             Cancel
           </button>
-          <button className="bg-[var(--Negative-color)] text-white px-5 py-1.5 rounded-md flex justify-center items-center font-semibold text-[1.1dvw] cursor-pointer">
+          <button
+            onClick={handleDelete}
+            className="bg-[var(--Negative-color)] text-white px-5 py-1.5 rounded-md flex justify-center items-center font-semibold text-[1.1dvw] cursor-pointer"
+          >
             Delete
-            
-
           </button>
         </div>
       </div>
