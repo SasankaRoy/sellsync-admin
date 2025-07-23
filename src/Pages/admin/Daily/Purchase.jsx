@@ -668,6 +668,7 @@ const DeleteModel = ({ setDeleteModel, purchaseId }) => {
           <button className="bg-[var(--Negative-color)] text-white px-5 py-1.5 rounded-md flex justify-center items-center font-semibold text-[1.1dvw] cursor-pointer">
             Delete
             
+
           </button>
         </div>
       </div>
