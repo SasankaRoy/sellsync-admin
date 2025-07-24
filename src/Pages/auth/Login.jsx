@@ -28,7 +28,7 @@ export const Login = () => {
         email: loginDetails.email,
         password: loginDetails.password,
       });
-
+     console.log(reqLogin.data)
       if (reqLogin.status === 200 && reqLogin.data) {
         toast.success("Login Success");
         Cookies.setItem("authToken", reqLogin.data.token, {
@@ -39,10 +39,11 @@ export const Login = () => {
         setIsLoading(false);
       }
     } catch (error) {
+      console.log(error.response)
       toast.error(
         error?.response?.data?.error.password ||
           error?.response?.data?.error.email ||
-          "Login faild!"
+          "Login failed!"
       );
       setIsLoading(false);
     }

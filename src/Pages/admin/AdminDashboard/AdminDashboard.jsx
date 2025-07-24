@@ -166,8 +166,8 @@ export const AdminDashboard = () => {
           </div>
         </div>
 
-        {/* Right Sidebar - Hidden on Mobile */}
-        <div className="hidden lg:block w-full lg:w-[27%] shrink-0 mt-6 lg:mt-0">
+        {/* Right Sidebar */}
+        <div className="w-full lg:w-[27%] shrink-0 mt-6 lg:mt-0">
           {/* Top Selling Items */}
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 mb-4 sm:mb-6">
             <h3 className="text-lg sm:text-xl lg:text-[1.1dvw] font-semibold text-[var(--mainText-color)]">
