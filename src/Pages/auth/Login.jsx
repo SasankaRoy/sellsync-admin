@@ -42,7 +42,7 @@ export const Login = () => {
       console.log(error.response)
       toast.error(
         error?.response?.data?.error.password ||
-          error?.response?.data?.error.email ||
+          error?.response?.data?.error.email || 
           "Login failed!"
       );
       setIsLoading(false);

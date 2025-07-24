@@ -211,13 +211,16 @@ export const Employee = () => {
               <h3 className="text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
                 Employees
               </h3>
-              <button onClick={()=>{
-                setEditModel({
-                    status:true,
-                    productData: '20',
+              <button
+                onClick={() => {
+                  setEditModel({
+                    status: true,
+                    productData: "20",
                     forStatus: "Add",
-                })
-              }} className="px-5 py-1.5 rounded-full bg-[var(--button-color1)] flex justify-center items-center gap-4 text-white mainFont font-[500] cursor-pointer text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
+                  });
+                }}
+                className="px-5 py-1.5 rounded-full bg-[var(--button-color1)] flex justify-center items-center gap-4 text-white mainFont font-[500] cursor-pointer text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
+              >
                 Add Employee <PluseIcon />
               </button>
             </div>
@@ -383,6 +386,7 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
                 className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                 type="number"
                 placeholder="phone number..."
+                name="phone"
               />
             </div>
 
@@ -422,7 +426,7 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
               </label>
               <input
                 className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                type="type"
+                type="number"
                 placeholder="Enter Zipcode..."
               />
             </div>
