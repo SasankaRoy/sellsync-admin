@@ -12,10 +12,11 @@ import {
 } from "../../../assets/Svgs/AllSvgs";
 import { Overviewcards } from "../../../components/common/Overviewcards/Overviewcards";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
-// Core CSS
 import { AgGridReact } from "ag-grid-react";
 import { DeleteModel } from "../../../components/common/Models/DeleteMode";
 import { CircleX, Edit, Trash } from "lucide-react";
+import { toast } from "react-toastify";
+import axiosInstance from "../../../utils/axios-interceptor";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -165,10 +166,10 @@ export const Employee = () => {
       forStatus: "Edit",
     });
   };
-  const onDelete = (product) => {
+  const onDelete = (model) => {
     setDeleteModel({
       status: true,
-      productData: product.ID,
+      productData: model.ID,
     });
   };
 
@@ -202,6 +203,7 @@ export const Employee = () => {
       editable: true,
     };
   }, []);
+
   return (
     <>
       <Layout>
@@ -211,13 +213,16 @@ export const Employee = () => {
               <h3 className="text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
                 Employees
               </h3>
-              <button onClick={()=>{
-                setEditModel({
-                    status:true,
-                    productData: '20',
+              <button
+                onClick={() => {
+                  setEditModel({
+                    status: true,
+                    productData: null,
                     forStatus: "Add",
-                })
-              }} className="px-5 py-1.5 rounded-full bg-[var(--button-color1)] flex justify-center items-center gap-4 text-white mainFont font-[500] cursor-pointer text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
+                  });
+                }}
+                className="px-5 py-1.5 rounded-full bg-[var(--button-color1)] flex justify-center items-center gap-4 text-white mainFont font-[500] cursor-pointer text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
+              >
                 Add Employee <PluseIcon />
               </button>
             </div>
@@ -279,7 +284,6 @@ export const Employee = () => {
             <AgGridReact
               rowData={rowData}
               columnDefs={colDefs}
-              // loading={loading}
               defaultColDef={defaultColDef}
               pagination={true}
               rowSelection={rowSelection}
@@ -299,7 +303,7 @@ export const Employee = () => {
         />
       )}
 
-      {editModel.status && editModel.productData && editModel.forStatus && (
+      {editModel.status && editModel.forStatus && (
         <EditModel
           forState={editModel.forStatus}
           setEditUserModel={setEditModel}
@@ -318,9 +322,6 @@ const ActionBtns = (props) => {
     onEdit(data);
   };
 
-  const handleView = () => {
-    onView(data);
-  };
   const handleDelete = () => {
     onDelete(data);
   };
@@ -347,112 +348,282 @@ const ActionBtns = (props) => {
 };
 
 const EditModel = ({ forState, setEditUserModel, productData }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [userInfo, setUserInfo] = useState({
+    full_name: productData?.FullName || "",
+    phone: productData?.PhoneNumber || "",
+    email: productData?.Email || "",
+    password: productData?.Password || "",
+    street: productData?.Address?.split(",")[0] || "",
+    zip: productData?.Address?.split(",")[2] || "",
+    role: productData?.Role || "",
+    status: productData?.Status || "",
+    city: productData?.Address?.split(",")[1] || "",
+    state: productData?.Address?.split(",")[2]?.split(",")[0] || "",
+    staff_position: "",
+    date_of_birth: "",
+  });
+
+  const handleOnChange = (e) => {
+    const { name, value } = e.target;
+    setUserInfo({
+      ...userInfo,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      const response = await axiosInstance.post("/api/v1/user/employee-add", {
+        full_name: userInfo.full_name,
+        email: userInfo.email,
+        password: userInfo.password,
+        role: userInfo.role,
+        staff_position: userInfo.staff_position,
+        phone: userInfo.phone,
+        date_of_birth: userInfo.date_of_birth,
+        address: {
+          street: userInfo.street,
+          city: userInfo.city,
+          state: userInfo.state,
+          zip: userInfo.zip,
+        },
+        status: userInfo.status,
+      });
+      console.log(response.data);
+      if (response.status === 200 && response.data) {
+        toast.success(`${forState === "Add" ? "Employee Added" : "Employee Updated"} Successfully`);
+        setEditUserModel({
+          status: false,
+          productData: null,
+          forStatus: null,
+        });
+        // Optionally update rowData here if needed
+      }
+    } catch (error) {
+      console.log(error.response);
+      toast.error(
+        error?.response?.data?.error?.password ||
+          error?.response?.data?.error?.email ||
+          error?.response?.data?.message ||
+          `${forState === "Add" ? "Add Employee" : "Update Employee"} Failed!`
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <>
       <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center">
-        <div className="bg-white w-[50%] p-5 rounded-lg shadow-md">
-          <div className="flex justify-between items-center w-full p-2.5 rounded-md bg-[var(--sideMenu-color)] text-white">
-            <h3 className="text-[1.5dvw] font-semibold">{forState} Employee</h3>
+        <div className="bg-white w-[40%] p-4 rounded-lg shadow-md">
+          <div className="flex justify-between items-center w-full p-2 rounded-md bg-[var(--button-color1)] text-white">
+            <h3 className="text-[1.2dvw] font-semibold">{forState === "Add" ? "Add Employee" : "Edit Employee"}</h3>
             <button
               onClick={() => {
                 setEditUserModel({
-                  state: false,
-                  userData: null,
+                  status: false,
+                  productData: null,
+                  forStatus: null,
                 });
               }}
               className="hover:text-[var(--Negative-color)] transition-all duration-300 ease-linear cursor-pointer"
             >
-              <CircleX size={30} />
+              <CircleX size={24} />
             </button>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 w-full p-3">
-            <div className="w-full my-4 flex flex-col gap-2">
-              <label className="text-[1dvw] font-normal paraFont">
-                FullName
-              </label>
-              <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                type="text"
-                placeholder="Enter FullName..."
-              />
-            </div>
-            <div className="w-full my-4 flex flex-col gap-2">
-              <label className="text-[1dvw] font-normal paraFont">Mobile</label>
-              <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                type="number"
-                placeholder="phone number..."
-              />
-            </div>
+          <form onSubmit={handleSubmit}>
+            <div className="grid grid-cols-2 gap-2 w-full p-2">
+              <div className="w-full my-3 flex flex-col gap-1">
+                <label className="text-[0.9dvw] font-normal paraFont">
+                  Full Name
+                </label>
+                <input
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1 px-2"
+                  type="text"
+                  placeholder="Enter Full Name..."
+                  name="full_name"
+                  value={userInfo.full_name}
+                  onChange={handleOnChange}
+                  required
+                />
+              </div>
+              <div className="w-full my-3 flex flex-col gap-1">
+                <label className="text-[0.9dvw] font-normal paraFont">Phone</label>
+                <input
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1 px-2"
+                  type="tel"
+                  placeholder="Phone number..."
+                  name="phone"
+                  value={userInfo.phone}
+                  onChange={handleOnChange}
+                  required
+                />
+              </div>
 
-            <div className="w-full my-4 flex flex-col gap-2">
-              <label className="text-[1dvw] font-normal paraFont">Email</label>
-              <input
-                className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                type="email"
-                placeholder="Enter Email...."
-              />
-            </div>
-            <div className="w-full my-4 flex flex-col gap-2">
-              <label className="text-[1dvw] font-normal paraFont">
-                Password
-              </label>
-              <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                type="password"
-                placeholder="Enter password"
-              />
-            </div>
+              <div className="w-full my-3 flex flex-col gap-1">
+                <label className="text-[0.9dvw] font-normal paraFont">Email</label>
+                <input
+                  className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1 px-2"
+                  type="email"
+                  placeholder="Enter Email..."
+                  name="email"
+                  value={userInfo.email}
+                  onChange={handleOnChange}
+                  required
+                />
+              </div>
+              <div className="w-full my-3 flex flex-col gap-1">
+                <label className="text-[0.9dvw] font-normal paraFont">
+                  Password
+                </label>
+                <input
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1 px-2"
+                  type="password"
+                  placeholder="Enter password"
+                  name="password"
+                  value={userInfo.password}
+                  onChange={handleOnChange}
+                  required
+                />
+              </div>
 
-            <div className="w-full my-4 flex flex-col gap-2">
-              <label className="text-[1dvw] font-normal paraFont">
-                Address
-              </label>
-              <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                type="type"
-                placeholder="Enter Address..."
-              />
-            </div>
+              <div className="w-full my-3 flex flex-col gap-1">
+                <label className="text-[0.9dvw] font-normal paraFont">
+                  Street Address
+                </label>
+                <input
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1 px-2"
+                  type="text"
+                  placeholder="Enter Street Address..."
+                  name="street"
+                  value={userInfo.street}
+                  onChange={handleOnChange}
+                  required
+                />
+              </div>
 
-            <div className="w-full my-4 flex flex-col gap-2">
-              <label className="text-[1dvw] font-normal paraFont">
-                Zipcode
-              </label>
-              <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                type="type"
-                placeholder="Enter Zipcode..."
-              />
-            </div>
+              <div className="w-full my-3 flex flex-col gap-1">
+                <label className="text-[0.9dvw] font-normal paraFont">
+                  Zip Code
+                </label>
+                <input
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1 px-2"
+                  type="text"
+                  placeholder="Enter Zip Code..."
+                  name="zip"
+                  value={userInfo.zip}
+                  onChange={handleOnChange}
+                  required
+                />
+              </div>
 
-            <div className="w-full my-4 flex flex-col gap-2">
-              <label className="text-[1dvw] font-normal paraFont">Role</label>
-              <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                type="numver"
-                placeholder="Enter Role..."
-              />
-            </div>
+              <div className="w-full my-3 flex flex-col gap-1">
+                <label className="text-[0.9dvw] font-normal paraFont">City</label>
+                <input
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1 px-2"
+                  type="text"
+                  placeholder="Enter City..."
+                  name="city"
+                  value={userInfo.city}
+                  onChange={handleOnChange}
+                  required
+                />
+              </div>
 
-            <div className="w-full my-4 flex flex-col gap-2">
-              <label className="text-[1dvw] font-normal paraFont">Status</label>
-              <select className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3">
-                <option>Select Employee Status</option>
-                <option>Active</option>
-                <option>Inactive</option>
-              </select>
+              <div className="w-full my-3 flex flex-col gap-1">
+                <label className="text-[0.9dvw] font-normal paraFont">State</label>
+                <input
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1 px-2"
+                  type="text"
+                  placeholder="Enter State..."
+                  name="state"
+                  value={userInfo.state}
+                  onChange={handleOnChange}
+                  required
+                />
+              </div>
+
+              <div className="w-full my-3 flex flex-col gap-1">
+                <label className="text-[0.9dvw] font-normal paraFont">Role</label>
+                <input
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1 px-2"
+                  type="text"
+                  placeholder="Enter Role..."
+                  name="role"
+                  value={userInfo.role}
+                  onChange={handleOnChange}
+                  required
+                />
+              </div>
+
+              <div className="w-full my-3 flex flex-col gap-1">
+                <label className="text-[0.9dvw] font-normal paraFont">Status</label>
+                <select
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1 px-2"
+                  name="status"
+                  value={userInfo.status}
+                  onChange={handleOnChange}
+                  required
+                >
+                  <option value="">Select Employee Status</option>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+              </div>
+
+              <div className="w-full my-3 flex flex-col gap-1">
+                <label className="text-[0.9dvw] font-normal paraFont">Staff Position</label>
+                <input
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1 px-2"
+                  type="text"
+                  placeholder="Enter Staff Position..."
+                  name="staff_position"
+                  value={userInfo.staff_position}
+                  onChange={handleOnChange}
+                  required
+                />
+              </div>
+
+              <div className="w-full my-3 flex flex-col gap-1">
+                <label className="text-[0.9dvw] font-normal paraFont">Date of Birth</label>
+                <input
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1 px-2"
+                  type="date"
+                  placeholder="Enter Date of Birth..."
+                  name="date_of_birth"
+                  value={userInfo.date_of_birth}
+                  onChange={handleOnChange}
+                  required
+                />
+              </div>
             </div>
-          </div>
-          <div className="flex justify-end items-center gap-5 my-4">
-            <button className="px-5 py-1 rounded-md cursor-pointer text-white font-semibold bg-[var(--button-color4)] text-[1.2dvw] ">
-              Cancel
-            </button>
-            <button className="px-5 py-1 rounded-md cursor-pointer text-white font-semibold bg-[var(--button-color5)] text-[1.2dvw] ">
-              Update
-            </button>
-          </div>
+            <div className="flex justify-end items-center gap-5 my-4">
+              <button
+                type="button"
+                onClick={() => {
+                  setEditUserModel({
+                    status: false,
+                    productData: null,
+                    forStatus: null,
+                  });
+                }}
+                className="px-5 py-1 rounded-md cursor-pointer text-white font-semibold bg-[var(--button-color4)] text-[1.2dvw]"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="px-5 py-1 rounded-md cursor-pointer text-white font-semibold bg-[var(--button-color5)] text-[1.2dvw]"
+                disabled={isLoading}
+              >
+                {isLoading ? "Processing..." : forState === "Add" ? "Add Employee" : "Update Employee"}
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </>

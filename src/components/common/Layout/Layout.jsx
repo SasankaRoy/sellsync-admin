@@ -1302,9 +1302,9 @@ export const Layout = ({ children }) => {
         {isMobile && (
           <div className={`fixed inset-0 z-50 ${isMobileMenuOpen ? 'block' : 'hidden'}`}>
             <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)}></div>
-            <div className="mobile-sidebar fixed left-0 top-0 h-full w-80 max-w-[85vw] bg-[var(--sideMenu-color)] transform transition-transform duration-300 ease-in-out flex flex-col">
+            <div className="mobile-sidebar fixed left-0 top-0 h-full w-full bg-[var(--sideMenu-color)] transform transition-transform duration-300 ease-in-out flex flex-col">
               {/* Mobile Logo Header */}
-              <div className="sideMenu__logoWrapper relative">
+              <div className="sideMenu__logoWrapper relative p-6">
                 <img alt="sellsync.com" src={SellsyncLogo} className="w-[60%]" />
                 <button 
                   onClick={() => setIsMobileMenuOpen(false)}
