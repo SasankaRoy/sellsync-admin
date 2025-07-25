@@ -19,7 +19,6 @@ import { toast } from "react-toastify";
 import axiosInstance from "../../../utils/axios-interceptor";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
-
 const rowSelection = {
   mode: "multiRow",
   headerCheckbox: false,
