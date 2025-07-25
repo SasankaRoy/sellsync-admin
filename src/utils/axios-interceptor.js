@@ -15,7 +15,7 @@ axiosInstance.interceptors.request.use(
 
     const token = Cookies.getItem("authToken");
     if (token) {
-      config.headers["Authorization"] = `${token}`;
+      config.headers["token"] = `${token}`;
     }
 
     config.headers["x-api-key"] = import.meta.env.VITE_APP_HEADER_KEY;
