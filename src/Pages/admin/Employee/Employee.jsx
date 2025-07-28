@@ -41,7 +41,7 @@ export const Employee = () => {
     try {
       const request = await axiosInstance.post("/api/v1/user/employee-list", {
         page: 1,
-        limit: 20,
+        limit: 30,
       });
       if (request.status === 200 && request.data) {
         console.log(request);
@@ -213,6 +213,7 @@ export const Employee = () => {
           forState={editModel.forStatus}
           setEditUserModel={setEditModel}
           productData={editModel.productData}
+          refreshEmployeeList={getEmployeeList}
         />
       )}
     </>
@@ -252,7 +253,8 @@ const ActionBtns = (props) => {
   );
 };
 
-const EditModel = ({ forState, setEditUserModel, productData }) => {
+const EditModel = ({ forState, setEditUserModel, productData, refreshEmployeeList }) => {
+  console.log(productData?.id,"productData")
   const [isLoading, setIsLoading] = useState(false);
   const [userInfo, setUserInfo] = useState({
     full_name: productData?.FullName || "",
@@ -300,13 +302,15 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
       });
       console.log(response.data);
       if (response.status === 200 && response.data) {
-        toast.success(`${forState === "Add" ? "Employee Added" : "Employee Updated"} Successfully`);
+        toast.success("Employee Added Successfully");
         setEditUserModel({
           status: false,
           productData: null,
           forStatus: null,
         });
-        // Optionally update rowData here if needed
+        if (refreshEmployeeList) {
+          refreshEmployeeList();
+        }
       }
     } catch (error) {
       console.log(error.response);
@@ -314,7 +318,53 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
         error?.response?.data?.error?.password ||
           error?.response?.data?.error?.email ||
           error?.response?.data?.message ||
-          `${forState === "Add" ? "Add Employee" : "Update Employee"} Failed!`
+          "Add Employee Failed!"
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleEmployee = async () => {
+    setIsLoading(true);
+    console.log(userInfo);
+
+    try {
+      const response = await axiosInstance.post(`/api/v1/user/employee-update/${productData.id}`, {
+        full_name: userInfo.full_name,
+        email: userInfo.email,
+        password: userInfo.password,
+        role: userInfo.role,
+        staff_position: userInfo.staff_position,
+        phone: userInfo.phone,
+        date_of_birth: userInfo.date_of_birth,
+        address: {
+          street: userInfo.street,
+          city: userInfo.city,
+          state: userInfo.state,
+          zip: userInfo.zip,
+        },
+        status: userInfo.status,
+      });
+      console.log(response.data);
+      if (response.status === 200 && response.data) {
+        toast.success("Employee Updated Successfully");
+        setEditUserModel({
+          status: false,
+          productData: null,
+          forStatus: null,
+        });
+        if (refreshEmployeeList) {
+          refreshEmployeeList();
+        }
+      }
+    } catch (error) {
+      console.log(error.response);
+      toast.error(
+        error?.response?.data?.error?.password ||
+          error?.response?.data?.error?.email ||
+          error?.response?.data?.message ||
+          "Update Employee Failed!"
       );
     } finally {
       setIsLoading(false);
@@ -524,7 +574,7 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
             </button>
             <button
               type="button"
-              onClick={handleSubmit}
+              onClick={() =>  forState === "Add" ? handleSubmit() : handleEmployee()}
               className="px-5 py-1 rounded-md cursor-pointer text-white font-semibold bg-[var(--button-color5)] text-[1.2dvw]"
               disabled={isLoading}
             >
