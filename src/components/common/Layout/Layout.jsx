@@ -1304,13 +1304,16 @@ export const Layout = ({ children }) => {
             <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)}></div>
             <div className="mobile-sidebar fixed left-0 top-0 h-full w-full bg-[var(--sideMenu-color)] transform transition-transform duration-300 ease-in-out flex flex-col">
               {/* Mobile Logo Header */}
-              <div className="sideMenu__logoWrapper relative p-6">
-                <img alt="sellsync.com" src={SellsyncLogo} className="w-[60%]" />
+              <div className="sideMenu__logoWrapper relative flex items-center justify-center h-16 w-full">
+                <img alt="sellsync.com" src={SellsyncLogo} className="h-8 w-auto" />
                 <button 
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 flex items-center justify-center w-10 h-10 rounded-full hover:bg-white/10 transition-colors"
                 >
-                  <X size={24} />
+                  <X size={24} className="text-white" />
                 </button>
               </div>
               
