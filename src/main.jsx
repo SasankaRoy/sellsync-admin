@@ -13,21 +13,20 @@ const queryClient = new QueryClient({
     queries: {
       retry: 3,
       refetchOnWindowFocus: true,
-      staleTime: 0.5 * 60 * 1000,
-      refetchInterval: 0.5 * 60 * 1000,
-
-      // cacheTime: 5 * 60 * 1000,
+      staleTime: 3 * 60 * 1000,
+      refetchInterval: 5 * 60 * 1000,
+      // cacheTime: 3 * 60 * 1000,
     },
   },
 });
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <Provider store={Store}>
+    <Provider store={Store}>
+      <QueryClientProvider client={queryClient}>
         <App />
         <ToastContainer position="bottom-center" />
-      </Provider>
-    </QueryClientProvider>
+      </QueryClientProvider>
+    </Provider>
   </StrictMode>
 );

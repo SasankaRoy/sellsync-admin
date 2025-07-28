@@ -8,7 +8,8 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookies";
 import { useDispatch } from "react-redux";
-import { setLoggedInUser } from "../../Redux/UserSlice";
+import { setLogginUser } from "../../Redux/UserSlice";
+
 
 export const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -32,19 +33,27 @@ export const Login = () => {
         password: loginDetails.password,
       });
 
-      console.log(reqLogin.data);
+      // console.log(reqLogin.data);
       if (reqLogin.status === 200 && reqLogin.data) {
         toast.success("Login Success");
         Cookies.setItem("authToken", reqLogin.data.token, {
           expire: reqLogin.data.token_expiry,
           path: "/",
         });
-        /*dispatch(
-          setLoggedInUser({
+        Cookies.setItem("u_id", reqLogin.data.user_id, {
+          expire: reqLogin.data.token_expiry,
+          path: "/",
+        });
+        Cookies.setItem("u_type", reqLogin.data.user_type, {
+          expire: reqLogin.data.token_expiry,
+          path: "/",
+        });
+        dispatch(
+          setLogginUser({
             userType: reqLogin?.data?.user_type,
             userId: reqLogin?.data?.user_id,
           })
-        );*/
+        );
         router("/");
         setIsLoading(false);
       }
@@ -58,6 +67,8 @@ export const Login = () => {
       setIsLoading(false);
     }
   };
+
+
 
   // const { data, isLoading, error } = useQuery({
   //   queryKey: ["login"],
