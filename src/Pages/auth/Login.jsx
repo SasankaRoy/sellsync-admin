@@ -7,10 +7,13 @@ import axiosInstance from "../../utils/axios-interceptor";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookies";
+import { useDispatch } from "react-redux";
+import { setLoggedInUser } from "../../Redux/UserSlice";
 
 export const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useNavigate();
+  const dispatch = useDispatch();
   const [loginDetails, setLogoinDetails] = useState({
     email: "",
     password: "",
@@ -28,21 +31,28 @@ export const Login = () => {
         email: loginDetails.email,
         password: loginDetails.password,
       });
-     console.log(reqLogin.data)
+
+      console.log(reqLogin.data);
       if (reqLogin.status === 200 && reqLogin.data) {
         toast.success("Login Success");
         Cookies.setItem("authToken", reqLogin.data.token, {
           expire: reqLogin.data.token_expiry,
           path: "/",
         });
+        dispatch(
+          setLoggedInUser({
+            userType: reqLogin?.data?.user_type,
+            userId: reqLogin?.data?.user_id,
+          })
+        );
         router("/");
         setIsLoading(false);
       }
     } catch (error) {
-      console.log(error.response)
+      console.log(error.response);
       toast.error(
         error?.response?.data?.error.password ||
-          error?.response?.data?.error.email || 
+          error?.response?.data?.error.email ||
           "Login failed!"
       );
       setIsLoading(false);
@@ -118,10 +128,16 @@ export const Login = () => {
                   />
                 </div>
                 <button
+                  disabled={
+                    isLoading ||
+                    !Object.keys(loginDetails).every(
+                      (item) => loginDetails[item]
+                    )
+                  }
                   onClick={loginHandler}
-                  className="text-white mt-3 flex justify-center items-center py-3 bg-[var(--button-color2)] font-semibold paraFont w-full rounded-full cursor-pointer border border-[var(--button-color2)] hover:text-[var(--button-color2)] hover:bg-white transition-all duration-300 ease-linear"
+                  className="text-white mt-3 flex justify-center items-center py-3 bg-[var(--button-color2)] font-semibold paraFont w-full rounded-full cursor-pointer border border-[var(--button-color2)] hover:text-[var(--button-color2)] hover:bg-white transition-all duration-300 ease-linear disabled:pointer-events-none disabled:cursor-not-allowed  disabled:animate-pulse"
                 >
-                  Login
+                  {isLoading ? "Logging in..." : "Login"}
                 </button>
 
                 {/* <span className="text-center text-[1.2dvw] text-gray-400 font-semibold">
