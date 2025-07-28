@@ -48,13 +48,13 @@ export const Login = () => {
           expire: reqLogin.data.token_expiry,
           path: "/",
         });
+        router("/");
         dispatch(
           setLogginUser({
             userType: reqLogin?.data?.user_type,
             userId: reqLogin?.data?.user_id,
           })
         );
-        router("/");
         setIsLoading(false);
       }
     } catch (error) {
