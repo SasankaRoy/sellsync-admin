@@ -53,7 +53,7 @@ export const AdminDashboard = () => {
             <h3 className="text-lg sm:text-xl lg:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
               Overview
             </h3>
-            <select className="px-3 sm:px-4 py-2 sm:py-1 bg-[var(--button-color2)] text-[var(--primary-color)] rounded-full font-[var(--paraFont)] text-sm sm:text-base w-full sm:w-auto">
+            <select className="px-3 sm:px-4 py-2 sm:py-1 bg-[var(--button-color2)] text-[var(--primary-color)] rounded-full font-[var(--paraFont)] text-sm sm:text-base w-full sm:w-auto appearance-none bg-[right_0.5rem_center] bg-no-repeat pr-8 sm:pr-0 sm:appearance-auto">
               <option>Weekly</option>
               <option>1 week</option>
               <option>2 week</option>
@@ -68,20 +68,23 @@ export const AdminDashboard = () => {
               cardTitle="Sales"
               cardValue="32"
               percent="+14"
-              icon={<OverviewCardIcon1 />}
+              icon={<OverviewCardIcon1 className="w-8 h-8 sm:w-10 sm:h-10" />}
+              className="text-xl sm:text-base lg:text-[1.4dvw]" // Increased font size for mobile view only
             />
             <Overviewcards
               cardTitle="Refunds"
               cardValue="03"
               percent="-2"
-              icon={<RefundIcon />}
+              icon={<RefundIcon className="w-8 h-8 sm:w-10 sm:h-10" />}
+              className="text-lg sm:text-base lg:text-[1.4dvw]"
             />
             <div className="sm:col-span-2 lg:col-span-1">
               <Overviewcards
                 cardTitle="Net Sales Amount"
                 cardValue="$5,456"
                 percent="+4"
-                icon={<NetsaleAmountIcon />}
+                icon={<NetsaleAmountIcon className="w-8 h-8 sm:w-10 sm:h-10" />}
+                className="text-lg sm:text-base lg:text-[1.4dvw]"
               />
             </div>
           </div>
@@ -94,7 +97,7 @@ export const AdminDashboard = () => {
           {/* Sales Stats */}
           <div className="flex flex-col justify-center items-center gap-2 w-full min-h-[20vh] sm:min-h-[22vh] lg:min-h-[25dvh] overflow-hidden my-4 sm:my-6">
             <div className="flex justify-between items-center w-full p-2 sm:p-3">
-              <h3 className="text-lg sm:text-xl lg:text-[1.3dvw] font-[600]">Sales Stats</h3>
+              <h3 className="text-xl sm:text-xl lg:text-[1.3dvw] font-[600]">Sales Stats</h3>
             </div>
             <div className="w-full h-full flex flex-col lg:flex-row justify-center gap-3 sm:gap-4">
               {/* Sales Data List */}
@@ -109,13 +112,13 @@ export const AdminDashboard = () => {
                         style={{
                           background: cur.color,
                         }}
-                        className="w-3 h-3 sm:w-4 sm:h-4 lg:w-[1dvw] lg:h-[1dvw] rounded-full"
+                        className="w-4 h-4 sm:w-4 sm:h-4 lg:w-[1dvw] lg:h-[1dvw] rounded-full"
                       />
-                      <p className="font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1dvw] text-[var(--paraText-color)]">
+                      <p className="font-semibold font-[var(--paraFont)] text-base sm:text-base lg:text-[1dvw] text-[var(--paraText-color)]">
                         {cur.name}
                       </p>
                     </div>
-                    <h5 className="text-black font-medium text-sm sm:text-base lg:text-[1dvw]">
+                    <h5 className="text-black font-medium text-base sm:text-base lg:text-[1dvw]">
                       ${cur.value}
                     </h5>
                   </div>

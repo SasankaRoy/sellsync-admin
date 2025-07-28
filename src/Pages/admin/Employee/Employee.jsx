@@ -78,7 +78,7 @@ export const Employee = () => {
     { field: "id" },
     { field: "name" },
     { field: "email" },
-    //{ field: "dob" },
+    { field: "dob" },
     { field: "mobile" },
     {
       field: "address",
@@ -279,6 +279,8 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
 
   const handleSubmit = async () => {
     setIsLoading(true);
+    console.log(userInfo);
+
     try {
       const response = await axiosInstance.post("/api/v1/user/employee-add", {
         full_name: userInfo.full_name,
@@ -498,15 +500,10 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
                 className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-2 px-2"
                 type="date"
                 name="date_of_birth"
-                value={userInfo.date_of_birth ? new Date(userInfo.date_of_birth).toISOString().split('T')[0] : ''}
-                onChange={(e) => {
-                  const selectedDate = e.target.value;
-                  setUserInfo(prev => ({
-                    ...prev,
-                    date_of_birth: selectedDate
-                  }));
-                }}
-                max={new Date().toISOString().split('T')[0]} // Prevent future dates
+                value={userInfo.date_of_birth}
+                onChange={handleOnChange}
+                max={new Date().toISOString().split('T')[0]}
+                pattern="\d{4}-\d{2}-\d{2}"
                 required
               />
             </div>
