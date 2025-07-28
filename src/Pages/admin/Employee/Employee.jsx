@@ -19,6 +19,7 @@ import { toast } from "react-toastify";
 import axiosInstance from "../../../utils/axios-interceptor";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
+
 const rowSelection = {
   mode: "multiRow",
   headerCheckbox: false,
@@ -216,7 +217,7 @@ export const Employee = () => {
                 onClick={() => {
                   setEditModel({
                     status: true,
-                    productData: null,
+                    productData: "20",
                     forStatus: "Add",
                   });
                 }}
@@ -393,7 +394,11 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
       });
       console.log(response.data);
       if (response.status === 200 && response.data) {
-        toast.success(`${forState === "Add" ? "Employee Added" : "Employee Updated"} Successfully`);
+        toast.success(
+          `${
+            forState === "Add" ? "Employee Added" : "Employee Updated"
+          } Successfully`
+        );
         setEditUserModel({
           status: false,
           productData: null,
@@ -418,53 +423,51 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
     <>
       <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center">
         <div className="bg-white w-[40%] p-4 rounded-lg shadow-md">
-          <div className="flex justify-between items-center w-full p-2 rounded-md bg-[var(--button-color1)] text-white">
-            <h3 className="text-[1.2dvw] font-semibold">{forState === "Add" ? "Add Employee" : "Edit Employee"}</h3>
-            <button
-              onClick={() => {
-                setEditUserModel({
-                  status: false,
-                  productData: null,
-                  forStatus: null,
-                });
-              }}
-              className="hover:text-[var(--Negative-color)] transition-all duration-300 ease-linear cursor-pointer"
-            >
-              <CircleX size={24} />
-            </button>
-          </div>
+          <form>
+            <div className="flex justify-between items-center w-full p-2 rounded-md bg-[var(--button-color1)] text-white">
+              <h3 className="text-[1.2dvw] font-semibold">
+                {forState === "Add" ? "Add Employee" : "Edit Employee"}
+              </h3>
+              <button
+                onClick={() => {
+                  setEditUserModel({
+                    status: false,
+                    productData: null,
+                    forStatus: null,
+                  });
+                }}
+                className="hover:text-[var(--Negative-color)] transition-all duration-300 ease-linear cursor-pointer"
+              >
+                <CircleX size={24} />
+              </button>
+            </div>
 
-          <form onSubmit={handleSubmit}>
-            <div className="grid grid-cols-2 gap-2 w-full p-2">
-              <div className="w-full my-3 flex flex-col gap-1">
-                <label className="text-[0.9dvw] font-normal paraFont">
-                  Full Name
+            <div className="grid grid-cols-2 gap-3 w-full p-3">
+              <div className="w-full my-4 flex flex-col gap-2">
+                <label className="text-[1dvw] font-normal paraFont">
+                  FullName
                 </label>
                 <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1 px-2"
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                   type="text"
-                  placeholder="Enter Full Name..."
-                  name="full_name"
-                  value={userInfo.full_name}
-                  onChange={handleOnChange}
-                  required
+                  placeholder="Enter FullName..."
                 />
               </div>
-              <div className="w-full my-3 flex flex-col gap-1">
-                <label className="text-[0.9dvw] font-normal paraFont">Phone</label>
+              <div className="w-full my-4 flex flex-col gap-2">
+                <label className="text-[1dvw] font-normal paraFont">
+                  Mobile
+                </label>
                 <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1 px-2"
-                  type="tel"
-                  placeholder="Phone number..."
-                  name="phone"
-                  value={userInfo.phone}
-                  onChange={handleOnChange}
-                  required
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  type="number"
+                  placeholder="phone number..."
                 />
               </div>
 
               <div className="w-full my-3 flex flex-col gap-1">
-                <label className="text-[0.9dvw] font-normal paraFont">Email</label>
+                <label className="text-[0.9dvw] font-normal paraFont">
+                  Email
+                </label>
                 <input
                   className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1 px-2"
                   type="email"
@@ -505,49 +508,21 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
                 />
               </div>
 
-              <div className="w-full my-3 flex flex-col gap-1">
-                <label className="text-[0.9dvw] font-normal paraFont">
-                  Zip Code
+              <div className="w-full my-4 flex flex-col gap-2">
+                <label className="text-[1dvw] font-normal paraFont">
+                  Zipcode
                 </label>
                 <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1 px-2"
-                  type="text"
-                  placeholder="Enter Zip Code..."
-                  name="zip"
-                  value={userInfo.zip}
-                  onChange={handleOnChange}
-                  required
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  type="type"
+                  placeholder="Enter Zipcode..."
                 />
               </div>
 
               <div className="w-full my-3 flex flex-col gap-1">
-                <label className="text-[0.9dvw] font-normal paraFont">City</label>
-                <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1 px-2"
-                  type="text"
-                  placeholder="Enter City..."
-                  name="city"
-                  value={userInfo.city}
-                  onChange={handleOnChange}
-                  required
-                />
-              </div>
-
-              <div className="w-full my-3 flex flex-col gap-1">
-                <label className="text-[0.9dvw] font-normal paraFont">State</label>
-                <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1 px-2"
-                  type="text"
-                  placeholder="Enter State..."
-                  name="state"
-                  value={userInfo.state}
-                  onChange={handleOnChange}
-                  required
-                />
-              </div>
-
-              <div className="w-full my-3 flex flex-col gap-1">
-                <label className="text-[0.9dvw] font-normal paraFont">Role</label>
+                <label className="text-[0.9dvw] font-normal paraFont">
+                  Role
+                </label>
                 <input
                   className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1 px-2"
                   type="text"
@@ -560,7 +535,9 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
               </div>
 
               <div className="w-full my-3 flex flex-col gap-1">
-                <label className="text-[0.9dvw] font-normal paraFont">Status</label>
+                <label className="text-[0.9dvw] font-normal paraFont">
+                  Status
+                </label>
                 <select
                   className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1 px-2"
                   name="status"
@@ -570,12 +547,14 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
                 >
                   <option value="">Select Employee Status</option>
                   <option value="active">Active</option>
-                  <option value="in-active">Inactive</option>
+                  <option value="inactive">Inactive</option>
                 </select>
               </div>
 
               <div className="w-full my-3 flex flex-col gap-1">
-                <label className="text-[0.9dvw] font-normal paraFont">Staff Position</label>
+                <label className="text-[0.9dvw] font-normal paraFont">
+                  Staff Position
+                </label>
                 <input
                   className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1 px-2"
                   type="text"
@@ -588,7 +567,9 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
               </div>
 
               <div className="w-full my-3 flex flex-col gap-1">
-                <label className="text-[0.9dvw] font-normal paraFont">Date of Birth</label>
+                <label className="text-[0.9dvw] font-normal paraFont">
+                  Date of Birth
+                </label>
                 <input
                   className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1 px-2"
                   type="date"
@@ -619,7 +600,11 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
                 className="px-5 py-1 rounded-md cursor-pointer text-white font-semibold bg-[var(--button-color5)] text-[1.2dvw]"
                 disabled={isLoading}
               >
-                {isLoading ? "Processing..." : forState === "Add" ? "Add Employee" : "Update Employee"}
+                {isLoading
+                  ? "Processing..."
+                  : forState === "Add"
+                  ? "Add Employee"
+                  : "Update Employee"}
               </button>
             </div>
           </form>
