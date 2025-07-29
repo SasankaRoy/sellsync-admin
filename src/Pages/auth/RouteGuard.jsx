@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import Cookies from "js-cookies";
+import Cookies from "js-cookie";
 import { Navigate, Outlet } from "react-router-dom";
 import axiosInstance from "../../utils/axios-interceptor";
 import { useDispatch } from "react-redux";
@@ -8,9 +8,11 @@ import { toast } from "react-toastify";
 import { Loading } from "../../components/UI/Loading/Loading";
 const RouteGuard = () => {
   const dispatch = useDispatch();
-  const token = Cookies.getItem("authToken");
-  const userId = Cookies.getItem("u_id");
-  const userType = Cookies.getItem("u_type");
+  const token = Cookies.get("authToken");
+  const userId = Cookies.get("u_id");
+  const userType = Cookies.get("u_type");
+
+  console.log(userId, userType);
   const { data, isLoading, error } = useQuery({
     queryKey: ["login"],
     queryFn: async () => {
@@ -34,7 +36,7 @@ const RouteGuard = () => {
       }
     },
   });
-  console.log('running every time')
+  console.log("running every time");
   return token ? (
     <>{isLoading ? <Loading /> : <Outlet />}</>
   ) : (

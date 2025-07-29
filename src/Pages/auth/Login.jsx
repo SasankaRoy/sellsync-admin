@@ -6,10 +6,9 @@ import WhiteTexture from "../../assets/images/WhiteTexture.jpg";
 import axiosInstance from "../../utils/axios-interceptor";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import Cookies from "js-cookies";
+import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
 import { setLogginUser } from "../../Redux/UserSlice";
-
 
 export const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -36,25 +35,19 @@ export const Login = () => {
       // console.log(reqLogin.data);
       if (reqLogin.status === 200 && reqLogin.data) {
         toast.success("Login Success");
-        Cookies.setItem("authToken", reqLogin.data.token, {
-          expire: reqLogin.data.token_expiry,
+        Cookies.set("authToken", reqLogin.data.token, {
+          expires: 1,
           path: "/",
         });
-        Cookies.setItem("u_id", reqLogin.data.user_id, {
-          expire: reqLogin.data.token_expiry,
+        Cookies.set("u_id", reqLogin.data.user_id, {
+          expires: 1,
           path: "/",
         });
-        Cookies.setItem("u_type", reqLogin.data.user_type, {
-          expire: reqLogin.data.token_expiry,
+        Cookies.set("u_type", reqLogin.data.user_type, {
+          expires: 1,
           path: "/",
         });
         router("/");
-        dispatch(
-          setLogginUser({
-            userType: reqLogin?.data?.user_type,
-            userId: reqLogin?.data?.user_id,
-          })
-        );
         setIsLoading(false);
       }
     } catch (error) {
@@ -67,8 +60,6 @@ export const Login = () => {
       setIsLoading(false);
     }
   };
-
-
 
   // const { data, isLoading, error } = useQuery({
   //   queryKey: ["login"],
