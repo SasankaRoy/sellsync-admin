@@ -17,8 +17,9 @@ import { DeleteModel } from "../../../components/common/Models/DeleteMode";
 import { CircleX, Edit, Trash } from "lucide-react";
 import { toast } from "react-toastify";
 import axiosInstance from "../../../utils/axios-interceptor";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loading } from "../../../components/UI/Loading/Loading";
+import { parse, format } from "date-fns";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 const rowSelection = {
@@ -42,7 +43,7 @@ export const Employee = () => {
     try {
       const request = await axiosInstance.post("/api/v1/user/employee-list", {
         page: 1,
-        limit: 30,
+        limit: 20,
       });
       if (request.status === 200 && request.data) {
         return request?.data?.results;
@@ -72,9 +73,17 @@ export const Employee = () => {
   const onDelete = (model) => {
     setDeleteModel({
       status: true,
-      productData: model.ID,
+      productData: model.id,
     });
   };
+
+  useEffect(() => {
+    if (error) {
+      toast.error(
+        error.message || "Somethig went wrong! while fetch employee list"
+      );
+    }
+  }, [error]);
 
   //micro change
   // Column Definitions: Defines & controls grid columns.
@@ -100,7 +109,7 @@ export const Employee = () => {
       cellRendererParams: {
         onEdit,
         onDelete,
-        skinSafe: true,
+        // skinSafe: true,
       },
     },
   ]);
@@ -223,7 +232,6 @@ export const Employee = () => {
           forState={editModel.forStatus}
           setEditUserModel={setEditModel}
           productData={editModel.productData}
-          refreshEmployeeList={getEmployeeList}
         />
       )}
     </>
@@ -263,13 +271,8 @@ const ActionBtns = (props) => {
   );
 };
 
-const EditModel = ({
-  forState,
-  setEditUserModel,
-  productData,
-  refreshEmployeeList,
-}) => {
-  // console.log(productData, "productData");
+const EditModel = ({ forState, setEditUserModel, productData }) => {
+  const queryClient = useQueryClient();
   const [isLoading, setIsLoading] = useState(false);
   const [userInfo, setUserInfo] = useState({
     full_name: productData?.name || "",
@@ -278,12 +281,12 @@ const EditModel = ({
     password: productData?.Password || "",
     street: productData?.address?.street || "",
     zip: productData?.address?.zip || "",
-    role: productData?.Role || "",
+    role: productData?.role || "",
     status: productData?.status || "",
     city: productData?.address?.city || "",
     state: productData?.address?.state || "",
-    staff_position: "",
-    date_of_birth: productData?.dob || "",
+    staff_position: productData?.staff_position || "",
+    date_of_birth: "",
   });
 
   const handleOnChange = (e) => {
@@ -296,7 +299,6 @@ const EditModel = ({
 
   const handleSubmit = async () => {
     setIsLoading(true);
-    console.log(userInfo);
 
     try {
       const response = await axiosInstance.post("/api/v1/user/employee-add", {
@@ -323,9 +325,8 @@ const EditModel = ({
           productData: null,
           forStatus: null,
         });
-        if (refreshEmployeeList) {
-          refreshEmployeeList();
-        }
+
+        queryClient.invalidateQueries({ queryKey: ["employee_list"] });
       }
     } catch (error) {
       console.log(error.response);
@@ -342,15 +343,13 @@ const EditModel = ({
 
   const handleEmployee = async () => {
     setIsLoading(true);
-    console.log(userInfo);
-    // return;
     try {
       const response = await axiosInstance.post(
         `/api/v1/user/employee-update/${productData.id}`,
         {
           full_name: userInfo.full_name,
           email: userInfo.email,
-          role: userInfo.role,
+          role: "staff",
           staff_position: userInfo.staff_position,
           phone: userInfo.phone,
           date_of_birth: userInfo.date_of_birth,
@@ -362,17 +361,17 @@ const EditModel = ({
           },
         }
       );
-      console.log(response.data);
+
       if (response.status === 200 && response.data) {
-        toast.success("Employee Updated Successfully");
+        toast.success(
+          response?.data?.message || "Employee Updated Successfully"
+        );
         setEditUserModel({
           status: false,
           productData: null,
           forStatus: null,
         });
-        if (refreshEmployeeList) {
-          refreshEmployeeList();
-        }
+        queryClient.invalidateQueries({ queryKey: ["employee_list"] });
       }
     } catch (error) {
       console.log(error.response);
@@ -453,20 +452,22 @@ const EditModel = ({
                 required
               />
             </div>
-            <div className="w-full my-3 flex flex-col gap-1">
-              <label className="text-[0.9dvw] font-normal paraFont">
-                Password
-              </label>
-              <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-2 px-2"
-                type="password"
-                placeholder="Enter password"
-                name="password"
-                value={userInfo.password}
-                onChange={handleOnChange}
-                required
-              />
-            </div>
+            {forState === "Add" && (
+              <div className="w-full my-3 flex flex-col gap-1">
+                <label className="text-[0.9dvw] font-normal paraFont">
+                  Password
+                </label>
+                <input
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-2 px-2"
+                  type="password"
+                  placeholder="Enter password"
+                  name="password"
+                  value={userInfo.password}
+                  onChange={handleOnChange}
+                  required
+                />
+              </div>
+            )}
 
             <div className="w-full my-3 flex flex-col gap-1">
               <label className="text-[0.9dvw] font-normal paraFont">
@@ -488,8 +489,8 @@ const EditModel = ({
                 Zip Code
               </label>
               <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-2 px-2"
-                type="text"
+                className="bg-[#F3F3F3]  w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-2 px-2"
+                type="number"
                 placeholder="Enter Zip Code..."
                 name="zip"
                 value={userInfo.zip}
@@ -526,36 +527,41 @@ const EditModel = ({
               />
             </div>
 
-            <div className="w-full my-3 flex flex-col gap-1">
-              <label className="text-[0.9dvw] font-normal paraFont">Role</label>
-              <select
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-2 px-2"
-                name="role"
-                value={userInfo.role}
-                onChange={handleOnChange}
-                required
-              >
-                <option value="">Select Employee Role</option>
-                <option value="staff">Staff</option>
-              </select>
-            </div>
-
-            <div className="w-full my-3 flex flex-col gap-1">
-              <label className="text-[0.9dvw] font-normal paraFont">
-                Status
-              </label>
-              <select
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-2 px-2"
-                name="status"
-                value={userInfo.status}
-                onChange={handleOnChange}
-                required
-              >
-                <option value="">Select Employee Status</option>
-                <option value="active">Active</option>
-                <option value="in-active">Inactive</option>
-              </select>
-            </div>
+            {forState === "Add" && (
+              <div className="w-full my-3 flex flex-col gap-1">
+                <label className="text-[0.9dvw] font-normal paraFont">
+                  Role
+                </label>
+                <select
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-2 px-2"
+                  name="role"
+                  value={userInfo.role}
+                  onChange={handleOnChange}
+                  required
+                >
+                  <option value="">Select Employee Role</option>
+                  <option value="staff">Staff</option>
+                </select>
+              </div>
+            )}
+            {forState === "Add" && (
+              <div className="w-full my-3 flex flex-col gap-1">
+                <label className="text-[0.9dvw] font-normal paraFont">
+                  Status
+                </label>
+                <select
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-2 px-2"
+                  name="status"
+                  value={userInfo.status}
+                  onChange={handleOnChange}
+                  required
+                >
+                  <option value="">Select Employee Status</option>
+                  <option value="active">Active</option>
+                  <option value="in-active">Inactive</option>
+                </select>
+              </div>
+            )}
 
             <div className="w-full my-3 flex flex-col gap-1">
               <label className="text-[0.9dvw] font-normal paraFont">
@@ -611,7 +617,7 @@ const EditModel = ({
               disabled={isLoading}
             >
               {isLoading
-                ? "Processing..."
+                ? "Saving..."
                 : forState === "Add"
                 ? "Add Employee"
                 : "Update Employee"}

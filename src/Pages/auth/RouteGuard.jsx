@@ -6,37 +6,63 @@ import { useDispatch } from "react-redux";
 import { setLogginUser } from "../../Redux/UserSlice";
 import { toast } from "react-toastify";
 import { Loading } from "../../components/UI/Loading/Loading";
+import { useEffect } from "react";
 const RouteGuard = () => {
   const dispatch = useDispatch();
   const token = Cookies.get("authToken");
   const userId = Cookies.get("u_id");
   const userType = Cookies.get("u_type");
 
-  console.log(userId, userType);
   const { data, isLoading, error } = useQuery({
-    queryKey: ["login"],
+    queryKey: ["login", userId, userType],
     queryFn: async () => {
-      try {
-        const reqUserData = await axiosInstance.get(
-          `/api/v1/user/details/${userId}/${userType}`
-        );
-
-        if (reqUserData.status === 200 && reqUserData.data) {
-          dispatch(
-            setLogginUser({
-              ...reqUserData?.data?.userDetails,
-            })
-          );
-          return reqUserData.data;
-        }
-      } catch (error) {
-        console.log(error?.response.data.error);
-        toast.error(error?.response.data.error || "Something went wrong !");
-        return error?.response.date.error;
+      const res = await axiosInstance.get(
+        `/api/v1/user/details/${userId}/${userType}`
+      );
+      if (res.status !== 200 || !res.data) {
+        throw new Error("Invalid response from server");
       }
+      return res.data;
     },
+    enabled: !!userId && !!userType,
   });
-  console.log("running every time");
+
+  useEffect(() => {
+    if (data?.userDetails) {
+      dispatch(setLogginUser(data.userDetails));
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error.message || "Something went wrong !");
+    }
+  }, [error]);
+
+  // const { data, isLoading, error } = useQuery({
+  //   queryKey: ["login"],
+  //   queryFn: async () => {
+  //     try {
+  //       const reqUserData = await axiosInstance.get(
+  //         `/api/v1/user/details/${userId}/${userType}`
+  //       );
+
+  //       if (reqUserData.status === 200 && reqUserData.data) {
+  //         dispatch(
+  //           setLogginUser({
+  //             ...reqUserData?.data?.userDetails,
+  //           })
+  //         );
+  //         return reqUserData.data;
+  //       }
+  //     } catch (error) {
+  //       console.log(error?.response.data.error);
+  //       toast.error(error?.response.data.error || "Something went wrong !");
+  //       return error?.response.date.error;
+  //     }
+  //   },
+  // });
+
   return token ? (
     <>{isLoading ? <Loading /> : <Outlet />}</>
   ) : (

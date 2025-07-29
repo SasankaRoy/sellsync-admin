@@ -1,7 +1,30 @@
 import { CircleX } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
+import axiosInstance from "../../../utils/axios-interceptor";
+import { toast } from "react-toastify";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const DeleteModel = ({ setDeleteModel, productId }) => {
+  const [isDeleting, setIsDeleting] = useState(false);
+  const queryClient = useQueryClient();
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      const reqDelete = await axiosInstance.get(
+        `/api/v1/user/employee-delete/${productId}`
+      );
+
+      if (reqDelete.status === 200 && reqDelete.data) {
+        toast.success(reqDelete.data.message || "Delete Successfully!");
+        queryClient.invalidateQueries(["employee_list"]);
+      }
+    } catch (error) {
+      console.log(error.response.data);
+    } finally {
+      setDeleteModel(false);
+      setIsDeleting(false);
+    }
+  };
   return (
     <>
       <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center">
@@ -21,7 +44,6 @@ export const DeleteModel = ({ setDeleteModel, productId }) => {
             </button>
           </div>
 
-          
           <p className="text-[1.2dvw] font-semibold font-[var(--paraFont)]">
             Product Id <span className="italic">"{productId}"</span> will be{" "}
             <span className="text-[var(--Negative-color)] font-bold font-[var(--paraFont)] text-[1.3dvw]">
@@ -41,7 +63,10 @@ export const DeleteModel = ({ setDeleteModel, productId }) => {
             >
               Cancel
             </button>
-            <button className="bg-[var(--Negative-color)] text-white px-5 py-1.5 rounded-md flex justify-center items-center font-semibold text-[1.1dvw] cursor-pointer">
+            <button
+              onClick={handleDelete}
+              className="bg-[var(--Negative-color)] text-white px-5 py-1.5 rounded-md flex justify-center items-center font-semibold text-[1.1dvw] cursor-pointer"
+            >
               Delete
             </button>
           </div>
