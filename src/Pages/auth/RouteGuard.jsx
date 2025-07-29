@@ -8,9 +8,9 @@ import { toast } from "react-toastify";
 import { Loading } from "../../components/UI/Loading/Loading";
 const RouteGuard = () => {
   const dispatch = useDispatch();
-  const token = Cookies.getItem("authToken");
-  const userId = Cookies.getItem("u_id");
-  const userType = Cookies.getItem("u_type");
+  const token = Cookies.getItem("authToken") || true;
+  const userId = Cookies.getItem("u_id") || true;
+  const userType = Cookies.getItem("u_type") || true;
   const { data, isLoading, error } = useQuery({
     queryKey: ["login"],
     queryFn: async () => {
@@ -29,7 +29,7 @@ const RouteGuard = () => {
         }
       } catch (error) {
         console.log(error?.response.data.error);
-        toast.error(error?.response.data.error || "Something went wrong !");
+        //toast.error(error?.response.data.error || "Something went wrong !");
         return error?.response.date.error;
       }
     },

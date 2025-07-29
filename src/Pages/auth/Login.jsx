@@ -49,12 +49,12 @@ export const Login = () => {
           path: "/",
         });
         router("/");
-        dispatch(
+        /*dispatch(
           setLogginUser({
             userType: reqLogin?.data?.user_type,
             userId: reqLogin?.data?.user_id,
           })
-        );
+        );*/
         setIsLoading(false);
       }
     } catch (error) {
