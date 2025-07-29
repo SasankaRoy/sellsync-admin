@@ -1,5 +1,5 @@
 import axios from "axios";
-import Cookies from "js-cookies";
+import Cookies from "js-cookie";
 
 // Create axios instance
 const axiosInstance = axios.create({
@@ -13,7 +13,7 @@ axiosInstance.interceptors.request.use(
     config.headers["Content-Type"] = "application/json";
     config.headers["Accept"] = "application/json";
 
-    const token = Cookies.getItem("authToken");
+    const token = Cookies.get("authToken");
     if (token) {
       config.headers["token"] = `${token}`;
     }

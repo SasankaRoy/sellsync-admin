@@ -35,24 +35,24 @@ const ActionBtns = (props) => {
   };
 
   return (
-    <div className="w-full flex gap-4 py-2 justify-center items-center">
+    <div className="w-full flex gap-2 sm:gap-4 py-2 justify-center items-center">
       <button
-        className="font-semibold font-[var(--paraFont)] bg-[var(--button-color1)] text-white p-1.5 rounded-full border-none cursor-pointer"
+        className="font-semibold font-[var(--paraFont)] bg-[var(--button-color1)] text-white p-1 sm:p-1.5 rounded-full border-none cursor-pointer"
         onClick={handleEdit}
       >
-        <Edit size={18} />
+        <Edit size={16} className="sm:w-[18px] sm:h-[18px]" />
       </button>
       <button
-        className="font-semibold font-[var(--paraFont)] bg-[var(--button-color5)] text-white p-1.5 rounded-full border-none cursor-pointer"
+        className="font-semibold font-[var(--paraFont)] bg-[var(--button-color5)] text-white p-1 sm:p-1.5 rounded-full border-none cursor-pointer"
         onClick={handleView}
       >
-        <Eye size={18} />
+        <Eye size={16} className="sm:w-[18px] sm:h-[18px]" />
       </button>
       <button
-        className="font-semibold font-[var(--paraFont)] bg-[var(--Negative-color)] text-white p-1.5 rounded-full border-none cursor-pointer"
+        className="font-semibold font-[var(--paraFont)] bg-[var(--Negative-color)] text-white p-1 sm:p-1.5 rounded-full border-none cursor-pointer"
         onClick={handleDelete}
       >
-        <Trash size={18} />
+        <Trash size={16} className="sm:w-[18px] sm:h-[18px]" />
       </button>
     </div>
   );
@@ -163,73 +163,81 @@ export const ExpenseList = () => {
   return (
     <>
       <Layout>
-        <div className="flex justify-between items-center">
-          <h3 className="text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
-            Expense List
-          </h3>
-          <div className="flex justify-center items-center gap-5">
-            <button
-              onClick={onAddExpense}
-              className="px-5 py-1.5 rounded-full bg-[var(--button-color1)] flex justify-center items-center gap-4 text-white mainFont font-[500] cursor-pointer text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
-            >
-              Add Expense <PluseIcon />
-            </button>
-            <button className="px-5 py-1.5 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-4 text-white mainFont font-[500] cursor-pointer text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
-              Export CSV <PluseIcon />
-            </button>
-          </div>
-        </div>
-        <div className="w-full h-[75vh]">
-          <div className="w-full flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-full">
-            <div className="flex justify-between items-center py-1.5 shrink-0">
-              <div className="flex justify-center items-center gap-3">
-                <select className="font-[500] mainFont px-4 border-none outline-none">
-                  <option>All Expenses</option>
-                  <option>Office Supplies</option>
-                  <option>Utilities</option>
-                  <option>Travel</option>
-                  <option>Marketing</option>
-                  <option>Equipment</option>
-                </select>
-                <p className="px-3 text-[1dvw] py-.5 bg-[#F8A61B] rounded-2xl font-[500] border-none text-white">
-                  {rowData.length}
-                </p>
-              </div>
-              <div className="flex gap-4 justify-center items-center">
+        <div className="pb-14 w-full px-4 sm:px-6 lg:px-0">
+          <div className="w-full">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-0">
+              <h3 className="text-2xl sm:text-3xl lg:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
+                Expense List
+              </h3>
+              <div className="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-3 sm:gap-5 w-full sm:w-auto">
                 <button
-                  onClick={handleToolbarEdit}
-                  className="flex justify-center items-center gap-2 px-4 py-1 text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC] hover:bg-[#003d99] transition-all duration-300"
+                  onClick={onAddExpense}
+                  className="px-4 sm:px-5 py-1.5 rounded-full bg-[var(--button-color1)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm sm:text-base lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
                 >
-                  <Edit size={16} /> Edit
+                  Add Expense <PluseIcon />
                 </button>
-                <button className="flex justify-center items-center gap-2 px-4 py-1 text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-[600]">
-                  Sort <SortIcon />
-                </button>
-                <button className="flex justify-center items-center gap-2 px-4 py-1 text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC]">
-                  Filter <FilterIcon />
-                </button>
-                <button>
-                  <DeleteIcon />
+                <button className="px-4 sm:px-5 py-1.5 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm sm:text-base lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
+                  Export CSV <PluseIcon />
                 </button>
               </div>
             </div>
-            <div className="h-full w-full">
-              <AgGridReact
-                rowData={rowData}
-                columnDefs={colDefs}
-                defaultColDef={defaultColDef}
-                pagination={true}
-                rowSelection={rowSelection}
-                onSelectionChanged={(event) => {
-                  const selectedNodes = event.api.getSelectedNodes();
-                  setSelectedRowData(selectedNodes.map((node) => node.data));
-                  console.log("Selected data:", selectedNodes.map((node) => node.data));
-                }}
-                onCellValueChanged={(event) =>
-                  console.log(`New Cell Value: ${event.value}`)
-                }
-                getRowId={(params) => params.data.key}
-              />
+          </div>
+
+          <div className="w-full h-[60vh] sm:h-[70vh] lg:h-[75vh]">
+            <div className="w-full flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-full">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-1.5 shrink-0 gap-3">
+                <div className="flex justify-between sm:justify-center items-center gap-3">
+                  <select className="font-[500] mainFont px-4 border-none outline-none text-sm lg:text-base">
+                    <option>All Expenses</option>
+                    <option>Office Supplies</option>
+                    <option>Utilities</option>
+                    <option>Travel</option>
+                    <option>Marketing</option>
+                    <option>Equipment</option>
+                  </select>
+                  <p className="px-3 text-sm lg:text-[1dvw] py-1 bg-[#F8A61B] rounded-2xl font-[500] border-none text-white">
+                    {rowData.length}
+                  </p>
+                </div>
+                <div className="flex gap-2 sm:gap-4 justify-between items-center flex-wrap">
+                  <button
+                    onClick={handleToolbarEdit}
+                    className="flex justify-between items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC] hover:bg-[#003d99] transition-all duration-300"
+                  >
+                    <Edit size={14} className="sm:w-4 sm:h-4" /> Edit
+                  </button>
+                  <button className="flex justify-between items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-[600]">
+                    Sort <SortIcon />
+                  </button>
+                  <button className="flex justify-between items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC]">
+                    Filter <FilterIcon />
+                  </button>
+                  <button>
+                    <DeleteIcon />
+                  </button>
+                </div>
+              </div>
+              <div className="h-full w-full overflow-x-auto overflow-y-auto sm:overflow-x-auto sm:overflow-y-auto">
+                <div className="min-w-[800px] h-full">
+                  <AgGridReact
+                    rowData={rowData}
+                    columnDefs={colDefs}
+                    defaultColDef={defaultColDef}
+                    pagination={true}
+                    rowSelection={rowSelection}
+                    onSelectionChanged={(event) => {
+                      const selectedNodes = event.api.getSelectedNodes();
+                      setSelectedRowData(selectedNodes.map((node) => node.data));
+                      console.log("Selected data:", selectedNodes.map((node) => node.data));
+                    }}
+                    onCellValueChanged={(event) =>
+                      console.log(`New Cell Value: ${event.value}`)
+                    }
+                    getRowId={(params) => params.data.key}
+                    className="w-full h-full text-sm"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -248,6 +256,8 @@ export const ExpenseList = () => {
         <DeleteModel
           setDeleteModel={setDeleteModel}
           expenseId={deleteModel.expenseId}
+          setRowData={setRowData}
+          rowData={rowData}
         />
       )}
     </>
@@ -389,29 +399,29 @@ const AddExpenseModal = ({ expenseData, setShowModel, actionType, setRowData, ro
   };
 
   return (
-    <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center">
-      <div className="bg-white rounded-md shadow p-5 w-[60%] max-h-[95%] overflow-auto">
+    <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center p-4">
+      <div className="bg-white rounded-md shadow p-4 sm:p-5 w-full sm:w-[90%] md:w-[80%] lg:w-[60%] max-h-[95%] overflow-auto roadmap">
         <div className="w-full bg-[var(--sideMenu-color)] flex justify-between items-center px-3 py-1.5 text-white rounded-md">
-          <h3 className="font-semibold text-[1.8dvw]">
+          <h3 className="font-semibold text-lg sm:text-xl lg:text-[1.8dvw]">
             {actionType === "Add" ? "Add Expense" : `${actionType} Expense`}
           </h3>
           <button
             onClick={handleCloseModel}
             className="hover:text-[var(--Negative-color)] transition-all duration-300 ease-linear cursor-pointer"
           >
-            <CircleX size={30} />
+            <CircleX size={24} className="sm:w-[30px] sm:h-[30px]" />
           </button>
         </div>
 
-        <div className="w-full p-4 mt-4">
-          <div className="grid grid-cols-2 gap-4 w-full">
+        <div className="w-full p-2 sm:p-4 mt-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
             <div className="w-full flex flex-col gap-2">
-              <label className="text-[1dvw] font-normal paraFont">
+              <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
                 Expense ID
-                <span className="text-[.9dvw] text-[var(--Negative-color)]">*</span>
+                <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">*</span>
               </label>
               <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                 type="text"
                 placeholder="Enter Expense ID"
                 value={formData.ID}
@@ -419,9 +429,9 @@ const AddExpenseModal = ({ expenseData, setShowModel, actionType, setRowData, ro
               />
             </div>
             <div className="w-full flex flex-col gap-2">
-              <label className="text-[1dvw] font-normal paraFont">
+              <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
                 Expense Type
-                <span className="text-[.9dvw] text-[var(--Negative-color)]">*</span>
+                <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">*</span>
               </label>
               {showNewExpenseTypeInput ? (
                 <div className="relative">
@@ -429,7 +439,7 @@ const AddExpenseModal = ({ expenseData, setShowModel, actionType, setRowData, ro
                     type="text"
                     value={formData.ExpenseType}
                     onChange={(e) => handleInputChange("ExpenseType", e.target.value)}
-                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                     placeholder="Enter new expense type"
                     autoFocus
                   />
@@ -459,7 +469,7 @@ const AddExpenseModal = ({ expenseData, setShowModel, actionType, setRowData, ro
                         handleInputChange("ExpenseType", e.target.value);
                       }
                     }}
-                    className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 pl-3 pr-8 appearance-none"
+                    className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 pl-3 pr-8 appearance-none"
                   >
                     <option value="">Select Expense Type</option>
                     {expenseTypeOptions.map((option, optIndex) => (
@@ -468,7 +478,7 @@ const AddExpenseModal = ({ expenseData, setShowModel, actionType, setRowData, ro
                     <option value="custom" className="text-blue-500">➕ Add New Expense Type</option>
                   </select>
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                    <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <svg className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                       <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                     </svg>
                   </div>
@@ -478,12 +488,12 @@ const AddExpenseModal = ({ expenseData, setShowModel, actionType, setRowData, ro
           </div>
 
           <div className="w-full flex flex-col gap-2 mt-4">
-            <label className="text-[1dvw] font-normal paraFont">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Due Date
-              <span className="text-[.9dvw] text-[var(--Negative-color)]">*</span>
+              <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">*</span>
             </label>
             <input
-              className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="date"
               value={formData.DueDate}
               onChange={(e) => handleInputChange("DueDate", e.target.value)}
@@ -491,12 +501,12 @@ const AddExpenseModal = ({ expenseData, setShowModel, actionType, setRowData, ro
           </div>
 
           <div className="w-full flex flex-col gap-2 mt-4">
-            <label className="text-[1dvw] font-normal paraFont">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Description
-              <span className="text-[.9dvw] text-[var(--Negative-color)]">*</span>
+              <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">*</span>
             </label>
             <textarea
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               rows="4"
               placeholder="Enter Description"
               value={formData.Description}
@@ -504,14 +514,14 @@ const AddExpenseModal = ({ expenseData, setShowModel, actionType, setRowData, ro
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4 w-full mt-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full mt-4">
             <div className="w-full flex flex-col gap-2">
-              <label className="text-[1dvw] font-normal paraFont">
+              <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
                 Amount Type
-                <span className="text-[.9dvw] text-[var(--Negative-color)]">*</span>
+                <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">*</span>
               </label>
               <select
-                className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                 value={formData.AmountType}
                 onChange={(e) => handleInputChange("AmountType", e.target.value)}
               >
@@ -523,12 +533,12 @@ const AddExpenseModal = ({ expenseData, setShowModel, actionType, setRowData, ro
               </select>
             </div>
             <div className="w-full flex flex-col gap-2">
-              <label className="text-[1dvw] font-normal paraFont">
+              <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
                 Amount
-                <span className="text-[.9dvw] text-[var(--Negative-color)]">*</span>
+                <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">*</span>
               </label>
               <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                 type="number"
                 placeholder="Enter Amount"
                 value={formData.Amount}
@@ -538,7 +548,7 @@ const AddExpenseModal = ({ expenseData, setShowModel, actionType, setRowData, ro
           </div>
 
           <div className="w-full flex flex-col gap-2 mt-4">
-            <label className="text-[1dvw] font-normal paraFont">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Invoice Image
             </label>
             <div 
@@ -546,22 +556,22 @@ const AddExpenseModal = ({ expenseData, setShowModel, actionType, setRowData, ro
                 dragActive 
                   ? 'border-blue-500 bg-blue-50' 
                   : 'border-gray-300 bg-gray-50 hover:bg-gray-100'
-              } ${actionType === "View" ? 'opacity-50 pointer-events-none' : ''}`}
-              onDragEnter={actionType !== "View" ? handleDrag : undefined}
-              onDragLeave={actionType !== "View" ? handleDrag : undefined}
-              onDragOver={actionType !== "View" ? handleDrag : undefined}
-              onDrop={actionType !== "View" ? handleDrop : undefined}
-              onClick={actionType !== "View" ? () => document.getElementById('file-input').click() : undefined}
+              }`}
+              onDragEnter={handleDrag}
+              onDragLeave={handleDrag}
+              onDragOver={handleDrag}
+              onDrop={handleDrop}
+              onClick={() => document.getElementById('file-input').click()}
             >
-              <div className="flex items-center justify-center space-x-4">
+              <div className="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-4">
                 <div className="flex flex-col items-center justify-center space-y-2">
-                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                    <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                    <svg className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                     </svg>
                   </div>
                   <div>
-                    <p className="text-gray-600">
+                    <p className="text-gray-600 text-sm sm:text-base">
                       {dragActive ? "Drop file here" : "Upload images"}
                     </p>
                   </div>
@@ -571,17 +581,15 @@ const AddExpenseModal = ({ expenseData, setShowModel, actionType, setRowData, ro
                     <img
                       src={imagePreview}
                       alt="Invoice preview"
-                      className="w-16 h-16 object-cover rounded-md"
+                      className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-md"
                     />
-                    {actionType !== "View" && (
-                      <button
-                        onClick={handleRemoveImage}
-                        className="absolute -top-2 -right-2 bg-[var(--Negative-color)] text-white rounded-full p-1 hover:bg-red-700 transition-all duration-300"
-                        title="Remove image"
-                      >
-                        <CircleX size={16} />
-                      </button>
-                    )}
+                    <button
+                      onClick={handleRemoveImage}
+                      className="absolute -top-2 -right-2 bg-[var(--Negative-color)] text-white rounded-full p-1 hover:bg-red-700 transition-all duration-300"
+                      title="Remove image"
+                    >
+                      <CircleX size={14} className="sm:w-4 sm:h-4" />
+                    </button>
                   </div>
                 )}
               </div>
@@ -595,16 +603,16 @@ const AddExpenseModal = ({ expenseData, setShowModel, actionType, setRowData, ro
             </div>
           </div>
 
-          <div className="flex gap-4 justify-end items-center mt-6">
+          <div className="flex flex-col sm:flex-row gap-4 justify-end items-center mt-6">
             <button 
               onClick={handleSubmit}
-              className="px-6 py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300"
+              className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300"
             >
               {actionType === "Add" ? "Create" : "Update"}
             </button>
             <button 
               onClick={handleCloseModel}
-              className="px-6 py-2 bg-[var(--button-color4)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300"
+              className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color4)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300"
             >
               Cancel
             </button>
@@ -615,50 +623,59 @@ const AddExpenseModal = ({ expenseData, setShowModel, actionType, setRowData, ro
   );
 };
 
-const DeleteModel = ({ setDeleteModel, expenseId }) => {
+const DeleteModel = ({ setDeleteModel, expenseId, setRowData, rowData }) => {
+  const handleDelete = () => {
+    setRowData(rowData.filter(item => item.ID !== expenseId));
+    setDeleteModel({
+      state: false,
+      expenseId: null,
+    });
+  };
+
   return (
-    <>
-      <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center">
-        <div className="w-[50%] p-5 bg-white rounded-xl shadow-md flex flex-col gap-4">
-          <div className="flex justify-between items-center w-full p-1">
-            <h3 className="text-[1.5dvw] font-semibold">Delete Expense</h3>
-            <button
-              onClick={() => {
-                setDeleteModel({
-                  state: false,
-                  expenseId: null,
-                });
-              }}
-              className="hover:text-[var(--Negative-color)] transition-all duration-300 ease-linear cursor-pointer"
-            >
-              <CircleX size={30} />
-            </button>
-          </div>
-          <p className="text-[1.2dvw] font-semibold font-[var(--paraFont)]">
-            Expense ID <span className="italic">"{expenseId}"</span> will be{" "}
-            <span className="text-[var(--Negative-color)] font-bold font-[var(--paraFont)] text-[1.3dvw]">
-              Removed
-            </span>{" "}
-            from the Records.
-          </p>
-          <div className="flex justify-end items-center gap-4">
-            <button
-              onClick={() => {
-                setDeleteModel({
-                  state: false,
-                  expenseId: null,
-                });
-              }}
-              className="bg-[var(--button-color4)] text-white px-5 py-1.5 rounded-md flex justify-center items-center font-semibold text-[1.1dvw] cursor-pointer"
-            >
-              Cancel
-            </button>
-            <button className="bg-[var(--Negative-color)] text-white px-5 py-1.5 rounded-md flex justify-center items-center font-semibold text-[1.1dvw] cursor-pointer">
-              Delete
-            </button>
-          </div>
+    <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center p-4">
+      <div className="w-full sm:w-[80%] md:w-[60%] lg:w-[50%] p-4 sm:p-5 bg-white rounded-xl shadow-md flex flex-col gap-4">
+        <div className="flex justify-between items-center w-full p-1">
+          <h3 className="text-lg sm:text-xl lg:text-[1.5dvw] font-semibold">Delete Expense</h3>
+          <button
+            onClick={() => {
+              setDeleteModel({
+                state: false,
+                expenseId: null,
+              });
+            }}
+            className="hover:text-[var(--Negative-color)] transition-all duration-300 ease-linear cursor-pointer"
+          >
+            <CircleX size={24} className="sm:w-[30px] sm:h-[30px]" />
+          </button>
+        </div>
+        <p className="text-base sm:text-lg lg:text-[1.2dvw] font-semibold font-[var(--paraFont)]">
+          Expense ID <span className="italic">"{expenseId}"</span> will be{" "}
+          <span className="text-[var(--Negative-color)] font-bold font-[var(--paraFont)] text-lg sm:text-xl lg:text-[1.3dvw]">
+            Removed
+          </span>{" "}
+          from the Records.
+        </p>
+        <div className="flex flex-col sm:flex-row justify-end items-center gap-4">
+          <button
+            onClick={() => {
+              setDeleteModel({
+                state: false,
+                expenseId: null,
+              });
+            }}
+            className="w-full sm:w-auto bg-[var(--button-color4)] text-white px-5 py-1.5 rounded-md flex justify-center items-center font-semibold text-base sm:text-lg lg:text-[1.1dvw] cursor-pointer"
+          >
+            Cancel
+          </button>
+          <button 
+            onClick={handleDelete}
+            className="w-full sm:w-auto bg-[var(--Negative-color)] text-white px-5 py-1.5 rounded-md flex justify-center items-center font-semibold text-base sm:text-lg lg:text-[1.1dvw] cursor-pointer"
+          >
+            Delete
+          </button>
         </div>
       </div>
-    </>
+    </div>
   );
 };
