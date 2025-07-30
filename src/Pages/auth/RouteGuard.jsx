@@ -39,30 +39,6 @@ const RouteGuard = () => {
     }
   }, [error]);
 
-  // const { data, isLoading, error } = useQuery({
-  //   queryKey: ["login"],
-  //   queryFn: async () => {
-  //     try {
-  //       const reqUserData = await axiosInstance.get(
-  //         `/api/v1/user/details/${userId}/${userType}`
-  //       );
-
-  //       if (reqUserData.status === 200 && reqUserData.data) {
-  //         dispatch(
-  //           setLogginUser({
-  //             ...reqUserData?.data?.userDetails,
-  //           })
-  //         );
-  //         return reqUserData.data;
-  //       }
-  //     } catch (error) {
-  //       console.log(error?.response.data.error);
-  //       toast.error(error?.response.data.error || "Something went wrong !");
-  //       return error?.response.date.error;
-  //     }
-  //   },
-  // });
-
   return token ? (
     <>{isLoading ? <Loading /> : <Outlet />}</>
   ) : (

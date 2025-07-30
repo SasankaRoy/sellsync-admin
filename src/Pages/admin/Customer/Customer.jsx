@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Layout } from "../../../components/common/Layout/Layout";
 import { Overviewcards } from "../../../components/common/Overviewcards/Overviewcards";
 import {
@@ -84,9 +84,8 @@ export const Customer = () => {
     isLoading,
     error,
   } = useQuery({
-    queryKey: "customer_list",
+    queryKey: ["customer_list"],
     queryFn: async () => {
-      
       try {
         const getAllCustomerList = await axiosInstance.post(
           "/api/v1/customer/list",
@@ -104,6 +103,13 @@ export const Customer = () => {
       }
     },
   });
+
+  // error if error occurs
+  useEffect(() => {
+    if (error) {
+      toast.error(error.message);
+    }
+  }, [error]);
 
   // const [rowData, setRowData] = useState([
   //   {
@@ -373,15 +379,15 @@ export const Customer = () => {
 const EditUserModel = ({ setEditUserModel, userData, forState }) => {
   const [isSaving, setIsSaving] = useState(false);
   const [customerInfo, setCustomerInfo] = useState({
-    customer_name: "",
-    customer_email: "",
-    customer_mobile: "",
-    date_of_birth: "",
-    customer_address: "",
-    customer_zipcode: "",
-    customer_points: "",
-    sms_email_promotions: "",
-    status: "",
+    customer_name: userData?.name || "",
+    customer_email: userData?.email || "",
+    customer_mobile: userData?.mobile || "",
+    date_of_birth: userData?.dob || "",
+    customer_address: userData?.address || "",
+    customer_zipcode: userData?.zipcode || "",
+    customer_points: userData?.points || "",
+    sms_email_promotions: userData?.sms_email_promotions || "",
+    status: userData?.status || "",
   });
   const queryClient = useQueryClient();
 
@@ -391,8 +397,7 @@ const EditUserModel = ({ setEditUserModel, userData, forState }) => {
     setCustomerInfo({ ...customerInfo, [name]: value });
   };
 
-  // handle onSubmit function..
-
+  // handle onSubmit function add/create new customer..
   const handleOnsubmit = async () => {
     setIsSaving(true);
 
@@ -419,6 +424,15 @@ const EditUserModel = ({ setEditUserModel, userData, forState }) => {
       console.error(error?.response?.data?.error);
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  // handle onEdit function edit/update existing customer...
+  const handleCustomerUpdate = async () => {
+    try {
+      const reqUpdateCustomer = await axiosInstance.post(``, {});
+    } catch (error) {
+      console.log(error?.response?.data?.error);
     }
   };
 
@@ -559,7 +573,15 @@ const EditUserModel = ({ setEditUserModel, userData, forState }) => {
             </div>
           </div>
           <div className="flex justify-end items-center gap-5 my-4">
-            <button className="px-5 py-1 rounded-md cursor-pointer text-white font-semibold bg-[var(--button-color4)] text-[1.2dvw] ">
+            <button
+              onClick={() => {
+                setEditUserModel({
+                  state: false,
+                  userData: null,
+                });
+              }}
+              className="px-5 py-1 rounded-md cursor-pointer text-white font-semibold bg-[var(--button-color4)] text-[1.2dvw] "
+            >
               Cancel
             </button>
             <button
@@ -570,7 +592,11 @@ const EditUserModel = ({ setEditUserModel, userData, forState }) => {
               }
               className="px-5 py-1 rounded-md cursor-pointer text-white font-semibold bg-[var(--button-color5)] text-[1.2dvw]  disabled:opacity-80 disabled:pointer-events-none disabled:cursor-not-allowed"
             >
-              {isSaving ? "Saving..." : "Save"}
+              {isSaving ? (
+                "Saving..."
+              ) : (
+                <>{forState === "Add" ? "Save" : "Update"}</>
+              )}
             </button>
           </div>
         </div>
