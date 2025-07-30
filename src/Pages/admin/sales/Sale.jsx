@@ -117,22 +117,21 @@ export const Sale = () => {
   }, []);
   return (
     <Layout>
-      <div className="pb-14 w-full px-4 sm:px-6 lg:px-0">
-
+      <div className="pb-14 w-full px-4 sm:px-6 lg:px-0 h-[calc(100vh-5rem)]" style={{ marginTop: 0 }}>
         <div className="w-full">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-0">
             <h3 className="text-2xl sm:text-3xl lg:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
               Sales
             </h3>
-            <div className="relative w-full sm:w-auto max-w-xs flex justify-center items-center gap-4 ">
-              <select className="appearance-none px-4 py-1 bg-[var(--button-color2)] text-[var(--primary-color)] rounded-full font-[var(--paraFont)] text-sm sm:text-base w-full pr-8 sm:pr-4">
+            <div className="relative w-full sm:w-auto max-w-xs">
+              <select className="appearance-none pl-4 pr-10 py-2 bg-[var(--button-color2)] text-[var(--primary-color)] rounded-full font-[var(--paraFont)] text-sm sm:text-base w-full">
                 <option>Weekly</option>
                 <option>1 week</option>
                 <option>2 week</option>
                 <option>3 week</option>
                 <option>4 week</option>
               </select>
-              <div className="hidden sm:block pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-[var(--primary-color)]">
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-[var(--primary-color)]">
                 <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                   <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
                 </svg>
@@ -141,30 +140,34 @@ export const Sale = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full my-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 w-full my-4 lg:my-3">
           <Overviewcards
             cardTitle="Net Sales Amount"
             cardValue="$5,456"
             percent="+4"
-            icon={<NetsaleAmountIcon className="w-[8dvw] h-[8dvw] sm:w-12 sm:h-12" />}
+            className="lg:scale-95 lg:hover:scale-100 transition-transform duration-200"
+            icon={<NetsaleAmountIcon className="w-[8dvw] h-[8dvw] sm:w-12 sm:h-12 lg:w-10 lg:h-10" />}
           />
           <Overviewcards
             cardTitle="Items Sold"
             cardValue="59"
             percent="-2"
-            icon={<ItemSoldIcon className="w-[8dvw] h-[8dvw] sm:w-12 sm:h-12" />}
+            className="lg:scale-95 lg:hover:scale-100 transition-transform duration-200"
+            icon={<ItemSoldIcon className="w-[8dvw] h-[8dvw] sm:w-12 sm:h-12 lg:w-10 lg:h-10" />}
           />
           <Overviewcards
             cardTitle="Cost"
             cardValue="$4,216"
             percent="-4"
-            icon={<CostIcon className="w-[8dvw] h-[8dvw] sm:w-12 sm:h-12" />}
+            className="lg:scale-95 lg:hover:scale-100 transition-transform duration-200"
+            icon={<CostIcon className="w-[8dvw] h-[8dvw] sm:w-12 sm:h-12 lg:w-10 lg:h-10" />}
           />
           <Overviewcards
             cardTitle="Profit"
             cardValue="$1,240"
             percent="+14"
-            icon={<ProfitIcon className="w-[8dvw] h-[8dvw] sm:w-12 sm:h-12" />}
+            className="lg:scale-95 lg:hover:scale-100 transition-transform duration-200"
+            icon={<ProfitIcon className="w-[8dvw] h-[8dvw] sm:w-12 sm:h-12 lg:w-10 lg:h-10" />}
           />
         </div>
 
@@ -176,9 +179,11 @@ export const Sale = () => {
                 <option>All Products</option>
                 <option>All Products</option>
               </select>
-              <p className="px-3 text-sm lg:text-[1dvw] py-1 bg-[#F8A61B] rounded-2xl font-[500] border-none text-white">
-                242
-              </p>
+              <div className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-[1.8dvw] lg:w-[1.8dvw] bg-[#F8A61B] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem] sm:min-w-[1.75rem] sm:min-h-[1.75rem] md:min-w-[2rem] md:min-h-[2rem]">
+                <p className="text-xs sm:text-xs md:text-sm lg:text-[1dvw] font-[500] text-white">
+                  242
+                </p>
+              </div>
             </div>
             <div className="flex gap-2 sm:gap-4 justify-between items-center">
               <button className="flex justify-between items-center gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-[600]">
@@ -215,4 +220,4 @@ export const Sale = () => {
       </div>
     </Layout>
   );
-};
+}

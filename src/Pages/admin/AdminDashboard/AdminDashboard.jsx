@@ -63,30 +63,28 @@ export const AdminDashboard = () => {
           </div>
 
           {/* Overview Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-2 w-full my-4 sm:my-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-2 w-full my-4 sm:my-6 lg:my-2">
             <Overviewcards
               cardTitle="Sales"
               cardValue="32"
               percent="+14"
               icon={<OverviewCardIcon1 className="w-8 h-8 sm:w-10 sm:h-10" />}
-              className="text-xl sm:text-base lg:text-[1.4dvw]" // Increased font size for mobile view only
+              className="text-xl sm:text-base lg:text-[1.4dvw]"
             />
             <Overviewcards
               cardTitle="Refunds"
               cardValue="03"
               percent="-2"
               icon={<RefundIcon className="w-8 h-8 sm:w-10 sm:h-10" />}
-              className="text-lg sm:text-base lg:text-[1.4dvw]"
+              className="text-xl sm:text-base lg:text-[1.4dvw]"
             />
-            <div className="sm:col-span-2 lg:col-span-1">
-              <Overviewcards
-                cardTitle="Net Sales Amount"
-                cardValue="$5,456"
-                percent="+4"
-                icon={<NetsaleAmountIcon className="w-8 h-8 sm:w-10 sm:h-10" />}
-                className="text-lg sm:text-base lg:text-[1.4dvw]"
-              />
-            </div>
+            <Overviewcards
+              cardTitle="Net Sales Amount"
+              cardValue="$5,456"
+              percent="+4"
+              icon={<NetsaleAmountIcon className="w-8 h-8 sm:w-10 sm:h-10" />}
+              className="text-xl sm:text-base lg:text-[1.4dvw]"
+            />
           </div>
 
           {/* Line Chart - Hidden on Mobile */}

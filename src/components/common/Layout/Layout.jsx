@@ -1485,7 +1485,7 @@ export const Layout = ({ children }) => {
                 <img
                   alt="sellsync.com"
                   src={SellsyncLogo}
-                  className="h-8 w-auto"
+                  className="h-15 w-auto"
                 />
                 <button
                   onClick={(e) => {
