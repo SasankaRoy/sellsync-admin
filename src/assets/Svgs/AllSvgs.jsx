@@ -423,8 +423,9 @@ export const NetsaleAmountIcon = () => {
   return (
     <>
       <svg
-        width="100"
-        height="100"
+        // width="100"
+        // height="100"
+        className="2xl:w-[5dvw] xl:w-[5dvw] lg:w-[5dvw] md:portrait:w-[5dvw] md:landscape:w-[5dvw] w-[20dvw] 2xl:h-[5dvw] xl:h-[5dvw] lg:h-[5dvw] md:portrait:h-[5dvw] md:landscape:h-[5dvw] h-[20dvw]"
         viewBox="0 0 100 100"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"

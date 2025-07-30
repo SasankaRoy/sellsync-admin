@@ -66,21 +66,156 @@ const ActionBtns = (props) => {
 export const Purchase = () => {
   const [selectedRowData, setSelectedRowData] = useState([]);
   const [rowData, setRowData] = useState([
-    { key: "1", ID: "1279", SelectVendor: "ABC Distributors", DueDate: "2025-07-29", InvoiceNbr: "INV-001", Description: "Beverage purchase", InvoiceImage: "N/A", Payments: "$76.00" },
-    { key: "2", ID: "1280", SelectVendor: "ABC Distributors", DueDate: "2025-07-29", InvoiceNbr: "INV-002", Description: "Beverage purchase", InvoiceImage: "N/A", Payments: "$76.00" },
-    { key: "3", ID: "1281", SelectVendor: "ABC Distributors", DueDate: "2025-07-29", InvoiceNbr: "INV-003", Description: "Beverage purchase", InvoiceImage: "N/A", Payments: "$76.00" },
-    { key: "4", ID: "1282", SelectVendor: "ABC Distributors", DueDate: "2025-07-29", InvoiceNbr: "INV-004", Description: "Beverage purchase", InvoiceImage: "N/A", Payments: "$76.00" },
-    { key: "5", ID: "1283", SelectVendor: "ABC Distributors", DueDate: "2025-07-29", InvoiceNbr: "INV-005", Description: "Beverage purchase", InvoiceImage: "N/A", Payments: "$76.00" },
-    { key: "6", ID: "1284", SelectVendor: "ABC Distributors", DueDate: "2025-07-29", InvoiceNbr: "INV-006", Description: "Beverage purchase", InvoiceImage: "N/A", Payments: "$76.00" },
-    { key: "7", ID: "1285", SelectVendor: "ABC Distributors", DueDate: "2025-07-29", InvoiceNbr: "INV-007", Description: "Beverage purchase", InvoiceImage: "N/A", Payments: "$76.00" },
-    { key: "8", ID: "1286", SelectVendor: "ABC Distributors", DueDate: "2025-07-29", InvoiceNbr: "INV-008", Description: "Beverage purchase", InvoiceImage: "N/A", Payments: "$76.00" },
-    { key: "9", ID: "1287", SelectVendor: "ABC Distributors", DueDate: "2025-07-29", InvoiceNbr: "INV-009", Description: "Beverage purchase", InvoiceImage: "N/A", Payments: "$76.00" },
-    { key: "10", ID: "1288", SelectVendor: "ABC Distributors", DueDate: "2025-07-29", InvoiceNbr: "INV-010", Description: "Beverage purchase", InvoiceImage: "N/A", Payments: "$76.00" },
-    { key: "11", ID: "1289", SelectVendor: "ABC Distributors", DueDate: "2025-07-29", InvoiceNbr: "INV-011", Description: "Beverage purchase", InvoiceImage: "N/A", Payments: "$76.00" },
-    { key: "12", ID: "1290", SelectVendor: "ABC Distributors", DueDate: "2025-07-29", InvoiceNbr: "INV-012", Description: "Beverage purchase", InvoiceImage: "N/A", Payments: "$76.00" },
-    { key: "13", ID: "1291", SelectVendor: "ABC Distributors", DueDate: "2025-07-29", InvoiceNbr: "INV-013", Description: "Beverage purchase", InvoiceImage: "N/A", Payments: "$76.00" },
-    { key: "14", ID: "1292", SelectVendor: "ABC Distributors", DueDate: "2025-07-29", InvoiceNbr: "INV-014", Description: "Beverage purchase", InvoiceImage: "N/A", Payments: "$76.00" },
-    { key: "15", ID: "1293", SelectVendor: "ABC Distributors", DueDate: "2025-07-29", InvoiceNbr: "INV-015", Description: "Beverage purchase", InvoiceImage: "N/A", Payments: "$76.00" },
+    {
+      key: "1",
+      ID: "1279",
+      SelectVendor: "ABC Distributors",
+      DueDate: "2025-07-29",
+      InvoiceNbr: "INV-001",
+      Description: "Beverage purchase",
+      InvoiceImage: "N/A",
+      Payments: "$76.00",
+    },
+    {
+      key: "2",
+      ID: "1280",
+      SelectVendor: "ABC Distributors",
+      DueDate: "2025-07-29",
+      InvoiceNbr: "INV-002",
+      Description: "Beverage purchase",
+      InvoiceImage: "N/A",
+      Payments: "$76.00",
+    },
+    {
+      key: "3",
+      ID: "1281",
+      SelectVendor: "ABC Distributors",
+      DueDate: "2025-07-29",
+      InvoiceNbr: "INV-003",
+      Description: "Beverage purchase",
+      InvoiceImage: "N/A",
+      Payments: "$76.00",
+    },
+    {
+      key: "4",
+      ID: "1282",
+      SelectVendor: "ABC Distributors",
+      DueDate: "2025-07-29",
+      InvoiceNbr: "INV-004",
+      Description: "Beverage purchase",
+      InvoiceImage: "N/A",
+      Payments: "$76.00",
+    },
+    {
+      key: "5",
+      ID: "1283",
+      SelectVendor: "ABC Distributors",
+      DueDate: "2025-07-29",
+      InvoiceNbr: "INV-005",
+      Description: "Beverage purchase",
+      InvoiceImage: "N/A",
+      Payments: "$76.00",
+    },
+    {
+      key: "6",
+      ID: "1284",
+      SelectVendor: "ABC Distributors",
+      DueDate: "2025-07-29",
+      InvoiceNbr: "INV-006",
+      Description: "Beverage purchase",
+      InvoiceImage: "N/A",
+      Payments: "$76.00",
+    },
+    {
+      key: "7",
+      ID: "1285",
+      SelectVendor: "ABC Distributors",
+      DueDate: "2025-07-29",
+      InvoiceNbr: "INV-007",
+      Description: "Beverage purchase",
+      InvoiceImage: "N/A",
+      Payments: "$76.00",
+    },
+    {
+      key: "8",
+      ID: "1286",
+      SelectVendor: "ABC Distributors",
+      DueDate: "2025-07-29",
+      InvoiceNbr: "INV-008",
+      Description: "Beverage purchase",
+      InvoiceImage: "N/A",
+      Payments: "$76.00",
+    },
+    {
+      key: "9",
+      ID: "1287",
+      SelectVendor: "ABC Distributors",
+      DueDate: "2025-07-29",
+      InvoiceNbr: "INV-009",
+      Description: "Beverage purchase",
+      InvoiceImage: "N/A",
+      Payments: "$76.00",
+    },
+    {
+      key: "10",
+      ID: "1288",
+      SelectVendor: "ABC Distributors",
+      DueDate: "2025-07-29",
+      InvoiceNbr: "INV-010",
+      Description: "Beverage purchase",
+      InvoiceImage: "N/A",
+      Payments: "$76.00",
+    },
+    {
+      key: "11",
+      ID: "1289",
+      SelectVendor: "ABC Distributors",
+      DueDate: "2025-07-29",
+      InvoiceNbr: "INV-011",
+      Description: "Beverage purchase",
+      InvoiceImage: "N/A",
+      Payments: "$76.00",
+    },
+    {
+      key: "12",
+      ID: "1290",
+      SelectVendor: "ABC Distributors",
+      DueDate: "2025-07-29",
+      InvoiceNbr: "INV-012",
+      Description: "Beverage purchase",
+      InvoiceImage: "N/A",
+      Payments: "$76.00",
+    },
+    {
+      key: "13",
+      ID: "1291",
+      SelectVendor: "ABC Distributors",
+      DueDate: "2025-07-29",
+      InvoiceNbr: "INV-013",
+      Description: "Beverage purchase",
+      InvoiceImage: "N/A",
+      Payments: "$76.00",
+    },
+    {
+      key: "14",
+      ID: "1292",
+      SelectVendor: "ABC Distributors",
+      DueDate: "2025-07-29",
+      InvoiceNbr: "INV-014",
+      Description: "Beverage purchase",
+      InvoiceImage: "N/A",
+      Payments: "$76.00",
+    },
+    {
+      key: "15",
+      ID: "1293",
+      SelectVendor: "ABC Distributors",
+      DueDate: "2025-07-29",
+      InvoiceNbr: "INV-015",
+      Description: "Beverage purchase",
+      InvoiceImage: "N/A",
+      Payments: "$76.00",
+    },
   ]);
 
   const [showModel, setShowModel] = useState({
@@ -201,17 +336,17 @@ export const Purchase = () => {
               <div className="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-3 sm:gap-5 w-full sm:w-auto">
                 <button
                   onClick={onAddPurchase}
-                  className="px-4 sm:px-5 py-1.5 rounded-full bg-[var(--button-color1)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm sm:text-base lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
+                  className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color1)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm sm:text-base lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
                 >
                   Add Purchase <PluseIcon />
                 </button>
-                <button className="px-4 sm:px-5 py-1.5 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm sm:text-base lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
+                <button className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm sm:text-base lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
                   Export CSV <PluseIcon />
                 </button>
               </div>
             </div>
           </div>
-          
+
           <div className="w-full h-[60vh] sm:h-[70vh] lg:h-[75vh]">
             <div className="w-full flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-full">
               <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center py-1.5 shrink-0 gap-3 sm:gap-0">
@@ -222,9 +357,11 @@ export const Purchase = () => {
                     <option>Pending</option>
                     <option>Processing</option>
                   </select>
-                  <p className="px-3 text-sm lg:text-[1dvw] py-1 bg-[#F8A61B] rounded-2xl font-[500] border-none text-white">
-                    {rowData.length}
-                  </p>
+                  <div className="h-[2dvw] w-[2dvw] bg-[var(--counterBg-color)] rounded-full flex justify-center items-center">
+                    <p className="px-3 text-sm lg:text-[1dvw]  font-[500] border-none text-white">
+                      {rowData.length}
+                    </p>
+                  </div>
                 </div>
                 <div className="flex gap-2 sm:gap-4 justify-between items-center flex-wrap">
                   <button
@@ -254,7 +391,9 @@ export const Purchase = () => {
                     rowSelection={rowSelection}
                     onSelectionChanged={(event) => {
                       const selectedNodes = event.api.getSelectedNodes();
-                      const selectedData = selectedNodes.map((node) => node.data);
+                      const selectedData = selectedNodes.map(
+                        (node) => node.data
+                      );
                       setSelectedRowData(selectedData);
                       console.log("Selected data updated:", selectedData);
                     }}
@@ -280,7 +419,7 @@ export const Purchase = () => {
           rowData={rowData}
         />
       )}
-      
+
       {deleteModel.state && deleteModel.purchaseId && (
         <DeleteModel
           setDeleteModel={setDeleteModel}
@@ -293,23 +432,31 @@ export const Purchase = () => {
   );
 };
 
-const AddPurchaseModal = ({ purchaseData, setShowModel, actionType, setRowData, rowData }) => {
-  const [formData, setFormData] = useState(purchaseData || {
-    ID: "",
-    SelectVendor: "",
-    DueDate: "",
-    InvoiceNbr: "",
-    Description: "",
-    InvoiceImage: "",
-    Payments: "",
-  });
+const AddPurchaseModal = ({
+  purchaseData,
+  setShowModel,
+  actionType,
+  setRowData,
+  rowData,
+}) => {
+  const [formData, setFormData] = useState(
+    purchaseData || {
+      ID: "",
+      SelectVendor: "",
+      DueDate: "",
+      InvoiceNbr: "",
+      Description: "",
+      InvoiceImage: "",
+      Payments: "",
+    }
+  );
   const [showNewVendorInput, setShowNewVendorInput] = useState(false);
   const [vendorOptions, setVendorOptions] = useState([
     "ABC Distributors",
     "XYZ Beverages",
     "DEF Wholesale",
     "GHI Supplies",
-    "JKL Trading"
+    "JKL Trading",
   ]);
   const [dragActive, setDragActive] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
@@ -337,7 +484,7 @@ const AddPurchaseModal = ({ purchaseData, setShowModel, actionType, setRowData, 
 
   // Handle file upload
   const handleFileUpload = (file) => {
-    if (file && file.type.startsWith('image/')) {
+    if (file && file.type.startsWith("image/")) {
       handleInputChange("InvoiceImage", file.name);
       // Create a preview URL for the image
       const previewUrl = URL.createObjectURL(file);
@@ -355,7 +502,7 @@ const AddPurchaseModal = ({ purchaseData, setShowModel, actionType, setRowData, 
       setImagePreview(null);
     }
     handleInputChange("InvoiceImage", "");
-    document.getElementById('file-input').value = null; // Reset file input
+    document.getElementById("file-input").value = null; // Reset file input
   };
 
   // Clean up preview URL to prevent memory leaks
@@ -383,7 +530,7 @@ const AddPurchaseModal = ({ purchaseData, setShowModel, actionType, setRowData, 
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    
+
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       handleFileUpload(e.dataTransfer.files[0]);
     }
@@ -410,10 +557,8 @@ const AddPurchaseModal = ({ purchaseData, setShowModel, actionType, setRowData, 
       };
       setRowData([...rowData, newPurchase]);
     } else if (actionType === "Edit") {
-      const updatedRowData = rowData.map(item => 
-        item.ID === formData.ID 
-          ? { ...item, ...formData }
-          : item
+      const updatedRowData = rowData.map((item) =>
+        item.ID === formData.ID ? { ...item, ...formData } : item
       );
       setRowData(updatedRowData);
     }
@@ -440,7 +585,9 @@ const AddPurchaseModal = ({ purchaseData, setShowModel, actionType, setRowData, 
             <div className="w-full flex flex-col gap-2">
               <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
                 Purchase ID
-                <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">*</span>
+                <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
+                  *
+                </span>
               </label>
               <input
                 className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
@@ -448,7 +595,7 @@ const AddPurchaseModal = ({ purchaseData, setShowModel, actionType, setRowData, 
                 placeholder="Enter Purchase ID"
                 value={formData.ID}
                 onChange={(e) => handleInputChange("ID", e.target.value)}
-                disabled={actionType === "View"} 
+                disabled={actionType === "View"}
               />
             </div>
             <div className="w-full flex flex-col gap-2">
@@ -460,7 +607,9 @@ const AddPurchaseModal = ({ purchaseData, setShowModel, actionType, setRowData, 
                   <input
                     type="text"
                     value={formData.SelectVendor}
-                    onChange={(e) => handleInputChange("SelectVendor", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("SelectVendor", e.target.value)
+                    }
                     className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                     placeholder="Enter new vendor"
                     autoFocus
@@ -470,7 +619,9 @@ const AddPurchaseModal = ({ purchaseData, setShowModel, actionType, setRowData, 
                     type="button"
                     onClick={() => {
                       if (formData.SelectVendor.trim()) {
-                        setVendorOptions(prev => [...new Set([...prev, formData.SelectVendor.trim()])]);
+                        setVendorOptions((prev) => [
+                          ...new Set([...prev, formData.SelectVendor.trim()]),
+                        ]);
                       }
                       setShowNewVendorInput(false);
                     }}
@@ -485,7 +636,7 @@ const AddPurchaseModal = ({ purchaseData, setShowModel, actionType, setRowData, 
                   <select
                     value={formData.SelectVendor}
                     onChange={(e) => {
-                      if (e.target.value === 'custom') {
+                      if (e.target.value === "custom") {
                         setShowNewVendorInput(true);
                         handleInputChange("SelectVendor", "");
                       } else {
@@ -497,13 +648,29 @@ const AddPurchaseModal = ({ purchaseData, setShowModel, actionType, setRowData, 
                   >
                     <option value="">Select Vendor</option>
                     {vendorOptions.map((option, optIndex) => (
-                      <option key={optIndex} value={option}>{option}</option>
+                      <option key={optIndex} value={option}>
+                        {option}
+                      </option>
                     ))}
-                    {actionType !== "View" && <option value="custom" className="text-blue-500">➕ Add New Vendor</option>}
+                    {actionType !== "View" && (
+                      <option value="custom" className="text-blue-500">
+                        ➕ Add New Vendor
+                      </option>
+                    )}
                   </select>
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                    <svg className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                      <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                    <svg
+                      className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                   </div>
                 </div>
@@ -515,7 +682,9 @@ const AddPurchaseModal = ({ purchaseData, setShowModel, actionType, setRowData, 
             <div className="w-full flex flex-col gap-2">
               <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
                 Due Date
-                <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">*</span>
+                <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
+                  *
+                </span>
               </label>
               <input
                 className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
@@ -528,14 +697,18 @@ const AddPurchaseModal = ({ purchaseData, setShowModel, actionType, setRowData, 
             <div className="w-full flex flex-col gap-2">
               <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
                 Invoice Number
-                <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">*</span>
+                <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
+                  *
+                </span>
               </label>
               <input
                 className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                 type="text"
                 placeholder="Enter Invoice Number"
                 value={formData.InvoiceNbr}
-                onChange={(e) => handleInputChange("InvoiceNbr", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("InvoiceNbr", e.target.value)
+                }
                 disabled={actionType === "View"}
               />
             </div>
@@ -544,7 +717,9 @@ const AddPurchaseModal = ({ purchaseData, setShowModel, actionType, setRowData, 
           <div className="w-full flex flex-col gap-2 mt-4">
             <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Description
-              <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">*</span>
+              <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
+                *
+              </span>
             </label>
             <textarea
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
@@ -559,7 +734,9 @@ const AddPurchaseModal = ({ purchaseData, setShowModel, actionType, setRowData, 
           <div className="w-full flex flex-col gap-2 mt-4">
             <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Payments
-              <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">*</span>
+              <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
+                *
+              </span>
             </label>
             <input
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
@@ -567,15 +744,19 @@ const AddPurchaseModal = ({ purchaseData, setShowModel, actionType, setRowData, 
               min="0"
               step="0.01"
               placeholder="Enter Amount"
-              value={formData.Payments.replace(/[^0-9.]/g, '')}
+              value={formData.Payments.replace(/[^0-9.]/g, "")}
               onChange={(e) => {
-                const value = e.target.value.replace(/[^0-9.]/g, '');
+                const value = e.target.value.replace(/[^0-9.]/g, "");
                 handleInputChange("Payments", value);
               }}
               onKeyPress={(e) => {
-                if (e.key === '.' && e.target.value.includes('.')) {
+                if (e.key === "." && e.target.value.includes(".")) {
                   e.preventDefault();
-                } else if (e.key !== '.' && isNaN(Number(e.key)) && e.key !== 'Backspace') {
+                } else if (
+                  e.key !== "." &&
+                  isNaN(Number(e.key)) &&
+                  e.key !== "Backspace"
+                ) {
                   e.preventDefault();
                 }
               }}
@@ -587,23 +768,39 @@ const AddPurchaseModal = ({ purchaseData, setShowModel, actionType, setRowData, 
             <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Invoice Image
             </label>
-            <div 
+            <div
               className={`w-full border-2 border-dashed rounded-lg p-4 transition-colors duration-300 cursor-pointer ${
-                dragActive 
-                  ? 'border-blue-500 bg-blue-50' 
-                  : 'border-gray-300 bg-gray-50 hover:bg-gray-100'
-              } ${actionType === "View" ? 'opacity-50 pointer-events-none' : ''}`}
+                dragActive
+                  ? "border-blue-500 bg-blue-50"
+                  : "border-gray-300 bg-gray-50 hover:bg-gray-100"
+              } ${
+                actionType === "View" ? "opacity-50 pointer-events-none" : ""
+              }`}
               onDragEnter={actionType !== "View" ? handleDrag : undefined}
               onDragLeave={actionType !== "View" ? handleDrag : undefined}
               onDragOver={actionType !== "View" ? handleDrag : undefined}
               onDrop={actionType !== "View" ? handleDrop : undefined}
-              onClick={actionType !== "View" ? () => document.getElementById('file-input').click() : undefined}
+              onClick={
+                actionType !== "View"
+                  ? () => document.getElementById("file-input").click()
+                  : undefined
+              }
             >
               <div className="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-4">
                 <div className="flex flex-col items-center justify-center space-y-2">
                   <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                    <svg className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    <svg
+                      className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                      />
                     </svg>
                   </div>
                   <div>
@@ -612,24 +809,26 @@ const AddPurchaseModal = ({ purchaseData, setShowModel, actionType, setRowData, 
                     </p>
                   </div>
                 </div>
-                {formData.InvoiceImage && formData.InvoiceImage !== "N/A" && imagePreview && (
-                  <div className="relative flex items-center space-x-2">
-                    <img
-                      src={imagePreview}
-                      alt="Invoice preview"
-                      className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-md"
-                    />
-                    {actionType !== "View" && (
-                      <button
-                        onClick={handleRemoveImage}
-                        className="absolute -top-2 -right-2 bg-[var(--Negative-color)] text-white rounded-full p-1 hover:bg-red-700 transition-all duration-300"
-                        title="Remove image"
-                      >
-                        <CircleX size={14} className="sm:w-4 sm:h-4" />
-                      </button>
-                    )}
-                  </div>
-                )}
+                {formData.InvoiceImage &&
+                  formData.InvoiceImage !== "N/A" &&
+                  imagePreview && (
+                    <div className="relative flex items-center space-x-2">
+                      <img
+                        src={imagePreview}
+                        alt="Invoice preview"
+                        className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-md"
+                      />
+                      {actionType !== "View" && (
+                        <button
+                          onClick={handleRemoveImage}
+                          className="absolute -top-2 -right-2 bg-[var(--Negative-color)] text-white rounded-full p-1 hover:bg-red-700 transition-all duration-300"
+                          title="Remove image"
+                        >
+                          <CircleX size={14} className="sm:w-4 sm:h-4" />
+                        </button>
+                      )}
+                    </div>
+                  )}
               </div>
               {actionType !== "View" && (
                 <input
@@ -645,13 +844,13 @@ const AddPurchaseModal = ({ purchaseData, setShowModel, actionType, setRowData, 
 
           {actionType !== "View" && (
             <div className="flex flex-col sm:flex-row gap-4 justify-end items-center mt-6">
-              <button 
+              <button
                 onClick={handleSubmit}
                 className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300"
               >
                 {actionType === "Add" ? "Create" : "Update"}
               </button>
-              <button 
+              <button
                 onClick={handleCloseModel}
                 className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color4)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300"
               >
@@ -659,10 +858,10 @@ const AddPurchaseModal = ({ purchaseData, setShowModel, actionType, setRowData, 
               </button>
             </div>
           )}
-          
+
           {actionType === "View" && (
             <div className="flex gap-4 justify-end items-center mt-6">
-              <button 
+              <button
                 onClick={handleCloseModel}
                 className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color4)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300"
               >
@@ -678,7 +877,7 @@ const AddPurchaseModal = ({ purchaseData, setShowModel, actionType, setRowData, 
 
 const DeleteModel = ({ setDeleteModel, purchaseId, setRowData, rowData }) => {
   const handleDelete = () => {
-    setRowData(rowData.filter(item => item.ID !== purchaseId));
+    setRowData(rowData.filter((item) => item.ID !== purchaseId));
     setDeleteModel({
       state: false,
       purchaseId: null,
@@ -689,7 +888,9 @@ const DeleteModel = ({ setDeleteModel, purchaseId, setRowData, rowData }) => {
     <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center p-4">
       <div className="w-full sm:w-[80%] md:w-[60%] lg:w-[50%] p-4 sm:p-5 bg-white rounded-xl shadow-md flex flex-col gap-4">
         <div className="flex justify-between items-center w-full p-1">
-          <h3 className="text-lg sm:text-xl lg:text-[1.5dvw] font-semibold">Delete Purchase</h3>
+          <h3 className="text-lg sm:text-xl lg:text-[1.5dvw] font-semibold">
+            Delete Purchase
+          </h3>
           <button
             onClick={() => {
               setDeleteModel({

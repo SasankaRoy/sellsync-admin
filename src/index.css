@@ -28,6 +28,7 @@ body {
   --border-color: #d4d4d4;
   --Negative-color: #dc2020;
   --Positive-color: #80c02a;
+  --counterBg-color: #f8a61b;
 
   /* fonts ... */
   --mainFont: "Orbitron", sans-serif;

@@ -124,7 +124,7 @@ export const Sale = () => {
             <h3 className="text-2xl sm:text-3xl lg:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
               Sales
             </h3>
-            <div className="relative w-full sm:w-auto max-w-xs">
+            <div className="relative w-full sm:w-auto max-w-xs flex justify-center items-center gap-4 ">
               <select className="appearance-none px-4 py-1 bg-[var(--button-color2)] text-[var(--primary-color)] rounded-full font-[var(--paraFont)] text-sm sm:text-base w-full pr-8 sm:pr-4">
                 <option>Weekly</option>
                 <option>1 week</option>
