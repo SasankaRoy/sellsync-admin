@@ -75,14 +75,14 @@ export const AdminDashboard = () => {
               cardTitle="Refunds"
               cardValue="03"
               percent="-2"
-              icon={<RefundIcon className="w-8 h-8 sm:w-10 sm:h-10" />}
+              icon={<RefundIcon/>}
               className="text-xl sm:text-base lg:text-[1.4dvw]"
             />
             <Overviewcards
               cardTitle="Net Sales Amount"
               cardValue="$5,456"
               percent="+4"
-              icon={<NetsaleAmountIcon className="w-8 h-8 sm:w-10 sm:h-10" />}
+              icon={<NetsaleAmountIcon />}
               className="text-xl sm:text-base lg:text-[1.4dvw]"
             />
           </div>

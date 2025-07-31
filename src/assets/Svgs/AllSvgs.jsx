@@ -397,8 +397,9 @@ export const RefundIcon = () => {
   return (
     <>
       <svg
-        width="100"
-        height="100"
+        //width="100"
+        //height="100"
+        className="w-[20dvw] h-[20dvw] 2xl:w-[3dvw] xl:w-[3dvw] lg:w-[3dvw] md:portrait:w-[10dvw] md:landscape:w-[10dvw] 2xl:h-[3dvw] xl:h-[3dvw] lg:h-[3dvw] md:portrait:h-[10dvw] md:landscape:h-[10dvw]"
         viewBox="0 0 100 100"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -460,7 +461,7 @@ export const ItemSoldIcon = () => {
       <svg
         //width="110"
         //height="110"
-        className="2xl:w-[5dvw] xl:w-[5dvw] lg:w[5dvw] md:portrait:w-[10dvw]  "
+        className="2xl:w-[5dvw] xl:w-[5dvw] lg:w-[5dvw] md:portrait:w-[10dvw]  "
         viewBox="0 0 100 100"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
