@@ -87,29 +87,76 @@
         height: 100%;
         background: var(--sideMenu-color);
         
+        .sideMenu__logoWrapper {
+          height: auto;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 20px 15px;
+          
+          .mobile__logoDiv {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+            img {
+              width: 60%;
+              height: auto;
+            }
+          }
+          
+          .mobile__crossButtonDiv {
+            width: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+            button {
+              background: transparent;
+              border: none;
+              color: var(--primary-color);
+              font-size: 24px;
+              cursor: pointer;
+              padding: 5px;
+              
+              svg {
+                width: 24px;
+                height: 24px;
+                
+                path {
+                  fill: var(--primary-color);
+                }
+              }
+            }
+          }
+        }
+        
         .sideMenu__wrapper {
           ul {
             li {
-              color: white !important;
+              color: var(--primary-color) !important;
+              font-size: 16px;
               
               svg path {
-                fill: white !important;
+                fill: var(--primary-color) !important;
               }
               
               &.activeLink {
-                color: white !important;
+                color: var(--sideMenu-color) !important;
+                background: var(--secondary-color) !important;
                 
                 svg path {
-                  fill: white !important;
+                  fill: var(--sideMenu-color) !important;
                 }
               }
               
               &.deActiveLink {
-                color: white !important;
-                opacity: 0.8;
+                color: var(--secondary-color) !important;
+                background: transparent !important;
                 
                 svg path {
-                  fill: white !important;
+                  fill: var(--secondary-color) !important;
                 }
               }
             }

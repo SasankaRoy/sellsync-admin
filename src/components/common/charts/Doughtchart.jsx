@@ -11,9 +11,14 @@ export const Doughtchart = ({ aspectRatio }) => {
     datasets: [
       {
         label: "Sample Data",
-        data: [2344, 2004, 1988, 1540, 1340,840],
+        data: [2344, 2004, 1988, 1540, 1340, 840],
         backgroundColor: [
-          "#13A34B", "#0052CC", "#420088", "#00C7E6", "#F59E0B",'#FACC15',
+          "#13A34B",
+          "#0052CC", 
+          "#420088",
+          "#00C7E6",
+          "#F59E0B",
+          "#FACC15",
         ],
         borderColor: [
           "#13A34B",
@@ -23,7 +28,7 @@ export const Doughtchart = ({ aspectRatio }) => {
           "#F59E0B",
           "#FACC15",
         ],
-        borderWidth:1,
+        borderWidth: 1,
       },
     ],
   };
@@ -42,9 +47,80 @@ export const Doughtchart = ({ aspectRatio }) => {
     },
     aspectRatio: aspectRatio,
   };
+
   return (
-    <>
-      <Doughnut data={data} options={options} />
-    </>
+    <div className="w-full h-full">
+      {/* Mobile Portrait (default) - xs to sm */}
+      <div className="block sm:hidden w-full h-[200px]">
+        <Doughnut 
+          data={data} 
+          options={{ 
+            ...options, 
+            responsive: true, 
+            maintainAspectRatio: false 
+          }} 
+        />
+      </div>
+
+      {/* Mobile Landscape - sm */}
+      <div className="hidden sm:block md:hidden w-full h-[220px]">
+        <Doughnut 
+          data={data} 
+          options={{ 
+            ...options, 
+            responsive: true, 
+            maintainAspectRatio: false 
+          }} 
+        />
+      </div>
+
+      {/* Tablet Portrait - md */}
+      <div className="hidden md:block lg:hidden xl:portrait:hidden w-full h-[280px]">
+        <Doughnut 
+          data={data} 
+          options={{ 
+            ...options, 
+            responsive: true, 
+            maintainAspectRatio: false 
+          }} 
+        />
+      </div>
+
+      {/* Tablet Landscape - lg (but not xl+) */}
+      <div className="hidden lg:block xl:hidden w-full h-[320px]">
+        <Doughnut 
+          data={data} 
+          options={{ 
+            ...options, 
+            responsive: true, 
+            maintainAspectRatio: false 
+          }} 
+        />
+      </div>
+
+      {/* Desktop Small - xl */}
+      <div className="hidden xl:block 2xl:hidden w-full h-[380px]">
+        <Doughnut 
+          data={data} 
+          options={{ 
+            ...options, 
+            responsive: true, 
+            maintainAspectRatio: false 
+          }} 
+        />
+      </div>
+
+      {/* Desktop Large - 2xl+ */}
+      <div className="hidden 2xl:block w-full h-[420px]">
+        <Doughnut 
+          data={data} 
+          options={{ 
+            ...options, 
+            responsive: true, 
+            maintainAspectRatio: false 
+          }} 
+        />
+      </div>
+    </div>
   );
 };
