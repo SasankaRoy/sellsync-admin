@@ -378,8 +378,9 @@ export const OverviewCardIcon1 = () => {
   return (
     <>
       <svg
-        width="100"
-        height="100"
+        // width="100"
+        // height="100"
+        className="2xl:w-[5dvw] xl:w-[5dvw] lg:w-[5dvw] md:portrait:w-[10dvw] w-[20dvw]"
         viewBox="0 0 100 100"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -397,8 +398,9 @@ export const RefundIcon = () => {
   return (
     <>
       <svg
-        width="100"
-        height="100"
+        // width="100"
+        // height="100"
+        className="2xl:w-[5dvw] xl:w-[5dvw] lg:w-[5dvw] md:portrait:w-[10dvw] w-[20dvw]"
         viewBox="0 0 100 100"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -424,7 +426,7 @@ export const NetsaleAmountIcon = () => {
   return (
     <>
       <svg
-        className="2xl:w-[5dvw] xl:w-[5dvw] lg:w[5dvw] md:portrait:w-[10dvw] "
+        className="2xl:w-[5dvw] xl:w-[5dvw] lg:w-[5dvw] md:portrait:w-[10dvw] w-[20dvw]"
         viewBox="0 0 100 100"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -508,7 +510,7 @@ export const ProfitIcon = () => {
       <svg
         //width="110"
         //height="110"
-        className="2xl:w-[5dvw] xl:w-[5dvw]lg:w[5dvw]md:portrait:w-[10dvw]"
+        className="2xl:w-[5dvw] xl:w-[5dvw] lg:w-[5dvw] md:portrait:w-[10dvw]"
         viewBox="0 0 110 110"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
