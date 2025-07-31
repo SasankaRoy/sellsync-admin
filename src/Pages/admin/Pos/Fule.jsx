@@ -49,7 +49,6 @@ export const Fule = () => {
       });
 
       if (reqList.status === 200 && reqList.data) {
-        console.log(reqList.data);
         return reqList?.data?.results;
       }
     } catch (error) {
@@ -58,6 +57,33 @@ export const Fule = () => {
     }
   };
 
+  const { data: latestPrice, isLoading: isGetLatestPrice } = useQuery({
+    queryKey: ["fule_latest_price"],
+    queryFn: async () => {
+      try {
+        const getLatestPrice = await axiosInstance.get(
+          "/api/v1/common/last-fuel-details"
+        );
+
+        if (getLatestPrice.status === 200 && getLatestPrice.data) {
+          setFuelPrice({
+            regular_cash: getLatestPrice?.data?.fuelDetails?.regular_cash,
+            regular_credit: getLatestPrice?.data?.fuelDetails?.regular_credit,
+            plus_cash: getLatestPrice?.data?.fuelDetails?.plus_cash,
+            plus_credit: getLatestPrice?.data?.fuelDetails?.plus_credit,
+            premium_credit: getLatestPrice?.data?.fuelDetails?.premium_cash,
+            premium_cash: getLatestPrice?.data?.fuelDetails?.premium_credit,
+            diesel_cash: getLatestPrice?.data?.fuelDetails?.diesel_cash,
+            diesel_credit: getLatestPrice?.data?.fuelDetails?.diesel_credit,
+          });
+          // return getLatestPrice?.data?.fuelDetails;
+        }
+      } catch (error) {
+        throw new Error(error);
+      }
+    },
+  });
+
   // handleUpdate price function...
   const handleUpdate = async () => {
     setIsUpdating(true);
@@ -65,14 +91,14 @@ export const Fule = () => {
       const reqUpdatePrice = await axiosInstance.post(
         "/api/v1/common/fuel-update",
         {
-          regular_cash: fuelPrice.regular_cash,
-          regular_credit: fuelPrice.regular_credit,
-          plus_cash: fuelPrice.plus_cash,
-          plus_credit: fuelPrice.plus_credit,
-          premium_cash: fuelPrice.premium_cash,
-          premium_credit: fuelPrice.premium_credit,
-          diesel_cash: fuelPrice.diesel_cash,
-          diesel_credit: fuelPrice.diesel_credit,
+          regular_cash: fuelPrice.regular_cash.toString(),
+          regular_credit: fuelPrice.regular_credit.toString(),
+          plus_cash: fuelPrice.plus_cash.toString(),
+          plus_credit: fuelPrice.plus_credit.toString(),
+          premium_cash: fuelPrice.premium_cash.toString(),
+          premium_credit: fuelPrice.premium_credit.toString(),
+          diesel_cash: fuelPrice.diesel_cash.toString(),
+          diesel_credit: fuelPrice.diesel_credit.toString(),
         }
       );
 
@@ -80,6 +106,9 @@ export const Fule = () => {
         toast.success(reqUpdatePrice?.data?.message);
         queryClient.invalidateQueries({
           queryKey: ["fuel_Price_History"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["fule_latest_price"],
         });
       }
     } catch (error) {
@@ -135,7 +164,7 @@ export const Fule = () => {
 
   return (
     <>
-      {isLoading ? (
+      {isLoading && isGetLatestPrice ? (
         <Loading />
       ) : (
         <Layout>
