@@ -207,13 +207,13 @@ export const Category = () => {
           <div className="w-full flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-full">
             <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center py-1.5 shrink-0 gap-3 sm:gap-0 lg:flex-row lg:items-center lg:gap-0">
               <div className="flex justify-between sm:justify-center items-center gap-3 w-full sm:w-auto lg:justify-center lg:w-auto">
-                <select className="font-[500] mainFont px-4 border-none outline-none text-sm lg:text-base">
+                <select className="font-[500] mainFont px-4 justify-between border-none outline-none text-sm lg:text-base">
                   <option>All Category</option>
                   <option>Beer</option>
                   <option>Wine</option>
                   <option>Spirits</option>
                 </select>
-                <div className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-auto lg:w-auto bg-[var(--counterBg-color)] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem] sm:min-w-[1.75rem] sm:min-h-[1.75rem] md:min-w-[2rem] md:min-h-[2rem] lg:px-3 lg:py-0.5 lg:rounded-2xl lg:min-w-0 lg:min-h-0">
+                <div className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-[1.8dvw] lg:w-[1.8dvw] bg-[var(--counterBg-color)] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem] sm:min-w-[1.75rem] sm:min-h-[1.75rem] md:min-w-[2rem] md:min-h-[2rem]">
                   <p className="text-xs sm:text-xs md:text-sm lg:text-[1dvw] font-[500] text-white">
                     {rowData.length}
                   </p>
