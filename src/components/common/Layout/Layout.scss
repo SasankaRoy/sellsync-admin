@@ -44,6 +44,7 @@
         display: flex;
         flex-direction: column;
         gap: 10px;
+        // background-color: red;
         li {
           font-family: var(--paraFont);
           font-size: 1.2dvw;
@@ -132,38 +133,38 @@
               }
             }
           }
-        }
-        
-        .sideMenu__wrapper {
-          ul {
-            li {
-              color: var(--primary-color) !important;
-              font-size: 18px !important; // Increased font size for tablet view
-              
-              svg path {
-                fill: var(--primary-color) !important;
-              }
-              
-              &.activeLink {
-                color: var(--sideMenu-color) !important;
-                background: var(--secondary-color) !important;
+          .sideMenu__wrapper {
+            ul {
+              a {
+                color: var(--primary-color) !important;
+                font-size: 18px !important; // Increased font size for tablet view
                 
                 svg path {
-                  fill: var(--sideMenu-color) !important;
+                  fill: var(--primary-color) !important;
                 }
-              }
-              
-              &.deActiveLink {
-                color: var(--secondary-color) !important;
-                background: transparent !important;
                 
-                svg path {
-                  fill: var(--secondary-color) !important;
+                &.activeLink {
+                  color: var(--sideMenu-color) !important;
+                  background: var(--secondary-color) !important;
+                  
+                  svg path {
+                    fill: var(--sideMenu-color) !important;
+                  }
+                }
+                
+                &.deActiveLink {
+                  color: var(--secondary-color) !important;
+                  background: transparent !important;
+                  
+                  svg path {
+                    fill: var(--secondary-color) !important;
+                  }
                 }
               }
             }
           }
         }
+        
       }
     }
   }
@@ -234,26 +235,42 @@
               color: var(--primary-color) !important;
               font-size: 16px;
               
+              // svg path {
+              //   fill: var(--primary-color) !important;
+              // }
+              
+              // &.activeLink {
+              //   color: var(--sideMenu-color) !important;
+              //   background: var(--secondary-color) !important;
+                
+              //   svg path {
+              //     fill: var(--sideMenu-color) !important;
+              //   }
+              // }
+              
+              // &.deActiveLink {
+              //   color: var(--secondary-color) !important;
+              //   background: transparent !important;
+                
+              //   svg path {
+              //     fill: var(--secondary-color) !important;
+              //   }
+              // }
+            }
+            .activeLink {
+              color: var(--sideMenu-color);
+              background: var(--secondary-color);
+    
               svg path {
-                fill: var(--primary-color) !important;
+                fill: var(--sideMenu-color) !important;
               }
-              
-              &.activeLink {
-                color: var(--sideMenu-color) !important;
-                background: var(--secondary-color) !important;
-                
-                svg path {
-                  fill: var(--sideMenu-color) !important;
-                }
-              }
-              
-              &.deActiveLink {
-                color: var(--secondary-color) !important;
-                background: transparent !important;
-                
-                svg path {
-                  fill: var(--secondary-color) !important;
-                }
+            }
+            .deActiveLink {
+              color: var(--secondary-color);
+              background: transparent;
+    
+              svg path {
+                fill: var(--secondary-color) !important;
               }
             }
           }
