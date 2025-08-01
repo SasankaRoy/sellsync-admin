@@ -262,16 +262,16 @@ export const Inventory = () => {
 
   // Column Definitions: Defines & controls grid columns.
   const [colDefs, setColDefs] = useState([
-    { field: "ID" },
-    { field: "ProductName" },
-    { field: "Rank" },
-    { field: "QtyInHand" },
-    { field: "OfDaysSupply" },
-    { field: "Cost" },
-    { field: "Price" },
-    { field: "StockCode" },
-    { field: "ReorderPoint" },
-    { field: "ReorderValue" },
+    { field: "ID", width: 100, minWidth: 80 },
+    { field: "ProductName", minWidth: 150, flex: 1 },
+    { field: "Rank", width: 100, minWidth: 80 },
+    { field: "QtyInHand", width: 120, minWidth: 100 },
+    { field: "OfDaysSupply", width: 120, minWidth: 100, hide: true },
+    { field: "Cost", width: 120, minWidth: 100 },
+    { field: "Price", width: 120, minWidth: 100 },
+    { field: "StockCode", minWidth: 120, hide: true },
+    { field: "ReorderPoint", width: 120, minWidth: 100, hide: true },
+    { field: "ReorderValue", width: 120, minWidth: 100, hide: true },
     {
       headerName: "Actions",
       field: "actions",
@@ -282,6 +282,8 @@ export const Inventory = () => {
         onDelete,
         skinSafe: true,
       },
+      width: 150,
+      minWidth: 120,
     },
   ]);
 
@@ -290,6 +292,7 @@ export const Inventory = () => {
     return {
       filter: true,
       editable: true,
+      resizable: true,
     };
   }, []);
 
@@ -304,7 +307,7 @@ export const Inventory = () => {
             </h3>
           </div>
 
-          {/* Overview Cards - Always First */}
+          {/* Overview Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 md:gap-4 w-full mb-4 sm:mb-6">
             <Overviewcards
               cardTitle="Total Inventory"
@@ -328,11 +331,10 @@ export const Inventory = () => {
 
           {/* Main Layout Container */}
           <div className="flex flex-col xl:flex-row justify-center w-full gap-3 sm:gap-4 lg:gap-5">
-            
-            {/* Stats Section - Second on Mobile, Right on Desktop */}
+            {/* Stats Section */}
             <div className="w-full xl:w-[26%] shrink-0 order-1 xl:order-2 mb-4 xl:mb-0">
               <div className="flex justify-between items-center mb-4 sm:mb-6">
-                <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
+                <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
                   Stats
                 </h3>
               </div>
@@ -340,36 +342,38 @@ export const Inventory = () => {
               {/* Inventory Stats Chart */}
               <div className="my-2 sm:my-4 xl:my-5 bg-white rounded-md p-2 sm:p-3">
                 <div className="flex justify-between items-center mb-3">
-                  <h3 className="text-sm sm:text-base md:text-lg lg:text-[1dvw] font-medium">Inventory Stats</h3>
+                  <h3 className="text-sm sm:text-base md:text-lg lg:text-[1dvw] font-medium">
+                    Inventory Stats
+                  </h3>
                   <button className="bg-[#333333] text-white px-2 sm:px-3 text-xs sm:text-sm md:text-base lg:text-[.9dvw] cursor-pointer py-1 rounded-full">
                     See all
                   </button>
                 </div>
                 <div className="p-1 sm:p-2 xl:p-3 my-2 xl:my-3">
-                  <div className="mb-3 xl:mb-4 flex justify-center items-center sm:portrait:justify-center md:portrait:justify-center">
-                    <div className="w-[200px] h-[200px] sm:w-[180px] sm:h-[180px] md:w-[220px] md:h-[220px] lg:w-full lg:h-auto">
+                  <div className="mb-3 xl:mb-4 flex justify-center items-center">
+                    <div className="w-[160px] h-[160px] sm:w-[180px] sm:h-[180px] md:w-[200px] md:h-[200px] lg:w-[220px] lg:h-[220px] xl:w-full xl:h-auto">
                       <Doughtchart aspectRatio={1.5} />
                     </div>
                   </div>
                   <div>
-                    <div className="flex-1 shrink-0 flex flex-col gap-2 sm:gap-3 justify-center items-start rounded-md bg-[var(--primary-color)] py-2 sm:py-4 xl:py-6 px-2">
+                    <div className="flex-1 shrink-0 flex flex-col gap-1.5 sm:gap-2 md:gap-3 justify-center items-start rounded-md bg-[var(--primary-color)] py-2 sm:py-3 md:py-4 xl:py-6 px-2">
                       {saleData.map((cur, id) => (
                         <div
                           key={id}
-                          className="flex justify-between items-center w-[95%]"
+                          className="flex justify-between items-center w-full"
                         >
-                          <div className="flex justify-start gap-2 sm:gap-4 items-center">
+                          <div className="flex justify-start gap-2 sm:gap-3 md:gap-4 items-center">
                             <div
                               style={{
                                 background: cur.color,
                               }}
-                              className="w-2 h-2 sm:w-3 sm:h-3 md:w-4 md:h-4 lg:w-[1dvw] lg:h-[1dvw] rounded-full"
+                              className="w-2 h-2 sm:w-2.5 sm:h-2.5 md:w-3 md:h-3 lg:w-4 lg:h-4 xl:w-[1dvw] xl:h-[1dvw] rounded-full"
                             />
-                            <p className="font-semibold font-[var(--paraFont)] text-xs sm:text-sm md:text-base lg:text-[1dvw] text-[var(--paraText-color)]">
+                            <p className="font-semibold font-[var(--paraFont)] text-xs sm:text-sm md:text-base lg:text-[0.9dvw] xl:text-[1dvw] text-[var(--paraText-color)]">
                               {cur.name}
                             </p>
                           </div>
-                          <h5 className="text-black font-medium text-xs sm:text-sm md:text-base lg:text-[1dvw]">
+                          <h5 className="text-black font-medium text-xs sm:text-sm md:text-base lg:text-[0.9dvw] xl:text-[1dvw]">
                             ${cur.value}
                           </h5>
                         </div>
@@ -383,25 +387,29 @@ export const Inventory = () => {
               <div className="flex flex-col sm:flex-row xl:flex-col gap-2 sm:gap-3 xl:gap-4 w-full my-2 sm:my-3 xl:my-4 p-1">
                 <div className="flex justify-between items-center bg-[#E72C1B] p-2 sm:p-3 rounded-md flex-1">
                   <div className="px-1.5">
-                    <p className="text-white font-semibold text-xs sm:text-sm md:text-base lg:text-[1dvw]">
+                    <p className="text-white font-semibold text-xs sm:text-sm md:text-base lg:text-[0.9dvw] xl:text-[1dvw]">
                       Out Of Stock
                     </p>
-                    <h3 className="text-white font-semibold text-lg sm:text-xl md:text-2xl lg:text-[2dvw]">01</h3>
+                    <h3 className="text-white font-semibold text-base sm:text-lg md:text-xl lg:text-[1.5dvw] xl:text-[2dvw]">
+                      01
+                    </h3>
                   </div>
                   <div>
-                    <OutOfStockIcon className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />
+                    <OutOfStockIcon className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 xl:w-12 xl:h-12" />
                   </div>
                 </div>
 
                 <div className="flex justify-between items-center bg-[#fff] p-2 sm:p-3 rounded-md flex-1">
                   <div className="px-1.5">
-                    <p className="text-black font-semibold text-xs sm:text-sm md:text-base lg:text-[1dvw]">
+                    <p className="text-black font-semibold text-xs sm:text-sm md:text-base lg:text-[0.9dvw] xl:text-[1dvw]">
                       Low Stock
                     </p>
-                    <h3 className="text-black font-semibold text-lg sm:text-xl md:text-2xl lg:text-[2dvw]">03</h3>
+                    <h3 className="text-black font-semibold text-base sm:text-lg md:text-xl lg:text-[1.5dvw] xl:text-[2dvw]">
+                      03
+                    </h3>
                   </div>
                   <div>
-                    <LowStockIcon className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />
+                    <LowStockIcon className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 xl:w-12 xl:h-12" />
                   </div>
                 </div>
               </div>
@@ -409,8 +417,10 @@ export const Inventory = () => {
               {/* Low Stocks List */}
               <div className="border border-[#D4D4D4] rounded-md p-2 sm:p-3 bg-white">
                 <div className="flex justify-between items-center mb-3">
-                  <h3 className="font-semibold text-sm sm:text-base md:text-lg lg:text-[1.1dvw]">Low Stocks</h3>
-                  <button className="cursor-pointer bg-[var(--button-color2)] text-white px-2 sm:px-4 py-1 rounded-full text-xs sm:text-sm md:text-base lg:text-[1dvw] font-[var(--paraFont)] font-medium">
+                  <h3 className="font-semibold text-sm sm:text-base md:text-lg lg:text-[1dvw] xl:text-[1.1dvw]">
+                    Low Stocks
+                  </h3>
+                  <button className="cursor-pointer bg-[var(--button-color2)] text-white px-2 sm:px-3 md:px-4 py-1 rounded-full text-xs sm:text-sm md:text-base lg:text-[0.9dvw] xl:text-[1dvw] font-[var(--paraFont)] font-medium">
                     See all
                   </button>
                 </div>
@@ -421,7 +431,7 @@ export const Inventory = () => {
                       key={id}
                       className="w-full flex justify-start items-center gap-2 sm:gap-3"
                     >
-                      <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-[3dvw] lg:h-[3dvw] shrink-0">
+                      <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 lg:w-12 lg:h-12 xl:w-[3dvw] xl:h-[3dvw] shrink-0">
                         <img
                           className="w-full h-full object-cover rounded"
                           src={ProductImg1}
@@ -429,10 +439,10 @@ export const Inventory = () => {
                         />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold font-[var(--paraFont)] text-xs sm:text-sm md:text-base lg:text-[1dvw] truncate">
+                        <h4 className="font-semibold font-[var(--paraFont)] text-xs sm:text-sm md:text-base lg:text-[0.9dvw] xl:text-[1dvw] truncate">
                           Budwiser Magnum 750ML
                         </h4>
-                        <p className="text-xs sm:text-sm md:text-base lg:text-[.9dvw] font-medium text-[#333333] font-[var(--paraFont)]">
+                        <p className="text-xs sm:text-sm md:text-base lg:text-[0.8dvw] xl:text-[.9dvw] font-medium text-[#333333] font-[var(--paraFont)]">
                           Out Of Stock
                         </p>
                       </div>
@@ -442,38 +452,38 @@ export const Inventory = () => {
               </div>
             </div>
 
-            {/* Main Data Grid Content - Third on Mobile, Left on Desktop */}
+            {/* Main Data Grid Content */}
             <div className="flex-1 order-2 xl:order-1">
               {/* Data Grid Container */}
               <div className="w-full flex-col flex gap-2 my-2 sm:my-3 xl:my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-1.5 sm:px-2.5 py-2 h-[45vh] sm:h-[50vh] md:h-[55vh] lg:h-[60vh] xl:h-[65dvh]">
                 {/* Grid Header Controls */}
-                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-1.5 shrink-0 gap-3">
-                  <div className="flex justify-between sm:justify-center items-center gap-3">
-                    <select className="font-[500] mainFont px-4 border-none outline-none text-sm lg:text-base">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-1.5 shrink-0 gap-2 sm:gap-3">
+                  <div className="flex justify-between sm:justify-center items-center gap-2 sm:gap-3">
+                    <select className="font-[500] mainFont px-2 sm:px-3 md:px-4 border-none outline-none text-xs sm:text-sm md:text-base lg:text-[0.9dvw] xl:text-base">
                       <option>All Products</option>
                       <option>Category 1</option>
                       <option>Category 2</option>
                       <option>Category 3</option>
                     </select>
-                    <div className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-[1.8dvw] lg:w-[1.8dvw] bg-[var(--counterBg-color)] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem] sm:min-w-[1.75rem] sm:min-h-[1.75rem] md:min-w-[2rem] md:min-h-[2rem]">
-                      <p className="text-xs sm:text-xs md:text-sm lg:text-[1dvw] font-[500] text-white">
+                    <div className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-[1.6dvw] xl:h-[1.8dvw] lg:w-[1.6dvw] xl:w-[1.8dvw] bg-[var(--counterBg-color)] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem] sm:min-w-[1.75rem] sm:min-h-[1.75rem] md:min-w-[2rem] md:min-h-[2rem]">
+                      <p className="text-xs sm:text-xs md:text-sm lg:text-[0.9dvw] xl:text-[1dvw] font-[500] text-white">
                         {rowData.length}
                       </p>
                     </div>
                   </div>
-                  <div className="flex gap-2 sm:gap-4 justify-between items-center flex-wrap">
-                    <button className="flex justify-between items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm md:text-base lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-semibold">
+                  <div className="flex gap-1.5 sm:gap-2 md:gap-3 lg:gap-4 justify-between items-center flex-wrap">
+                    <button className="flex justify-between items-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-1 text-xs sm:text-sm md:text-base lg:text-[0.9dvw] xl:text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-semibold">
                       Sort <SortIcon className="w-3 h-3 sm:w-4 sm:h-4" />
                     </button>
-                    <button className="flex justify-center items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm md:text-base lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-semibold bg-[#0052CC]">
+                    <button className="flex justify-center items-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-1 text-xs sm:text-sm md:text-base lg:text-[0.9dvw] xl:text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-semibold bg-[#0052CC]">
                       Filter <FilterIcon className="w-3 h-3 sm:w-4 sm:h-4" />
                     </button>
                     <button>
-                      <DeleteIcon className="w-5 h-5 sm:w-6 sm:h-6" />
+                      <DeleteIcon className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
                     </button>
                   </div>
                 </div>
-                
+
                 {/* AG Grid */}
                 <div className="h-full w-full overflow-auto min-h-0">
                   <div className="ag-theme-alpine h-full w-full">

@@ -37,6 +37,7 @@ import { Purchase } from "./Pages/admin/Daily/Purchase";
 import { ExpenseList } from "./Pages/admin/Daily/Expense";
 import RouteGuard from "./Pages/auth/RouteGuard";
 
+
 function App() {
   return (
     <>

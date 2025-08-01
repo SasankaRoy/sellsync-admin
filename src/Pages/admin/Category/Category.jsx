@@ -154,13 +154,29 @@ export const Category = () => {
     });
   };
 
+  // Toolbar edit function - opens edit modal directly with empty data
+  const handleToolbarEdit = () => {
+    console.log("Toolbar edit clicked");
+    setShowModel({
+      state: true,
+      productData: {
+        ID: "",
+        CategoryName: "",
+        Group: "",
+        Stock: "",
+        Supplier: "",
+      },
+      actionType: "Edit",
+    });
+  };
+
   // Column Definitions: Defines & controls grid columns.
   const [colDefs, setColDefs] = useState([
-    { field: "ID" },
-    { field: "CategoryName" },
-    { field: "Group" },
-    { field: "Stock" },
-    { field: "Supplier" },
+    { field: "ID", headerName: "ID", width: 80 },
+    { field: "CategoryName", headerName: "Category Name", width: 200 },
+    { field: "Group", headerName: "Group", width: 120 },
+    { field: "Stock", headerName: "Stock", width: 100 },
+    { field: "Supplier", headerName: "Supplier", width: 150 },
     {
       headerName: "Actions",
       field: "actions",
@@ -170,6 +186,9 @@ export const Category = () => {
         onDelete,
         skinSafe: true,
       },
+      width: 200,
+      sortable: false,
+      filter: false,
     },
   ]);
 
@@ -177,49 +196,60 @@ export const Category = () => {
   const defaultColDef = useMemo(() => {
     return {
       filter: true,
-      editable: true,
+      sortable: true,
+      resizable: true,
     };
   }, []);
 
   return (
     <Layout onAddProduct={handleAddProduct}>
-      <div className="w-full">
-        <div className="flex justify-between items-center">
-          <h3 className="text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
-            Categories List
-          </h3>
-          <div className="flex justify-center items-center gap-5">
-            <button
-              onClick={onAddCategory}
-              className="px-5 py-1.5 rounded-full bg-[var(--button-color1)] flex justify-center items-center gap-4 text-white mainFont font-[500] cursor-pointer text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
-            >
-              Create Category <PluseIcon />
-            </button>
-            <button className="px-5 py-1.5 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-4 text-white mainFont font-[500] cursor-pointer text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
-              import CVS <PluseIcon />
-            </button>
+      <div className="pb-14 w-full px-4 sm:px-6 lg:px-0">
+        <div className="w-full">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-0">
+            <h3 className="text-2xl md:text-xl lg:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
+              Categories List
+            </h3>
+            <div className="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-3 sm:gap-5 w-full sm:w-auto">
+              <button
+                onClick={onAddCategory}
+                className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color1)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
+              >
+                Create Category <PluseIcon />
+              </button>
+              <button className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
+                import CVS <PluseIcon />
+              </button>
+            </div>
           </div>
         </div>
 
-        <div className="w-full h-[75vh] ">
+        <div className="w-full h-[60vh] sm:h-[70vh] lg:h-[75vh]">
           <div className="w-full flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-full">
-            <div className="flex justify-between items-center py-1.5 shrink-0">
-              <div className="flex justify-center items-center gap-3">
-                <select className="font-[500] mainFont px-4 border-none outline-none">
+            <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center py-1.5 shrink-0 gap-3 sm:gap-0">
+              <div className="flex justify-between sm:justify-center items-center gap-3 w-full sm:w-auto">
+                <select className="font-[500] mainFont px-4 border-none outline-none text-sm lg:text-base">
                   <option>All Category</option>
                   <option>Beer</option>
                   <option>Wine</option>
                   <option>Spirits</option>
                 </select>
-                <p className="px-3 text-[1dvw] py-.5 bg-[#F8A61B] rounded-2xl font-[500] border-none text-white">
-                  {rowData.length}
-                </p>
+                <div className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-[1.8dvw] lg:w-[1.8dvw] bg-[var(--counterBg-color)] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem] sm:min-w-[1.75rem] sm:min-h-[1.75rem] md:min-w-[2rem] md:min-h-[2rem]">
+                  <p className="text-xs sm:text-xs md:text-sm lg:text-[1dvw] font-[500] text-white">
+                    {rowData.length}
+                  </p>
+                </div>
               </div>
-              <div className="flex gap-4 justify-center items-center">
-                <button className="flex justify-center items-center gap-2 px-4 py-1 text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-[600]">
+              <div className="flex gap-2 sm:gap-4 justify-between items-center flex-wrap">
+                <button
+                  onClick={handleToolbarEdit}
+                  className="flex justify-between items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC] hover:bg-[#003d99] transition-all duration-300"
+                >
+                  <Edit size={14} className="sm:w-4 sm:h-4" /> Edit
+                </button>
+                <button className="flex justify-between items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-[600]">
                   Sort <SortIcon />
                 </button>
-                <button className="flex justify-center items-center gap-2 px-4 py-1 text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC]">
+                <button className="flex justify-between items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC]">
                   Filter <FilterIcon />
                 </button>
                 <button>
@@ -227,18 +257,28 @@ export const Category = () => {
                 </button>
               </div>
             </div>
-            <div className="h-full w-full">
-              <AgGridReact
-                rowData={rowData}
-                columnDefs={colDefs}
-                defaultColDef={defaultColDef}
-                pagination={true}
-                rowSelection={rowSelection}
-                onSelectionChanged={(event) => console.log("Row Selected!")}
-                onCellValueChanged={(event) =>
-                  console.log(`New Cell Value: ${event.value}`)
-                }
-              />
+            <div className="h-full w-full overflow-x-scroll overflow-y-auto">
+              <div className="min-w-[800px] h-full">
+                <AgGridReact
+                  rowData={rowData}
+                  columnDefs={colDefs}
+                  defaultColDef={defaultColDef}
+                  pagination={true}
+                  rowSelection={rowSelection}
+                  onSelectionChanged={(event) => {
+                    const selectedNodes = event.api.getSelectedNodes();
+                    const selectedData = selectedNodes.map(
+                      (node) => node.data
+                    );
+                    console.log("Selected data updated:", selectedData);
+                  }}
+                  onCellValueChanged={(event) =>
+                    console.log(`New Cell Value: ${event.value}`)
+                  }
+                  getRowId={(params) => params.data.ID}
+                  className="w-full h-full text-sm"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -279,19 +319,19 @@ const ActionBtns = (props) => {
 
   return (
     <>
-      <div className="w-full flex gap-4 py-2 justify-center items-center">
+      <div className="w-full flex gap-2 sm:gap-4 py-2 justify-center items-center">
         <button
-          className="font-semibold font-[var(--paraFont)] bg-[var(--button-color1)] text-white p-1.5 rounded-full border-none cursor-pointer"
+          className="font-semibold font-[var(--paraFont)] bg-[var(--button-color1)] text-white p-1 sm:p-1.5 rounded-full border-none cursor-pointer"
           onClick={handleEdit}
         >
-          <Edit size={18} />
+          <Edit size={16} className="sm:w-[18px] sm:h-[18px]" />
         </button>
 
         <button
-          className="font-semibold font-[var(--paraFont)] bg-[var(--Negative-color)] text-white p-1.5 rounded-full border-none cursor-pointer"
+          className="font-semibold font-[var(--paraFont)] bg-[var(--Negative-color)] text-white p-1 sm:p-1.5 rounded-full border-none cursor-pointer"
           onClick={handleDelete}
         >
-          <Trash size={18} />
+          <Trash size={16} className="sm:w-[18px] sm:h-[18px]" />
         </button>
       </div>
     </>
@@ -414,23 +454,23 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
   };
 
   return (
-    <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center">
-      <div className="bg-white w-[70%] max-h-[90vh] overflow-y-auto p-5 rounded-lg shadow-md">
+    <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center p-4">
+      <div className="bg-white w-full sm:w-[90%] md:w-[80%] lg:w-[70%] max-h-[90vh] overflow-y-auto p-4 sm:p-5 rounded-lg shadow-md">
         <div className="flex justify-between items-center w-full p-2.5 rounded-md bg-[var(--sideMenu-color)] text-white">
-          <h3 className="text-[1.5dvw] font-semibold">
+          <h3 className="text-lg sm:text-xl lg:text-[1.5dvw] font-semibold">
             {actionType === "Add" ? "Add Category" : `${actionType} Category`}
           </h3>
           <button
             onClick={handleCloseModel}
             className="hover:text-[var(--Negative-color)] transition-all duration-300 ease-linear cursor-pointer"
           >
-            <CircleX size={30} />
+            <CircleX size={24} className="sm:w-[30px] sm:h-[30px]" />
           </button>
         </div>
 
-        <div className="w-full p-3 space-y-6">
+        <div className="w-full p-2 sm:p-3 space-y-4 sm:space-y-6">
           {categoryFields.map((field, index) => (
-            <div key={field.id} className="border border-gray-200 rounded-lg p-4 relative">
+            <div key={field.id} className="border border-gray-200 rounded-lg p-3 sm:p-4 relative">
               {categoryFields.length > 1 && (
                 <button
                   onClick={() => handleRemoveField(index)}
@@ -441,9 +481,9 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
                 </button>
               )}
               
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="w-full flex flex-col gap-2">
-                  <label className="text-[1dvw] font-normal paraFont">
+                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
                     Category Name
                   </label>
                   {showNewCategoryInput ? (
@@ -452,7 +492,7 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
                         type="text"
                         value={field.CategoryName}
                         onChange={(e) => handleFieldChange(index, 'CategoryName', e.target.value)}
-                        className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                        className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                         placeholder="Enter new category name"
                         autoFocus
                       />
@@ -483,7 +523,7 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
                               handleSelectChange(index, 'CategoryName', e.target.value, setCategoryOptions, categoryOptions);
                             }
                           }}
-                          className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 pl-3 pr-8 appearance-none"
+                          className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 pl-3 pr-8 appearance-none"
                         >
                           <option value="">Select Category Name</option>
                           {categoryOptions.map((option, optIndex) => (
@@ -492,7 +532,7 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
                           <option value="custom" className="text-blue-500">➕ Add New Category</option>
                         </select>
                         <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                          <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                          <svg className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                             <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                           </svg>
                         </div>
@@ -502,13 +542,13 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
                 </div>
                 
                 <div className="w-full flex flex-col gap-2">
-                  <label className="text-[1dvw] font-normal paraFont">Group</label>
+                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Group</label>
                   <div className="relative">
                     <input
                       type="text"
                       value={field.Group}
                       onChange={(e) => handleFieldChange(index, 'Group', e.target.value)}
-                      className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                      className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                       placeholder="Enter Group Name"
                     />
                     {!groupOptions.includes(field.Group) && field.Group && (
@@ -525,19 +565,19 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
                 </div>
                 
                 <div className="w-full flex flex-col gap-2">
-                  <label className="text-[1dvw] font-normal paraFont">Stock</label>
+                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Stock</label>
                   <input
                     type="number"
                     value={field.Stock}
                     onChange={(e) => handleFieldChange(index, 'Stock', e.target.value)}
-                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                     placeholder="Enter stock quantity"
                     step="1"
                   />
                 </div>
                 
                 <div className="w-full flex flex-col gap-2">
-                  <label className="text-[1dvw] font-normal paraFont">
+                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
                     Supplier
                   </label>
                   {showNewSupplierInput ? (
@@ -546,7 +586,7 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
                         type="text"
                         value={field.Supplier}
                         onChange={(e) => handleFieldChange(index, 'Supplier', e.target.value)}
-                        className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                        className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                         placeholder="Enter new supplier name"
                         autoFocus
                       />
@@ -576,7 +616,7 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
                             handleSelectChange(index, 'Supplier', e.target.value, setSupplierOptions, supplierOptions);
                           }
                         }}
-                        className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 pl-3 pr-8 appearance-none"
+                        className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 pl-3 pr-8 appearance-none"
                       >
                         <option value="">Select Supplier</option>
                         {supplierOptions.map((option, optIndex) => (
@@ -585,7 +625,7 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
                         <option value="custom" className="text-blue-500">➕ Add New Supplier</option>
                       </select>
                       <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                        <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <svg className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                           <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                         </svg>
                       </div>
@@ -597,16 +637,16 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
           ))}
         </div>
 
-        <div className="flex justify-end items-center gap-5 my-4">
+        <div className="flex flex-col sm:flex-row justify-end items-center gap-4 sm:gap-5 my-4">
           <button
-            className="px-5 py-1 rounded-md cursor-pointer text-white font-semibold bg-[var(--button-color4)] text-[1.2dvw] hover:opacity-80 transition-all duration-300"
+            className="w-full sm:w-auto px-4 sm:px-5 py-1.5 sm:py-2 rounded-md cursor-pointer text-white font-semibold bg-[var(--button-color4)] text-sm sm:text-base lg:text-[1.2dvw] hover:opacity-80 transition-all duration-300"
             onClick={handleCloseModel}
           >
             Cancel
           </button>
           <button 
             onClick={handleSubmit}
-            className="px-5 py-1 rounded-md cursor-pointer text-white font-semibold bg-[var(--button-color5)] text-[1.2dvw] hover:opacity-80 transition-all duration-300"
+            className="w-full sm:w-auto px-4 sm:px-5 py-1.5 sm:py-2 rounded-md cursor-pointer text-white font-semibold bg-[var(--button-color5)] text-sm sm:text-base lg:text-[1.2dvw] hover:opacity-80 transition-all duration-300"
           >
             {actionType === "Add" ? "Create" : "Update"}
           </button>

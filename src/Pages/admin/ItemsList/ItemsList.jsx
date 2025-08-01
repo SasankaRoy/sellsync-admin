@@ -281,18 +281,40 @@ export const ItemsList = () => {
     });
   };
 
+  // Toolbar edit function - opens edit modal directly with empty data
+  const handleToolbarEdit = () => {
+    console.log("Toolbar edit clicked");
+    setShowModel({
+      state: true,
+      productData: {
+        ID: "",
+        ProductName: "",
+        Rank: "",
+        Category: "",
+        Stock: "",
+        OfDaysSupply: "",
+        BuyPrice: "",
+        SellPrice: "",
+        StockCode: "",
+        SupplierID: "",
+        SupplierName: "",
+      },
+      actionType: "Edit",
+    });
+  };
+
   // Column Definitions: Defines & controls grid columns.
   const [colDefs, setColDefs] = useState([
-    { field: "ID" },
-    { field: "ProductName" },
-    { field: "Rank" },
-    { field: "Category" },
-    { field: "Stock" },
-    { field: "BuyPrice" },
-    { field: "SellPrice" },
-    { field: "StockCode" },
-    { field: "SupplierID" },
-    { field: "SupplierName" },
+    { field: "ID", headerName: "ID", width: 80 },
+    { field: "ProductName", headerName: "Product Name", width: 200 },
+    { field: "Rank", headerName: "Rank", width: 80 },
+    { field: "Category", headerName: "Category", width: 120 },
+    { field: "Stock", headerName: "Stock", width: 80 },
+    { field: "BuyPrice", headerName: "Buy Price", width: 100 },
+    { field: "SellPrice", headerName: "Sell Price", width: 100 },
+    { field: "StockCode", headerName: "Stock Code", width: 150 },
+    { field: "SupplierID", headerName: "Supplier ID", width: 120 },
+    { field: "SupplierName", headerName: "Supplier Name", width: 150 },
     {
       headerName: "Actions",
       field: "actions",
@@ -303,6 +325,9 @@ export const ItemsList = () => {
         onDelete,
         skinSafe: true,
       },
+      width: 200,
+      sortable: false,
+      filter: false,
     },
   ]);
 
@@ -310,83 +335,91 @@ export const ItemsList = () => {
   const defaultColDef = useMemo(() => {
     return {
       filter: true,
-      editable: true,
+      sortable: true,
+      resizable: true,
     };
   }, []);
   return (
     <>
       <Layout>
-        <div className="flex justify-between items-center">
-          <h3 className="text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
-            Item Lists
-          </h3>
-          <div className="flex justify-center items-center gap-5">
-            <button
-              onClick={onAddItem}
-              className="px-5 py-1.5 rounded-full bg-[var(--button-color1)] flex justify-center items-center gap-4 text-white mainFont font-[500] cursor-pointer text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
-            >
-              Add Items <PluseIcon />
-            </button>
-            <button className="px-5 py-1.5 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-4 text-white mainFont font-[500] cursor-pointer text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
-              import CVS <PluseIcon />
-            </button>
-          </div>
-        </div>
-        <div className="w-full h-[75vh] ">
-          <div className="w-full flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-full">
-            <div className="flex justify-between items-center py-1.5 shrink-0">
-              <div className="flex justify-center items-center gap-3">
-                <select className="font-[500] mainFont px-4 border-none outline-none">
-                  <option>All Products</option>
-                  <option>All Products</option>
-                  <option>All Products</option>
-                </select>
-                <p className="px-3 text-[1dvw] py-.5 bg-[#F8A61B] rounded-2xl font-[500] border-none text-white">
-                  242
-                </p>
-              </div>
-              <div className="flex gap-4 justify-center items-center">
+        <div className="pb-14 w-full px-4 sm:px-6 lg:px-0">
+          <div className="w-full">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-0">
+              <h3 className="text-2xl md:text-xl lg:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
+                Item Lists
+              </h3>
+              <div className="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-3 sm:gap-5 w-full sm:w-auto">
                 <button
-                  onClick={() => {
-                    setShowModel({
-                      state: true,
-                      productData: "product",
-                      actionType: "Edit",
-                    });
-                  }}
-                  className="flex justify-center items-center gap-2 px-4 py-1 text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC]"
+                  onClick={onAddItem}
+                  className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color1)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
                 >
-                  <Edit size={16} /> Edit
+                  Add Items <PluseIcon />
                 </button>
-                <button className="flex justify-center items-center gap-2 px-4 py-1 text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-[600]">
-                  Sort <SortIcon />
-                </button>
-                <button className="flex justify-center items-center gap-2 px-4 py-1 text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC]">
-                  Filter <FilterIcon />
-                </button>
-                <button>
-                  <DeleteIcon />
+                <button className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
+                  import CVS <PluseIcon />
                 </button>
               </div>
             </div>
-            <div className="h-full w-full">
-              <AgGridReact
-                rowData={rowData}
-                columnDefs={colDefs}
-                // loading={loading}
-                defaultColDef={defaultColDef}
-                pagination={true}
-                rowSelection={rowSelection}
-                onSelectionChanged={(event) => {
-                  event.selectedNodes.forEach((item, id) => {
-                    console.log("Row Selected!", event);
-                    setSelectedRowData([item.data]);
-                  });
-                }}
-                onCellValueChanged={(event) =>
-                  console.log(`New Cell Value: ${event.value}`)
-                }
-              />
+          </div>
+
+          <div className="w-full h-[60vh] sm:h-[70vh] lg:h-[75vh]">
+            <div className="w-full flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-full">
+              <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center py-1.5 shrink-0 gap-3 sm:gap-0">
+                <div className="flex justify-between sm:justify-center items-center gap-3 w-full sm:w-auto">
+                  <select className="font-[500] mainFont px-4 border-none outline-none text-sm lg:text-base">
+                    <option>All Products</option>
+                    <option>All Products</option>
+                    <option>All Products</option>
+                  </select>
+                  <div className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-[1.8dvw] lg:w-[1.8dvw] bg-[var(--counterBg-color)] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem] sm:min-w-[1.75rem] sm:min-h-[1.75rem] md:min-w-[2rem] md:min-h-[2rem]">
+                    <p className="text-xs sm:text-xs md:text-sm lg:text-[1dvw] font-[500] text-white">
+                      {rowData.length}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-2 sm:gap-4 justify-between items-center flex-wrap">
+                  <button
+                    onClick={handleToolbarEdit}
+                    className="flex justify-between items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC] hover:bg-[#003d99] transition-all duration-300"
+                  >
+                    <Edit size={14} className="sm:w-4 sm:h-4" /> Edit
+                  </button>
+                  <button className="flex justify-between items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-[600]">
+                    Sort <SortIcon />
+                  </button>
+                  <button className="flex justify-between items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC]">
+                    Filter <FilterIcon />
+                  </button>
+                  <button>
+                    <DeleteIcon />
+                  </button>
+                </div>
+              </div>
+              <div className="h-full w-full overflow-x-scroll overflow-y-auto">
+                <div className="min-w-[1200px] h-full">
+                  <AgGridReact
+                    rowData={rowData}
+                    columnDefs={colDefs}
+                    // loading={loading}
+                    defaultColDef={defaultColDef}
+                    pagination={true}
+                    rowSelection={rowSelection}
+                    onSelectionChanged={(event) => {
+                      const selectedNodes = event.api.getSelectedNodes();
+                      const selectedData = selectedNodes.map(
+                        (node) => node.data
+                      );
+                      setSelectedRowData(selectedData);
+                      console.log("Selected data updated:", selectedData);
+                    }}
+                    onCellValueChanged={(event) =>
+                      console.log(`New Cell Value: ${event.value}`)
+                    }
+                    getRowId={(params) => params.data.ID}
+                    className="w-full h-full text-sm"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -426,24 +459,24 @@ const ActionBtns = (props) => {
 
   return (
     <>
-      <div className="w-full flex gap-4 py-2 justify-center items-center">
+      <div className="w-full flex gap-2 sm:gap-4 py-2 justify-center items-center">
         <button
-          className="font-semibold font-[var(--paraFont)] bg-[var(--button-color1)] text-white p-1.5 rounded-full border-none cursor-pointer"
+          className="font-semibold font-[var(--paraFont)] bg-[var(--button-color1)] text-white p-1 sm:p-1.5 rounded-full border-none cursor-pointer"
           onClick={handleEdit}
         >
-          <Edit size={18} />
+          <Edit size={16} className="sm:w-[18px] sm:h-[18px]" />
         </button>
         <button
-          className="font-semibold font-[var(--paraFont)] bg-[var(--button-color5)] text-white p-1.5 rounded-full border-none cursor-pointer"
+          className="font-semibold font-[var(--paraFont)] bg-[var(--button-color5)] text-white p-1 sm:p-1.5 rounded-full border-none cursor-pointer"
           onClick={handleView}
         >
-          <Eye size={18} />
+          <Eye size={16} className="sm:w-[18px] sm:h-[18px]" />
         </button>
         <button
-          className="font-semibold font-[var(--paraFont)] bg-[var(--Negative-color)] text-white p-1.5 rounded-full border-none cursor-pointer"
+          className="font-semibold font-[var(--paraFont)] bg-[var(--Negative-color)] text-white p-1 sm:p-1.5 rounded-full border-none cursor-pointer"
           onClick={handleDelete}
         >
-          <Trash size={18} />
+          <Trash size={16} className="sm:w-[18px] sm:h-[18px]" />
         </button>
       </div>
     </>
@@ -481,28 +514,28 @@ const EditAndViewModel = ({ productData, setShowModel, actionType }) => {
 
   return (
     <>
-      <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center">
-        <div className="bg-white rounded-md shadow p-5 w-[60%] max-h-[95%] overflow-auto">
+      <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center p-4">
+        <div className="bg-white rounded-md shadow p-4 sm:p-5 w-full sm:w-[90%] md:w-[80%] lg:w-[60%] max-h-[95%] overflow-auto">
           <div className="w-full bg-[var(--sideMenu-color)] flex justify-between items-center px-3 py-1.5 text-white rounded-md">
-            <h3 className="font-semibold text-[1.8dvw]">
+            <h3 className="font-semibold text-lg sm:text-xl lg:text-[1.8dvw]">
               {actionType === "Add" ? "Add Items" : `${actionType} Product`}
             </h3>
             <button
               onClick={handleCloseModle}
               className="hover:text-[var(--Negative-color)] transition-all duration-300 ease-linear cursor-pointer"
             >
-              <CircleX size={30} />
+              <CircleX size={24} className="sm:w-[30px] sm:h-[30px]" />
             </button>
           </div>
 
-          <div className="bg-[#E6E6E6] p-2 rounded-full w-auto my-5 inline-flex gap-3">
+          <div className="bg-[#E6E6E6] p-2 rounded-full w-auto my-5 inline-flex flex-wrap gap-2 sm:gap-3">
             <button
               onClick={() => handleChangeTab("Details")}
               className={` ${
                 currentActiveTab === "Details"
                   ? "bg-[var(--sideMenu-color)] text-white"
                   : "bg-transparent text-[#333333]/70"
-              } border-none outline-none px-8 py-1 text-[.9dvw] cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
+              } border-none outline-none px-4 sm:px-8 py-1 text-sm sm:text-base lg:text-[.9dvw] cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
             >
               Details
             </button>
@@ -514,7 +547,7 @@ const EditAndViewModel = ({ productData, setShowModel, actionType }) => {
                     currentActiveTab === "Options"
                       ? "bg-[var(--sideMenu-color)] text-white"
                       : "bg-transparent text-[#333333]/70"
-                  } border-none outline-none px-8 py-1 text-[.9dvw] cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
+                  } border-none outline-none px-4 sm:px-8 py-1 text-sm sm:text-base lg:text-[.9dvw] cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
                 >
                   Options
                 </button>
@@ -524,7 +557,7 @@ const EditAndViewModel = ({ productData, setShowModel, actionType }) => {
                     currentActiveTab === "Promotions"
                       ? "bg-[var(--sideMenu-color)] text-white"
                       : "bg-transparent text-[#333333]/70"
-                  } border-none outline-none px-8 py-1 text-[.9dvw] cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
+                  } border-none outline-none px-4 sm:px-8 py-1 text-sm sm:text-base lg:text-[.9dvw] cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
                 >
                   Promotions
                 </button>
@@ -534,11 +567,11 @@ const EditAndViewModel = ({ productData, setShowModel, actionType }) => {
 
           <div className="w-full p-2 border border-[var(--border-color)] rounded-md">
             {handleRenderTab(currentActiveTab)}
-            <div className="flex gap-4 justify-end items-center">
-              <button className="px-4 py-1.5 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md">
+            <div className="flex flex-col sm:flex-row gap-4 justify-end items-center mt-6">
+              <button className="w-full sm:w-auto px-4 sm:px-6 py-1.5 sm:py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300">
                 Update
               </button>
-              <button className="px-4 py-1.5 bg-[var(--button-color4)] cursor-pointer text-white paraFont rounded-md">
+              <button className="w-full sm:w-auto px-4 sm:px-6 py-1.5 sm:py-2 bg-[var(--button-color4)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300">
                 Cancel
               </button>
             </div>
@@ -555,200 +588,200 @@ const DetailsTab = () => {
   return (
     <>
       <div className="w-full p-2">
-        <div className="grid grid-cols-3 gap-3 relative">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 relative">
           <button
             onClick={() =>
               setAddStockData([...addStockData, addStockData.length + 1])
             }
-            className="absolute -top-[0%] cursor-pointer -right-[0%] p-1 flex justify-center items-center bg-[var(--button-color1)] text-white rounded-full"
+            className="absolute -top-[2%] sm:-top-[0%] cursor-pointer -right-[0%] p-1 flex justify-center items-center bg-[var(--button-color1)] text-white rounded-full"
           >
             <Plus size={20} />
           </button>
           <div className="flex flex-col gap-2 w-full">
-            <label className="text-[1dvw] font-normal paraFont">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Stockcode
-              <span className="text-[var(--Negative-color)] text-[.9dvw]">
+              <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
                 *
               </span>
             </label>
           </div>
           <div className="flex flex-col gap-2 w-full">
-            <label className="text-[1dvw] font-normal paraFont">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Qty on Hand:
-              <span className="text-[var(--Negative-color)] text-[.9dvw]">
+              <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
                 *
               </span>
             </label>
           </div>
           <div className="flex flex-col gap-2 w-full">
-            <label className="text-[1dvw] font-normal paraFont">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Qty on Hand:
-              <span className="text-[var(--Negative-color)] text-[.9dvw]">
+              <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
                 *
               </span>
             </label>
           </div>
           {addStockData.map((cur, id) => (
-            <>
+            <React.Fragment key={id}>
               <div className="flex flex-col gap-2 w-full">
                 <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                   placeholder="78440005246"
                   type="text"
                 />
               </div>
               <div className="flex flex-col gap-2 w-full">
                 <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                   placeholder="Items"
                   type="number"
                 />
               </div>
               <div className="flex flex-col gap-2 w-full">
                 <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                   placeholder="Cases"
                   type="number"
                 />
               </div>
-            </>
+            </React.Fragment>
           ))}
         </div>
 
         <div className="w-full my-4 flex flex-col gap-2">
-          <label className="text-[1dvw] font-normal paraFont">
+          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
             Name
-            <span className="text-[.9dvw] text-[var(--Negative-color)]">*</span>
+            <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">*</span>
           </label>
           <input
-            className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+            className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
             type="text"
             placeholder="Enter Product Name..."
           />
         </div>
 
-        <div className="grid grid-cols-7 gap-2 my-4 relative">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-7 gap-2 my-4 relative">
           <button
             onClick={() =>
               setQuantityData([...addQuantityData, addQuantityData.length + 1])
             }
-            className="absolute -top-[2%] cursor-pointer -right-[0%] p-1 flex justify-center items-center bg-[var(--button-color1)] text-white rounded-full"
+            className="absolute -top-[4%] sm:-top-[2%] cursor-pointer -right-[0%] p-1 flex justify-center items-center bg-[var(--button-color1)] text-white rounded-full"
           >
             <Plus size={20} />
           </button>
           <div className="w-full flex flex-col gap-1.5">
-            <label className="text-[1dvw] font-normal paraFont">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Qty
-              <span className="text-[.9dvw] text-[var(--Negative-color)]">
+              <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
                 *
               </span>
             </label>
           </div>
           <div className="w-full flex flex-col gap-1.5">
-            <label className="text-[1dvw] font-normal paraFont">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Price
-              <span className="text-[.9dvw] text-[var(--Negative-color)]">
+              <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
                 *
               </span>
             </label>
           </div>
           <div className="w-full flex flex-col gap-1.5">
-            <label className="text-[1dvw] font-normal paraFont">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Avg Cost
-              <span className="text-[.9dvw] text-[var(--Negative-color)]">
+              <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
                 *
               </span>
             </label>
           </div>
 
           <div className="w-full flex flex-col gap-1.5">
-            <label className="text-[1dvw] font-normal paraFont">Margin</label>
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Margin</label>
           </div>
           <div className="w-full flex flex-col gap-1.5">
-            <label className="text-[1dvw] font-normal paraFont">Markup</label>
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Markup</label>
           </div>
 
           <div className="w-full flex flex-col gap-1.5">
-            <label className="text-[1dvw] font-normal paraFont">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Latest Cost
             </label>
           </div>
           <div className="w-full flex flex-col gap-1.5">
-            <label className="text-[1dvw] font-normal paraFont">Qty</label>
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Qty</label>
           </div>
 
           {addQuantityData.map((cur, id) => (
-            <>
+            <React.Fragment key={id}>
               <div className="w-full flex flex-col gap-1.5">
                 <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                   type="number"
                 />
               </div>
               <div className="w-full flex flex-col gap-1.5">
                 <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                   type="number"
                 />
               </div>
               <div className="w-full flex flex-col gap-1.5">
                 <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                  type="number"
-                />
-              </div>
-
-              <div className="w-full flex flex-col gap-1.5">
-                <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                  type="number"
-                />
-              </div>
-              <div className="w-full flex flex-col gap-1.5">
-                <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                   type="number"
                 />
               </div>
 
               <div className="w-full flex flex-col gap-1.5">
                 <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                   type="number"
                 />
               </div>
               <div className="w-full flex flex-col gap-1.5">
                 <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                   type="number"
                 />
               </div>
-            </>
+
+              <div className="w-full flex flex-col gap-1.5">
+                <input
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  type="number"
+                />
+              </div>
+              <div className="w-full flex flex-col gap-1.5">
+                <input
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  type="number"
+                />
+              </div>
+            </React.Fragment>
           ))}
         </div>
 
-        <div className="grid grid-cols-2 gap-4 w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
           <div className="flex flex-col gap-2">
-            <label className="text-[1dvw] font-normal paraFont">Size</label>
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Size</label>
             <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
             />
           </div>
           <div className="flex flex-col gap-2">
-            <label className="text-[1dvw] font-normal paraFont">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Vendor Item No
             </label>
             <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
             />
           </div>
         </div>
 
         <div className="w-full flex flex-col gap-2 my-4">
-          <label className="text-[1dvw] font-normal paraFont">Category</label>
-          <select className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3">
+          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Category</label>
+          <select className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3">
             <option>Select Category</option>
             <option>Select Category</option>
             <option>Select Category</option>
@@ -760,10 +793,10 @@ const DetailsTab = () => {
           </select>
         </div>
 
-        <div className="grid grid-cols-2 gap-2 w-full my-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full my-4">
           <div className="w-full flex flex-col gap-2">
-            <label className="text-[1dvw] font-normal paraFont">Supplier</label>
-            <select className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Supplier</label>
+            <select className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3">
               <option>Select Supplier</option>
               <option>Select Supplier</option>
               <option>Select Supplier</option>
@@ -778,63 +811,63 @@ const DetailsTab = () => {
             </select>
           </div>
           <div className="w-full flex flex-col gap-2">
-            <label className="text-[1dvw] font-normal paraFont">SKU</label>
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">SKU</label>
             <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
             />
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-3 w-full my-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 w-full my-6">
           <div className="w-full flex flex-col gap-2">
-            <label className="text-[1dvw] font-normal paraFont">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Units Per Case
             </label>
             <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
             />
           </div>
           <div className="w-full flex flex-col gap-2">
-            <label className="text-[1dvw] font-normal paraFont">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Case Cost Total
             </label>
             <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
             />
           </div>
           <div className="w-full flex flex-col gap-2">
-            <label className="text-[1dvw] font-normal paraFont">Tax</label>
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Tax</label>
             <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
             />
           </div>
 
           <div className="w-full flex flex-col gap-2">
-            <label className="text-[1dvw] font-normal paraFont">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Reorder Point
             </label>
             <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
             />
           </div>
           <div className="w-full flex flex-col gap-2">
-            <label className="text-[1dvw] font-normal paraFont">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Reorder Value
             </label>
             <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
             />
           </div>
           <div className="w-full flex flex-col gap-2">
-            <label className="text-[1dvw] font-normal paraFont">Rank</label>
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Rank</label>
             <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
             />
           </div>
@@ -847,16 +880,16 @@ const OptionsTab = () => {
   return (
     <>
       <div className="w-full p-2">
-        <div className="grid grid-cols-2 w-full gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 w-full gap-2 sm:gap-4">
           <div className="flex justify-start items-center gap-3">
             <input
               id="autoUpdate"
               type="checkbox"
-              className="h-[1.2dvw] w-[1.2dvw]"
+              className="h-4 w-4 sm:h-5 sm:w-5 lg:h-[1.2dvw] lg:w-[1.2dvw]"
             />
             <label
               htmlFor="autoUpdate"
-              className="text-[1.2dvw] font-semibold cursor-pointer"
+              className="text-sm sm:text-base lg:text-[1.2dvw] font-semibold cursor-pointer"
             >
               Do Not Auto Update
             </label>
@@ -865,11 +898,11 @@ const OptionsTab = () => {
             <input
               id="trackInventory"
               type="checkbox"
-              className="h-[1.2dvw] w-[1.2dvw]"
+              className="h-4 w-4 sm:h-5 sm:w-5 lg:h-[1.2dvw] lg:w-[1.2dvw]"
             />
             <label
               htmlFor="trackInventory"
-              className="text-[1.2dvw] font-semibold cursor-pointer"
+              className="text-sm sm:text-base lg:text-[1.2dvw] font-semibold cursor-pointer"
             >
               Do Not Track Inventory
             </label>
@@ -878,11 +911,11 @@ const OptionsTab = () => {
             <input
               id="shortcutKeys"
               type="checkbox"
-              className="h-[1.2dvw] w-[1.2dvw]"
+              className="h-4 w-4 sm:h-5 sm:w-5 lg:h-[1.2dvw] lg:w-[1.2dvw]"
             />
             <label
               htmlFor="shortcutKeys"
-              className="text-[1.2dvw] font-semibold cursor-pointer"
+              className="text-sm sm:text-base lg:text-[1.2dvw] font-semibold cursor-pointer"
             >
               Add to Shortcut Keys
             </label>
@@ -891,11 +924,11 @@ const OptionsTab = () => {
             <input
               id="outItem"
               type="checkbox"
-              className="h-[1.2dvw] w-[1.2dvw]"
+              className="h-4 w-4 sm:h-5 sm:w-5 lg:h-[1.2dvw] lg:w-[1.2dvw]"
             />
             <label
               htmlFor="outItem"
-              className="text-[1.2dvw] font-semibold cursor-pointer"
+              className="text-sm sm:text-base lg:text-[1.2dvw] font-semibold cursor-pointer"
             >
               Close Out Item
             </label>
@@ -904,11 +937,11 @@ const OptionsTab = () => {
             <input
               id="manualDiscount"
               type="checkbox"
-              className="h-[1.2dvw] w-[1.2dvw]"
+              className="h-4 w-4 sm:h-5 sm:w-5 lg:h-[1.2dvw] lg:w-[1.2dvw]"
             />
             <label
               htmlFor="manualDiscount"
-              className="text-[1.2dvw] font-semibold cursor-pointer"
+              className="text-sm sm:text-base lg:text-[1.2dvw] font-semibold cursor-pointer"
             >
               Do Not Apply Manual Discount
             </label>
@@ -917,11 +950,11 @@ const OptionsTab = () => {
             <input
               id="promotionsDiscount"
               type="checkbox"
-              className="h-[1.2dvw] w-[1.2dvw]"
+              className="h-4 w-4 sm:h-5 sm:w-5 lg:h-[1.2dvw] lg:w-[1.2dvw]"
             />
             <label
               htmlFor="promotionsDiscount"
-              className="text-[1.2dvw] font-semibold cursor-pointer"
+              className="text-sm sm:text-base lg:text-[1.2dvw] font-semibold cursor-pointer"
             >
               Exclude from Promotions Discount
             </label>
@@ -930,11 +963,11 @@ const OptionsTab = () => {
             <input
               id="showWebstore"
               type="checkbox"
-              className="h-[1.2dvw] w-[1.2dvw]"
+              className="h-4 w-4 sm:h-5 sm:w-5 lg:h-[1.2dvw] lg:w-[1.2dvw]"
             />
             <label
               htmlFor="showWebstore"
-              className="text-[1.2dvw] font-semibold cursor-pointer"
+              className="text-sm sm:text-base lg:text-[1.2dvw] font-semibold cursor-pointer"
             >
               Do Not Show to Webstore
             </label>
@@ -943,11 +976,11 @@ const OptionsTab = () => {
             <input
               id="hideInventory"
               type="checkbox"
-              className="h-[1.2dvw] w-[1.2dvw]"
+              className="h-4 w-4 sm:h-5 sm:w-5 lg:h-[1.2dvw] lg:w-[1.2dvw]"
             />
             <label
               htmlFor="hideInventory"
-              className="text-[1.2dvw] font-semibold cursor-pointer"
+              className="text-sm sm:text-base lg:text-[1.2dvw] font-semibold cursor-pointer"
             >
               Hide Inventory
             </label>
@@ -956,85 +989,84 @@ const OptionsTab = () => {
             <input
               id="EBTEligible"
               type="checkbox"
-              className="h-[1.2dvw] w-[1.2dvw]"
+              className="h-4 w-4 sm:h-5 sm:w-5 lg:h-[1.2dvw] lg:w-[1.2dvw]"
             />
             <label
               htmlFor="EBTEligible"
-              className="text-[1.2dvw] font-semibold cursor-pointer"
+              className="text-sm sm:text-base lg:text-[1.2dvw] font-semibold cursor-pointer"
             >
               EBT Eligible
             </label>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
           <div className="w-full my-4 flex flex-col gap-2">
-            <label className="text-[1dvw] font-normal paraFont">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Default Qty
             </label>
             <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
               placeholder="Enter Quantity..."
             />
           </div>
           <div className="w-full my-4 flex flex-col gap-2">
-            <label className="text-[1dvw] font-normal paraFont">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Min Price
             </label>
             <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="number"
               placeholder="Min Price..."
             />
           </div>
 
           <div className="w-full my-4 flex flex-col gap-2">
-            <label className="text-[1dvw] font-normal paraFont">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Remind Date
             </label>
             <input
-              className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="date"
             />
           </div>
           <div className="w-full my-4 flex flex-col gap-2">
-            <label className="text-[1dvw] font-normal paraFont">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Vendor Item Name
             </label>
             <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-              type="type"
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              type="text"
             />
           </div>
         </div>
 
         <div className="flex flex-col gap-2 w-full my-4">
-          <label className="text-[1dvw] font-normal paraFont">Notes</label>
+          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Notes</label>
           <textarea
-            className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+            className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
             rows={5}
             placeholder="Enter Notes..."
           ></textarea>
         </div>
 
         <div className="flex flex-col gap-2 w-full my-4">
-          <label className="text-[1dvw] font-normal paraFont">Tags</label>
+          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Tags</label>
           <input
-            className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-            type="type"
+            className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+            type="text"
             placeholder="Tags"
           />
         </div>
 
-        <div className="grid grid-cols-2 w-full gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 w-full gap-4">
           <div className="flex flex-col gap-2 w-full my-4">
-            <label className="text-[1dvw] font-normal paraFont">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Points Multiplier
             </label>
             <select
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-              type="type"
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               placeholder="Tags"
             >
               <option>Select Multiplier</option>
@@ -1046,22 +1078,21 @@ const OptionsTab = () => {
             </select>
           </div>
           <div className="flex flex-col gap-2 w-full my-4">
-            <label className="text-[1dvw] font-normal paraFont">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Points Required
             </label>
             <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-              type="type"
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              type="text"
               placeholder="Enter points"
             />
           </div>
           <div className="flex flex-col gap-2 w-full my-4">
-            <label className="text-[1dvw] font-normal paraFont">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Item Type
             </label>
             <select
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-              type="type"
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               placeholder="Tags"
             >
               <option>Select Item Type</option>
@@ -1074,7 +1105,7 @@ const OptionsTab = () => {
               <option>Gift Item</option>
               <option>Online Lottery</option>
               <option>Online Payout</option>
-              <option>Mannual Item</option>
+              <option>Manual Item</option>
               <option>House Pay</option>
               <option>Coupon ($)</option>
               <option>Coupon (%)</option>
@@ -1104,45 +1135,49 @@ const PromotionsTab = () => {
     },
   ]);
   const [colDefs, setColDefs] = useState([
-    { field: "ID" },
-    { field: "Name" },
-    { field: "Status" },
+    { field: "ID", width: 80 },
+    { field: "Name", width: 150 },
+    { field: "Status", width: 120 },
   ]);
 
   // Apply settings across all columns
   const defaultColDef = useMemo(() => {
     return {
       filter: true,
-      editable: true,
+      sortable: true,
+      resizable: true,
     };
   }, []);
   return (
     <>
       <div className="w-full p-2">
         <div className="flex flex-col gap-2 w-full my-4">
-          <label className="text-[1dvw] font-normal paraFont" F>
+          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
             Search Items
           </label>
           <input
             placeholder="Enter items ..."
-            className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+            className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
             type="text"
           />
         </div>
-        <div className="h-[40vh] w-full">
-          <div className="h-full w-full">
-            <AgGridReact
-              rowData={rowData}
-              columnDefs={colDefs}
-              // loading={loading}
-              defaultColDef={defaultColDef}
-              pagination={true}
-              rowSelection={rowSelection}
-              onSelectionChanged={(event) => console.log("Row Selected!")}
-              onCellValueChanged={(event) =>
-                console.log(`New Cell Value: ${event.value}`)
-              }
-            />
+        <div className="h-[30vh] sm:h-[40vh] w-full">
+          <div className="h-full w-full overflow-x-scroll overflow-y-auto">
+            <div className="min-w-[400px] h-full">
+              <AgGridReact
+                rowData={rowData}
+                columnDefs={colDefs}
+                // loading={loading}
+                defaultColDef={defaultColDef}
+                pagination={true}
+                rowSelection={rowSelection}
+                onSelectionChanged={(event) => console.log("Row Selected!")}
+                onCellValueChanged={(event) =>
+                  console.log(`New Cell Value: ${event.value}`)
+                }
+                className="w-full h-full text-sm"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -1153,10 +1188,10 @@ const PromotionsTab = () => {
 const DeleteModel = ({ setDeleteModel, productId }) => {
   return (
     <>
-      <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center">
-        <div className="w-[50%] p-5 bg-white rounded-xl shadow-md flex flex-col gap-4">
+      <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center p-4">
+        <div className="w-full sm:w-[80%] md:w-[60%] lg:w-[50%] p-4 sm:p-5 bg-white rounded-xl shadow-md flex flex-col gap-4">
           <div className="flex justify-between items-center w-full p-1">
-            <h3 className="text-[1.5dvw] font-semibold">Delete Item</h3>
+            <h3 className="text-lg sm:text-xl lg:text-[1.5dvw] font-semibold">Delete Item</h3>
             <button
               onClick={() => {
                 setDeleteModel({
@@ -1166,29 +1201,29 @@ const DeleteModel = ({ setDeleteModel, productId }) => {
               }}
               className="hover:text-[var(--Negative-color)] transition-all duration-300 ease-linear cursor-pointer"
             >
-              <CircleX size={30} />
+              <CircleX size={24} className="sm:w-[30px] sm:h-[30px]" />
             </button>
           </div>
-          <p className="text-[1.2dvw] font-semibold font-[var(--paraFont)]">
+          <p className="text-base sm:text-lg lg:text-[1.2dvw] font-semibold font-[var(--paraFont)]">
             Product Id <span className="italic">"{productId}"</span> will be{" "}
-            <span className="text-[var(--Negative-color)] font-bold font-[var(--paraFont)] text-[1.3dvw]">
+            <span className="text-[var(--Negative-color)] font-bold font-[var(--paraFont)] text-lg sm:text-xl lg:text-[1.3dvw]">
               Removed
             </span>{" "}
             from the Inventory.
           </p>
-          <div className="flex justify-end items-center gap-4">
+          <div className="flex flex-col sm:flex-row justify-end items-center gap-4">
             <button
               onClick={() => {
                 setDeleteModel({
-                  showDeleteModel: false,
+                  state: false,
                   productId: null,
                 });
               }}
-              className="bg-[var(--button-color4)] text-white px-5 py-1.5 rounded-md flex justify-center items-center font-semibold text-[1.1dvw] cursor-pointer"
+              className="w-full sm:w-auto bg-[var(--button-color4)] text-white px-5 py-1.5 rounded-md flex justify-center items-center font-semibold text-base sm:text-lg lg:text-[1.1dvw] cursor-pointer"
             >
               Cancel
             </button>
-            <button className="bg-[var(--Negative-color)] text-white px-5 py-1.5 rounded-md flex justify-center items-center font-semibold text-[1.1dvw] cursor-pointer">
+            <button className="w-full sm:w-auto bg-[var(--Negative-color)] text-white px-5 py-1.5 rounded-md flex justify-center items-center font-semibold text-base sm:text-lg lg:text-[1.1dvw] cursor-pointer">
               Delete
             </button>
           </div>

@@ -146,10 +146,39 @@
                 &.activeLink {
                   color: var(--sideMenu-color) !important;
                   background: var(--secondary-color) !important;
+                  div{
+                    svg path {
+                      fill: var(--sideMenu-color) !important;
+                    }
+                    &.activeLink {
+                  color: var(--sideMenu-color) !important;
+                  background: var(--secondary-color) !important;
+                  div{
+                    svg path {
+                      fill: var(--sideMenu-color) !important;
+                    }
+
+                    
+                  }
+                  /*svg path {
+                    fill: var(--sideMenu-color) !important;
+                  }*/
+                }
+                
+                &.deActiveLink {
+                  color: var(--secondary-color) !important;
+                  background: transparent !important;
                   
                   svg path {
-                    fill: var(--sideMenu-color) !important;
+                    fill: var(--secondary-color) !important;
                   }
+                }
+
+                    
+                  }
+                  /*svg path {
+                    fill: var(--sideMenu-color) !important;
+                  }*/
                 }
                 
                 &.deActiveLink {
@@ -161,6 +190,31 @@
                   }
                 }
               }
+              &.activeLink {
+                color: var(--sideMenu-color) !important;
+                background: var(--secondary-color) !important;
+                div{
+                  svg path {
+                    fill: var(--sideMenu-color) !important;
+                  }
+
+                  
+                }
+                /*svg path {
+                  fill: var(--sideMenu-color) !important;
+                }*/
+              }
+              
+              &.deActiveLink {
+                color: var(--secondary-color) !important;
+                background: transparent !important;
+                
+                svg path {
+                  fill: var(--secondary-color) !important;
+                }
+              }
+
+
             }
           }
         }

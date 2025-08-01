@@ -663,12 +663,15 @@ export const Layout = ({ children }) => {
           className={({ isActive }) =>
             isActive
               ? `flex py-2 px-5 rounded-full font-[600] text-sm lg:text-[1.2dvw] paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink`
-              : `flex py-2 px-5 rounded-full font-[600] text-sm lg:text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink text-white`
+              : `flex py-2 px-5 rounded-full font-[600] text-sm lg:text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink ${
+                  isMobile ? "text-white" : ""
+                }`
           }
           onClick={() => handleNavigation("/")}
         >
           <DashboardIcon />
           Dashboard
+
         </NavLink>
 
         <NavLink
@@ -677,7 +680,7 @@ export const Layout = ({ children }) => {
             isActive
               ? `flex py-2 px-5 rounded-full font-[600] text-sm lg:text-[1.2dvw] paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink`
               : `flex py-2 px-5 rounded-full font-[600] text-sm lg:text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink ${
-                  isMobile ? "text-white" : ""
+                  isMobile ? 'text-white  ' : ""
                 }`
           }
           onClick={() => handleNavigation("/admin/sale")}
@@ -708,7 +711,9 @@ export const Layout = ({ children }) => {
           </div>
           <div
             className={`bg-[#0052cc]/50 w-[80%] mx-auto rounded-md flex flex-col gap-2 ${
-              subMenuStateDaily ? "h-auto opacity-100" : "h-0 opacity-0"
+              subMenuStateDaily
+                ? "h-auto opacity-100 p-2"
+                : "h-0 opacity-0"
             } transition-all duration-300 ease-linear overflow-hidden`}
           >
             <NavLink
@@ -770,7 +775,9 @@ export const Layout = ({ children }) => {
           </div>
           <div
             className={`bg-[#0052cc]/50 w-[80%] mx-auto rounded-md flex flex-col gap-2 ${
-              subMenuStateInventory ? "h-auto opacity-100" : "h-0 opacity-0"
+              subMenuStateInventory
+                ? "h-auto opacity-100 p-2"
+                : "h-0 opacity-0"
             } transition-all duration-300 ease-linear overflow-hidden`}
           >
             <NavLink
@@ -904,7 +911,9 @@ export const Layout = ({ children }) => {
           </div>
           <div
             className={`bg-[#0052cc]/50 w-[80%] mx-auto rounded-md flex flex-col gap-2 ${
-              subMenuStateUser ? "h-auto opacity-100" : "h-0 opacity-0"
+              subMenuStateUser
+                ? "h-auto opacity-100 p-2"
+                : "h-0 opacity-0"
             } transition-all duration-300 ease-linear overflow-hidden`}
           >
             <NavLink
@@ -966,7 +975,9 @@ export const Layout = ({ children }) => {
           </div>
           <div
             className={`bg-[#0052cc]/50 w-[80%] mx-auto rounded-md flex flex-col gap-2 ${
-              subMenuStatePos ? "h-auto opacity-100" : "h-0 opacity-0"
+              subMenuStatePos
+                ? "h-auto opacity-100 p-2 "
+                : "h-0 opacity-0"
             } transition-all duration-300 ease-linear overflow-hidden`}
           >
             <NavLink
@@ -978,8 +989,8 @@ export const Layout = ({ children }) => {
               className={({ isActive }) => {
                 isActive && setSunMenuStatePos(true);
                 return isActive
-                  ? `flex py-2 px-5 rounded-full font-[600] text-xs lg:text-[1dvw] paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink`
-                  : `flex py-2 px-5 rounded-full font-[600] text-xs lg:text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink ${
+                  ? `flex py-2 px-5 rounded-full font-[600] text-xs lg:text-[1dvw] paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink line-clamp-1`
+                  : `flex py-2 px-5 rounded-full font-[600] text-xs lg:text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink line-clamp-1 ${
                       isMobile ? "text-white" : ""
                     }`;
               }}
@@ -995,8 +1006,8 @@ export const Layout = ({ children }) => {
               className={({ isActive }) => {
                 isActive && setSunMenuStatePos(true);
                 return isActive
-                  ? `flex py-2 px-5 rounded-full font-[600] text-xs lg:text-[1dvw] paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink`
-                  : `flex py-2 px-5 rounded-full font-[600] text-xs lg:text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink ${
+                  ? `flex py-2 px-5 rounded-full font-[600] text-xs lg:text-[1dvw] paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink line-clamp-1`
+                  : `flex py-2 px-5 rounded-full font-[600] text-xs lg:text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink line-clamp-1 ${
                       isMobile ? "text-white" : ""
                     }`;
               }}
@@ -1012,8 +1023,8 @@ export const Layout = ({ children }) => {
               className={({ isActive }) => {
                 isActive && setSunMenuStatePos(true);
                 return isActive
-                  ? `flex py-2 px-5 rounded-full font-[600] text-xs lg:text-[1dvw] paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink`
-                  : `flex py-2 px-5 rounded-full font-[600] text-xs lg:text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink ${
+                  ? `flex py-2 px-5 rounded-full font-[600] text-xs lg:text-[1dvw] paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink line-clamp-1`
+                  : `flex py-2 px-5 rounded-full font-[600] text-xs lg:text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink line-clamp-1 ${
                       isMobile ? "text-white" : ""
                     }`;
               }}
@@ -1029,8 +1040,8 @@ export const Layout = ({ children }) => {
               className={({ isActive }) => {
                 isActive && setSunMenuStatePos(true);
                 return isActive
-                  ? `flex py-2 px-5 rounded-full font-[600] text-xs lg:text-[1dvw] paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink`
-                  : `flex py-2 px-5 rounded-full font-[600] text-xs lg:text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink ${
+                  ? `flex py-2 px-5 rounded-full font-[600] text-xs lg:text-[1dvw] paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink line-clamp-1`
+                  : `flex py-2 px-5 rounded-full font-[600] text-xs lg:text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink line-clamp-1 ${
                       isMobile ? "text-white" : ""
                     }`;
               }}
@@ -1046,8 +1057,8 @@ export const Layout = ({ children }) => {
               className={({ isActive }) => {
                 isActive && setSunMenuStatePos(true);
                 return isActive
-                  ? `flex py-2 px-5 rounded-full font-[600] text-xs lg:text-[1dvw] paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink`
-                  : `flex py-2 px-5 rounded-full font-[600] text-xs lg:text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink ${
+                  ? `flex py-2 px-5 rounded-full font-[600] text-xs lg:text-[1dvw] paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink line-clamp-1`
+                  : `flex py-2 px-5 rounded-full font-[600] text-xs lg:text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink line-clamp-1 ${
                       isMobile ? "text-white" : ""
                     }`;
               }}
@@ -1063,8 +1074,8 @@ export const Layout = ({ children }) => {
               className={({ isActive }) => {
                 isActive && setSunMenuStatePos(true);
                 return isActive
-                  ? `flex py-2 px-5 rounded-full font-[600] text-xs lg:text-[1dvw] paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink`
-                  : `flex py-2 px-5 rounded-full font-[600] text-xs lg:text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink ${
+                  ? `flex py-2 px-5 rounded-full font-[600] text-xs lg:text-[1dvw] paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink line-clamp-1`
+                  : `flex py-2 px-5 rounded-full font-[600] text-xs lg:text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink line-clamp-1 ${
                       isMobile ? "text-white" : ""
                     }`;
               }}
@@ -1080,8 +1091,8 @@ export const Layout = ({ children }) => {
               className={({ isActive }) => {
                 isActive && setSunMenuStatePos(true);
                 return isActive
-                  ? `flex py-2 px-5 rounded-full font-[600] text-xs lg:text-[1dvw] paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink`
-                  : `flex py-2 px-5 rounded-full font-[600] text-xs lg:text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink ${
+                  ? `flex py-2 px-5 rounded-full font-[600] text-xs lg:text-[1dvw] paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink line-clamp-1`
+                  : `flex py-2 px-5 rounded-full font-[600] text-xs lg:text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink line-clamp-1 ${
                       isMobile ? "text-white" : ""
                     }`;
               }}
@@ -1097,8 +1108,8 @@ export const Layout = ({ children }) => {
               className={({ isActive }) => {
                 isActive && setSunMenuStatePos(true);
                 return isActive
-                  ? `flex py-2 px-5 rounded-full font-[600] text-xs lg:text-[1dvw] paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink`
-                  : `flex py-2 px-5 rounded-full font-[600] text-xs lg:text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink ${
+                  ? `flex py-2 px-5 rounded-full font-[600] text-xs lg:text-[1dvw] paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink line-clamp-1`
+                  : `flex py-2 px-5 rounded-full font-[600] text-xs lg:text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink line-clamp-1 ${
                       isMobile ? "text-white" : ""
                     }`;
               }}
@@ -1114,8 +1125,8 @@ export const Layout = ({ children }) => {
               className={({ isActive }) => {
                 isActive && setSunMenuStatePos(true);
                 return isActive
-                  ? `flex py-2 px-5 rounded-full font-[600] text-xs lg:text-[1dvw] paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink`
-                  : `flex py-2 px-5 rounded-full font-[600] text-xs lg:text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink ${
+                  ? `flex py-2 px-5 rounded-full font-[600] text-xs lg:text-[1dvw] paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink line-clamp-1`
+                  : `flex py-2 px-5 rounded-full font-[600] text-xs lg:text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink line-clamp-1 ${
                       isMobile ? "text-white" : ""
                     }`;
               }}
@@ -1145,7 +1156,9 @@ export const Layout = ({ children }) => {
           </div>
           <div
             className={`bg-[#0052cc]/50 w-[80%] mx-auto rounded-md flex flex-col gap-2 ${
-              subMenuStateLottery ? "h-auto opacity-100" : "h-0 opacity-0"
+              subMenuStateLottery
+                ? "h-auto opacity-100 p-2"
+                : "h-0 opacity-0"
             } transition-all duration-300 ease-linear overflow-hidden`}
           >
             <NavLink
@@ -1222,7 +1235,9 @@ export const Layout = ({ children }) => {
           </div>
           <div
             className={`bg-[#0052cc]/50 w-[80%] mx-auto rounded-md flex flex-col gap-2 ${
-              subMenuStateLoyalty ? "h-auto opacity-100" : "h-0 opacity-0"
+              subMenuStateLoyalty
+                ? "h-auto opacity-100 p-2"
+                : "h-0 opacity-0"
             } transition-all duration-300 ease-linear overflow-hidden`}
           >
             <NavLink
@@ -1282,7 +1297,7 @@ export const Layout = ({ children }) => {
           className={({ isActive }) =>
             isActive
               ? `flex py-2 px-5 rounded-full font-[600] text-sm lg:text-[1.2dvw] paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink`
-              : `flex py-2 px-5 rounded-full font-[600] text-sm lg:text-[1dvw] paraFont justify-start items-center gap-4 deActiveLink ${
+              : `flex py-2 px-5 rounded-full font-[600] text-sm lg:text-[1.2dvw] paraFont justify-start items-center gap-4 deActiveLink ${
                   isMobile ? "text-white" : ""
                 }`
           }
@@ -1405,16 +1420,16 @@ export const Layout = ({ children }) => {
               onClick={() => setIsMobileMenuOpen(false)}
             ></div>
             <div className="mobile-sidebar fixed left-0 top-0 h-full w-full bg-[var(--sideMenu-color)] transform transition-transform duration-300 ease-in-out flex flex-col">
-              {/* Mobile Logo Header */}
-              <div className="sideMenu__logoWrapper flex items-center justify-between h-16 w-full px-4">
-                <div className="flex justify-center items-center w-full">
+              {/* Mobile Logo Header with separated logo and cross button */}
+              <div className="flex items-center justify-between h-16 w-full px-4">
+                <div className="flex items-center justify-center flex-1">
                   <img
                     alt="sellsync.com"
                     src={SellsyncLogo}
-                    style={{ width: "200px", height: "auto" }}
+                    className="h-8 sm:h-10 md:h-12 w-auto"
                   />
                 </div>
-                <div className="flex items-center">
+                <div className="flex items-center justify-center">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();

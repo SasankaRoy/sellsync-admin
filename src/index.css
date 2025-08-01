@@ -52,3 +52,17 @@ h6,
 .clipPathEffect {
   clip-path: circle(65% at 80% 50%);
 }
+
+.activeLink svg path,
+.activeLink svg g path {
+  fill: var(--sideMenu-color) !important;
+}
+
+.deActiveLink svg path {
+  fill: var(--secondary-color) !important;
+}
+
+.deActiveLink svg g path {
+  fill: var(--secondary-color) !important;
+}
+
