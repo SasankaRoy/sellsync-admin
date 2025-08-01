@@ -347,7 +347,9 @@ export const Inventory = () => {
                 </div>
                 <div className="p-1 sm:p-2 xl:p-3 my-2 xl:my-3">
                   <div className="mb-3 xl:mb-4 flex justify-center items-center sm:portrait:justify-center md:portrait:justify-center">
-                    <Doughtchart aspectRatio={1.5} />
+                    <div className="w-[200px] h-[200px] sm:w-[180px] sm:h-[180px] md:w-[220px] md:h-[220px] lg:w-full lg:h-auto">
+                      <Doughtchart aspectRatio={1.5} />
+                    </div>
                   </div>
                   <div>
                     <div className="flex-1 shrink-0 flex flex-col gap-2 sm:gap-3 justify-center items-start rounded-md bg-[var(--primary-color)] py-2 sm:py-4 xl:py-6 px-2">
