@@ -154,29 +154,13 @@ export const Category = () => {
     });
   };
 
-  // Toolbar edit function - opens edit modal directly with empty data
-  const handleToolbarEdit = () => {
-    console.log("Toolbar edit clicked");
-    setShowModel({
-      state: true,
-      productData: {
-        ID: "",
-        CategoryName: "",
-        Group: "",
-        Stock: "",
-        Supplier: "",
-      },
-      actionType: "Edit",
-    });
-  };
-
   // Column Definitions: Defines & controls grid columns.
   const [colDefs, setColDefs] = useState([
-    { field: "ID", headerName: "ID", width: 80 },
-    { field: "CategoryName", headerName: "Category Name", width: 200 },
-    { field: "Group", headerName: "Group", width: 120 },
-    { field: "Stock", headerName: "Stock", width: 100 },
-    { field: "Supplier", headerName: "Supplier", width: 150 },
+    { field: "ID" },
+    { field: "CategoryName" },
+    { field: "Group" },
+    { field: "Stock" },
+    { field: "Supplier" },
     {
       headerName: "Actions",
       field: "actions",
@@ -186,9 +170,6 @@ export const Category = () => {
         onDelete,
         skinSafe: true,
       },
-      width: 200,
-      sortable: false,
-      filter: false,
     },
   ]);
 
@@ -196,8 +177,7 @@ export const Category = () => {
   const defaultColDef = useMemo(() => {
     return {
       filter: true,
-      sortable: true,
-      resizable: true,
+      editable: true,
     };
   }, []);
 
@@ -205,11 +185,11 @@ export const Category = () => {
     <Layout onAddProduct={handleAddProduct}>
       <div className="pb-14 w-full px-4 sm:px-6 lg:px-0">
         <div className="w-full">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-0">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-0 lg:flex-row lg:items-center lg:gap-0 lg:mb-0">
             <h3 className="text-2xl md:text-xl lg:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
               Categories List
             </h3>
-            <div className="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-3 sm:gap-5 w-full sm:w-auto">
+            <div className="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-3 sm:gap-5 w-full sm:w-auto lg:flex-row lg:w-auto lg:gap-5">
               <button
                 onClick={onAddCategory}
                 className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color1)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
@@ -225,27 +205,21 @@ export const Category = () => {
 
         <div className="w-full h-[60vh] sm:h-[70vh] lg:h-[75vh]">
           <div className="w-full flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-full">
-            <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center py-1.5 shrink-0 gap-3 sm:gap-0">
-              <div className="flex justify-between sm:justify-center items-center gap-3 w-full sm:w-auto">
+            <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center py-1.5 shrink-0 gap-3 sm:gap-0 lg:flex-row lg:items-center lg:gap-0">
+              <div className="flex justify-between sm:justify-center items-center gap-3 w-full sm:w-auto lg:justify-center lg:w-auto">
                 <select className="font-[500] mainFont px-4 border-none outline-none text-sm lg:text-base">
                   <option>All Category</option>
                   <option>Beer</option>
                   <option>Wine</option>
                   <option>Spirits</option>
                 </select>
-                <div className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-[1.8dvw] lg:w-[1.8dvw] bg-[var(--counterBg-color)] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem] sm:min-w-[1.75rem] sm:min-h-[1.75rem] md:min-w-[2rem] md:min-h-[2rem]">
+                <div className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-auto lg:w-auto bg-[var(--counterBg-color)] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem] sm:min-w-[1.75rem] sm:min-h-[1.75rem] md:min-w-[2rem] md:min-h-[2rem] lg:px-3 lg:py-0.5 lg:rounded-2xl lg:min-w-0 lg:min-h-0">
                   <p className="text-xs sm:text-xs md:text-sm lg:text-[1dvw] font-[500] text-white">
                     {rowData.length}
                   </p>
                 </div>
               </div>
-              <div className="flex gap-2 sm:gap-4 justify-between items-center flex-wrap">
-                <button
-                  onClick={handleToolbarEdit}
-                  className="flex justify-between items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC] hover:bg-[#003d99] transition-all duration-300"
-                >
-                  <Edit size={14} className="sm:w-4 sm:h-4" /> Edit
-                </button>
+              <div className="flex gap-2 sm:gap-4 justify-between items-center flex-wrap lg:gap-4">
                 <button className="flex justify-between items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-[600]">
                   Sort <SortIcon />
                 </button>
@@ -257,25 +231,18 @@ export const Category = () => {
                 </button>
               </div>
             </div>
-            <div className="h-full w-full overflow-x-scroll overflow-y-auto">
-              <div className="min-w-[800px] h-full">
+            <div className="h-full w-full overflow-x-scroll overflow-y-auto lg:overflow-x-visible">
+              <div className="min-w-[800px] h-full lg:min-w-0">
                 <AgGridReact
                   rowData={rowData}
                   columnDefs={colDefs}
                   defaultColDef={defaultColDef}
                   pagination={true}
                   rowSelection={rowSelection}
-                  onSelectionChanged={(event) => {
-                    const selectedNodes = event.api.getSelectedNodes();
-                    const selectedData = selectedNodes.map(
-                      (node) => node.data
-                    );
-                    console.log("Selected data updated:", selectedData);
-                  }}
+                  onSelectionChanged={(event) => console.log("Row Selected!")}
                   onCellValueChanged={(event) =>
                     console.log(`New Cell Value: ${event.value}`)
                   }
-                  getRowId={(params) => params.data.ID}
                   className="w-full h-full text-sm"
                 />
               </div>
@@ -637,16 +604,16 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
           ))}
         </div>
 
-        <div className="flex flex-col sm:flex-row justify-end items-center gap-4 sm:gap-5 my-4">
+        <div className="flex flex-col sm:flex-row justify-end items-center gap-4 sm:gap-5 my-4 lg:flex-row lg:gap-5">
           <button
-            className="w-full sm:w-auto px-4 sm:px-5 py-1.5 sm:py-2 rounded-md cursor-pointer text-white font-semibold bg-[var(--button-color4)] text-sm sm:text-base lg:text-[1.2dvw] hover:opacity-80 transition-all duration-300"
+            className="w-full sm:w-auto px-4 sm:px-5 py-1 sm:py-1.5 rounded-md cursor-pointer text-white font-semibold bg-[var(--button-color4)] text-sm sm:text-base lg:text-[1.2dvw] hover:opacity-80 transition-all duration-300"
             onClick={handleCloseModel}
           >
             Cancel
           </button>
           <button 
             onClick={handleSubmit}
-            className="w-full sm:w-auto px-4 sm:px-5 py-1.5 sm:py-2 rounded-md cursor-pointer text-white font-semibold bg-[var(--button-color5)] text-sm sm:text-base lg:text-[1.2dvw] hover:opacity-80 transition-all duration-300"
+            className="w-full sm:w-auto px-4 sm:px-5 py-1 sm:py-1.5 rounded-md cursor-pointer text-white font-semibold bg-[var(--button-color5)] text-sm sm:text-base lg:text-[1.2dvw] hover:opacity-80 transition-all duration-300"
           >
             {actionType === "Add" ? "Create" : "Update"}
           </button>
