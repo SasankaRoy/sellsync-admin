@@ -53,13 +53,20 @@ export const AdminDashboard = () => {
             <h3 className="text-lg sm:text-xl lg:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
               Overview
             </h3>
-            <select className="px-3 sm:px-4 py-2 sm:py-1 bg-[var(--button-color2)] text-[var(--primary-color)] rounded-full font-[var(--paraFont)] text-sm sm:text-base w-full sm:w-auto">
-              <option>Weekly</option>
-              <option>1 week</option>
-              <option>2 week</option>
-              <option>3 week</option>
-              <option>4 week</option>
-            </select>
+            <div className="relative w-full sm:w-auto">
+              <select className="appearance-none pl-4 pr-8 py-1 bg-[var(--button-color2)] text-[var(--primary-color)] rounded-full font-[var(--paraFont)] text-sm sm:text-base w-full sm:w-auto cursor-pointer">
+                <option>Weekly</option>
+                <option>1 week</option>
+                <option>2 week</option>
+                <option>3 week</option>
+                <option>4 week</option>
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-[var(--primary-color)]">
+                <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                </svg>
+              </div>
+            </div>
           </div>
 
           {/* Overview Cards */}

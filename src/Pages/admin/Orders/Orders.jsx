@@ -280,14 +280,14 @@ export const Orders = () => {
 
   // Column Definitions: Defines & controls grid columns.
   const [colDefs, setColDefs] = useState([
-    { field: "ID" },
-    { field: "OrderNumber" },
-    { field: "CustomerName" },
-    { field: "SupplierName" },
-    { field: "Items" },
-    { field: "OrderedDate" },
-    { field: "Total" },
-    { field: "Status" },
+    { field: "ID", headerName: "ID", width: 80 },
+    { field: "OrderNumber", headerName: "Order Number", width: 150 },
+    { field: "CustomerName", headerName: "Customer Name", width: 150 },
+    { field: "SupplierName", headerName: "Supplier Name", width: 250 },
+    { field: "Items", headerName: "Items", width: 100 },
+    { field: "OrderedDate", headerName: "Ordered Date", width: 150 },
+    { field: "Total", headerName: "Total", width: 100 },
+    { field: "Status", headerName: "Status", width: 120 },
     {
       headerName: "Actions",
       field: "actions",
@@ -298,6 +298,9 @@ export const Orders = () => {
         onDelete,
         skinSafe: true,
       },
+      width: 150,
+      sortable: false,
+      filter: false,
     },
   ]);
 
@@ -305,59 +308,70 @@ export const Orders = () => {
   const defaultColDef = useMemo(() => {
     return {
       filter: true,
-      editable: true,
+      sortable: true,
+      resizable: true,
     };
   }, []);
 
   
   return (
     <Layout>
-      <div className="flex justify-between items-center">
-        <h3 className="text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
-          Orders
-        </h3>
-        <div className="flex justify-center items-center gap-5">
-          <button className="px-5 py-1.5 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-4 text-white mainFont font-[500] cursor-pointer text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
-            export CVS <PluseIcon />
-          </button>
-        </div>
-      </div>
-
-      <div className="w-full h-[75vh] ">
-        <div className="w-full flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-full">
-          <div className="flex justify-between items-center py-1.5 shrink-0">
-            <div className="flex justify-center items-center gap-3">
-              <select className="font-[500] mainFont px-4 border-none outline-none">
-                <option>All</option>
-                <option>Older</option>
-                <option>Newest</option>
-              </select>
-              <p className="px-3 text-[1dvw] py-.5 bg-[#F8A61B] rounded-2xl font-[500] border-none text-white">
-                42
-              </p>
-            </div>
-            <div className="flex gap-4 justify-center items-center">
-              <button className="flex justify-center items-center gap-2 px-4 py-1 text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-[600] hover:text-white hover:bg-[#0052CC] transition-all duration-300 ease-linear">
-                Sort <SortIcon />
-              </button>
-              <button className="flex justify-center items-center gap-2 px-4 py-1 text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC] hover:text-[#0052CC] hover:bg-white transition-all duration-300 ease-linear">
-                Filter <FilterIcon />
+      <div className="pb-14 w-full px-4 sm:px-6 lg:px-0">
+        <div className="w-full">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-0">
+            <h3 className="text-2xl md:text-xl lg:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
+              Orders
+            </h3>
+            <div className="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-3 sm:gap-5 w-full sm:w-auto">
+              <button className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
+                export CVS <PluseIcon />
               </button>
             </div>
           </div>
-          <div className="h-full w-full">
-            <AgGridReact
-              rowData={rowData}
-              columnDefs={colDefs}
-              // loading={loading}
-              defaultColDef={defaultColDef}
-              pagination={true}
-              rowSelection={rowSelection}
-              onSelectionChanged={(event) => console.log("Row Selected!")}
-              onCellValueChanged={(event) =>
-                console.log(`New Cell Value: ${event.value}`)
-              }
-            />
+        </div>
+
+        <div className="w-full h-[60vh] sm:h-[70vh] lg:h-[75vh]">
+          <div className="w-full flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-full">
+            <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center py-1.5 shrink-0 gap-3 sm:gap-0">
+              <div className="flex justify-between sm:justify-center items-center gap-3 w-full sm:w-auto">
+                <select className="font-[500] mainFont px-4 border-none outline-none text-sm lg:text-base">
+                  <option>All</option>
+                  <option>Older</option>
+                  <option>Newest</option>
+                </select>
+                <div className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-[1.8dvw] lg:w-[1.8dvw] bg-[var(--counterBg-color)] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem] sm:min-w-[1.75rem] sm:min-h-[1.75rem] md:min-w-[2rem] md:min-h-[2rem]">
+                  <p className="text-xs sm:text-xs md:text-sm lg:text-[1dvw] font-[500] text-white">
+                    42
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-2 sm:gap-4 justify-between items-center flex-wrap">
+                <button className="flex justify-between items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-[600] hover:text-white hover:bg-[#0052CC] transition-all duration-300 ease-linear">
+                  Sort <SortIcon />
+                </button>
+                <button className="flex justify-between items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC] hover:text-[#0052CC] hover:bg-white transition-all duration-300 ease-linear">
+                  Filter <FilterIcon />
+                </button>
+              </div>
+            </div>
+            <div className="h-full w-full overflow-x-scroll overflow-y-auto">
+              <div className="min-w-[1200px] h-full">
+                <AgGridReact
+                  rowData={rowData}
+                  columnDefs={colDefs}
+                  // loading={loading}
+                  defaultColDef={defaultColDef}
+                  pagination={true}
+                  rowSelection={rowSelection}
+                  onSelectionChanged={(event) => console.log("Row Selected!")}
+                  onCellValueChanged={(event) =>
+                    console.log(`New Cell Value: ${event.value}`)
+                  }
+                  getRowId={(params) => params.data.ID}
+                  className="w-full h-full text-sm"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -381,19 +395,19 @@ const ActionBtns = (props) => {
   
     return (
       <>
-        <div className="w-full flex gap-4 py-2 justify-center items-center">
+        <div className="w-full flex gap-2 sm:gap-4 py-2 justify-center items-center">
           <button
-            className="font-semibold font-[var(--paraFont)] bg-[var(--button-color1)] text-white p-1.5 rounded-full border-none cursor-pointer"
+            className="font-semibold font-[var(--paraFont)] bg-[var(--button-color1)] text-white p-1 sm:p-1.5 rounded-full border-none cursor-pointer"
             onClick={handleEdit}
           >
-            <Edit size={18} />
+            <Edit size={16} className="sm:w-[18px] sm:h-[18px]" />
           </button>
   
           <button
-            className="font-semibold font-[var(--paraFont)] bg-[var(--Negative-color)] text-white p-1.5 rounded-full border-none cursor-pointer"
+            className="font-semibold font-[var(--paraFont)] bg-[var(--Negative-color)] text-white p-1 sm:p-1.5 rounded-full border-none cursor-pointer"
             onClick={handleDelete}
           >
-            <Trash size={18} />
+            <Trash size={16} className="sm:w-[18px] sm:h-[18px]" />
           </button>
         </div>
       </>
