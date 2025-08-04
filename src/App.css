@@ -1,0 +1,6 @@
+.activeLink svg g path{
+    fill:red !important
+}
+.activeLink svg path{
+    fill:red !important
+}

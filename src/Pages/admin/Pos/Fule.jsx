@@ -21,6 +21,7 @@ const rowSelection = {
 };
 
 export const Fule = () => {
+  const [isDownloading, setIsDownloading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [fuelPrice, setFuelPrice] = useState({
     regular_cash: "",
@@ -57,7 +58,7 @@ export const Fule = () => {
     }
   };
 
-  const { data: latestPrice, isLoading: isGetLatestPrice } = useQuery({
+  const { isLoading: isGetLatestPrice } = useQuery({
     queryKey: ["fule_latest_price"],
     queryFn: async () => {
       try {
@@ -161,6 +162,34 @@ export const Fule = () => {
       editable: true,
     };
   }, []);
+
+  // download csv function ...
+  const handleDownloadCSV = async () => {
+    setIsDownloading(true);
+    try {
+      const reqDownloadCSV = await axiosInstance.post(
+        "api/v1/common/fuel-list-csv"
+      );
+
+      if (reqDownloadCSV.status === 200 && reqDownloadCSV.data) {
+        const blob = new Blob([reqDownloadCSV.data], { type: "text/csv" });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "fuel-price-history.csv";
+        a.click();
+        window.URL.revokeObjectURL(url);
+      }
+    } catch (error) {
+      console.error(error?.response?.data?.error);
+      toast.error(
+        error?.response?.data?.error ||
+          "Something went wrong! while downloading csv"
+      );
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   return (
     <>
@@ -328,8 +357,13 @@ export const Fule = () => {
           <div className="flex flex-col gap-3 bg-white rounded-md border border-[#d4d4d4] px-5 py-2">
             <div className="flex justify-between items-center w-full">
               <h3 className="font-[500] text-[1.5vw]">Price Update History</h3>
-              <button className="bg-[var(--button-color1)] flex justify-center items-center text-[1dvw] gap-2 px-5 py-2 rounded-full mainFont font-[500] cursor-pointer text-white">
-                <Download /> Download CSV
+              <button
+                onClick={handleDownloadCSV}
+                disabled={isDownloading}
+                className="bg-[var(--button-color1)] flex justify-center items-center text-[1dvw] gap-2 px-5 py-2 rounded-full mainFont font-[500] cursor-pointer text-white disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-70 hover:bg-[var(--button-color5)] transition-all duration-300 ease-linear"
+              >
+                <Download />{" "}
+                {isDownloading ? "Downloading...." : "Download CSV"}
               </button>
             </div>
             <div className=" h-[60vh]">
