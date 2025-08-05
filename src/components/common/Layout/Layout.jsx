@@ -164,11 +164,21 @@ export const Layout = ({ children }) => {
           </button>
           <div className="flex flex-col gap-2 w-full">
             <label className="text-sm lg:text-[1dvw] font-normal paraFont">
-              Stockcode
+              Stockcode 
               <span className="text-xs lg:text-[.9dvw] text-[var(--Negative-color)]">
                 *
               </span>
             </label>
+            <div className="flex flex-col gap-2 w-full">
+                <input
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  placeholder="Enter the code"
+                  type="text"
+                  onChange={(e) =>
+                    handleStockFieldChange(index, "stockCode", e.target.value)
+                  }
+                />
+              </div>
           </div>
           <div className="flex flex-col gap-2 w-full">
             <label className="text-sm lg:text-[1dvw] font-normal paraFont">
@@ -177,6 +187,16 @@ export const Layout = ({ children }) => {
                 *
               </span>
             </label>
+            <div className="flex flex-col gap-2 w-full">
+                <input
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  placeholder="Enter Qty"
+                  type="text"
+                  onChange={(e) =>
+                    handleStockFieldChange(index, "stockCode", e.target.value)
+                  }
+                />
+              </div>
           </div>
           <div className="flex flex-col gap-2 w-full">
             <label className="text-sm lg:text-[1dvw] font-normal paraFont">
@@ -185,8 +205,18 @@ export const Layout = ({ children }) => {
                 *
               </span>
             </label>
+            <div className="flex flex-col gap-2 w-full">
+                <input
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  placeholder="Enter Qty"
+                  type="text"
+                  onChange={(e) =>
+                    handleStockFieldChange(index, "stockCode", e.target.value)
+                  }
+                />
+              </div>
           </div>
-          {stockFields.map((field, index) => (
+          {/* {stockFields.map((field, index) => (
             <React.Fragment key={field.id}>
               <div className="flex flex-col gap-2 w-full">
                 <input
@@ -222,7 +252,7 @@ export const Layout = ({ children }) => {
                 />
               </div>
             </React.Fragment>
-          ))}
+          ))} */}
         </div>
 
         <div className="w-full my-4 flex flex-col gap-2">
@@ -255,6 +285,13 @@ export const Layout = ({ children }) => {
                 *
               </span>
             </label>
+               <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
+                <input
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  type="number"
+                 
+                />
+              </div>
           </div>
           <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
             <label className="text-xs sm:text-sm lg:text-[1dvw] font-normal paraFont">
@@ -263,6 +300,13 @@ export const Layout = ({ children }) => {
                 *
               </span>
             </label>
+            <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
+                <input
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  type="number"
+                 
+                />
+              </div>
           </div>
           <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
             <label className="text-xs sm:text-sm lg:text-[1dvw] font-normal paraFont">
@@ -271,37 +315,71 @@ export const Layout = ({ children }) => {
                 *
               </span>
             </label>
+            <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
+                <input
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  type="number"
+                 
+                />
+              </div>
           </div>
           <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
             <label className="text-xs sm:text-sm lg:text-[1dvw] font-normal paraFont">
               Margin
             </label>
+            <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
+                <input
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  type="number"
+                 
+                />
+              </div>
           </div>
           <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
             <label className="text-xs sm:text-sm lg:text-[1dvw] font-normal paraFont">
               Markup
             </label>
+            <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
+                <input
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  type="number"
+                 
+                />
+              </div>
           </div>
           <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
             <label className="text-xs sm:text-sm lg:text-[1dvw] font-normal paraFont">
               Latest Cost
             </label>
+            <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
+                <input
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  type="number"
+                 
+                />
+              </div>
+            
           </div>
           <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
             <label className="text-xs sm:text-sm lg:text-[1dvw] font-normal paraFont">
               Qty
             </label>
+            <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
+                <input
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  type="number"
+                 
+                />
+              </div>
           </div>
-          {quantityFields.map((field, index) => (
+          {/* {quantityFields.map((field, index) => (
             <React.Fragment key={field.id}>
               <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
                 <input
                   className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                   type="number"
                   value={field.qty}
-                  onChange={(e) =>
-                    handleQuantityFieldChange(index, "qty", e.target.value)
-                  }
+                 
                 />
               </div>
               <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
@@ -369,7 +447,7 @@ export const Layout = ({ children }) => {
                 />
               </div>
             </React.Fragment>
-          ))}
+          ))} */}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">

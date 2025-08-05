@@ -80,12 +80,11 @@ export const Employee = () => {
   useEffect(() => {
     if (error) {
       toast.error(
-        error.message || "Somethig went wrong! while fetch employee list"
+        error.message || "Something went wrong! while fetch employee list"
       );
     }
   }, [error]);
 
-  //micro change
   // Column Definitions: Defines & controls grid columns.
   const [colDefs, setColDefs] = useState([
     { field: "id" },
@@ -109,7 +108,6 @@ export const Employee = () => {
       cellRendererParams: {
         onEdit,
         onDelete,
-        // skinSafe: true,
       },
     },
   ]);
@@ -129,91 +127,102 @@ export const Employee = () => {
       ) : (
         <>
           <Layout>
-            <div className="w-full gap-5">
+            <div className="pb-14 w-full px-4 sm:px-6 lg:px-0 h-[calc(100vh-5rem)]" style={{ marginTop: 0 }}>
               <div className="w-full">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-0">
+                  <h3 className="text-2xl sm:text-3xl lg:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
                     Employees
                   </h3>
-                  <button
-                    onClick={() => {
-                      setEditModel({
-                        status: true,
-                        productData: null,
-                        forStatus: "Add",
-                      });
-                    }}
-                    className="px-5 py-1.5 rounded-full bg-[var(--button-color1)] flex justify-center items-center gap-4 text-white mainFont font-[500] cursor-pointer text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
-                  >
-                    Add Employee <PluseIcon />
-                  </button>
+                  <div className="relative w-full sm:w-auto max-w-xs flex justify-center sm:block">
+                    <button
+                      onClick={() => {
+                        setEditModel({
+                          status: true,
+                          productData: null,
+                          forStatus: "Add",
+                        });
+                      }}
+                      className="w-full sm:w-auto px-5 py-2.5 sm:py-1.5 rounded-full bg-[var(--button-color1)] flex justify-center items-center gap-2 text-white mainFont font-[500] cursor-pointer text-sm sm:text-base hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
+                    >
+                      Add Employee <PluseIcon className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="grid grid-cols-4 gap-2 w-full my-6">
-              <Overviewcards
-                cardTitle="Active Employees"
-                cardValue="2"
-                percent="View"
-                icon={<StoreManagerIcon />}
-              />
-              <Overviewcards
-                cardTitle="Inactive Employees"
-                cardValue="8"
-                percent="View"
-                icon={<CashierIcon />}
-              />
-              <Overviewcards
-                cardTitle="Total Tasks"
-                cardValue="4"
-                percent="View"
-                icon={<InventoryManagerIcon />}
-              />
-              <Overviewcards
-                cardTitle="Total Employee"
-                cardValue="8,593"
-                percent="View"
-                icon={<UsersIcon2 />}
-              />
-            </div>
-
-            <div className="w-full flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-[60dvh]">
-              <div className="flex justify-between items-center py-1.5 shrink-0">
-                <div className="flex justify-center items-center gap-3">
-                  <select className="font-[500] mainFont px-4 border-none outline-none">
-                    <option>All Customers</option>
-                    <option>All Customer</option>
-                    <option>All Customer</option>
-                  </select>
-                  <p className="px-3 text-[1dvw] py-.5 bg-[#F8A61B] rounded-2xl font-[500] border-none text-white">
-                    {rowData?.length}
-                  </p>
-                </div>
-                <div className="flex gap-4 justify-center items-center">
-                  <button className="flex justify-center items-center gap-2 px-4 py-1 text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-[600]">
-                    Sort <SortIcon />
-                  </button>
-                  <button className="flex justify-center items-center gap-2 px-4 py-1 text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC]">
-                    Filter <FilterIcon />
-                  </button>
-                  <button>
-                    <DeleteIcon />
-                  </button>
-                </div>
-              </div>
-              <div className="h-full w-full">
-                <AgGridReact
-                  rowData={rowData}
-                  columnDefs={colDefs}
-                  defaultColDef={defaultColDef}
-                  pagination={true}
-                  rowSelection={rowSelection}
-                  onSelectionChanged={(event) => console.log("Row Selected!")}
-                  onCellValueChanged={(event) =>
-                    console.log(`New Cell Value: ${event.value}`)
-                  }
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 w-full my-4 lg:my-3">
+                <Overviewcards
+                  cardTitle="Active Employees"
+                  cardValue="2"
+                  percent="View"
+                  className="lg:scale-95 lg:hover:scale-100 transition-transform duration-200"
+                  icon={<StoreManagerIcon className="w-[8dvw] h-[8dvw] sm:w-12 sm:h-12 lg:w-10 lg:h-10" />}
                 />
+                <Overviewcards
+                  cardTitle="Inactive Employees"
+                  cardValue="8"
+                  percent="View"
+                  className="lg:scale-95 lg:hover:scale-100 transition-transform duration-200"
+                  icon={<CashierIcon className="w-[8dvw] h-[8dvw] sm:w-12 sm:h-12 lg:w-10 lg:h-10" />}
+                />
+                <Overviewcards
+                  cardTitle="Total Tasks"
+                  cardValue="4"
+                  percent="View"
+                  className="lg:scale-95 lg:hover:scale-100 transition-transform duration-200"
+                  icon={<InventoryManagerIcon className="w-[8dvw] h-[8dvw] sm:w-12 sm:h-12 lg:w-10 lg:h-10" />}
+                />
+                <Overviewcards
+                  cardTitle="Total Employee"
+                  cardValue="8,593"
+                  percent="View"
+                  className="lg:scale-95 lg:hover:scale-100 transition-transform duration-200"
+                  icon={<UsersIcon2 className="w-[8dvw] h-[8dvw] sm:w-12 sm:h-12 lg:w-10 lg:h-10" />}
+                />
+              </div>
+
+              <div className="w-full flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-[60dvh]">
+                <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center py-1.5 shrink-0 gap-3 sm:gap-0">
+                  <div className="flex justify-between sm:justify-center items-center gap-3 w-full sm:w-auto">
+                    <select className="font-[500] mainFont px-4 border-none outline-none text-sm lg:text-base">
+                      <option>All Employees</option>
+                      <option>Active</option>
+                      <option>Inactive</option>
+                    </select>
+                    <div className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-[1.8dvw] lg:w-[1.8dvw] bg-[#F8A61B] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem] sm:min-w-[1.75rem] sm:min-h-[1.75rem] md:min-w-[2rem] md:min-h-[2rem]">
+                      <p className="text-xs sm:text-xs md:text-sm lg:text-[1dvw] font-[500] text-white">
+                        {rowData?.length}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-2 sm:gap-4 justify-between items-center">
+                    <button className="flex justify-between items-center gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-[600]">
+                      Sort <SortIcon />
+                    </button>
+                    <button className="flex justify-between items-center gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC]">
+                      Filter <FilterIcon />
+                    </button>
+                    <button>
+                      <DeleteIcon className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
+                <div className="h-full w-full overflow-x-scroll overflow-y-auto">
+                  <div className="min-w-[800px] h-full">
+                    <AgGridReact
+                      rowData={rowData}
+                      columnDefs={colDefs}
+                      defaultColDef={defaultColDef}
+                      pagination={true}
+                      rowSelection={rowSelection}
+                      onSelectionChanged={(event) => console.log("Row Selected!")}
+                      onCellValueChanged={(event) =>
+                        console.log(`New Cell Value: ${event.value}`)
+                      }
+                      className="w-full h-full text-sm"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </Layout>
@@ -317,7 +326,6 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
         },
         status: userInfo.status,
       });
-      console.log(response.data);
       if (response.status === 200 && response.data) {
         toast.success("Employee Added Successfully");
         setEditUserModel({
@@ -329,7 +337,6 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
         queryClient.invalidateQueries({ queryKey: ["employee_list"] });
       }
     } catch (error) {
-      console.log(error.response);
       toast.error(
         error?.response?.data?.error?.password ||
           error?.response?.data?.error?.email ||
@@ -374,7 +381,6 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
         queryClient.invalidateQueries({ queryKey: ["employee_list"] });
       }
     } catch (error) {
-      console.log(error.response);
       toast.error(
         error?.response?.data?.error?.password ||
           error?.response?.data?.error?.email ||
@@ -389,11 +395,9 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
   return (
     <>
       <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center">
-        <div className="bg-white w-[60%] max-h-[95%] overflow-y-auto p-4 rounded-lg shadow-md">
-          <div className="flex justify-between items-center w-full px-2 py-2 rounded-md bg-[var(--button-color1)] text-white">
-            <h3 className="text-[1.6dvw] font-semibold">
-              {forState === "Add" ? "Add Employee" : "Edit Employee"}
-            </h3>
+        <div className="bg-white w-[95%] sm:w-[80%] md:w-[70%] lg:w-[50%] p-4 sm:p-5 rounded-lg shadow-md max-h-[90vh] overflow-y-auto">
+          <div className="flex justify-between items-center w-full p-2.5 rounded-md bg-[var(--sideMenu-color)] text-white">
+            <h3 className="text-lg sm:text-xl md:text-2xl lg:text-[1.5dvw] font-semibold">{forState === "Add" ? "Add Employee" : "Edit Employee"}</h3>
             <button
               onClick={() => {
                 setEditUserModel({
@@ -404,17 +408,15 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
               }}
               className="hover:text-[var(--Negative-color)] transition-all duration-300 ease-linear cursor-pointer"
             >
-              <CircleX size={24} />
+              <CircleX size={30} />
             </button>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 w-full p-2">
-            <div className="w-full my-3 flex flex-col gap-1">
-              <label className="text-[0.9dvw] font-normal paraFont">
-                Full Name
-              </label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full p-3">
+            <div className="w-full my-4 flex flex-col gap-2">
+              <label className="text-base sm:text-lg md:text-xl lg:text-[1dvw] font-normal paraFont">Full Name</label>
               <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-2 px-2"
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-base sm:text-lg md:text-xl lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                 type="text"
                 placeholder="Enter Full Name..."
                 name="full_name"
@@ -423,12 +425,10 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
                 required
               />
             </div>
-            <div className="w-full my-3 flex flex-col gap-1">
-              <label className="text-[0.9dvw] font-normal paraFont">
-                Phone
-              </label>
+            <div className="w-full my-4 flex flex-col gap-2">
+              <label className="text-base sm:text-lg md:text-xl lg:text-[1dvw] font-normal paraFont">Phone</label>
               <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-2 px-2"
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-base sm:text-lg md:text-xl lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                 type="tel"
                 placeholder="Phone number..."
                 name="phone"
@@ -438,12 +438,10 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
               />
             </div>
 
-            <div className="w-full my-3 flex flex-col gap-1">
-              <label className="text-[0.9dvw] font-normal paraFont">
-                Email
-              </label>
+            <div className="w-full my-4 flex flex-col gap-2">
+              <label className="text-base sm:text-lg md:text-xl lg:text-[1dvw] font-normal paraFont">Email</label>
               <input
-                className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-2 px-2"
+                className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-base sm:text-lg md:text-xl lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                 type="email"
                 placeholder="Enter Email..."
                 name="email"
@@ -453,12 +451,10 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
               />
             </div>
             {forState === "Add" && (
-              <div className="w-full my-3 flex flex-col gap-1">
-                <label className="text-[0.9dvw] font-normal paraFont">
-                  Password
-                </label>
+              <div className="w-full my-4 flex flex-col gap-2">
+                <label className="text-base sm:text-lg md:text-xl lg:text-[1dvw] font-normal paraFont">Password</label>
                 <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-2 px-2"
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-base sm:text-lg md:text-xl lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                   type="password"
                   placeholder="Enter password"
                   name="password"
@@ -469,12 +465,10 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
               </div>
             )}
 
-            <div className="w-full my-3 flex flex-col gap-1">
-              <label className="text-[0.9dvw] font-normal paraFont">
-                Street Address
-              </label>
+            <div className="w-full my-4 flex flex-col gap-2">
+              <label className="text-base sm:text-lg md:text-xl lg:text-[1dvw] font-normal paraFont">Street Address</label>
               <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-2 px-2"
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-base sm:text-lg md:text-xl lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                 type="text"
                 placeholder="Enter Street Address..."
                 name="street"
@@ -484,12 +478,10 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
               />
             </div>
 
-            <div className="w-full my-3 flex flex-col gap-1">
-              <label className="text-[0.9dvw] font-normal paraFont">
-                Zip Code
-              </label>
+            <div className="w-full my-4 flex flex-col gap-2">
+              <label className="text-base sm:text-lg md:text-xl lg:text-[1dvw] font-normal paraFont">Zip Code</label>
               <input
-                className="bg-[#F3F3F3]  w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-2 px-2"
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-base sm:text-lg md:text-xl lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                 type="number"
                 placeholder="Enter Zip Code..."
                 name="zip"
@@ -499,10 +491,10 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
               />
             </div>
 
-            <div className="w-full my-3 flex flex-col gap-1">
-              <label className="text-[0.9dvw] font-normal paraFont">City</label>
+            <div className="w-full my-4 flex flex-col gap-2">
+              <label className="text-base sm:text-lg md:text-xl lg:text-[1dvw] font-normal paraFont">City</label>
               <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-2 px-2"
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-base sm:text-lg md:text-xl lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                 type="text"
                 placeholder="Enter City..."
                 name="city"
@@ -512,12 +504,10 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
               />
             </div>
 
-            <div className="w-full my-3 flex flex-col gap-1">
-              <label className="text-[0.9dvw] font-normal paraFont">
-                State
-              </label>
+            <div className="w-full my-4 flex flex-col gap-2">
+              <label className="text-base sm:text-lg md:text-xl lg:text-[1dvw] font-normal paraFont">State</label>
               <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-2 px-2"
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-base sm:text-lg md:text-xl lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                 type="text"
                 placeholder="Enter State..."
                 name="state"
@@ -528,12 +518,10 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
             </div>
 
             {forState === "Add" && (
-              <div className="w-full my-3 flex flex-col gap-1">
-                <label className="text-[0.9dvw] font-normal paraFont">
-                  Role
-                </label>
+              <div className="w-full my-4 flex flex-col gap-2">
+                <label className="text-base sm:text-lg md:text-xl lg:text-[1dvw] font-normal paraFont">Role</label>
                 <select
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-2 px-2"
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-base sm:text-lg md:text-xl lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                   name="role"
                   value={userInfo.role}
                   onChange={handleOnChange}
@@ -545,12 +533,10 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
               </div>
             )}
             {forState === "Add" && (
-              <div className="w-full my-3 flex flex-col gap-1">
-                <label className="text-[0.9dvw] font-normal paraFont">
-                  Status
-                </label>
+              <div className="w-full my-4 flex flex-col gap-2">
+                <label className="text-base sm:text-lg md:text-xl lg:text-[1dvw] font-normal paraFont">Status</label>
                 <select
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-2 px-2"
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-base sm:text-lg md:text-xl lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                   name="status"
                   value={userInfo.status}
                   onChange={handleOnChange}
@@ -563,12 +549,10 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
               </div>
             )}
 
-            <div className="w-full my-3 flex flex-col gap-1">
-              <label className="text-[0.9dvw] font-normal paraFont">
-                Staff Position
-              </label>
+            <div className="w-full my-4 flex flex-col gap-2">
+              <label className="text-base sm:text-lg md:text-xl lg:text-[1dvw] font-normal paraFont">Staff Position</label>
               <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-2 px-2"
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-base sm:text-lg md:text-xl lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                 type="text"
                 placeholder="Enter Staff Position..."
                 name="staff_position"
@@ -578,12 +562,10 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
               />
             </div>
 
-            <div className="w-full my-3 flex flex-col gap-1">
-              <label className="text-[0.9dvw] font-normal paraFont">
-                Date of Birth
-              </label>
+            <div className="w-full my-4 flex flex-col gap-2">
+              <label className="text-base sm:text-lg md:text-xl lg:text-[1dvw] font-normal paraFont">Date of Birth</label>
               <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[0.9dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-2 px-2"
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-base sm:text-lg md:text-xl lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                 type="date"
                 name="date_of_birth"
                 value={userInfo.date_of_birth}
@@ -604,7 +586,7 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
                   forStatus: null,
                 });
               }}
-              className="px-5 py-1 rounded-md cursor-pointer text-white font-semibold bg-[var(--button-color4)] text-[1.2dvw]"
+              className="px-5 py-1 rounded-md cursor-pointer text-white font-semibold bg-[var(--button-color4)] text-base sm:text-lg md:text-xl lg:text-[1.2dvw]"
             >
               Cancel
             </button>
@@ -613,7 +595,7 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
               onClick={() =>
                 forState === "Add" ? handleSubmit() : handleEmployee()
               }
-              className="px-5 py-1 rounded-md cursor-pointer text-white font-semibold bg-[var(--button-color5)] text-[1.2dvw]"
+              className="px-5 py-1 rounded-md cursor-pointer text-white font-semibold bg-[var(--button-color5)] text-base sm:text-lg md:text-xl lg:text-[1.2dvw] disabled:opacity-80 disabled:pointer-events-none disabled:cursor-not-allowed"
               disabled={isLoading}
             >
               {isLoading

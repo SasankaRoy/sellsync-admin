@@ -152,7 +152,7 @@ export const Reports = () => {
               Reports & Analytics
             </h3>
             <div className="relative">
-              <select className="appearance-none pl-4 pr-8 py-1 bg-[var(--button-color2)] text-[var(--primary-color)] rounded-full font-[var(--paraFont)] cursor-pointer">
+              <select className="appearance-none pl-4 pr-8 py-2 sm:py-1 bg-[var(--button-color2)] text-[var(--primary-color)] rounded-full font-[var(--paraFont)] text-sm sm:text-base w-full sm:w-auto cursor-pointer">
                 <option>Weekly</option>
                 <option>1 week</option>
                 <option>2 week</option>
@@ -328,7 +328,7 @@ export const Reports = () => {
               Reports & Analytics
             </h3>
             <div className="relative w-full sm:w-auto">
-              <select className="appearance-none pl-4 pr-8 py-1 bg-[var(--button-color2)] text-[var(--primary-color)] rounded-full font-[var(--paraFont)] w-full sm:w-auto cursor-pointer">
+              <select className="appearance-none pl-4 pr-8 py-2 sm:py-1 bg-[var(--button-color2)] text-[var(--primary-color)] rounded-full font-[var(--paraFont)] text-sm sm:text-base w-full sm:w-auto cursor-pointer">
                 <option>Weekly</option>
                 <option>1 week</option>
                 <option>2 week</option>

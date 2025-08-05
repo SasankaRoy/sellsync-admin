@@ -197,188 +197,194 @@ export const Fule = () => {
         <Loading />
       ) : (
         <Layout>
-          <div className="w-full">
-            <div className="flex justify-between items-center">
-              <h3 className="text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
-                POS / Fuels
-              </h3>
+          <div className="pb-14 w-full px-4 sm:px-6 lg:px-0">
+            <div className="w-full">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-0 lg:flex-row lg:items-center lg:gap-0 lg:mb-0">
+                <h3 className="text-2xl md:text-xl lg:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
+                  POS / Fuels
+                </h3>
+              </div>
             </div>
-          </div>
 
-          <div className="flex flex-col gap-5 w-full my-8 bg-white rounded-md border border-[#d4d4d4] p-5">
-            <div className="">
-              <h3 className="font-semibold text-[1.3dvw]">
-                Current Fule Price
-              </h3>
-              <div className="flex justify-between items-center w-full gap-5">
-                <div className="my-4 border-b px-2 py-4 border-[#d4d4d4] w-1/2">
-                  <div className="flex justify-start items-center gap-3 mb-4">
-                    <h4 className="text-[1.2dvw] font-semibold">REG</h4>
-                    <p className="text-[1dvw] font-medium text-gray-600">
-                      Regular
-                    </p>
-                  </div>
-                  <div className="flex justify-start items-center gap-4 w-full">
-                    <div className="flex flex-col gap-3 flex-1">
-                      <label className="text-[1dvw] font-[700]">Cash</label>
-                      <input
-                        className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-2 px-3"
-                        type="number"
-                        placeholder="price.."
-                        onChange={handleOnChange}
-                        value={fuelPrice.regular_cash}
-                        name="regular_cash"
-                      />
+            <div className="flex flex-col gap-3 sm:gap-4 lg:gap-5 w-full my-6 sm:my-7 lg:my-8 bg-white rounded-md border border-[#d4d4d4] p-3 sm:p-4 lg:p-5">
+              <div className="">
+                <h3 className="font-semibold text-lg sm:text-xl lg:text-[1.3dvw] mb-4">
+                  Current Fule Price
+                </h3>
+                <div className="flex flex-col lg:flex-row justify-between items-center w-full gap-4 lg:gap-5">
+                  <div className="my-2 sm:my-3 lg:my-4 border-b px-1 sm:px-2 py-3 sm:py-4 border-[#d4d4d4] w-full lg:w-1/2">
+                    <div className="flex justify-start items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                      <h4 className="text-lg sm:text-xl lg:text-[1.2dvw] font-semibold">REG</h4>
+                      <p className="text-sm sm:text-base lg:text-[1dvw] font-medium text-gray-600">
+                        Regular
+                      </p>
                     </div>
-                    <div className="flex flex-col gap-3 flex-1">
-                      <label className="text-[1dvw] font-[700]">Credit</label>
-                      <input
-                        className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-2 px-3"
-                        type="number"
-                        placeholder="price.."
-                        onChange={handleOnChange}
-                        value={fuelPrice.regular_credit}
-                        name="regular_credit"
-                      />
+                    <div className="flex flex-col sm:flex-row justify-start items-center gap-3 sm:gap-4 w-full">
+                      <div className="flex flex-col gap-2 sm:gap-3 flex-1 w-full">
+                        <label className="text-sm sm:text-base lg:text-[1dvw] font-[700]">Cash</label>
+                        <input
+                          className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-2 px-3"
+                          type="number"
+                          placeholder="price.."
+                          onChange={handleOnChange}
+                          value={fuelPrice.regular_cash}
+                          name="regular_cash"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-2 sm:gap-3 flex-1 w-full">
+                        <label className="text-sm sm:text-base lg:text-[1dvw] font-[700]">Credit</label>
+                        <input
+                          className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-2 px-3"
+                          type="number"
+                          placeholder="price.."
+                          onChange={handleOnChange}
+                          value={fuelPrice.regular_credit}
+                          name="regular_credit"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="my-2 sm:my-3 lg:my-4 border-b px-1 sm:px-2 py-3 sm:py-4 border-[#d4d4d4] w-full lg:w-1/2">
+                    <div className="flex justify-start items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                      <h4 className="text-lg sm:text-xl lg:text-[1.2dvw] font-semibold">MID</h4>
+                      <p className="text-sm sm:text-base lg:text-[1dvw] font-medium text-gray-600">
+                        Plus
+                      </p>
+                    </div>
+                    <div className="flex flex-col sm:flex-row justify-start items-center gap-3 sm:gap-4 w-full">
+                      <div className="flex flex-col gap-2 sm:gap-3 flex-1 w-full">
+                        <label className="text-sm sm:text-base lg:text-[1dvw] font-[700]">Cash</label>
+                        <input
+                          className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-2 px-3"
+                          type="number"
+                          placeholder="price.."
+                          onChange={handleOnChange}
+                          value={fuelPrice.plus_cash}
+                          name="plus_cash"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-2 sm:gap-3 flex-1 w-full">
+                        <label className="text-sm sm:text-base lg:text-[1dvw] font-[700]">Credit</label>
+                        <input
+                          className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-2 px-3"
+                          type="number"
+                          placeholder="price.."
+                          onChange={handleOnChange}
+                          value={fuelPrice.plus_credit}
+                          name="plus_credit"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex flex-col lg:flex-row justify-between items-center gap-4 lg:gap-5 w-full">
+                  <div className="my-2 sm:my-3 lg:my-4 border-b px-1 sm:px-2 py-3 sm:py-4 border-[#d4d4d4] w-full lg:w-1/2">
+                    <div className="flex justify-start items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                      <h4 className="text-lg sm:text-xl lg:text-[1.2dvw] font-semibold">PRE</h4>
+                      <p className="text-sm sm:text-base lg:text-[1dvw] font-medium text-gray-600">
+                        PREMIUM
+                      </p>
+                    </div>
+                    <div className="flex flex-col sm:flex-row justify-start items-center gap-3 sm:gap-4 w-full">
+                      <div className="flex flex-col gap-2 sm:gap-3 flex-1 w-full">
+                        <label className="text-sm sm:text-base lg:text-[1dvw] font-[700]">Cash</label>
+                        <input
+                          className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-2 px-3"
+                          type="number"
+                          placeholder="price.."
+                          onChange={handleOnChange}
+                          value={fuelPrice.premium_cash}
+                          name="premium_cash"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-2 sm:gap-3 flex-1 w-full">
+                        <label className="text-sm sm:text-base lg:text-[1dvw] font-[700]">Credit</label>
+                        <input
+                          className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-2 px-3"
+                          type="number"
+                          placeholder="price.."
+                          onChange={handleOnChange}
+                          value={fuelPrice.premium_credit}
+                          name="premium_credit"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="my-2 sm:my-3 lg:my-4 border-b px-1 sm:px-2 py-3 sm:py-4 border-[#d4d4d4] w-full lg:w-1/2">
+                    <div className="flex justify-start items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                      <h4 className="text-lg sm:text-xl lg:text-[1.2dvw] font-semibold">DSL</h4>
+                      <p className="text-sm sm:text-base lg:text-[1dvw] font-medium text-gray-600">
+                        DIESEL
+                      </p>
+                    </div>
+                    <div className="flex flex-col sm:flex-row justify-start items-center gap-3 sm:gap-4 w-full">
+                      <div className="flex flex-col gap-2 sm:gap-3 flex-1 w-full">
+                        <label className="text-sm sm:text-base lg:text-[1dvw] font-[700]">Cash</label>
+                        <input
+                          className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-2 px-3"
+                          type="number"
+                          placeholder="price.."
+                          onChange={handleOnChange}
+                          value={fuelPrice.diesel_cash}
+                          name="diesel_cash"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-2 sm:gap-3 flex-1 w-full">
+                        <label className="text-sm sm:text-base lg:text-[1dvw] font-[700]">Credit</label>
+                        <input
+                          className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-2 px-3"
+                          type="number"
+                          placeholder="price.."
+                          onChange={handleOnChange}
+                          value={fuelPrice.diesel_credit}
+                          name="diesel_credit"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="my-4 border-b px-2 py-4 border-[#d4d4d4] w-1/2">
-                  <div className="flex justify-start items-center gap-3 mb-4">
-                    <h4 className="text-[1.2dvw] font-semibold">MID</h4>
-                    <p className="text-[1dvw] font-medium text-gray-600">
-                      Plus
-                    </p>
-                  </div>
-                  <div className="flex justify-start items-center gap-4 w-full">
-                    <div className="flex flex-col gap-3 flex-1">
-                      <label className="text-[1dvw] font-[700]">Cash</label>
-                      <input
-                        className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-2 px-3"
-                        type="number"
-                        placeholder="price.."
-                        onChange={handleOnChange}
-                        value={fuelPrice.plus_cash}
-                        name="plus_cash"
-                      />
-                    </div>
-                    <div className="flex flex-col gap-3 flex-1">
-                      <label className="text-[1dvw] font-[700]">Credit</label>
-                      <input
-                        className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-2 px-3"
-                        type="number"
-                        placeholder="price.."
-                        onChange={handleOnChange}
-                        value={fuelPrice.plus_credit}
-                        name="plus_credit"
-                      />
-                    </div>
-                  </div>
+                <button
+                  disabled={isUpdating}
+                  onClick={handleUpdate}
+                  className="w-full py-3 sm:py-4 lg:py-5 disabled:opacity-70 disabled:pointer-events-none disabled:cursor-not-allowed bg-[var(--button-color1)] text-white mainFont font-[600] rounded-xl cursor-pointer text-sm sm:text-base"
+                >
+                  {isUpdating ? "Updating...." : "Update Price"}
+                </button>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2 sm:gap-3 bg-white rounded-md border border-[#d4d4d4] px-3 py-2 sm:px-4 sm:py-2 lg:px-5 lg:py-2">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full gap-3 sm:gap-0 lg:flex-row lg:items-center">
+                <h3 className="font-[500] text-lg sm:text-xl lg:text-[1.5vw]">Price Update History</h3>
+                <div className="w-full sm:w-auto flex justify-center">
+                  <button
+                    onClick={handleDownloadCSV}
+                    disabled={isDownloading}
+                    className="w-full sm:w-auto flex justify-center items-center gap-2 rounded-full bg-[var(--button-color1)] text-white mainFont px-6 py-3 sm:px-4 sm:py-2 lg:px-5 lg:py-2 cursor-pointer text-base sm:text-sm hover:bg-[#F8A61B] transition-all duration-300 disabled:opacity-70 disabled:pointer-events-none"
+                  >
+                    <Download size={20} className="sm:w-5 sm:h-5" />
+                    {isDownloading ? "Downloading..." : "Download CSV"}
+                  </button>
                 </div>
               </div>
-              <div className="flex justify-between items-center gap-5 w-full">
-                <div className="my-4 border-b px-2 py-4 border-[#d4d4d4] w-1/2">
-                  <div className="flex justify-start items-center gap-3 mb-4">
-                    <h4 className="text-[1.2dvw] font-semibold">PRE</h4>
-                    <p className="text-[1dvw] font-medium text-gray-600">
-                      PREMIUM
-                    </p>
-                  </div>
-                  <div className="flex justify-start items-center gap-4 w-full">
-                    <div className="flex flex-col gap-3 flex-1">
-                      <label className="text-[1dvw] font-[700]">Cash</label>
-                      <input
-                        className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-2 px-3"
-                        type="number"
-                        placeholder="price.."
-                        onChange={handleOnChange}
-                        value={fuelPrice.premium_cash}
-                        name="premium_cash"
-                      />
-                    </div>
-                    <div className="flex flex-col gap-3 flex-1">
-                      <label className="text-[1dvw] font-[700]">Credit</label>
-                      <input
-                        className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-2 px-3"
-                        type="number"
-                        placeholder="price.."
-                        onChange={handleOnChange}
-                        value={fuelPrice.premium_credit}
-                        name="premium_credit"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div className="my-4 border-b px-2 py-4 border-[#d4d4d4] w-1/2">
-                  <div className="flex justify-start items-center gap-3 mb-4">
-                    <h4 className="text-[1.2dvw] font-semibold">DSL</h4>
-                    <p className="text-[1dvw] font-medium text-gray-600">
-                      DIESEL
-                    </p>
-                  </div>
-                  <div className="flex justify-start items-center gap-4 w-full">
-                    <div className="flex flex-col gap-3 flex-1">
-                      <label className="text-[1dvw] font-[700]">Cash</label>
-                      <input
-                        className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-2 px-3"
-                        type="number"
-                        placeholder="price.."
-                        onChange={handleOnChange}
-                        value={fuelPrice.diesel_cash}
-                        name="diesel_cash"
-                      />
-                    </div>
-                    <div className="flex flex-col gap-3 flex-1">
-                      <label className="text-[1dvw] font-[700]">Credit</label>
-                      <input
-                        className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-2 px-3"
-                        type="number"
-                        placeholder="price.."
-                        onChange={handleOnChange}
-                        value={fuelPrice.diesel_credit}
-                        name="diesel_credit"
-                      />
-                    </div>
-                  </div>
+              <div className="h-[40vh] sm:h-[50vh] lg:h-[60vh] overflow-x-scroll overflow-y-auto lg:overflow-visible">
+                <div className="min-w-[800px] lg:min-w-0 h-full">
+                  <AgGridReact
+                    rowData={rowData}
+                    columnDefs={colDefs}
+                    defaultColDef={defaultColDef}
+                    pagination={true}
+                    rowSelection={rowSelection}
+                    onSelectionChanged={(event) => console.log("Row Selected!")}
+                    onCellValueChanged={(event) =>
+                      console.log(`New Cell Value: ${event.value}`)
+                    }
+                    className="w-full h-full text-sm lg:text-base"
+                  />
                 </div>
               </div>
-
-              <button
-                disabled={isUpdating}
-                onClick={handleUpdate}
-                className="w-full py-5 disabled:opacity-70 disabled:pointer-events-none disabled:cursor-not-allowed bg-[var(--button-color1)] text-white mainFont font-[600] rounded-xl cursor-pointer"
-              >
-                {isUpdating ? "Updating...." : "Update Price"}
-              </button>
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-3 bg-white rounded-md border border-[#d4d4d4] px-5 py-2">
-            <div className="flex justify-between items-center w-full">
-              <h3 className="font-[500] text-[1.5vw]">Price Update History</h3>
-              <button
-                onClick={handleDownloadCSV}
-                disabled={isDownloading}
-                className="bg-[var(--button-color1)] flex justify-center items-center text-[1dvw] gap-2 px-5 py-2 rounded-full mainFont font-[500] cursor-pointer text-white disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-70 hover:bg-[var(--button-color5)] transition-all duration-300 ease-linear"
-              >
-                <Download />{" "}
-                {isDownloading ? "Downloading...." : "Download CSV"}
-              </button>
-            </div>
-            <div className=" h-[60vh]">
-              <AgGridReact
-                rowData={rowData}
-                columnDefs={colDefs}
-                // loading={loading}
-                defaultColDef={defaultColDef}
-                pagination={true}
-                rowSelection={rowSelection}
-                onSelectionChanged={(event) => console.log("Row Selected!")}
-                onCellValueChanged={(event) =>
-                  console.log(`New Cell Value: ${event.value}`)
-                }
-              />
             </div>
           </div>
         </Layout>

@@ -34,19 +34,19 @@ const ActionBtns = (props) => {
 
   return (
     <>
-      <div className="w-full flex gap-4 py-2 justify-center items-center">
+      <div className="w-full flex gap-2 sm:gap-4 lg:gap-4 py-2 justify-center items-center">
         <button
-          className="font-semibold font-[var(--paraFont)] bg-[var(--button-color1)] text-white p-1.5 rounded-full border-none cursor-pointer"
+          className="font-semibold font-[var(--paraFont)] bg-[var(--button-color1)] text-white p-1 sm:p-1.5 lg:p-1.5 rounded-full border-none cursor-pointer"
           onClick={handleEdit}
         >
-          <Eye size={18} />
+          <Eye size={16} className="sm:w-[18px] sm:h-[18px] lg:w-[18px] lg:h-[18px]" />
         </button>
 
         <button
-          className="font-semibold font-[var(--paraFont)] bg-[var(--Negative-color)] text-white p-1.5 rounded-full border-none cursor-pointer"
+          className="font-semibold font-[var(--paraFont)] bg-[var(--Negative-color)] text-white p-1 sm:p-1.5 lg:p-1.5 rounded-full border-none cursor-pointer"
           onClick={handleDelete}
         >
-          <Trash size={18} />
+          <Trash size={16} className="sm:w-[18px] sm:h-[18px] lg:w-[18px] lg:h-[18px]" />
         </button>
       </div>
     </>
@@ -64,170 +64,7 @@ export const DeviceAndLocation = () => {
     productData: null,
     actionType: null,
   });
-  // const [rowData, setRowData] = useState([
-  //   {
-  //     ID: "#521478",
-  //     DateOfReister: "20.02.2015",
-  //     Name: "Admin dash",
-  //     Location: "Admin dash",
-  //     Type: "main",
-  //     Status: "Active",
-  //     Actions: ActionBtns,
-  //   },
-  //   {
-  //     ID: "#521478",
-  //     DateOfReister: "20.02.2015",
-  //     Name: "Admin dash",
-  //     Location: "Admin dash",
-  //     Type: "main",
-  //     Status: "Active",
-  //     Actions: ActionBtns,
-  //   },
-  //   {
-  //     ID: "#521478",
-  //     DateOfReister: "20.02.2015",
-  //     Name: "Admin dash",
-  //     Location: "Admin dash",
-  //     Type: "main",
-  //     Status: "Active",
-  //     Actions: ActionBtns,
-  //   },
-  //   {
-  //     ID: "#521478",
-  //     DateOfReister: "20.02.2015",
-  //     Name: "Admin dash",
-  //     Location: "Admin dash",
-  //     Type: "main",
-  //     Status: "Active",
-  //     Actions: ActionBtns,
-  //   },
-  //   {
-  //     ID: "#521478",
-  //     DateOfReister: "20.02.2015",
-  //     Name: "Admin dash",
-  //     Location: "Admin dash",
-  //     Type: "main",
-  //     Status: "Active",
-  //     Actions: ActionBtns,
-  //   },
-  //   {
-  //     ID: "#521478",
-  //     DateOfReister: "20.02.2015",
-  //     Name: "Admin dash",
-  //     Location: "Admin dash",
-  //     Type: "main",
-  //     Status: "Active",
-  //     Actions: ActionBtns,
-  //   },
-  //   {
-  //     ID: "#521478",
-  //     DateOfReister: "20.02.2015",
-  //     Name: "Admin dash",
-  //     Location: "Admin dash",
-  //     Type: "main",
-  //     Status: "Active",
-  //     Actions: ActionBtns,
-  //   },
-  //   {
-  //     ID: "#521478",
-  //     DateOfReister: "20.02.2015",
-  //     Name: "Admin dash",
-  //     Location: "Admin dash",
-  //     Type: "main",
-  //     Status: "Active",
-  //     Actions: ActionBtns,
-  //   },
-  //   {
-  //     ID: "#521478",
-  //     DateOfReister: "20.02.2015",
-  //     Name: "Admin dash",
-  //     Location: "Admin dash",
-  //     Type: "main",
-  //     Status: "Active",
-  //     Actions: ActionBtns,
-  //   },
-  //   {
-  //     ID: "#521478",
-  //     DateOfReister: "20.02.2015",
-  //     Name: "Admin dash",
-  //     Location: "Admin dash",
-  //     Type: "main",
-  //     Status: "Active",
-  //     Actions: ActionBtns,
-  //   },
-  //   {
-  //     ID: "#521478",
-  //     DateOfReister: "20.02.2015",
-  //     Name: "Admin dash",
-  //     Location: "Admin dash",
-  //     Type: "main",
-  //     Status: "Active",
-  //     Actions: ActionBtns,
-  //   },
-  //   {
-  //     ID: "#521478",
-  //     DateOfReister: "20.02.2015",
-  //     Name: "Admin dash",
-  //     Location: "Admin dash",
-  //     Type: "main",
-  //     Status: "Active",
-  //     Actions: ActionBtns,
-  //   },
-  //   {
-  //     ID: "#521478",
-  //     DateOfReister: "20.02.2015",
-  //     Name: "Admin dash",
-  //     Location: "Admin dash",
-  //     Type: "main",
-  //     Status: "Active",
-  //     Actions: ActionBtns,
-  //   },
-  //   {
-  //     ID: "#521478",
-  //     DateOfReister: "20.02.2015",
-  //     Name: "Admin dash",
-  //     Location: "Admin dash",
-  //     Type: "main",
-  //     Status: "Active",
-  //     Actions: ActionBtns,
-  //   },
-  //   {
-  //     ID: "#521478",
-  //     DateOfReister: "20.02.2015",
-  //     Name: "Admin dash",
-  //     Location: "Admin dash",
-  //     Type: "main",
-  //     Status: "Active",
-  //     Actions: ActionBtns,
-  //   },
-  //   {
-  //     ID: "#521478",
-  //     DateOfReister: "20.02.2015",
-  //     Name: "Admin dash",
-  //     Location: "Admin dash",
-  //     Type: "main",
-  //     Status: "Active",
-  //     Actions: ActionBtns,
-  //   },
-  //   {
-  //     ID: "#521478",
-  //     DateOfReister: "20.02.2015",
-  //     Name: "Admin dash",
-  //     Location: "Admin dash",
-  //     Type: "main",
-  //     Status: "Active",
-  //     Actions: ActionBtns,
-  //   },
-  //   {
-  //     ID: "#521478",
-  //     DateOfReister: "20.02.2015",
-  //     Name: "Admin dash",
-  //     Location: "Admin dash",
-  //     Type: "main",
-  //     Status: "Active",
-  //     Actions: ActionBtns,
-  //   },
-  // ]);
+  const [selectedRowData, setSelectedRowData] = useState([]);
 
   // get device and location list ...
 
@@ -328,56 +165,74 @@ export const DeviceAndLocation = () => {
           </>
         ) : (
           <>
-            <div className="flex justify-between items-center p-2">
-              <h3 className="font-[500] text-[1.5dvw]">Device and Location</h3>
-              <button
-                onClick={() =>
-                  setEditModel({
-                    state: true,
-                    productData: null,
-                    actionType: "Add",
-                  })
-                }
-                className="flex justify-center items-center gap-2 rounded-full bg-[var(--button-color1)] text-white mainFont px-5 py-2 cursor-pointer"
-              >
-                <Plus /> New Device
-              </button>
-            </div>
-            <div className="w-full flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-[80dvh]">
-              <div className="flex justify-between items-center py-1.5 shrink-0">
-                <div className="flex justify-center items-center gap-3">
-                  <select className="font-[500] mainFont px-4 border-none outline-none">
-                    <option>All</option>
-                  </select>
-                  <p className="px-3 text-[1dvw] py-.5 bg-[#F8A61B] rounded-2xl font-[500] border-none text-white">
-                    {rowData.length}
-                  </p>
+            <div className="pb-14 w-full px-4 sm:px-6 lg:px-0">
+              <div className="flex flex-col sm:flex-row lg:flex-row justify-between items-start sm:items-center lg:items-center gap-4 mb-6 sm:mb-0 lg:mb-0 p-2 lg:p-2">
+                <h3 className="text-2xl md:text-xl lg:font-[500] lg:text-[1.5dvw] font-semibold text-[var(--mainText-color)]">
+                  Device and Location
+                </h3>
+                <div className="w-full sm:w-auto flex justify-center">
+                  <button
+                    onClick={() =>
+                      setEditModel({
+                        state: true,
+                        productData: null,
+                        actionType: "Add",
+                      })
+                    }
+                    className="w-full sm:w-auto flex justify-center items-center gap-2 rounded-full bg-[var(--button-color1)] text-white mainFont px-6 py-3 sm:px-4 sm:py-2 lg:px-5 lg:py-2 cursor-pointer text-base sm:text-sm hover:bg-[#F8A61B] transition-all duration-300"
+                  >
+                    <Plus size={20} className="sm:w-5 sm:h-5" /> New Device
+                  </button>
                 </div>
-                {/* <div className="flex gap-4 justify-center items-center">
-            <button className="flex justify-center items-center gap-2 px-4 py-1 text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-[600]">
-              Sort <SortIcon />
-            </button>
-            <button className="flex justify-center items-center gap-2 px-4 py-1 text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC]">
-              Filter <FilterIcon />
-            </button>
-            <button>
-              <DeleteIcon />
-            </button>
-          </div> */}
               </div>
-              <div className="h-full w-full">
-                <AgGridReact
-                  rowData={rowData}
-                  columnDefs={colDefs}
-                  // loading={loading}
-                  defaultColDef={defaultColDef}
-                  pagination={true}
-                  rowSelection={rowSelection}
-                  onSelectionChanged={(event) => console.log("Row Selected!")}
-                  onCellValueChanged={(event) =>
-                    console.log(`New Cell Value: ${event.value}`)
-                  }
-                />
+              
+              <div className="w-full h-[60vh] sm:h-[70vh] lg:h-[80dvh]">
+                <div className="w-full flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 lg:px-2.5 lg:py-2 h-full">
+                  <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center py-1.5 shrink-0 gap-3 sm:gap-0 lg:flex-row lg:items-center lg:gap-0">
+                    <div className="flex justify-between sm:justify-center items-center gap-3 w-full sm:w-auto lg:justify-center lg:w-auto">
+                      <select className="font-[500] mainFont px-4 border-none outline-none text-sm lg:text-base">
+                        <option>All</option>
+                      </select>
+                      <div className="h-6 w-6 sm:h-7 sm:w-7 bg-[#F8A61B] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem] sm:min-w-[1.75rem] sm:min-h-[1.75rem]">
+                        <p className="text-xs sm:text-xs font-[500] text-white">
+                          {rowData.length}
+                        </p>
+                      </div>
+                    </div>
+                    {/* <div className="flex gap-2 sm:gap-4 justify-between items-center flex-wrap lg:justify-center lg:gap-4">
+                      <button className="flex justify-between lg:justify-center items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-[600]">
+                        Sort <SortIcon />
+                      </button>
+                      <button className="flex justify-between lg:justify-center items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC]">
+                        Filter <FilterIcon />
+                      </button>
+                      <button>
+                        <DeleteIcon className="w-5 h-5 lg:w-auto lg:h-auto" />
+                      </button>
+                    </div> */}
+                  </div>
+                  <div className="h-full w-full overflow-x-scroll overflow-y-auto lg:overflow-visible">
+                    <div className="min-w-[800px] lg:min-w-0 h-full">
+                      <AgGridReact
+                        rowData={rowData}
+                        columnDefs={colDefs}
+                        defaultColDef={defaultColDef}
+                        pagination={true}
+                        rowSelection={rowSelection}
+                        onSelectionChanged={(event) => {
+                          const selectedNodes = event.api.getSelectedNodes();
+                          const selectedData = selectedNodes.map(node => node.data);
+                          setSelectedRowData(selectedData);
+                          console.log("Selected data updated:", selectedData);
+                        }}
+                        onCellValueChanged={(event) =>
+                          console.log(`New Cell Value: ${event.value}`)
+                        }
+                        className="w-full h-full text-sm lg:text-base"
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </>
@@ -501,9 +356,9 @@ const AddNewDevice = ({ setEditModel, editModel }) => {
   return (
     <>
       <div className="fixed top-0 left-0 flex justify-center items-center w-full h-full bg-[#000]/20 backdrop-blur-xl z-50">
-        <div className="bg-white rounded-lg p-5 w-[50%] shadow">
-          <div className="flex justify-between items-center w-full bg-[var(--sideMenu-color)] text-white p-3 rounded-lg">
-            <h3 className="text-[1.5dvw] font-[500]">
+        <div className="bg-white rounded-lg p-3 sm:p-5 w-[95%] sm:w-[80%] lg:w-[50%] shadow mx-4">
+          <div className="flex justify-between items-center w-full bg-[var(--sideMenu-color)] text-white p-2 sm:p-3 rounded-lg">
+            <h3 className="text-lg sm:text-xl lg:text-[1.5dvw] font-[500]">
               {editModel?.actionType === "Add" ? "Add New" : "Edit"} Device
             </h3>
             <button
@@ -516,15 +371,15 @@ const AddNewDevice = ({ setEditModel, editModel }) => {
               }
               className="cursor-pointer"
             >
-              <CircleX size={35} />
+              <CircleX size={24} className="sm:w-8 sm:h-8 lg:w-[35px] lg:h-[35px]" />
             </button>
           </div>
 
-          <div className="my-10 flex flex-col gap-8">
-            <div className="flex justify-between items-center gap-5 w-full">
-              <div className="w-1/2 flex flex-col gap-1.5">
+          <div className="my-6 sm:my-8 lg:my-10 flex flex-col gap-6 sm:gap-8">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-5 w-full">
+              <div className="w-full sm:w-1/2 flex flex-col gap-1.5">
                 <label
-                  className="text-[1dvw] font-normal paraFont"
+                  className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
                   htmlFor="name"
                 >
                   Name
@@ -532,16 +387,16 @@ const AddNewDevice = ({ setEditModel, editModel }) => {
                 <input
                   id="name"
                   type="text"
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                   placeholder="Enter name..."
                   name="device_name"
                   onChange={handleOnChange}
                   value={deviceData?.device_name}
                 />
               </div>
-              <div className="w-1/2 flex flex-col gap-1.5">
+              <div className="w-full sm:w-1/2 flex flex-col gap-1.5">
                 <label
-                  className="text-[1dvw] font-normal paraFont"
+                  className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
                   htmlFor="location"
                 >
                   Location
@@ -549,7 +404,7 @@ const AddNewDevice = ({ setEditModel, editModel }) => {
                 <input
                   id="location"
                   type="text"
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                   placeholder="Enter location..."
                   name="location"
                   onChange={handleOnChange}
@@ -557,10 +412,10 @@ const AddNewDevice = ({ setEditModel, editModel }) => {
                 />
               </div>
             </div>
-            <div className="flex justify-between items-center gap-5 w-full">
-              <div className="w-1/2 flex flex-col gap-1.5">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-5 w-full">
+              <div className="w-full sm:w-1/2 flex flex-col gap-1.5">
                 <label
-                  className="text-[1dvw] font-normal paraFont"
+                  className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
                   htmlFor="type"
                 >
                   Type
@@ -568,22 +423,22 @@ const AddNewDevice = ({ setEditModel, editModel }) => {
                 <input
                   id="type"
                   type="text"
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                   placeholder="Enter type..."
                   name="device_type"
                   onChange={handleOnChange}
                   value={deviceData?.device_type}
                 />
               </div>
-              <div className="w-1/2 flex flex-col gap-1.5">
+              <div className="w-full sm:w-1/2 flex flex-col gap-1.5">
                 <label
-                  className="text-[1dvw] font-normal paraFont"
+                  className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
                   htmlFor="status"
                 >
                   Status
                 </label>
                 <select
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3 appearance-none"
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3 appearance-none"
                   id="status"
                   name="status"
                   onChange={handleOnChange}
@@ -605,7 +460,7 @@ const AddNewDevice = ({ setEditModel, editModel }) => {
                   ? handleOnSubmit
                   : handleOnUpdate
               }
-              className="w-full py-2 rounded-lg mainFont font-[500] text-white bg-[var(--button-color1)] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-70 hover:bg-[var(--button-color5)] transition-all duration-300 ease-linear cursor-pointer"
+              className="w-full py-2 rounded-lg mainFont font-[500] text-white bg-[var(--button-color1)] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-70 hover:bg-[var(--button-color5)] transition-all duration-300 ease-linear cursor-pointer text-sm sm:text-base"
             >
               {isLoading ? (
                 "Saving..."
