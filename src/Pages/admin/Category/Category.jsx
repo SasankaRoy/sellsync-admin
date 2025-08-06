@@ -197,7 +197,7 @@ export const Category = () => {
                 Create Category <PluseIcon />
               </button>
               <button className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
-                import CVS <PluseIcon />
+                Import CSV <PluseIcon />
               </button>
             </div>
           </div>
@@ -604,16 +604,16 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
           ))}
         </div>
 
-        <div className="flex flex-col sm:flex-row justify-end items-center gap-4 sm:gap-5 my-4 lg:flex-row lg:gap-5">
+        <div className="flex flex-col sm:flex-row justify-end items-center gap-4 my-4">
           <button
-            className="w-full sm:w-auto px-4 sm:px-5 py-1 sm:py-1.5 rounded-md cursor-pointer text-white font-semibold bg-[var(--button-color4)] text-sm sm:text-base lg:text-[1.2dvw] hover:opacity-80 transition-all duration-300"
+            className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color4)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300"
             onClick={handleCloseModel}
           >
             Cancel
           </button>
           <button 
             onClick={handleSubmit}
-            className="w-full sm:w-auto px-4 sm:px-5 py-1 sm:py-1.5 rounded-md cursor-pointer text-white font-semibold bg-[var(--button-color5)] text-sm sm:text-base lg:text-[1.2dvw] hover:opacity-80 transition-all duration-300"
+            className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300"
           >
             {actionType === "Add" ? "Create" : "Update"}
           </button>

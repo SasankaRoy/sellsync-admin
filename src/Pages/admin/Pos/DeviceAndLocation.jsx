@@ -4,8 +4,6 @@ import { CircleX, Edit, Eye, Trash, X } from "lucide-react";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 // Core CSS
 import { AgGridReact } from "ag-grid-react";
-import { DeleteModel } from "../../../components/common/Models/DeleteMode";
-import { POSEditModel } from "../../../components/common/Models/POSEditModel";
 import { Layout } from "../../../components/common/Layout/Layout";
 import { Plus } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -199,17 +197,6 @@ export const DeviceAndLocation = () => {
                         </p>
                       </div>
                     </div>
-                    {/* <div className="flex gap-2 sm:gap-4 justify-between items-center flex-wrap lg:justify-center lg:gap-4">
-                      <button className="flex justify-between lg:justify-center items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-[600]">
-                        Sort <SortIcon />
-                      </button>
-                      <button className="flex justify-between lg:justify-center items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC]">
-                        Filter <FilterIcon />
-                      </button>
-                      <button>
-                        <DeleteIcon className="w-5 h-5 lg:w-auto lg:h-auto" />
-                      </button>
-                    </div> */}
                   </div>
                   <div className="h-full w-full overflow-x-scroll overflow-y-auto lg:overflow-visible">
                     <div className="min-w-[800px] lg:min-w-0 h-full">
@@ -467,6 +454,97 @@ const AddNewDevice = ({ setEditModel, editModel }) => {
               ) : (
                 <>{editModel?.actionType === "Add" ? "Save" : "Update"}</>
               )}
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+
+// Responsive DeleteModel Component
+const DeleteModel = ({ setDeleteModel, deleteModel }) => {
+  const [isDeleting, setIsDeleting] = useState(false);
+  const queryClient = useQueryClient();
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      const reqDelete = await axiosInstance.post(
+        `/api/v1/common/device-delete`,
+        {
+          id: deleteModel.productId,
+        }
+      );
+
+      if (reqDelete.status === 200 && reqDelete.data) {
+        toast.success(reqDelete.data.message || "Device deleted successfully!");
+        queryClient.invalidateQueries({
+          queryKey: ["device_and_location_list"],
+        });
+      }
+    } catch (error) {
+      console.error(error?.response?.data?.error);
+      toast.error(
+        error?.response?.data?.error ||
+          "Something went wrong! while deleting device"
+      );
+    } finally {
+      setDeleteModel({
+        state: false,
+        productId: null,
+      });
+      setIsDeleting(false);
+    }
+  };
+
+  return (
+    <>
+      <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center px-4 sm:px-6 lg:px-0">
+        <div className="w-full sm:w-[80%] lg:w-[50%] max-w-lg sm:max-w-2xl lg:max-w-none p-4 sm:p-5 lg:p-5 bg-white rounded-xl shadow-md flex flex-col gap-4">
+          <div className="flex justify-between items-center w-full p-2 sm:p-3 lg:p-3 rounded-md text-white bg-[var(--sideMenu-color)]">
+            <h3 className="text-base sm:text-lg lg:text-[1.5dvw] font-semibold">Delete Device</h3>
+            <button
+              onClick={() => {
+                setDeleteModel({
+                  state: false,
+                  productId: null,
+                });
+              }}
+              className="hover:text-[var(--Negative-color)] transition-all duration-300 ease-linear cursor-pointer"
+            >
+              <CircleX size={24} className="sm:w-7 sm:h-7 lg:w-[30px] lg:h-[30px]" />
+            </button>
+          </div>
+
+          <p className="text-sm sm:text-base lg:text-[1.2dvw] font-semibold font-[var(--paraFont)] text-center sm:text-left">
+            Device with ID{" "}
+            <span className="italic font-bold">"{deleteModel.productId}"</span>{" "}
+            will be{" "}
+            <span className="text-[var(--Negative-color)] font-bold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.3dvw]">
+              Permanently Deleted
+            </span>{" "}
+            from the system.
+          </p>
+
+          <div className="flex flex-col sm:flex-row justify-center sm:justify-end items-center gap-3 sm:gap-4">
+            <button
+              onClick={() => {
+                setDeleteModel({
+                  state: false,
+                  productId: null,
+                });
+              }}
+              className="w-full sm:w-auto bg-[var(--button-color4)] text-white px-4 sm:px-5 py-2 sm:py-1.5 rounded-md flex justify-center items-center font-semibold text-sm sm:text-base lg:text-[1.1dvw] cursor-pointer hover:opacity-80 transition-all duration-300"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="w-full sm:w-auto bg-[var(--Negative-color)] text-white px-4 sm:px-5 py-2 sm:py-1.5 rounded-md flex justify-center items-center font-semibold text-sm sm:text-base lg:text-[1.1dvw] cursor-pointer hover:opacity-80 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isDeleting ? "Deleting..." : "Delete"}
             </button>
           </div>
         </div>

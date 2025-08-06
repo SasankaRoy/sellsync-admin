@@ -21,9 +21,9 @@
       justify-content: center;
       align-items: center;
       width: 100%;
-      padding: 25px 8px;
+      padding: 18px 4px;
       img {
-        width: 70%;
+        width: 75%;
       }
     }
 
@@ -80,6 +80,7 @@
       display: none !important;
       width: 0;
       transition: all 0.3s ease;
+
       
       &.mobile-visible {
         display: flex !important;
@@ -94,18 +95,20 @@
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding: 20px 15px;
+          padding: 25px 15px; // Increased padding for tablet view
           
           .mobile__logoDiv {
             flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding-top: 30px;
+            padding-top: 20px; // Increased top padding for tablet
+            padding-bottom: 15px; // Increased bottom padding for tablet
             
             img {
               width: 60%;
               height: auto;
+              object-fit: contain;
             }
           }
           
@@ -114,18 +117,19 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 10px; // Added padding around close button for tablet
             
             button {
               background: transparent;
               border: none;
               color: var(--primary-color);
-              font-size: 24px;
+              font-size: 28px; // Slightly larger for tablet
               cursor: pointer;
-              padding: 5px;
+              padding: 8px; // Increased padding for better touch target
               
               svg {
-                width: 24px;
-                height: 24px;
+                width: 28px; // Larger icon for tablet
+                height: 28px;
                 
                 path {
                   fill: var(--primary-color);
@@ -133,76 +137,37 @@
               }
             }
           }
-          .sideMenu__wrapper {
-            ul {
-              a {
-                color: var(--primary-color) !important;
-                font-size: 58px !important; // Increased font size for tablet view
+        }
+        
+        .sideMenu__wrapper {
+          padding: 20px 0px; // Added proper padding for tablet menu wrapper
+          
+          ul {
+            margin: 20px auto !important; // Added margin for better spacing
+            padding: 0 15px; // Added horizontal padding for menu items
+            
+            li {
+              color: var(--primary-color) !important;
+              font-size: 22px !important; // Increased font size for tablet
+              padding: 12px 25px; // Increased padding for better touch targets
+              margin: 8px 0; // Added vertical margin between items
+              
+              svg {
+                width: 20px;
+                height: 20px;
                 
-                svg path {
+                path {
                   fill: var(--primary-color) !important;
                 }
-                
-                &.activeLink {
-                  color: var(--sideMenu-color) !important;
-                  background: var(--secondary-color) !important;
-                  div{
-                    svg path {
-                      fill: var(--sideMenu-color) !important;
-                    }
-                    &.activeLink {
-                  color: var(--sideMenu-color) !important;
-                  background: var(--secondary-color) !important;
-                  div{
-                    svg path {
-                      fill: var(--sideMenu-color) !important;
-                    }
-
-                    
-                  }
-                  /*svg path {
-                    fill: var(--sideMenu-color) !important;
-                  }*/
-                }
-                
-                &.deActiveLink {
-                  color: var(--secondary-color) !important;
-                  background: transparent !important;
-                  
-                  svg path {
-                    fill: var(--secondary-color) !important;
-                  }
-                }
-
-                    
-                  }
-                  /*svg path {
-                    fill: var(--sideMenu-color) !important;
-                  }*/
-                }
-                
-                &.deActiveLink {
-                  color: var(--secondary-color) !important;
-                  background: transparent !important;
-                  
-                  svg path {
-                    fill: var(--secondary-color) !important;
-                  }
-                }
               }
+              
               &.activeLink {
                 color: var(--sideMenu-color) !important;
                 background: var(--secondary-color) !important;
-                div{
-                  svg path {
-                    fill: var(--sideMenu-color) !important;
-                  }
-
-                  
-                }
-                /*svg path {
+                
+                svg path {
                   fill: var(--sideMenu-color) !important;
-                }*/
+                }
               }
               
               &.deActiveLink {
@@ -213,12 +178,9 @@
                   fill: var(--secondary-color) !important;
                 }
               }
-
-
             }
           }
         }
-        
       }
     }
   }
@@ -249,11 +211,13 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding-top: 30px;
+            padding-top: 15px;
+            padding-bottom: 10px;
             
             img {
               width: 60%;
               height: auto;
+              object-fit: contain;
             }
           }
           
@@ -287,30 +251,9 @@
           ul {
             li {
               color: var(--primary-color) !important;
-              font-size: 16px;
-              
-              // svg path {
-              //   fill: var(--primary-color) !important;
-              // }
-              
-              // &.activeLink {
-              //   color: var(--sideMenu-color) !important;
-              //   background: var(--secondary-color) !important;
-                
-              //   svg path {
-              //     fill: var(--sideMenu-color) !important;
-              //   }
-              // }
-              
-              // &.deActiveLink {
-              //   color: var(--secondary-color) !important;
-              //   background: transparent !important;
-                
-              //   svg path {
-              //     fill: var(--secondary-color) !important;
-              //   }
-              // }
+              font-size: 30px; // Increased font size for mobile
             }
+            
             .activeLink {
               color: var(--sideMenu-color);
               background: var(--secondary-color);
@@ -319,6 +262,7 @@
                 fill: var(--sideMenu-color) !important;
               }
             }
+            
             .deActiveLink {
               color: var(--secondary-color);
               background: transparent;

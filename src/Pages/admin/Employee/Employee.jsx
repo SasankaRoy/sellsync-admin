@@ -133,7 +133,7 @@ export const Employee = () => {
                   <h3 className="text-2xl sm:text-3xl lg:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
                     Employees
                   </h3>
-                  <div className="relative w-full sm:w-auto max-w-xs flex justify-center sm:block">
+                  <div className="w-full sm:w-auto flex justify-center sm:justify-end">
                     <button
                       onClick={() => {
                         setEditModel({
@@ -142,7 +142,7 @@ export const Employee = () => {
                           forStatus: "Add",
                         });
                       }}
-                      className="w-full sm:w-auto px-5 py-2.5 sm:py-1.5 rounded-full bg-[var(--button-color1)] flex justify-center items-center gap-2 text-white mainFont font-[500] cursor-pointer text-sm sm:text-base hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
+                      className="w-full sm:w-auto max-w-xs sm:max-w-none px-5 py-2.5 sm:py-1.5 rounded-full bg-[var(--button-color1)] flex justify-center items-center gap-2 text-white mainFont font-[500] cursor-pointer text-sm sm:text-base hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
                     >
                       Add Employee <PluseIcon className="w-4 h-4" />
                     </button>
@@ -576,7 +576,7 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
               />
             </div>
           </div>
-          <div className="flex justify-end items-center gap-5 my-4">
+          <div className="flex flex-col sm:flex-row gap-4 justify-end items-center my-4">
             <button
               type="button"
               onClick={() => {
@@ -586,7 +586,7 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
                   forStatus: null,
                 });
               }}
-              className="px-5 py-1 rounded-md cursor-pointer text-white font-semibold bg-[var(--button-color4)] text-base sm:text-lg md:text-xl lg:text-[1.2dvw]"
+              className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color4)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300"
             >
               Cancel
             </button>
@@ -595,7 +595,7 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
               onClick={() =>
                 forState === "Add" ? handleSubmit() : handleEmployee()
               }
-              className="px-5 py-1 rounded-md cursor-pointer text-white font-semibold bg-[var(--button-color5)] text-base sm:text-lg md:text-xl lg:text-[1.2dvw] disabled:opacity-80 disabled:pointer-events-none disabled:cursor-not-allowed"
+              className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300 disabled:opacity-80 disabled:pointer-events-none disabled:cursor-not-allowed"
               disabled={isLoading}
             >
               {isLoading

@@ -545,16 +545,16 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
           ))}
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-end items-center mt-6">
+        <div className="flex flex-col sm:flex-row justify-end items-center gap-4 mt-6">
           <button
-            className="w-full sm:w-auto px-4 sm:px-5 py-1 rounded-md cursor-pointer text-white font-semibold bg-[var(--button-color4)] text-base sm:text-lg lg:text-[1.2dvw] hover:opacity-80 transition-all duration-300"
+            className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color4)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300"
             onClick={handleCloseModel}
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
-            className="w-full sm:w-auto px-4 sm:px-5 py-1 rounded-md cursor-pointer text-white font-semibold bg-[var(--button-color5)] text-base sm:text-lg lg:text-[1.2dvw] hover:opacity-80 transition-all duration-300"
+            className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300"
           >
             {actionType === "Add" ? "Create" : "Update"}
           </button>

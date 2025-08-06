@@ -1,11 +1,12 @@
 import React, { useMemo, useState } from "react";
 import { DeleteIcon, FilterIcon, SortIcon } from "../../../assets/Svgs/AllSvgs";
-import { Edit, Trash, Eye } from "lucide-react";
+import { Edit, Trash, Eye, CircleX } from "lucide-react";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
-import { DeleteModel } from "../../../components/common/Models/DeleteMode";
-import { POSEditModel } from "../../../components/common/Models/POSEditModel";
 import { Layout } from "../../../components/common/Layout/Layout";
+import { toast } from "react-toastify";
+import axiosInstance from "../../../utils/axios-interceptor";
+import { useQueryClient } from "@tanstack/react-query";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -54,6 +55,345 @@ const ActionBtns = (props) => {
   );
 };
 
+// Responsive DeleteModel Component for Journals
+const DeleteModel = ({ setDeleteModel, deleteModel }) => {
+  const [isDeleting, setIsDeleting] = useState(false);
+  const queryClient = useQueryClient();
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      // Update this API endpoint according to your journal deletion endpoint
+      const reqDelete = await axiosInstance.post(
+        `/api/v1/journal/delete`,
+        {
+          id: deleteModel.productId,
+        }
+      );
+
+      if (reqDelete.status === 200 && reqDelete.data) {
+        toast.success(reqDelete.data.message || "Journal entry deleted successfully!");
+        // Update this query key according to your journal list query key
+        queryClient.invalidateQueries({
+          queryKey: ["journal_list"],
+        });
+      }
+    } catch (error) {
+      console.error(error?.response?.data?.error);
+      toast.error(
+        error?.response?.data?.error ||
+          "Something went wrong! while deleting journal entry"
+      );
+    } finally {
+      setDeleteModel({
+        state: false,
+        productId: null,
+      });
+      setIsDeleting(false);
+    }
+  };
+
+  return (
+    <>
+      <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center px-4 sm:px-6 lg:px-0">
+        <div className="w-full sm:w-[80%] lg:w-[50%] max-w-lg sm:max-w-2xl lg:max-w-none p-4 sm:p-5 lg:p-5 bg-white rounded-xl shadow-md flex flex-col gap-4">
+          <div className="flex justify-between items-center w-full p-2 sm:p-3 lg:p-3 rounded-md text-white bg-[var(--sideMenu-color)]">
+            <h3 className="text-base sm:text-lg lg:text-[1.5dvw] font-semibold">Delete Journal Entry</h3>
+            <button
+              onClick={() => {
+                setDeleteModel({
+                  state: false,
+                  productId: null,
+                });
+              }}
+              className="hover:text-[var(--Negative-color)] transition-all duration-300 ease-linear cursor-pointer"
+            >
+              <CircleX size={24} className="sm:w-7 sm:h-7 lg:w-[30px] lg:h-[30px]" />
+            </button>
+          </div>
+
+          <p className="text-sm sm:text-base lg:text-[1.2dvw] font-semibold font-[var(--paraFont)] text-center sm:text-left">
+            Journal entry with ID{" "}
+            <span className="italic font-bold">"{deleteModel.productId}"</span>{" "}
+            will be{" "}
+            <span className="text-[var(--Negative-color)] font-bold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.3dvw]">
+              Permanently Deleted
+            </span>{" "}
+            from the system.
+          </p>
+
+          <div className="flex flex-col sm:flex-row justify-center sm:justify-end items-center gap-3 sm:gap-4">
+            <button
+              onClick={() => {
+                setDeleteModel({
+                  state: false,
+                  productId: null,
+                });
+              }}
+              className="w-full sm:w-auto bg-[var(--button-color4)] text-white px-4 sm:px-5 py-2 sm:py-1.5 rounded-md flex justify-center items-center font-semibold text-sm sm:text-base lg:text-[1.1dvw] cursor-pointer hover:opacity-80 transition-all duration-300"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="w-full sm:w-auto bg-[var(--Negative-color)] text-white px-4 sm:px-5 py-2 sm:py-1.5 rounded-md flex justify-center items-center font-semibold text-sm sm:text-base lg:text-[1.1dvw] cursor-pointer hover:opacity-80 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isDeleting ? "Deleting..." : "Delete"}
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+
+// Responsive POSEditModel Component
+const POSEditModel = ({ setEditModel, productData }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [journalData, setJournalData] = useState({
+    ref: productData?.Ref || "",
+    user: productData?.User || "",
+    deviceLocation: productData?.["Device/Location"] || "",
+    items: productData?.Items || "",
+    processDate: productData?.ProccessDt || "",
+    total: productData?.Total || "",
+    status: productData?.Status || "",
+  });
+  const queryClient = useQueryClient();
+
+  // handle onChange function...
+  const handleOnChange = (e) => {
+    const { name, value } = e.target;
+    setJournalData({
+      ...journalData,
+      [name]: value,
+    });
+  };
+
+  // handle update function...
+  const handleOnUpdate = async () => {
+    setIsLoading(true);
+    try {
+      // Update this API endpoint according to your journal update endpoint
+      const reqUpdateJournal = await axiosInstance.post(
+        `/api/v1/journal/update`,
+        {
+          id: productData?.ID,
+          ...journalData,
+        }
+      );
+
+      if (reqUpdateJournal.status === 200 && reqUpdateJournal.data) {
+        toast.success("Journal entry updated successfully");
+        queryClient.invalidateQueries({
+          queryKey: ["journal_list"],
+        });
+      }
+    } catch (error) {
+      console.error(error?.response?.data?.error);
+      toast.error(
+        error?.response?.data?.error ||
+          "Something went wrong! while updating journal entry"
+      );
+    } finally {
+      setIsLoading(false);
+      setEditModel({
+        state: false,
+        productData: null,
+      });
+    }
+  };
+
+  return (
+    <>
+      <div className="fixed top-0 left-0 flex justify-center items-center w-full h-full bg-[#000]/20 backdrop-blur-xl z-50 px-4 sm:px-6 lg:px-0">
+        <div className="bg-white rounded-lg p-3 sm:p-4 lg:p-5 w-full sm:w-[90%] lg:w-[60%] max-w-sm sm:max-w-4xl lg:max-w-none shadow mx-2 sm:mx-4 lg:mx-0 max-h-[90vh] overflow-y-auto">
+          <div className="flex justify-between items-center w-full bg-[var(--sideMenu-color)] text-white p-2 sm:p-3 lg:p-3 rounded-lg">
+            <h3 className="text-base sm:text-lg lg:text-[1.5dvw] font-[500]">
+              Edit Journal Entry
+            </h3>
+            <button
+              onClick={() =>
+                setEditModel({
+                  state: false,
+                  productData: null,
+                })
+              }
+              className="cursor-pointer"
+            >
+              <CircleX size={20} className="sm:w-6 sm:h-6 lg:w-[35px] lg:h-[35px]" />
+            </button>
+          </div>
+
+          <div className="my-4 sm:my-6 lg:my-10 flex flex-col gap-4 sm:gap-5 lg:gap-8">
+            {/* Row 1 */}
+            <div className="flex flex-col lg:flex-row justify-between items-center gap-4 lg:gap-5 w-full">
+              <div className="w-full lg:w-1/2 flex flex-col gap-1.5">
+                <label
+                  className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
+                  htmlFor="ref"
+                >
+                  Reference
+                </label>
+                <input
+                  id="ref"
+                  type="text"
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-2 sm:py-2.5 lg:py-1.5 px-3"
+                  placeholder="Enter reference..."
+                  name="ref"
+                  onChange={handleOnChange}
+                  value={journalData?.ref}
+                />
+              </div>
+              <div className="w-full lg:w-1/2 flex flex-col gap-1.5">
+                <label
+                  className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
+                  htmlFor="user"
+                >
+                  User
+                </label>
+                <input
+                  id="user"
+                  type="text"
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-2 sm:py-2.5 lg:py-1.5 px-3"
+                  placeholder="Enter user..."
+                  name="user"
+                  onChange={handleOnChange}
+                  value={journalData?.user}
+                />
+              </div>
+            </div>
+
+            {/* Row 2 */}
+            <div className="flex flex-col lg:flex-row justify-between items-center gap-4 lg:gap-5 w-full">
+              <div className="w-full lg:w-1/2 flex flex-col gap-1.5">
+                <label
+                  className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
+                  htmlFor="deviceLocation"
+                >
+                  Device/Location
+                </label>
+                <input
+                  id="deviceLocation"
+                  type="text"
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-2 sm:py-2.5 lg:py-1.5 px-3"
+                  placeholder="Enter device/location..."
+                  name="deviceLocation"
+                  onChange={handleOnChange}
+                  value={journalData?.deviceLocation}
+                />
+              </div>
+              <div className="w-full lg:w-1/2 flex flex-col gap-1.5">
+                <label
+                  className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
+                  htmlFor="items"
+                >
+                  Items
+                </label>
+                <input
+                  id="items"
+                  type="number"
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-2 sm:py-2.5 lg:py-1.5 px-3"
+                  placeholder="Enter items count..."
+                  name="items"
+                  onChange={handleOnChange}
+                  value={journalData?.items}
+                />
+              </div>
+            </div>
+
+            {/* Row 3 */}
+            <div className="flex flex-col lg:flex-row justify-between items-center gap-4 lg:gap-5 w-full">
+              <div className="w-full lg:w-1/2 flex flex-col gap-1.5">
+                <label
+                  className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
+                  htmlFor="processDate"
+                >
+                  Process Date
+                </label>
+                <input
+                  id="processDate"
+                  type="datetime-local"
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-2 sm:py-2.5 lg:py-1.5 px-3"
+                  name="processDate"
+                  onChange={handleOnChange}
+                  value={journalData?.processDate}
+                />
+              </div>
+              <div className="w-full lg:w-1/2 flex flex-col gap-1.5">
+                <label
+                  className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
+                  htmlFor="total"
+                >
+                  Total
+                </label>
+                <input
+                  id="total"
+                  type="text"
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-2 sm:py-2.5 lg:py-1.5 px-3"
+                  placeholder="Enter total amount..."
+                  name="total"
+                  onChange={handleOnChange}
+                  value={journalData?.total}
+                />
+              </div>
+            </div>
+
+            {/* Row 4 */}
+            <div className="flex flex-col lg:flex-row justify-between items-center gap-4 lg:gap-5 w-full">
+              <div className="w-full lg:w-1/2 flex flex-col gap-1.5">
+                <label
+                  className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
+                  htmlFor="status"
+                >
+                  Status
+                </label>
+                <select
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-2 sm:py-2.5 lg:py-1.5 px-3 appearance-none"
+                  id="status"
+                  name="status"
+                  onChange={handleOnChange}
+                  value={journalData?.status}
+                >
+                  <option>-- Select Status --</option>
+                  <option value="Completed">Completed</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Processing">Processing</option>
+                  <option value="Cancelled">Cancelled</option>
+                </select>
+              </div>
+              <div className="w-full lg:w-1/2"></div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row justify-center sm:justify-end items-center gap-3 sm:gap-4 pt-2">
+              <button
+                onClick={() =>
+                  setEditModel({
+                    state: false,
+                    productData: null,
+                  })
+                }
+                className="w-full sm:w-auto bg-[var(--button-color4)] text-white px-4 sm:px-6 lg:px-5 py-2 sm:py-2 lg:py-2 rounded-lg flex justify-center items-center font-semibold text-sm sm:text-base lg:text-base cursor-pointer hover:opacity-80 transition-all duration-300"
+              >
+                Cancel
+              </button>
+              <button
+                disabled={isLoading}
+                onClick={handleOnUpdate}
+                className="w-full sm:w-auto py-2 sm:py-2 lg:py-2 px-4 sm:px-6 lg:px-5 rounded-lg mainFont font-[500] text-white bg-[var(--button-color1)] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-70 hover:bg-[var(--button-color5)] transition-all duration-300 ease-linear cursor-pointer text-sm sm:text-base lg:text-base"
+              >
+                {isLoading ? "Updating..." : "Update"}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+
 export const Journal = () => {
   const [deleteModel, setDeleteModel] = useState({
     state: false,
@@ -76,194 +416,176 @@ export const Journal = () => {
       ProccessDt: "2025-05-27 07:32:15",
       Total: "$6.89",
       Status: "Completed",
-      Actions: ActionBtns,
     },
     {
-      ID: "1",
-      Ref: "779",
+      ID: "2",
+      Ref: "780",
       User: "Malay",
       "Device/Location": "Register1 / Inventory",
       Items: "1",
       ProccessDt: "2025-05-27 07:32:15",
       Total: "$6.89",
       Status: "Completed",
-      Actions: ActionBtns,
     },
     {
-      ID: "1",
-      Ref: "779",
+      ID: "3",
+      Ref: "781",
       User: "Malay",
       "Device/Location": "Register1 / Inventory",
       Items: "1",
       ProccessDt: "2025-05-27 07:32:15",
       Total: "$6.89",
       Status: "Completed",
-      Actions: ActionBtns,
     },
     {
-      ID: "1",
-      Ref: "779",
+      ID: "4",
+      Ref: "782",
       User: "Malay",
       "Device/Location": "Register1 / Inventory",
       Items: "1",
       ProccessDt: "2025-05-27 07:32:15",
       Total: "$6.89",
       Status: "Completed",
-      Actions: ActionBtns,
     },
     {
-      ID: "1",
-      Ref: "779",
+      ID: "5",
+      Ref: "783",
       User: "Malay",
       "Device/Location": "Register1 / Inventory",
       Items: "1",
       ProccessDt: "2025-05-27 07:32:15",
       Total: "$6.89",
       Status: "Completed",
-      Actions: ActionBtns,
     },
     {
-      ID: "1",
-      Ref: "779",
+      ID: "6",
+      Ref: "784",
       User: "Malay",
       "Device/Location": "Register1 / Inventory",
       Items: "1",
       ProccessDt: "2025-05-27 07:32:15",
       Total: "$6.89",
       Status: "Completed",
-      Actions: ActionBtns,
     },
     {
-      ID: "1",
-      Ref: "779",
+      ID: "7",
+      Ref: "785",
       User: "Malay",
       "Device/Location": "Register1 / Inventory",
       Items: "1",
       ProccessDt: "2025-05-27 07:32:15",
       Total: "$6.89",
       Status: "Completed",
-      Actions: ActionBtns,
     },
     {
-      ID: "1",
-      Ref: "779",
+      ID: "8",
+      Ref: "786",
       User: "Malay",
       "Device/Location": "Register1 / Inventory",
       Items: "1",
       ProccessDt: "2025-05-27 07:32:15",
       Total: "$6.89",
       Status: "Completed",
-      Actions: ActionBtns,
     },
     {
-      ID: "1",
-      Ref: "779",
+      ID: "9",
+      Ref: "787",
       User: "Malay",
       "Device/Location": "Register1 / Inventory",
       Items: "1",
       ProccessDt: "2025-05-27 07:32:15",
       Total: "$6.89",
       Status: "Completed",
-      Actions: ActionBtns,
     },
     {
-      ID: "1",
-      Ref: "779",
+      ID: "10",
+      Ref: "788",
       User: "Malay",
       "Device/Location": "Register1 / Inventory",
       Items: "1",
       ProccessDt: "2025-05-27 07:32:15",
       Total: "$6.89",
       Status: "Completed",
-      Actions: ActionBtns,
     },
     {
-      ID: "1",
-      Ref: "779",
+      ID: "11",
+      Ref: "789",
       User: "Malay",
       "Device/Location": "Register1 / Inventory",
       Items: "1",
       ProccessDt: "2025-05-27 07:32:15",
       Total: "$6.89",
       Status: "Completed",
-      Actions: ActionBtns,
     },
     {
-      ID: "1",
-      Ref: "779",
+      ID: "12",
+      Ref: "790",
       User: "Malay",
       "Device/Location": "Register1 / Inventory",
       Items: "1",
       ProccessDt: "2025-05-27 07:32:15",
       Total: "$6.89",
       Status: "Completed",
-      Actions: ActionBtns,
     },
     {
-      ID: "1",
-      Ref: "779",
+      ID: "13",
+      Ref: "791",
       User: "Malay",
       "Device/Location": "Register1 / Inventory",
       Items: "1",
       ProccessDt: "2025-05-27 07:32:15",
       Total: "$6.89",
       Status: "Completed",
-      Actions: ActionBtns,
     },
     {
-      ID: "1",
-      Ref: "779",
+      ID: "14",
+      Ref: "792",
       User: "Malay",
       "Device/Location": "Register1 / Inventory",
       Items: "1",
       ProccessDt: "2025-05-27 07:32:15",
       Total: "$6.89",
       Status: "Completed",
-      Actions: ActionBtns,
     },
     {
-      ID: "1",
-      Ref: "779",
+      ID: "15",
+      Ref: "793",
       User: "Malay",
       "Device/Location": "Register1 / Inventory",
       Items: "1",
       ProccessDt: "2025-05-27 07:32:15",
       Total: "$6.89",
       Status: "Completed",
-      Actions: ActionBtns,
     },
     {
-      ID: "1",
-      Ref: "779",
+      ID: "16",
+      Ref: "794",
       User: "Malay",
       "Device/Location": "Register1 / Inventory",
       Items: "1",
       ProccessDt: "2025-05-27 07:32:15",
       Total: "$6.89",
       Status: "Completed",
-      Actions: ActionBtns,
     },
     {
-      ID: "1",
-      Ref: "779",
+      ID: "17",
+      Ref: "795",
       User: "Malay",
       "Device/Location": "Register1 / Inventory",
       Items: "1",
       ProccessDt: "2025-05-27 07:32:15",
       Total: "$6.89",
       Status: "Completed",
-      Actions: ActionBtns,
     },
     {
-      ID: "1",
-      Ref: "779",
+      ID: "18",
+      Ref: "796",
       User: "Malay",
       "Device/Location": "Register1 / Inventory",
       Items: "1",
       ProccessDt: "2025-05-27 07:32:15",
       Total: "$6.89",
       Status: "Completed",
-      Actions: ActionBtns,
     },
   ]);
 
@@ -402,7 +724,7 @@ export const Journal = () => {
       {deleteModel.state && deleteModel.productId && (
         <DeleteModel
           setDeleteModel={setDeleteModel}
-          productId={deleteModel.productId}
+          deleteModel={deleteModel}
         />
       )}
 
