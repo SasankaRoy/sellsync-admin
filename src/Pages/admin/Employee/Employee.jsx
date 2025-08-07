@@ -142,7 +142,7 @@ export const Employee = () => {
                           forStatus: "Add",
                         });
                       }}
-                      className="w-full sm:w-auto max-w-xs sm:max-w-none px-5 py-2.5 sm:py-1.5 rounded-full bg-[var(--button-color1)] flex justify-center items-center gap-2 text-white mainFont font-[500] cursor-pointer text-sm sm:text-base hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
+                      className="w-full sm:w-auto px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color1)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
                     >
                       Add Employee <PluseIcon className="w-4 h-4" />
                     </button>

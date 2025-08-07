@@ -653,7 +653,7 @@ const DetailsTab = () => {
           />
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-7 gap-2 my-4 relative">
+        <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 gap-2 my-4 relative">
           <button
             onClick={() =>
               setQuantityData([...addQuantityData, addQuantityData.length + 1])

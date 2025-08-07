@@ -181,7 +181,7 @@ export const Customer = () => {
                         forState: "Add",
                       });
                     }}
-                    className="w-full sm:w-auto max-w-xs sm:max-w-none px-5 py-2.5 sm:py-1.5 rounded-full bg-[var(--button-color1)] flex justify-center items-center gap-2 text-white mainFont font-[500] cursor-pointer text-sm sm:text-base hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
+                    className="w-full sm:w-auto px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color1)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
                   >
                     Add Customer <PluseIcon className="w-4 h-4" />
                   </button>
@@ -350,7 +350,7 @@ const EditUserModel = ({ setEditUserModel, userData, forState }) => {
   return (
     <>
       <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center">
-        <div className="bg-white w-[95%] sm:w-[80%] md:w-[70%] lg:w-[50%] p-4 sm:p-5 rounded-lg shadow-md max-h-[90vh] overflow-y-auto">
+        <div className="bg-white w-[95%] sm:w-[80%] md:w-[90%] lg:w-[50%] p-4 sm:p-5 rounded-lg shadow-md max-h-[90vh] overflow-y-auto">
           <div className="flex justify-between items-center w-full p-2.5 rounded-md bg-[var(--sideMenu-color)] text-white">
             <h3 className="text-lg sm:text-xl md:text-2xl lg:text-[1.5dvw] font-semibold">{forState} User</h3>
             <button
