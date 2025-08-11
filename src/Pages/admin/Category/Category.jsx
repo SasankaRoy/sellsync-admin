@@ -177,7 +177,7 @@ export const Category = () => {
   const defaultColDef = useMemo(() => {
     return {
       filter: true,
-      editable: true,
+      editable: false,
     };
   }, []);
 

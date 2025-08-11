@@ -127,7 +127,7 @@ export const SalesReport = () => {
   const defaultColDef = useMemo(() => {
     return {
       filter: true,
-      editable: true,
+      editable: false,
     };
   }, []);
   return (

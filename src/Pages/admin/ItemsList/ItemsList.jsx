@@ -1121,6 +1121,7 @@ const PromotionsTab = () => {
       filter: true,
       sortable: true,
       resizable: true,
+      editable: false,
     };
   }, []);
   return (

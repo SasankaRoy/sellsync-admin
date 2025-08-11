@@ -713,7 +713,7 @@ const ScanDataTab = () => {
   const defaultColDef = useMemo(() => {
     return {
       filter: true,
-      editable: true,
+      editable: false,
     };
   }, []);
   return (
@@ -938,7 +938,7 @@ const BusinessDocumentsTab = () => {
       const defaultColDef = useMemo(() => {
         return {
           filter: true,
-          editable: true,
+          editable: false,
         };
       }, []);
   return (

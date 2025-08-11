@@ -280,7 +280,7 @@ const JournalTab = () => {
   const defaultColDef = useMemo(() => {
     return {
       filter: true,
-      editable: true,
+     editable: false,
     };
   }, []);
 
@@ -449,7 +449,7 @@ const DealsTab = () => {
   const defaultColDef = useMemo(() => {
     return {
       filter: true,
-      editable: true,
+      editable: false,
     };
   }, []);
   return (
@@ -773,7 +773,7 @@ const CategoriesPOSTab = () => {
   const defaultColDef = useMemo(() => {
     return {
       filter: true,
-      editable: true,
+      editable: false,
     };
   }, []);
 
@@ -954,7 +954,7 @@ const EDIFileTab = () => {
   const defaultColDef = useMemo(() => {
     return {
       filter: true,
-      editable: true,
+      editable: false,
     };
   }, []);
 
@@ -1112,7 +1112,7 @@ const VendorsTab = () => {
   const defaultColDef = useMemo(() => {
     return {
       filter: true,
-      editable: true,
+      editable: false,
     };
   }, []);
 

@@ -156,7 +156,7 @@ export const Customer = () => {
   const defaultColDef = useMemo(() => {
     return {
       filter: true,
-      editable: true,
+      editable: false,
     };
   }, []);
 

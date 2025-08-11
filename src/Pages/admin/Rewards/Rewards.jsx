@@ -252,7 +252,7 @@ export const Rewards = () => {
   const defaultColDef = useMemo(() => {
     return {
       filter: true,
-      editable: true,
+      editable: false,
     };
   }, []);
   return (

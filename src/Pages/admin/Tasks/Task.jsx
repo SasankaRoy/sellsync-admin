@@ -192,7 +192,7 @@ export const Task = () => {
   const defaultColDef = useMemo(() => {
     return {
       filter: true,
-      editable: true,
+      editable: false,
       resizable: true,
     };
   }, []);

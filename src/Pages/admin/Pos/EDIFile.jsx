@@ -183,7 +183,7 @@ export const EDIFile = () => {
   const defaultColDef = useMemo(() => {
     return {
       filter: true,
-      editable: true,
+      editable: false,
     };
   }, []);
 

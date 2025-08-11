@@ -110,7 +110,7 @@ export const LoyaltyDeals = () => {
   const defaultColDef = useMemo(() => {
     return {
       filter: true,
-      editable: true,
+      editable: false,
     };
   }, []);
 
@@ -179,6 +179,7 @@ export const LoyaltyDeals = () => {
                       onCellValueChanged={(event) =>
                         console.log(`New Cell Value: ${event.value}`)
                       }
+                      suppressClickEdit={true}
                     />
                   </div>
                 </div>
@@ -257,14 +258,7 @@ const EditAndAddModel = ({ showModel, setShowModel }) => {
     });
   };
 
-  const handleSubmit = async () => {
-    try {
-      console.log(loyaltyData);
-    } catch (error) {
-      console.error(error.response.data.message);
-    }
-  };
-
+  // for search optimization (reduce un-necessary calls to the server) ....
   const debounceCallback = useDeboune((data, error) => {
     if (data.length > 0 && error === null) {
       setIsSearching(false);
@@ -280,7 +274,7 @@ const EditAndAddModel = ({ showModel, setShowModel }) => {
       setIsSearching(false);
       return;
     }
-  }, 2000);
+  }, 800); // adjust the delay...
 
   // genarate promocode
   const generatePromocode = () => {
@@ -291,7 +285,35 @@ const EditAndAddModel = ({ showModel, setShowModel }) => {
         Math.floor(Math.random() * characters.length)
       );
     }
+
+    setLoyaltyData({
+      ...loyaltyData,
+      promocode: result,
+    });
     return result;
+  };
+
+  // add loyalty deal function..
+  const handleSubmit = async () => {
+    try {
+      const reqSaveLoyaltyDeals = await axiosInstance.post(
+        "api/v1/loyalty/deal-add",
+        {
+          item_id: loyaltyData.item_id,
+          promocode: loyaltyData.promocode,
+          from_date: loyaltyData.from_date,
+          to_date: loyaltyData.to_date,
+          amount_off: loyaltyData.amount_off,
+          minimum_quantity: loyaltyData.minimum_quantity,
+          maximum_quantity: loyaltyData.maximum_quantity,
+          status: loyaltyData.status,
+        }
+      );
+
+      console.log(reqSaveLoyaltyDeals?.data, "reqSaveLoyaltyDeals");
+    } catch (error) {
+      console.error(error.response.data.message);
+    }
   };
 
   return (
@@ -399,17 +421,25 @@ const EditAndAddModel = ({ showModel, setShowModel }) => {
                 >
                   Promocode
                 </label>
-                <input
-                  id="promoCode"
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] appearance-none focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                  type="text"
-                  placeholder="Enter code..."
-                  value={loyaltyData.promocode}
-                  onChange={(e) => {
-                    handleOnChange(e);
-                  }}
-                  name="promocode"
-                />
+                <div className="flex justify-between items-center gap-5">
+                  <input
+                    id="promoCode"
+                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] appearance-none focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                    type="text"
+                    placeholder="Enter code..."
+                    value={loyaltyData.promocode}
+                    onChange={(e) => {
+                      handleOnChange(e);
+                    }}
+                    name="promocode"
+                  />
+                  <button
+                    onClick={generatePromocode}
+                    className="shrink-0 bg-[var(--sideMenu-color)] text-white px-4 py-1.5 rounded-md paraFont font-normal cursor-pointer text-[1.2dvw]"
+                  >
+                    Genarate Code
+                  </button>
+                </div>
               </div>
 
               <div className="flex justify-between items-center w-full gap-5">

@@ -113,7 +113,7 @@ export const ScanTickets = () => {
   const defaultColDef = useMemo(() => {
     return {
       filter: true,
-      editable: true,
+      editable: false,editable: true,
     };
   }, []);
   return (

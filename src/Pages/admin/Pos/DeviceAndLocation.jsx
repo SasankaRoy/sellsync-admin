@@ -150,7 +150,7 @@ export const DeviceAndLocation = () => {
   const defaultColDef = useMemo(() => {
     return {
       filter: true,
-      editable: true,
+     editable: false,
     };
   }, []);
 

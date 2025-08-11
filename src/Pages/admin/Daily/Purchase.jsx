@@ -321,6 +321,7 @@ export const Purchase = () => {
       filter: true,
       sortable: true,
       resizable: true,
+      editable: false,
     };
   }, []);
 

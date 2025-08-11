@@ -112,7 +112,7 @@ export const Sale = () => {
   const defaultColDef = useMemo(() => {
     return {
       filter: true,
-      editable: true,
+      editable: false,
     };
   }, []);
   return (

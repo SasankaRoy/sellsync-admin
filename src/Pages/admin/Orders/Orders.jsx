@@ -310,6 +310,7 @@ export const Orders = () => {
       filter: true,
       sortable: true,
       resizable: true,
+      editable: false,
     };
   }, []);
 

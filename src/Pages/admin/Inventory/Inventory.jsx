@@ -293,6 +293,7 @@ export const Inventory = () => {
       filter: true,
       editable: true,
       resizable: true,
+      editable: false,
     };
   }, []);
 
@@ -1171,6 +1172,7 @@ const PromotionsTab = () => {
       filter: true,
       sortable: true,
       resizable: true,
+      editable: false,
     };
   }, []);
   return (

@@ -7,7 +7,6 @@ const getItemData = async (queryString) => {
       search_text: queryString,
     });
     if (reqData.status === 200 && reqData.data) {
-      console.log(reqData?.data?.results);
       return reqData?.data?.results;
     }
   } catch (error) {

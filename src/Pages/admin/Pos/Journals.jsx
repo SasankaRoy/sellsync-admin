@@ -647,6 +647,7 @@ export const Journal = () => {
       filter: true,
       sortable: true,
       resizable: true,
+      editable: false,
     };
   }, []);
 
