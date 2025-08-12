@@ -366,6 +366,7 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
             state: userInfo.state,
             zip: userInfo.zip,
           },
+          status:userInfo?.status
         }
       );
 
@@ -532,7 +533,7 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
                 </select>
               </div>
             )}
-            {forState === "Add" && (
+            {/* {forState === "Add" && ( */}
               <div className="w-full my-4 flex flex-col gap-2">
                 <label className="text-base sm:text-lg md:text-xl lg:text-[1dvw] font-normal paraFont">Status</label>
                 <select
@@ -547,7 +548,7 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
                   <option value="in-active">Inactive</option>
                 </select>
               </div>
-            )}
+            {/* )} */}
 
             <div className="w-full my-4 flex flex-col gap-2">
               <label className="text-base sm:text-lg md:text-xl lg:text-[1dvw] font-normal paraFont">Staff Position</label>
