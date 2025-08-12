@@ -3,7 +3,6 @@ import { Layout } from "../../../components/common/Layout/Layout";
 import { PluseIcon } from "../../../assets/Svgs/AllSvgs";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { Loading } from "../../../components/UI/Loading/Loading";
-// Core CSS
 import { AgGridReact } from "ag-grid-react";
 import { Edit, Trash, X } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -81,7 +80,6 @@ export const LoyaltyDeals = () => {
     });
   };
 
-  // Column Definitions: Defines & controls grid columns.
   const [colDefs, setColDefs] = useState([
     { field: "id" },
     { field: "item_name" },
@@ -106,7 +104,6 @@ export const LoyaltyDeals = () => {
     },
   ]);
 
-  // Apply settings across all columns
   const defaultColDef = useMemo(() => {
     return {
       filter: true,
@@ -121,66 +118,76 @@ export const LoyaltyDeals = () => {
           <Loading />
         ) : (
           <>
-            <div className="h-full flex flex-col gap-6">
-              <div className="flex justify-between items-center w-full">
-                <h3 className="text-[1.5dvw] font-[500] mainFont">
-                  Loyalty Ddeals
+            <div className="pb-14 w-full px-4 sm:px-6 lg:px-0">
+              <div className="flex flex-col sm:flex-row lg:flex-row justify-between items-start sm:items-center lg:items-center gap-4 mb-6 sm:mb-0 lg:mb-0 p-2 lg:p-2">
+                <h3 className="text-2xl md:text-xl lg:font-[500] lg:text-[1.5dvw] font-semibold text-[var(--mainText-color)]">
+                  Loyalty Deals
                 </h3>
-                <button
-                  onClick={() =>
-                    setShowModel({
-                      state: true,
-                      actionType: "Add",
-                      productData: null,
-                    })
-                  }
-                  className="cursor-pointer px-5 py-2 bg-[var(--button-color1)] text-white mainFont rounded-full font-[500] flex justify-center items-center gap-3"
-                >
-                  <PluseIcon /> Create New Deals
-                </button>
+                <div className="w-full sm:w-auto flex justify-center">
+                  <button
+                    onClick={() =>
+                      setShowModel({
+                        state: true,
+                        actionType: "Add",
+                        productData: null,
+                      })
+                    }
+                    className="w-full sm:w-auto flex justify-center items-center gap-2 rounded-full bg-[var(--button-color1)] text-white mainFont px-6 py-3 sm:px-4 sm:py-2 lg:px-5 lg:py-2 cursor-pointer text-base sm:text-sm hover:bg-[#F8A61B] transition-all duration-300"
+                  >
+                    <PluseIcon className="sm:w-5 sm:h-5" /> Create New Deals
+                  </button>
+                </div>
               </div>
 
-              <div className="bg-white border border-[var(--border-color)] mt-5 p-5 rounded-md">
-                <h3 className="text-[1.3dvw] font-[600] ">Active Deals</h3>
-                <div className="h-[70vh] w-full my-5">
-                  <div className="h-full w-full">
-                    <AgGridReact
-                      rowData={rowData}
-                      columnDefs={colDefs}
-                      // loading={loading}
-                      defaultColDef={defaultColDef}
-                      pagination={true}
-                      rowSelection={rowSelection}
-                      onSelectionChanged={(event) =>
-                        console.log("Row Selected!")
-                      }
-                      onCellValueChanged={(event) =>
-                        console.log(`New Cell Value: ${event.value}`)
-                      }
-                    />
+              <div className="w-full h-[60vh] sm:h-[70vh] lg:h-[80dvh]">
+                <div className="flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 lg:px-2.5 lg:py-2 h-full">
+                  <h3 className="text-lg sm:text-xl lg:text-[1.3dvw] font-[600] text-[var(--mainText-color)] px-2.5">
+                    Active Deals
+                  </h3>
+                  <div className="h-full w-full overflow-x-scroll overflow-y-auto lg:overflow-visible">
+                    <div className="min-w-[800px] lg:min-w-0 h-full">
+                      <AgGridReact
+                        rowData={rowData}
+                        columnDefs={colDefs}
+                        defaultColDef={defaultColDef}
+                        pagination={true}
+                        rowSelection={rowSelection}
+                        onSelectionChanged={(event) =>
+                          console.log("Row Selected!")
+                        }
+                        onCellValueChanged={(event) =>
+                          console.log(`New Cell Value: ${event.value}`)
+                        }
+                        className="w-full h-full text-sm lg:text-base"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white border border-[var(--border-color)] p-5 rounded-md bg-red-500">
-                <h3 className="text-[1.3dvw] font-[600] ">Previous Deals</h3>
-                <div className="h-[50vh] w-full mt-5">
-                  <div className="h-full w-full">
-                    <AgGridReact
-                      rowData={prevData}
-                      columnDefs={colDefs}
-                      // loading={loading}
-                      defaultColDef={defaultColDef}
-                      pagination={true}
-                      rowSelection={rowSelection}
-                      onSelectionChanged={(event) =>
-                        console.log("Row Selected!")
-                      }
-                      onCellValueChanged={(event) =>
-                        console.log(`New Cell Value: ${event.value}`)
-                      }
-                      suppressClickEdit={true}
-                    />
+              <div className="w-full h-[40vh] sm:h-[50vh] lg:h-[50vh]">
+                <div className="flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 lg:px-2.5 lg:py-2 h-full">
+                  <h3 className="text-lg sm:text-xl lg:text-[1.3dvw] font-[600] text-[var(--mainText-color)] px-2.5">
+                    Previous Deals
+                  </h3>
+                  <div className="h-full w-full overflow-x-scroll overflow-y-auto lg:overflow-visible">
+                    <div className="min-w-[800px] lg:min-w-0 h-full">
+                      <AgGridReact
+                        rowData={prevData}
+                        columnDefs={colDefs}
+                        defaultColDef={defaultColDef}
+                        pagination={true}
+                        rowSelection={rowSelection}
+                        onSelectionChanged={(event) =>
+                          console.log("Row Selected!")
+                        }
+                        onCellValueChanged={(event) =>
+                          console.log(`New Cell Value: ${event.value}`)
+                        }
+                        suppressClickEdit={true}
+                        className="w-full h-full text-sm lg:text-base"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -213,19 +220,19 @@ const ActionBtns = (props) => {
 
   return (
     <>
-      <div className="w-full flex gap-4 py-2 justify-center items-center">
+      <div className="w-full flex gap-2 sm:gap-4 lg:gap-4 py-2 justify-center items-center">
         <button
-          className="font-semibold font-[var(--paraFont)] bg-[var(--button-color1)] text-white p-1.5 rounded-full border-none cursor-pointer"
+          className="font-semibold font-[var(--paraFont)] bg-[var(--button-color1)] text-white p-1 sm:p-1.5 lg:p-1.5 rounded-full border-none cursor-pointer"
           onClick={handleEdit}
         >
-          <Edit size={18} />
+          <Edit size={16} className="sm:w-[18px] sm:h-[18px] lg:w-[18px] lg:h-[18px]" />
         </button>
 
         <button
-          className="font-semibold font-[var(--paraFont)] bg-[var(--Negative-color)] text-white p-1.5 rounded-full border-none cursor-pointer"
+          className="font-semibold font-[var(--paraFont)] bg-[var(--Negative-color)] text-white p-1 sm:p-1.5 lg:p-1.5 rounded-full border-none cursor-pointer"
           onClick={handleDelete}
         >
-          <Trash size={18} />
+          <Trash size={16} className="sm:w-[18px] sm:h-[18px] lg:w-[18px] lg:h-[18px]" />
         </button>
       </div>
     </>
@@ -258,7 +265,6 @@ const EditAndAddModel = ({ showModel, setShowModel }) => {
     });
   };
 
-  // for search optimization (reduce un-necessary calls to the server) ....
   const debounceCallback = useDeboune((data, error) => {
     if (data.length > 0 && error === null) {
       setIsSearching(false);
@@ -274,9 +280,8 @@ const EditAndAddModel = ({ showModel, setShowModel }) => {
       setIsSearching(false);
       return;
     }
-  }, 800); // adjust the delay...
+  }, 800);
 
-  // genarate promocode
   const generatePromocode = () => {
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     let result = "";
@@ -293,7 +298,6 @@ const EditAndAddModel = ({ showModel, setShowModel }) => {
     return result;
   };
 
-  // add loyalty deal function..
   const handleSubmit = async () => {
     try {
       const reqSaveLoyaltyDeals = await axiosInstance.post(
@@ -318,13 +322,13 @@ const EditAndAddModel = ({ showModel, setShowModel }) => {
 
   return (
     <>
-      <div className="fixed top-0 left-0 w-full h-screen z-50 bg-[#000]/20 backdrop-blur-xl flex justify-center items-center">
+      <div className="fixed top-0 left-0 flex justify-center items-center w-full h-full bg-[#000]/20 backdrop-blur-xl z-50">
         <div
           onClick={() => setShowItemList(false)}
-          className="w-[65%] bg-white rounded-md p-5"
+          className="bg-white rounded-lg p-3 sm:p-5 w-[95%] sm:w-[80%] lg:w-[65%] shadow mx-4"
         >
-          <div className="rounded-md p-2 bg-[var(--sideMenu-color)] flex justify-between items-center w-full text-white">
-            <h2 className="font-[500] text-[1.5dvw] text-[var(--text-color)]">
+          <div className="flex justify-between items-center w-full bg-[var(--sideMenu-color)] text-white p-2 sm:p-3 rounded-lg">
+            <h2 className="text-lg sm:text-xl lg:text-[1.5dvw] font-[500]">
               {showModel?.actionType} Deals
             </h2>
             <button
@@ -333,98 +337,94 @@ const EditAndAddModel = ({ showModel, setShowModel }) => {
                 setShowModel({
                   actionType: "",
                   productData: null,
-                  status: false,
+                  state: false,
                 });
               }}
             >
-              <X size={30} />
+              <X size={24} className="sm:w-8 sm:h-8 lg:w-[30px] lg:h-[30px]" />
             </button>
           </div>
 
-          <div className="my-8 flex flex-col gap-3">
-            <div className="flex flex-col justify-center items-center gap-5">
-              <div className="flex flex-col gap-2 w-full relative">
+          <div className="my-6 sm:my-8 lg:my-10 flex flex-col gap-6 sm:gap-8">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-5 w-full">
+              <div className="w-full sm:w-1/2 flex flex-col gap-1.5">
                 <label
                   htmlFor="itemsDeal"
-                  className="text-[1dvw] font-normal paraFont"
+                  className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
                 >
                   Search Deal Item
                 </label>
-                <input
-                  placeholder="Enter item name..."
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] appearance-none focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                  onChange={(e) => {
-                    e.target.value && setIsSearching(true);
-                    e.target.value && debounceCallback(e.target.value);
-                    setShowItemList(true);
-                    setItemName("");
-                    handleOnChange(e);
-                  }}
-                  type="text"
-                  name="item_name"
-                  value={itemName ? itemName : loyaltyData.item_name}
-                />
-                {showItemList && (
-                  <div className="w-full top-[105%] rounded-md flex flex-col justify-start items-start gap-1 max-h-[20vh] left-0 absolute bg-white p-3 overflow-y-auto scroll-smooth">
-                    {error && (
-                      <>
-                        <p className="text-center mainFont text-gray-400 ">
+                <div className="relative">
+                  <input
+                    placeholder="Enter item name..."
+                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] appearance-none focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                    onChange={(e) => {
+                      e.target.value && setIsSearching(true);
+                      e.target.value && debounceCallback(e.target.value);
+                      setShowItemList(true);
+                      setItemName("");
+                      handleOnChange(e);
+                    }}
+                    type="text"
+                    name="item_name"
+                    value={itemName ? itemName : loyaltyData.item_name}
+                  />
+                  {showItemList && (
+                    <div className="w-full top-[105%] rounded-md flex flex-col justify-start items-start gap-1 max-h-[20vh] left-0 absolute bg-white p-3 overflow-y-auto scroll-smooth">
+                      {error && (
+                        <p className="text-center mainFont text-gray-400 text-sm sm:text-base">
                           {error}
                         </p>
-                      </>
-                    )}
-                    {isSearching ? (
-                      <>
-                        <p className="text-center mainFont text-gray-400 animate-pulse duration-200 ease-linear">
+                      )}
+                      {isSearching ? (
+                        <p className="text-center mainFont text-gray-400 animate-pulse duration-200 ease-linear text-sm sm:text-base">
                           Searching items...
                         </p>
-                      </>
-                    ) : (
-                      <>
-                        {searchResult.length === 0 ? (
-                          <>
-                            <p className="text-center mainFont text-gray-500 ">
+                      ) : (
+                        <>
+                          {searchResult.length === 0 ? (
+                            <p className="text-center mainFont text-gray-500 text-sm sm:text-base">
                               No items found...
                             </p>
-                          </>
-                        ) : (
-                          <>
-                            {searchResult?.map((cur, id) => (
-                              <button
-                                key={id}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setItemName(cur.name);
-                                  setLoyaltyData({
-                                    ...loyaltyData,
-                                    item_id: cur.id,
-                                    item_name: cur.name,
-                                  });
-                                }}
-                                className="w-full py-3 px-5 cursor-pointer hover:bg-[#000]/15 transition-all duration-200 ease-linear bg-[#000]/5 border-b border-[var(--border-color)] mainFont font-semibold rounded text-start"
-                              >
-                                {cur.name}
-                              </button>
-                            ))}
-                          </>
-                        )}
-                      </>
-                    )}
-                  </div>
-                )}
+                          ) : (
+                            <>
+                              {searchResult?.map((cur, id) => (
+                                <button
+                                  key={id}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setItemName(cur.name);
+                                    setLoyaltyData({
+                                      ...loyaltyData,
+                                      item_id: cur.id,
+                                      item_name: cur.name,
+                                    });
+                                  }}
+                                  className="w-full py-2 sm:py-3 px-3 sm:px-5 cursor-pointer hover:bg-[#000]/15 transition-all duration-200 ease-linear bg-[#000]/5 border-b border-[var(--border-color)] mainFont font-semibold rounded text-start text-sm sm:text-base"
+                                >
+                                  {cur.name}
+                                </button>
+                              ))}
+                            </>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
 
-              <div className="flex flex-col gap-2 w-full">
+              <div className="w-full sm:w-1/2 flex flex-col gap-1.5">
                 <label
                   htmlFor="promoCode"
-                  className="text-[1dvw] font-normal paraFont"
+                  className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
                 >
                   Promocode
                 </label>
-                <div className="flex justify-between items-center gap-5">
+                <div className="flex justify-between items-center gap-3 sm:gap-5">
                   <input
                     id="promoCode"
-                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] appearance-none focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] appearance-none focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                     type="text"
                     placeholder="Enter code..."
                     value={loyaltyData.promocode}
@@ -435,146 +435,155 @@ const EditAndAddModel = ({ showModel, setShowModel }) => {
                   />
                   <button
                     onClick={generatePromocode}
-                    className="shrink-0 bg-[var(--sideMenu-color)] text-white px-4 py-1.5 rounded-md paraFont font-normal cursor-pointer text-[1.2dvw]"
+                    className="shrink-0 bg-[var(--sideMenu-color)] text-white px-3 sm:px-4 py-1 sm:py-1.5 rounded-md paraFont font-normal cursor-pointer text-sm sm:text-base lg:text-[1.2dvw]"
                   >
-                    Genarate Code
+                    Generate Code
                   </button>
-                </div>
-              </div>
-
-              <div className="flex justify-between items-center w-full gap-5">
-                <div className="flex flex-col gap-2 w-full">
-                  <label
-                    htmlFor="offAmount"
-                    className="text-[1dvw] font-normal paraFont"
-                  >
-                    Amount Off
-                  </label>
-                  <input
-                    id="offAmount"
-                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] appearance-none focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                    type="number"
-                    placeholder="Enter off amount..."
-                    value={loyaltyData.amount_off}
-                    onChange={(e) => {
-                      handleOnChange(e);
-                    }}
-                    name="amount_off"
-                  />
-                </div>
-                <div className="flex flex-col gap-2 w-full">
-                  <label
-                    htmlFor="minQty"
-                    className="text-[1dvw] font-normal paraFont"
-                  >
-                    Min Quantity
-                  </label>
-                  <input
-                    id="minQty"
-                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] appearance-none focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                    type="number"
-                    placeholder="Enter min quantity..."
-                    value={loyaltyData.minimum_quantity}
-                    onChange={(e) => {
-                      handleOnChange(e);
-                    }}
-                    name="minimum_quantity"
-                  />
-                </div>
-              </div>
-
-              <div className="flex justify-between items-center w-full gap-5">
-                <div className="flex flex-col gap-2 w-full">
-                  <label
-                    htmlFor="offAmount"
-                    className="text-[1dvw] font-normal paraFont"
-                  >
-                    Max Quantity
-                  </label>
-                  <input
-                    id="offAmount"
-                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] appearance-none focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                    type="number"
-                    placeholder="Enter max quantity..."
-                    value={loyaltyData.maximum_quantity}
-                    onChange={(e) => {
-                      handleOnChange(e);
-                    }}
-                    name="maximum_quantity"
-                  />
-                </div>
-                <div className="flex flex-col gap-2 w-full">
-                  <label
-                    htmlFor="status"
-                    className="text-[1dvw] font-normal paraFont"
-                  >
-                    Status
-                  </label>
-                  <select
-                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] appearance-none focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                    id="status"
-                    value={loyaltyData.status}
-                    onChange={(e) => {
-                      handleOnChange(e);
-                    }}
-                    name="status"
-                  >
-                    <option>-- Select Status --</option>
-                    <option value="active">Active</option>
-                    <option value="inactive">In-Active</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="flex justify-between items-center w-full gap-5">
-                <div className="flex flex-col gap-2 w-full">
-                  <label
-                    htmlFor="from"
-                    className="text-[1dvw] font-normal paraFont"
-                  >
-                    From
-                  </label>
-                  <input
-                    id="from"
-                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] appearance-none focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                    type="date"
-                    placeholder="Enter max quantity..."
-                    value={loyaltyData.from_date}
-                    onChange={(e) => {
-                      handleOnChange(e);
-                    }}
-                    name="from_date"
-                  />
-                </div>
-                <div className="flex flex-col gap-2 w-full">
-                  <label
-                    htmlFor="to"
-                    className="text-[1dvw] font-normal paraFont"
-                  >
-                    To
-                  </label>
-                  <input
-                    id="to"
-                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] appearance-none focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                    type="date"
-                    value={loyaltyData.to_date}
-                    onChange={(e) => {
-                      handleOnChange(e);
-                    }}
-                    name="to_date"
-                  />
                 </div>
               </div>
             </div>
 
-            <div className="flex justify-end items-center gap-5 mt-5">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-5 w-full">
+              <div className="w-full sm:w-1/2 flex flex-col gap-1.5">
+                <label
+                  htmlFor="offAmount"
+                  className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
+                >
+                  Amount Off
+                </label>
+                <input
+                  id="offAmount"
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] appearance-none focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  type="number"
+                  placeholder="Enter off amount..."
+                  value={loyaltyData.amount_off}
+                  onChange={(e) => {
+                    handleOnChange(e);
+                  }}
+                  name="amount_off"
+                />
+              </div>
+              <div className="w-full sm:w-1/2 flex flex-col gap-1.5">
+                <label
+                  htmlFor="minQty"
+                  className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
+                >
+                  Min Quantity
+                </label>
+                <input
+                  id="minQty"
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] appearance-none focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  type="number"
+                  placeholder="Enter min quantity..."
+                  value={loyaltyData.minimum_quantity}
+                  onChange={(e) => {
+                    handleOnChange(e);
+                  }}
+                  name="minimum_quantity"
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-5 w-full">
+              <div className="w-full sm:w-1/2 flex flex-col gap-1.5">
+                <label
+                  htmlFor="maxQty"
+                  className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
+                >
+                  Max Quantity
+                </label>
+                <input
+                  id="maxQty"
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] appearance-none focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  type="number"
+                  placeholder="Enter max quantity..."
+                  value={loyaltyData.maximum_quantity}
+                  onChange={(e) => {
+                    handleOnChange(e);
+                  }}
+                  name="maximum_quantity"
+                />
+              </div>
+              <div className="w-full sm:w-1/2 flex flex-col gap-1.5">
+                <label
+                  htmlFor="status"
+                  className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
+                >
+                  Status
+                </label>
+                <select
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] appearance-none focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  id="status"
+                  value={loyaltyData.status}
+                  onChange={(e) => {
+                    handleOnChange(e);
+                  }}
+                  name="status"
+                >
+                  <option>-- Select Status --</option>
+                  <option value="active">Active</option>
+                  <option value="inactive">In-Active</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-5 w-full">
+              <div className="w-full sm:w-1/2 flex flex-col gap-1.5">
+                <label
+                  htmlFor="from"
+                  className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
+                >
+                  From
+                </label>
+                <input
+                  id="from"
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] appearance-none focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  type="date"
+                  placeholder="Enter from date..."
+                  value={loyaltyData.from_date}
+                  onChange={(e) => {
+                    handleOnChange(e);
+                  }}
+                  name="from_date"
+                />
+              </div>
+              <div className="w-full sm:w-1/2 flex flex-col gap-1.5">
+                <label
+                  htmlFor="to"
+                  className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
+                >
+                  To
+                </label>
+                <input
+                  id="to"
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] appearance-none focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  type="date"
+                  value={loyaltyData.to_date}
+                  onChange={(e) => {
+                    handleOnChange(e);
+                  }}
+                  name="to_date"
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row justify-center sm:justify-end items-center gap-3 sm:gap-4 mt-5">
               <button
                 onClick={handleSubmit}
-                className="px-4 py-1.5 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md"
+                className="w-full sm:w-auto bg-[var(--button-color5)] text-white px-4 sm:px-5 py-2 sm:py-1.5 rounded-md flex justify-center items-center font-semibold text-sm sm:text-base lg:text-[1.1dvw] cursor-pointer hover:opacity-80 transition-all duration-300"
               >
                 Save
               </button>
-              <button className="px-4 py-1.5 bg-[var(--button-color4)] cursor-pointer text-white paraFont rounded-md">
+              <button
+                onClick={() => {
+                  setShowModel({
+                    actionType: "",
+                    productData: null,
+                    state: false,
+                  });
+                }}
+                className="w-full sm:w-auto bg-[var(--button-color4)] text-white px-4 sm:px-5 py-2 sm:py-1.5 rounded-md flex justify-center items-center font-semibold text-sm sm:text-base lg:text-[1.1dvw] cursor-pointer hover:opacity-80 transition-all duration-300"
+              >
                 Cancel
               </button>
             </div>

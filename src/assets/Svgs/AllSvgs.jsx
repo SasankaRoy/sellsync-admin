@@ -1012,8 +1012,9 @@ export const UserGuideIcon = () => {
   return (
     <>
       <svg
-        width="110"
-        height="110"
+        //width="110"
+        //height="110"
+        className="2xl:w-[5dvw] xl:w-[5dvw] lg:w-[5dvw] md:portrait:w-[10dvw] w-[20dvw]"
         viewBox="0 0 110 110"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -1031,8 +1032,9 @@ export const TroubleShootingIcon = () => {
   return (
     <>
       <svg
-        width="110"
-        height="110"
+        //width="110"
+        //height="110"
+        className="2xl:w-[5dvw] xl:w-[5dvw] lg:w-[5dvw] md:portrait:w-[10dvw] w-[20dvw]"
         viewBox="0 0 110 110"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -1058,8 +1060,9 @@ export const MakeACallIcon = () => {
   return (
     <>
       <svg
-        width="110"
-        height="110"
+        //width="110"
+        //height="110"
+        className="2xl:w-[5dvw] xl:w-[5dvw] lg:w-[5dvw] md:portrait:w-[10dvw] w-[20dvw]"
         viewBox="0 0 110 110"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -1077,8 +1080,9 @@ export const ChatWithUsIcon = () => {
   return (
     <>
       <svg
-        width="110"
-        height="110"
+        //width="110"
+        //height="110"
+        className="2xl:w-[5dvw] xl:w-[5dvw] lg:w-[5dvw] md:portrait:w-[10dvw] w-[20dvw]"
         viewBox="0 0 110 110"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -1122,8 +1126,9 @@ export const ScanIcon = () => {
   return (
     <>
       <svg
-        width="110"
-        height="110"
+        //width="110"
+        //height="110"
+        className="2xl:w-[5dvw] xl:w-[5dvw] lg:w-[3dvw] md:portrait:w-[10dvw] w-[20dvw]"
         viewBox="0 0 110 110"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -1161,8 +1166,9 @@ export const TicketIcon = () => {
   return (
     <>
       <svg
-        width="110"
-        height="110"
+        //width="110"
+        //height="110"
+        className="2xl:w-[5dvw] xl:w-[5dvw] lg:w-[3dvw] md:portrait:w-[10dvw] w-[20dvw]"
         viewBox="0 0 110 110"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -1192,8 +1198,9 @@ export const LotteryWonIcon = () => {
   return (
     <>
       <svg
-        width="110"
-        height="110"
+        //width="110"
+        //height="110"
+        className="2xl:w-[5dvw] xl:w-[5dvw] lg:w-[2dvw] md:portrait:w-[10dvw] w-[20dvw]"
         viewBox="0 0 110 110"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -1230,8 +1237,9 @@ export const LotteryProfitIcon = () => {
   return (
     <>
       <svg
-        width="110"
-        height="110"
+        //width="110"
+        //height="110"
+        className="2xl:w-[5dvw] xl:w-[5dvw] lg:w-[3dvw] md:portrait:w-[10dvw] w-[20dvw]"
         viewBox="0 0 110 110"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -1261,8 +1269,9 @@ export const TotalEmployeePaidIcon = () => {
   return (
     <>
       <svg
-        width="110"
-        height="110"
+        //width="110"
+        //height="110"
+        className="2xl:w-[5dvw] xl:w-[5dvw] lg:w-[5dvw] md:portrait:w-[10dvw] w-[20dvw]"
         viewBox="0 0 110 110"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -1304,8 +1313,9 @@ export const TotalPayrollCostIcon = () => {
   return (
     <>
       <svg
-        width="110"
-        height="110"
+        //width="110"
+        //height="110"
+        className="2xl:w-[5dvw] xl:w-[5dvw] lg:w-[5dvw] md:portrait:w-[10dvw] w-[20dvw]"
         viewBox="0 0 110 110"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -1348,8 +1358,9 @@ export const TimeIcon = () => {
   return (
     <>
       <svg
-        width="110"
-        height="110"
+        //width="110"
+        //height="110"
+        className="2xl:w-[5dvw] xl:w-[5dvw] lg:w-[5dvw] md:portrait:w-[10dvw] w-[20dvw]"
         viewBox="0 0 110 110"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -1369,8 +1380,9 @@ export const PendingPayoutsIcon = () => {
   return (
     <>
       <svg
-        width="110"
-        height="110"
+        //width="110"
+        //height="110"
+        className="2xl:w-[5dvw] xl:w-[5dvw] lg:w-[5dvw] md:portrait:w-[10dvw] w-[20dvw]"
         viewBox="0 0 110 110"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"

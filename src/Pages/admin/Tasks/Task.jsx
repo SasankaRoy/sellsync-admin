@@ -2,12 +2,11 @@ import React, { useState, useMemo } from "react";
 import { Layout } from "../../../components/common/Layout/Layout";
 import { Plus, X } from "lucide-react";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
-// Core CSS
 import { AgGridReact } from "ag-grid-react";
 import { DeleteModel } from "../../../components/common/Models/DeleteMode";
 import { CircleX, Edit, Trash, Eye } from "lucide-react";
 import { DeleteIcon, FilterIcon, SortIcon } from "../../../assets/Svgs/AllSvgs";
-import { useNavigate } from "react-router-dom"; // Add this import
+import { useNavigate } from "react-router-dom";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -17,7 +16,7 @@ const rowSelection = {
 };
 
 export const Task = () => {
-  const navigate = useNavigate(); // Add this hook
+  const navigate = useNavigate();
   const [newTask, setNewTask] = useState({ status: false, task: null });
   const [deleteModel, setDeleteModel] = useState({
     status: false,
@@ -28,8 +27,7 @@ export const Task = () => {
     productData: null,
     forStatus: null,
   });
-  // Remove viewModel state since we're not using it anymore
-  
+
   const [rowData, setRowData] = useState([
     {
       TaskID: "665e9c1e9f4f123456789def",
@@ -150,11 +148,9 @@ export const Task = () => {
     });
   };
 
-  // Updated onView function to navigate to ViewTask page
   const onView = (task) => {
     console.log("onView called with task:", task);
     console.log("Navigating to:", `/admin/tasks/task-details/${task.TaskID}`);
-    // Navigate to ViewTask page with task ID as URL parameter
     navigate(`/admin/tasks/task-details/${task.TaskID}`, { 
       state: { taskData: task },
       replace: false 
@@ -164,11 +160,10 @@ export const Task = () => {
   const onDelete = (product) => {
     setDeleteModel({
       status: true,
-      productData: product.TaskID, // Changed from product.ID to product.TaskID
+      productData: product.TaskID,
     });
   };
 
-  // Column Definitions: Defines & controls grid columns.
   const [colDefs, setColDefs] = useState([
     { field: "TaskID", headerName: "Task ID", width: 200 },
     { field: "EmployeeName", headerName: "Employee", width: 150 },
@@ -188,7 +183,6 @@ export const Task = () => {
     },
   ]);
 
-  // Apply settings across all columns
   const defaultColDef = useMemo(() => {
     return {
       filter: true,
@@ -196,56 +190,68 @@ export const Task = () => {
       resizable: true,
     };
   }, []);
-  
+
   return (
     <>
       <Layout>
-        <div className="flex justify-between items-center w-full">
-          <h3 className="text-[1.5dvw] font-[500]">Task</h3>
-          <button
-            onClick={() => setNewTask({ status: true, task: null })}
-            className="flex justify-center items-center gap-3 mainFont bg-[var(--button-color1)] text-white px-5 py-2 rounded-full cursor-pointer font-[500] text-[1dvw]"
-          >
-            <Plus /> Create New Task
-          </button>
-        </div>
-        <div className="mt-5 bg-white rounded-md border border-[#d4d4d4] p-5">
-          <h3 className="text-[1.3dvw] font-[500]">Task List</h3>
-          <div className="w-full flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-[60dvh]">
-            <div className="flex justify-between items-center py-1.5 shrink-0">
-              <div className="flex justify-center items-center gap-3">
-                <select className="font-[500] mainFont px-4 border-none outline-none">
-                  <option>All Task</option>
-                </select>
-                <p className="px-3 text-[1dvw] py-.5 bg-[#F8A61B] rounded-2xl font-[500] border-none text-white">
-                  {rowData.length}
-                </p>
-              </div>
-              <div className="flex gap-4 justify-center items-center">
-                <button className="flex justify-center items-center gap-2 px-4 py-1 text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-[600]">
-                  Sort <SortIcon />
-                </button>
-                <button className="flex justify-center items-center gap-2 px-4 py-1 text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC]">
-                  Filter <FilterIcon />
-                </button>
-                <button>
-                  <DeleteIcon />
-                </button>
-              </div>
+        <div className="pb-14 w-full px-4 sm:px-6 lg:px-0">
+          <div className="flex flex-col sm:flex-row lg:flex-row justify-between items-start sm:items-center lg:items-center gap-4 mb-6 sm:mb-0 lg:mb-0 p-2 lg:p-2">
+            <h3 className="text-2xl md:text-xl lg:font-[500] lg:text-[1.5dvw] font-semibold text-[var(--mainText-color)]">
+              Task
+            </h3>
+            <div className="w-full sm:w-auto flex justify-center">
+              <button
+                onClick={() => setNewTask({ status: true, task: null })}
+                className="w-full sm:w-auto flex justify-center items-center gap-2 rounded-full bg-[var(--button-color1)] text-white mainFont px-6 py-3 sm:px-4 sm:py-2 lg:px-5 lg:py-2 cursor-pointer text-base sm:text-sm hover:bg-[#F8A61B] transition-all duration-300"
+              >
+                <Plus size={20} className="sm:w-5 sm:h-5" /> Create New Task
+              </button>
             </div>
-            <div className="h-full w-full">
-              <AgGridReact
-                rowData={rowData}
-                columnDefs={colDefs}
-                // loading={loading}
-                defaultColDef={defaultColDef}
-                pagination={true}
-                rowSelection={rowSelection}
-                onSelectionChanged={(event) => console.log("Row Selected!")}
-                onCellValueChanged={(event) =>
-                  console.log(`New Cell Value: ${event.value}`)
-                }
-              />
+          </div>
+          <div className="w-full h-[60vh] sm:h-[70vh] lg:h-[80dvh]">
+            <div className="flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 lg:px-2.5 lg:py-2 h-full">
+              <h3 className="text-lg sm:text-xl lg:text-[1.3dvw] font-[600] text-[var(--mainText-color)] px-2.5">
+                Task List
+              </h3>
+              <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center py-1.5 shrink-0 gap-3 sm:gap-0 lg:flex-row lg:items-center lg:gap-0">
+                <div className="flex justify-between sm:justify-center items-center gap-3 w-full sm:w-auto lg:justify-center lg:w-auto">
+                  <select className="font-[500] mainFont px-4 border-none outline-none text-sm sm:text-base lg:text-[1dvw]">
+                    <option>All Task</option>
+                  </select>
+                  <div className="h-6 w-6 sm:h-7 sm:w-7 bg-[#F8A61B] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem] sm:min-w-[1.75rem] sm:min-h-[1.75rem]">
+                    <p className="text-xs sm:text-xs font-[500] text-white">
+                      {rowData.length}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-2 sm:gap-4 lg:gap-4 justify-between items-center">
+                  <button className="flex justify-center items-center gap-2 px-3 sm:px-4 py-1 sm:py-1.5 text-sm sm:text-base lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-[600]">
+                    Sort <SortIcon className="sm:w-5 sm:h-5" />
+                  </button>
+                  <button className="flex justify-center items-center gap-2 px-3 sm:px-4 py-1 sm:py-1.5 text-sm sm:text-base lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC]">
+                    Filter <FilterIcon className="sm:w-5 sm:h-5" />
+                  </button>
+                  <button>
+                    <DeleteIcon className="sm:w-5 sm:h-5" />
+                  </button>
+                </div>
+              </div>
+              <div className="h-full w-full overflow-x-scroll overflow-y-auto lg:overflow-visible">
+                <div className="min-w-[800px] lg:min-w-0 h-full">
+                  <AgGridReact
+                    rowData={rowData}
+                    columnDefs={colDefs}
+                    defaultColDef={defaultColDef}
+                    pagination={true}
+                    rowSelection={rowSelection}
+                    onSelectionChanged={(event) => console.log("Row Selected!")}
+                    onCellValueChanged={(event) =>
+                      console.log(`New Cell Value: ${event.value}`)
+                    }
+                    className="w-full h-full text-sm lg:text-base"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -290,24 +296,24 @@ const ActionBtns = (props) => {
   };
 
   return (
-    <div className="w-full flex gap-4 py-2 justify-center items-center">
+    <div className="w-full flex gap-2 sm:gap-4 lg:gap-4 py-2 justify-center items-center">
       <button
-        className="font-semibold font-[var(--paraFont)] bg-[var(--button-color1)] text-white p-1.5 rounded-full border-none cursor-pointer"
+        className="font-semibold font-[var(--paraFont)] bg-[var(--button-color1)] text-white p-1 sm:p-1.5 lg:p-1.5 rounded-full border-none cursor-pointer"
         onClick={handleEdit}
       >
-        <Edit size={18} />
+        <Edit size={16} className="sm:w-[18px] sm:h-[18px] lg:w-[18px] lg:h-[18px]" />
       </button>
       <button
-        className="font-semibold font-[var(--paraFont)] bg-[var(--button-color5)] text-white p-1.5 rounded-full border-none cursor-pointer"
+        className="font-semibold font-[var(--paraFont)] bg-[var(--button-color5)] text-white p-1 sm:p-1.5 lg:p-1.5 rounded-full border-none cursor-pointer"
         onClick={handleView}
       >
-        <Eye size={18} />
+        <Eye size={16} className="sm:w-[18px] sm:h-[18px] lg:w-[18px] lg:h-[18px]" />
       </button>
       <button
-        className="font-semibold font-[var(--paraFont)] bg-[var(--Negative-color)] text-white p-1.5 rounded-full border-none cursor-pointer"
+        className="font-semibold font-[var(--paraFont)] bg-[var(--Negative-color)] text-white p-1 sm:p-1.5 lg:p-1.5 rounded-full border-none cursor-pointer"
         onClick={handleDelete}
       >
-        <Trash size={18} />
+        <Trash size={16} className="sm:w-[18px] sm:h-[18px] lg:w-[18px] lg:h-[18px]" />
       </button>
     </div>
   );
@@ -333,7 +339,6 @@ const CreateNewTask = ({ setNewTask, task, isEditing, setRowData, rowData }) => 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (isEditing && task) {
-      // Update existing task
       const updatedTasks = rowData.map(t => 
         t.TaskID === task.TaskID 
           ? { ...t, ...formData, Status: formData.Status === '-- Select Status --' ? 'Pending' : formData.Status }
@@ -341,7 +346,6 @@ const CreateNewTask = ({ setNewTask, task, isEditing, setRowData, rowData }) => 
       );
       setRowData(updatedTasks);
     } else {
-      // Add new task
       const newTask = {
         TaskID: `task-${Date.now()}`,
         ...formData,
@@ -357,43 +361,45 @@ const CreateNewTask = ({ setNewTask, task, isEditing, setRowData, rowData }) => 
   
   return (
     <>
-      <div className="fixed top-0 left-0 w-full z-50 h-screen bg-[#000]/20 backdrop-blur-xl flex justify-center items-center">
-        <div className="bg-white w-[60%] max-h-[95%] overflow-y-auto rounded-md border border-[#d4d4d4] shadow p-5">
-          <div className="flex justify-between items-center bg-[var(--sideMenu-color)] text-white rounded-md p-3">
-            <h3 className="text-[1.3dvw] font-[500]">{isEditing ? 'Edit Task' : 'Create New Task'}</h3>
+      <div className="fixed top-0 left-0 flex justify-center items-center w-full h-full bg-[#000]/20 backdrop-blur-xl z-50">
+        <div className="bg-white rounded-lg p-3 sm:p-5 w-[95%] sm:w-[80%] lg:w-[60%] max-h-[95%] overflow-y-auto shadow mx-4">
+          <div className="flex justify-between items-center w-full bg-[var(--sideMenu-color)] text-white p-2 sm:p-3 rounded-lg">
+            <h3 className="text-lg sm:text-xl lg:text-[1.5dvw] font-[500]">
+              {isEditing ? 'Edit Task' : 'Create New Task'}
+            </h3>
             <button
               className="cursor-pointer"
               onClick={() => setNewTask({ status: false, task: null })}
             >
-              <X size={35} />
+              <X size={24} className="sm:w-8 sm:h-8 lg:w-[35px] lg:h-[35px]" />
             </button>
           </div>
-          <div className="flex flex-col gap-5 mt-8">
-            <div className="flex flex-col gap-2 w-full">
+          <div className="my-6 sm:my-8 lg:my-10 flex flex-col gap-6 sm:gap-8">
+            <div className="w-full flex flex-col gap-1.5">
               <label
                 htmlFor="taskTitle"
-                className="text-[1dvw] font-normal paraFont"
+                className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
               >
                 Task Title
               </label>
               <input
                 placeholder="Enter Task Title..."
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                 type="text"
                 id="TaskTitle"
                 value={formData.TaskTitle}
                 onChange={handleChange}
               />
             </div>
-            <div className="flex flex-col gap-2 w-full">
+            <div className="w-full flex flex-col gap-1.5">
               <label
                 htmlFor="taskDescription"
-                className="text-[1dvw] font-normal paraFont"
+                className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
               >
                 Task Description
               </label>
               <textarea
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                 id="Description"
                 rows={5}
                 value={formData.Description}
@@ -401,16 +407,16 @@ const CreateNewTask = ({ setNewTask, task, isEditing, setRowData, rowData }) => 
                 placeholder="Enter Task Description..."
               ></textarea>
             </div>
-            <div className="flex flex-col gap-2 w-full">
+            <div className="w-full flex flex-col gap-1.5">
               <label
-                className="text-[1dvw] font-normal paraFont"
+                className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
                 htmlFor="employeeName"
               >
                 Select Employee
               </label>
               <select
                 id="EmployeeName"
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] appearance-none rounded-xl py-1.5 px-3"
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] appearance-none rounded-xl py-1.5 px-3"
                 value={formData.EmployeeName}
                 onChange={handleChange}
               >
@@ -426,32 +432,31 @@ const CreateNewTask = ({ setNewTask, task, isEditing, setRowData, rowData }) => 
                 <option value="Leo">Leo</option>
               </select>
             </div>
-            <div className="flex flex-col gap-3 w-full">
+            <div className="w-full flex flex-col gap-1.5">
               <label
-                className="text-[1dvw] font-normal paraFont"
+                className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
                 htmlFor="deadLine"
               >
                 Dead Line
               </label>
               <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] appearance-none rounded-xl py-1.5 px-3"
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] appearance-none rounded-xl py-1.5 px-3"
                 id="DeadLine"
                 type="date"
                 value={formData.DeadLine}
                 onChange={handleChange}
               />
             </div>
-
-            <div className="flex flex-col gap-3 w-full">
+            <div className="w-full flex flex-col gap-1.5">
               <label
                 htmlFor="status"
-                className="text-[1dvw] font-normal paraFont"
+                className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
               >
                 Update Status
               </label>
               <select
                 id="Status"
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)]  placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4]  active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] appearance-none rounded-xl py-1.5 px-3"
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] appearance-none rounded-xl py-1.5 px-3"
                 value={formData.Status}
                 onChange={handleChange}
               >
@@ -462,10 +467,9 @@ const CreateNewTask = ({ setNewTask, task, isEditing, setRowData, rowData }) => 
                 <option>Completed</option>
               </select>
             </div>
-
             <button
               type="button"
-              className="w-full mainFont rounded-md text-[1.2dvw] font-[500] py-2.5 cursor-pointer disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-60 bg-[var(--sideMenu-color)] text-white"
+              className="w-full sm:w-auto bg-[var(--sideMenu-color)] text-white px-4 sm:px-5 py-2 sm:py-1.5 rounded-md flex justify-center items-center font-semibold text-sm sm:text-base lg:text-[1.2dvw] cursor-pointer hover:opacity-80 transition-all duration-300 disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-60"
               onClick={handleSubmit}
             >
               Assign Task

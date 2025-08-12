@@ -113,51 +113,71 @@ export const ScanTickets = () => {
   const defaultColDef = useMemo(() => {
     return {
       filter: true,
-      editable: false,editable: true,
+      editable: false,
     };
   }, []);
+
   return (
     <Layout>
-      <div className="flex justify-between items-center w-full">
-        <h3 className="text-[1.5dvw] font-[500]">Instant Scan Tickets</h3>
-        <button className="bg-[var(--button-color1)] text-white px-5 py-2 mainFont rounded-full font-[500] flex justify-center items-center gap-3 cursor-pointer">
-          <Scan />
-          Scan Now
-        </button>
-      </div>
-      <div className="w-full border border-[#d4d4d4] p-5 rounded-md my-6 bg-white">
-        <h3 className="text-[1.3dvw] font-[600]">Current Scan Data</h3>
-        <div className="w-full h-[50vh] my-4">
-          <AgGridReact
-            rowData={rowData}
-            columnDefs={colDefs}
-            // loading={loading}
-            defaultColDef={defaultColDef}
-            pagination={true}
-            rowSelection={rowSelection}
-            onSelectionChanged={(event) => console.log("Row Selected!")}
-            onCellValueChanged={(event) =>
-              console.log(`New Cell Value: ${event.value}`)
-            }
-          />
+      <div className="pb-14 w-full px-4 sm:px-6 lg:px-0">
+        <div className="w-full">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-0">
+            <h3 className="text-2xl md:text-xl lg:text-[1.5dvw] font-semibold text-[var(--mainText-color)]">
+              Instant Scan Tickets
+            </h3>
+            <div className="w-full sm:w-auto flex justify-center sm:justify-end">
+              <button className="w-full sm:w-auto flex justify-center items-center gap-2 rounded-full bg-[var(--button-color1)] text-white mainFont px-6 py-3 sm:px-5 sm:py-2 lg:py-2 cursor-pointer text-base sm:text-sm sm:text-base lg:text-base hover:bg-[#F8A61B] transition-all duration-300">
+                <Scan className="w-5 h-5 sm:w-5 sm:h-5" />
+                Scan Now
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div className="w-full border border-[#d4d4d4] p-5 rounded-md my-6 bg-white">
-        <h3 className="text-[1.3dvw] font-[600]">Pervious  Data</h3>
-        <div className="w-full h-[70vh] my-4">
-          <AgGridReact
-            rowData={rowData}
-            columnDefs={colDefs}
-            // loading={loading}
-            defaultColDef={defaultColDef}
-            pagination={true}
-            rowSelection={rowSelection}
-            onSelectionChanged={(event) => console.log("Row Selected!")}
-            onCellValueChanged={(event) =>
-              console.log(`New Cell Value: ${event.value}`)
-            }
-          />
+        <div className="w-full border border-[#d4d4d4] p-3 sm:p-4 lg:p-5 rounded-md my-4 sm:my-5 lg:my-6 bg-white">
+          <h3 className="text-lg sm:text-xl md:text-xl lg:text-[1.3dvw] font-semibold mb-3 sm:mb-4">Current Scan Data</h3>
+          <div className="w-full h-[40vh] sm:h-[45vh] lg:h-[50vh] my-2 sm:my-3 lg:my-4">
+            <div className="h-full w-full overflow-x-scroll overflow-y-auto">
+              <div className="min-w-[800px] h-full">
+                <AgGridReact
+                  rowData={rowData}
+                  columnDefs={colDefs}
+                  // loading={loading}
+                  defaultColDef={defaultColDef}
+                  pagination={true}
+                  rowSelection={rowSelection}
+                  onSelectionChanged={(event) => console.log("Row Selected!")}
+                  onCellValueChanged={(event) =>
+                    console.log(`New Cell Value: ${event.value}`)
+                  }
+                  className="w-full h-full text-sm"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="w-full border border-[#d4d4d4] p-3 sm:p-4 lg:p-5 rounded-md my-4 sm:my-5 lg:my-6 bg-white">
+          <h3 className="text-lg sm:text-xl md:text-xl lg:text-[1.3dvw] font-semibold mb-3 sm:mb-4">Previous Data</h3>
+          <div className="w-full h-[50vh] sm:h-[60vh] lg:h-[70vh] my-2 sm:my-3 lg:my-4">
+            <div className="h-full w-full overflow-x-scroll overflow-y-auto">
+              <div className="min-w-[800px] h-full">
+                <AgGridReact
+                  rowData={rowData}
+                  columnDefs={colDefs}
+                  // loading={loading}
+                  defaultColDef={defaultColDef}
+                  pagination={true}
+                  rowSelection={rowSelection}
+                  onSelectionChanged={(event) => console.log("Row Selected!")}
+                  onCellValueChanged={(event) =>
+                    console.log(`New Cell Value: ${event.value}`)
+                  }
+                  className="w-full h-full text-sm"
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </Layout>
