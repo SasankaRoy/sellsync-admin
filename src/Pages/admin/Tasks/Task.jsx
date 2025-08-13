@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Layout } from "../../../components/common/Layout/Layout";
 import { Plus, X } from "lucide-react";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
@@ -7,6 +7,11 @@ import { DeleteModel } from "../../../components/common/Models/DeleteMode";
 import { CircleX, Edit, Trash, Eye } from "lucide-react";
 import { DeleteIcon, FilterIcon, SortIcon } from "../../../assets/Svgs/AllSvgs";
 import { useNavigate } from "react-router-dom";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
+import axiosInstance from "../../../utils/axios-interceptor";
+import { Loading } from "../../../components/UI/Loading/Loading";
+import moment from "moment";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -28,118 +33,146 @@ export const Task = () => {
     forStatus: null,
   });
 
-  const [rowData, setRowData] = useState([
-    {
-      TaskID: "665e9c1e9f4f123456789def",
-      EmployeeName: "Sohil Sen",
-      TaskTitle: "Dummy Task",
-      Description: "Test task description",
-      AssignedDate: "20.02.2025",
-      DeadLine: "22.02.2025",
-      PhoneNumber: "9990124321",
-      AssignedBy: "Admin",
-      Status: "Ongoing",
+  const {
+    data: rowData = [],
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["get_tasks_lists"],
+    queryFn: async () => {
+      try {
+        const reqTaskList = await axiosInstance.post("api/v1/user/task-list", {
+          page: 1,
+          limit: 20,
+        });
+        if (reqTaskList.status === 200 && reqTaskList.data) {
+          return reqTaskList?.data?.results;
+        }
+      } catch (error) {
+        throw new Error(error);
+      }
     },
-    {
-      TaskID: "665e9c1e9f4f123456789abc",
-      EmployeeName: "Sohil Sen",
-      TaskTitle: "Dummy Task 2",
-      Description: "Test task description 2",
-      AssignedDate: "20.02.2025",
-      DeadLine: "22.02.2025",
-      PhoneNumber: "9990124321",
-      AssignedBy: "Admin",
-      Status: "Ongoing",
-    },
-    {
-      TaskID: "665e9c1e9f4f123456789xyz",
-      EmployeeName: "Sohil Sen",
-      TaskTitle: "Dummy Task 3",
-      Description: "Test task description 3",
-      AssignedDate: "20.02.2025",
-      DeadLine: "22.02.2025",
-      PhoneNumber: "9990124321",
-      AssignedBy: "Admin",
-      Status: "Ongoing",
-    },
-    {
-      TaskID: "665e9c1e9f4f123456789def4",
-      EmployeeName: "Sohil Sen",
-      TaskTitle: "Dummy Task 4",
-      Description: "Test task description 4",
-      AssignedDate: "20.02.2025",
-      DeadLine: "22.02.2025",
-      PhoneNumber: "9990124321",
-      AssignedBy: "Admin",
-      Status: "Ongoing",
-    },
-    {
-      TaskID: "665e9c1e9f4f123456789def5",
-      EmployeeName: "Sohil Sen",
-      TaskTitle: "Dummy Task 5",
-      Description: "Test task description 5",
-      AssignedDate: "20.02.2025",
-      DeadLine: "22.02.2025",
-      PhoneNumber: "9990124321",
-      AssignedBy: "Admin",
-      Status: "Ongoing",
-    },
-    {
-      TaskID: "665e9c1e9f4f123456789def6",
-      EmployeeName: "Sohil Sen",
-      TaskTitle: "Dummy Task 6",
-      Description: "Test task description 6",
-      AssignedDate: "20.02.2025",
-      DeadLine: "22.02.2025",
-      PhoneNumber: "9990124321",
-      AssignedBy: "Admin",
-      Status: "Ongoing",
-    },
-    {
-      TaskID: "665e9c1e9f4f123456789def7",
-      EmployeeName: "Sohil Sen",
-      TaskTitle: "Dummy Task 7",
-      Description: "Test task description 7",
-      AssignedDate: "20.02.2025",
-      DeadLine: "22.02.2025",
-      PhoneNumber: "9990124321",
-      AssignedBy: "Admin",
-      Status: "Ongoing",
-    },
-    {
-      TaskID: "665e9c1e9f4f123456789def8",
-      EmployeeName: "Sohil Sen",
-      TaskTitle: "Dummy Task 8",
-      Description: "Test task description 8",
-      AssignedDate: "20.02.2025",
-      DeadLine: "22.02.2025",
-      PhoneNumber: "9990124321",
-      AssignedBy: "Admin",
-      Status: "Ongoing",
-    },
-    {
-      TaskID: "665e9c1e9f4f123456789def9",
-      EmployeeName: "Sohil Sen",
-      TaskTitle: "Dummy Task 9",
-      Description: "Test task description 9",
-      AssignedDate: "20.02.2025",
-      DeadLine: "22.02.2025",
-      PhoneNumber: "9990124321",
-      AssignedBy: "Admin",
-      Status: "Ongoing",
-    },
-    {
-      TaskID: "665e9c1e9f4f123456789def10",
-      EmployeeName: "Sohil Sen",
-      TaskTitle: "Dummy Task 10",
-      Description: "Test task description 10",
-      AssignedDate: "20.02.2025",
-      DeadLine: "22.02.2025",
-      PhoneNumber: "9990124321",
-      AssignedBy: "Admin",
-      Status: "Ongoing",
+  });
+
+  useEffect(() => {
+    if (error) {
+      console.log(error);
+      toast.error(error.message);
     }
-  ]);
+  }, [error]);
+
+  // const [rowData, setRowData] = useState([
+  //   {
+  //     TaskID: "665e9c1e9f4f123456789def",
+  //     EmployeeName: "Sohil Sen",
+  //     TaskTitle: "Dummy Task",
+  //     Description: "Test task description",
+  //     AssignedDate: "20.02.2025",
+  //     DeadLine: "22.02.2025",
+  //     PhoneNumber: "9990124321",
+  //     AssignedBy: "Admin",
+  //     Status: "Ongoing",
+  //   },
+  //   {
+  //     TaskID: "665e9c1e9f4f123456789abc",
+  //     EmployeeName: "Sohil Sen",
+  //     TaskTitle: "Dummy Task 2",
+  //     Description: "Test task description 2",
+  //     AssignedDate: "20.02.2025",
+  //     DeadLine: "22.02.2025",
+  //     PhoneNumber: "9990124321",
+  //     AssignedBy: "Admin",
+  //     Status: "Ongoing",
+  //   },
+  //   {
+  //     TaskID: "665e9c1e9f4f123456789xyz",
+  //     EmployeeName: "Sohil Sen",
+  //     TaskTitle: "Dummy Task 3",
+  //     Description: "Test task description 3",
+  //     AssignedDate: "20.02.2025",
+  //     DeadLine: "22.02.2025",
+  //     PhoneNumber: "9990124321",
+  //     AssignedBy: "Admin",
+  //     Status: "Ongoing",
+  //   },
+  //   {
+  //     TaskID: "665e9c1e9f4f123456789def4",
+  //     EmployeeName: "Sohil Sen",
+  //     TaskTitle: "Dummy Task 4",
+  //     Description: "Test task description 4",
+  //     AssignedDate: "20.02.2025",
+  //     DeadLine: "22.02.2025",
+  //     PhoneNumber: "9990124321",
+  //     AssignedBy: "Admin",
+  //     Status: "Ongoing",
+  //   },
+  //   {
+  //     TaskID: "665e9c1e9f4f123456789def5",
+  //     EmployeeName: "Sohil Sen",
+  //     TaskTitle: "Dummy Task 5",
+  //     Description: "Test task description 5",
+  //     AssignedDate: "20.02.2025",
+  //     DeadLine: "22.02.2025",
+  //     PhoneNumber: "9990124321",
+  //     AssignedBy: "Admin",
+  //     Status: "Ongoing",
+  //   },
+  //   {
+  //     TaskID: "665e9c1e9f4f123456789def6",
+  //     EmployeeName: "Sohil Sen",
+  //     TaskTitle: "Dummy Task 6",
+  //     Description: "Test task description 6",
+  //     AssignedDate: "20.02.2025",
+  //     DeadLine: "22.02.2025",
+  //     PhoneNumber: "9990124321",
+  //     AssignedBy: "Admin",
+  //     Status: "Ongoing",
+  //   },
+  //   {
+  //     TaskID: "665e9c1e9f4f123456789def7",
+  //     EmployeeName: "Sohil Sen",
+  //     TaskTitle: "Dummy Task 7",
+  //     Description: "Test task description 7",
+  //     AssignedDate: "20.02.2025",
+  //     DeadLine: "22.02.2025",
+  //     PhoneNumber: "9990124321",
+  //     AssignedBy: "Admin",
+  //     Status: "Ongoing",
+  //   },
+  //   {
+  //     TaskID: "665e9c1e9f4f123456789def8",
+  //     EmployeeName: "Sohil Sen",
+  //     TaskTitle: "Dummy Task 8",
+  //     Description: "Test task description 8",
+  //     AssignedDate: "20.02.2025",
+  //     DeadLine: "22.02.2025",
+  //     PhoneNumber: "9990124321",
+  //     AssignedBy: "Admin",
+  //     Status: "Ongoing",
+  //   },
+  //   {
+  //     TaskID: "665e9c1e9f4f123456789def9",
+  //     EmployeeName: "Sohil Sen",
+  //     TaskTitle: "Dummy Task 9",
+  //     Description: "Test task description 9",
+  //     AssignedDate: "20.02.2025",
+  //     DeadLine: "22.02.2025",
+  //     PhoneNumber: "9990124321",
+  //     AssignedBy: "Admin",
+  //     Status: "Ongoing",
+  //   },
+  //   {
+  //     TaskID: "665e9c1e9f4f123456789def10",
+  //     EmployeeName: "Sohil Sen",
+  //     TaskTitle: "Dummy Task 10",
+  //     Description: "Test task description 10",
+  //     AssignedDate: "20.02.2025",
+  //     DeadLine: "22.02.2025",
+  //     PhoneNumber: "9990124321",
+  //     AssignedBy: "Admin",
+  //     Status: "Ongoing",
+  //   },
+  // ]);
 
   const onEdit = (task) => {
     setNewTask({
@@ -151,9 +184,9 @@ export const Task = () => {
   const onView = (task) => {
     console.log("onView called with task:", task);
     console.log("Navigating to:", `/admin/tasks/task-details/${task.TaskID}`);
-    navigate(`/admin/tasks/task-details/${task.TaskID}`, { 
+    navigate(`/admin/tasks/task-details/${task.TaskID}`, {
       state: { taskData: task },
-      replace: false 
+      replace: false,
     });
   };
 
@@ -165,18 +198,24 @@ export const Task = () => {
   };
 
   const [colDefs, setColDefs] = useState([
-    { field: "TaskID", headerName: "Task ID", width: 200 },
-    { field: "EmployeeName", headerName: "Employee", width: 150 },
-    { field: "TaskTitle", headerName: "Title", width: 200 },
-    { field: "Description", headerName: "Description", width: 200 },
-    { field: "AssignedDate", headerName: "Assigned", width: 120 },
-    { field: "DeadLine", headerName: "Deadline", width: 120 },
-    { field: "AssignedBy", headerName: "Assigned By", width: 120 },
-    { field: "Status", headerName: "Status", width: 100 },
+    { field: "employee_name", headerName: "Employee" },
+    { field: "title", headerName: "Title" },
+    { field: "task_details", headerName: "Description" },
+    { field: "updatedAt", headerName: "Assigned" },
+    { field: "task_deadline", headerName: "Deadline" },
+    // { field: "AssignedBy", headerName: "Assigned By", width: 120 },
+    { field: "task_status", headerName: "Status" },
     {
       headerName: "Actions",
       field: "actions",
-      cellRenderer: (params) => <ActionBtns {...params} onEdit={onEdit} onView={onView} onDelete={onDelete} />,
+      cellRenderer: (params) => (
+        <ActionBtns
+          {...params}
+          onEdit={onEdit}
+          onView={onView}
+          onDelete={onDelete}
+        />
+      ),
       width: 150,
       sortable: false,
       filter: false,
@@ -194,74 +233,79 @@ export const Task = () => {
   return (
     <>
       <Layout>
-        <div className="pb-14 w-full px-4 sm:px-6 lg:px-0">
-          <div className="flex flex-col sm:flex-row lg:flex-row justify-between items-start sm:items-center lg:items-center gap-4 mb-6 sm:mb-0 lg:mb-0 p-2 lg:p-2">
-            <h3 className="text-2xl md:text-xl lg:font-[500] lg:text-[1.5dvw] font-semibold text-[var(--mainText-color)]">
-              Task
-            </h3>
-            <div className="w-full sm:w-auto flex justify-center">
-              <button
-                onClick={() => setNewTask({ status: true, task: null })}
-                className="w-full sm:w-auto flex justify-center items-center gap-2 rounded-full bg-[var(--button-color1)] text-white mainFont px-6 py-3 sm:px-4 sm:py-2 lg:px-5 lg:py-2 cursor-pointer text-base sm:text-sm hover:bg-[#F8A61B] transition-all duration-300"
-              >
-                <Plus size={20} className="sm:w-5 sm:h-5" /> Create New Task
-              </button>
-            </div>
-          </div>
-          <div className="w-full h-[60vh] sm:h-[70vh] lg:h-[80dvh]">
-            <div className="flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 lg:px-2.5 lg:py-2 h-full">
-              <h3 className="text-lg sm:text-xl lg:text-[1.3dvw] font-[600] text-[var(--mainText-color)] px-2.5">
-                Task List
+        {isLoading ? (
+          <Loading />
+        ) : (
+          <div className="pb-14 w-full px-4 sm:px-6 lg:px-0">
+            <div className="flex flex-col sm:flex-row lg:flex-row justify-between items-start sm:items-center lg:items-center gap-4 mb-6 sm:mb-0 lg:mb-0 p-2 lg:p-2">
+              <h3 className="text-2xl md:text-xl lg:font-[500] lg:text-[1.5dvw] font-semibold text-[var(--mainText-color)]">
+                Task
               </h3>
-              <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center py-1.5 shrink-0 gap-3 sm:gap-0 lg:flex-row lg:items-center lg:gap-0">
-                <div className="flex justify-between sm:justify-center items-center gap-3 w-full sm:w-auto lg:justify-center lg:w-auto">
-                  <select className="font-[500] mainFont px-4 border-none outline-none text-sm sm:text-base lg:text-[1dvw]">
-                    <option>All Task</option>
-                  </select>
-                  <div className="h-6 w-6 sm:h-7 sm:w-7 bg-[#F8A61B] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem] sm:min-w-[1.75rem] sm:min-h-[1.75rem]">
-                    <p className="text-xs sm:text-xs font-[500] text-white">
-                      {rowData.length}
-                    </p>
+              <div className="w-full sm:w-auto flex justify-center">
+                <button
+                  onClick={() => setNewTask({ status: true, task: null })}
+                  className="w-full sm:w-auto flex justify-center items-center gap-2 rounded-full bg-[var(--button-color1)] text-white mainFont px-6 py-3 sm:px-4 sm:py-2 lg:px-5 lg:py-2 cursor-pointer text-base sm:text-sm hover:bg-[#F8A61B] transition-all duration-300"
+                >
+                  <Plus size={20} className="sm:w-5 sm:h-5" /> Create New Task
+                </button>
+              </div>
+            </div>
+            <div className="w-full h-[60vh] sm:h-[70vh] lg:h-[80dvh]">
+              <div className="flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 lg:px-2.5 lg:py-2 h-full">
+                <h3 className="text-lg sm:text-xl lg:text-[1.3dvw] font-[600] text-[var(--mainText-color)] px-2.5">
+                  Task List
+                </h3>
+                <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center py-1.5 shrink-0 gap-3 sm:gap-0 lg:flex-row lg:items-center lg:gap-0">
+                  <div className="flex justify-between sm:justify-center items-center gap-3 w-full sm:w-auto lg:justify-center lg:w-auto">
+                    <select className="font-[500] mainFont px-4 border-none outline-none text-sm sm:text-base lg:text-[1dvw]">
+                      <option>All Task</option>
+                    </select>
+                    <div className="h-6 w-6 sm:h-7 sm:w-7 bg-[#F8A61B] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem] sm:min-w-[1.75rem] sm:min-h-[1.75rem]">
+                      <p className="text-xs sm:text-xs font-[500] text-white">
+                        {rowData.length}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-2 sm:gap-4 lg:gap-4 justify-between items-center">
+                    <button className="flex justify-center items-center gap-2 px-3 sm:px-4 py-1 sm:py-1.5 text-sm sm:text-base lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-[600]">
+                      Sort <SortIcon className="sm:w-5 sm:h-5" />
+                    </button>
+                    <button className="flex justify-center items-center gap-2 px-3 sm:px-4 py-1 sm:py-1.5 text-sm sm:text-base lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC]">
+                      Filter <FilterIcon className="sm:w-5 sm:h-5" />
+                    </button>
+                    <button>
+                      <DeleteIcon className="sm:w-5 sm:h-5" />
+                    </button>
                   </div>
                 </div>
-                <div className="flex gap-2 sm:gap-4 lg:gap-4 justify-between items-center">
-                  <button className="flex justify-center items-center gap-2 px-3 sm:px-4 py-1 sm:py-1.5 text-sm sm:text-base lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-[600]">
-                    Sort <SortIcon className="sm:w-5 sm:h-5" />
-                  </button>
-                  <button className="flex justify-center items-center gap-2 px-3 sm:px-4 py-1 sm:py-1.5 text-sm sm:text-base lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC]">
-                    Filter <FilterIcon className="sm:w-5 sm:h-5" />
-                  </button>
-                  <button>
-                    <DeleteIcon className="sm:w-5 sm:h-5" />
-                  </button>
-                </div>
-              </div>
-              <div className="h-full w-full overflow-x-scroll overflow-y-auto lg:overflow-visible">
-                <div className="min-w-[800px] lg:min-w-0 h-full">
-                  <AgGridReact
-                    rowData={rowData}
-                    columnDefs={colDefs}
-                    defaultColDef={defaultColDef}
-                    pagination={true}
-                    rowSelection={rowSelection}
-                    onSelectionChanged={(event) => console.log("Row Selected!")}
-                    onCellValueChanged={(event) =>
-                      console.log(`New Cell Value: ${event.value}`)
-                    }
-                    className="w-full h-full text-sm lg:text-base"
-                  />
+                <div className="h-full w-full overflow-x-scroll overflow-y-auto lg:overflow-visible">
+                  <div className="min-w-[800px] lg:min-w-0 h-full">
+                    <AgGridReact
+                      rowData={rowData}
+                      columnDefs={colDefs}
+                      defaultColDef={defaultColDef}
+                      pagination={true}
+                      rowSelection={rowSelection}
+                      onSelectionChanged={(event) =>
+                        console.log("Row Selected!")
+                      }
+                      onCellValueChanged={(event) =>
+                        console.log(`New Cell Value: ${event.value}`)
+                      }
+                      className="w-full h-full text-sm lg:text-base"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </Layout>
       {newTask.status && (
-        <CreateNewTask 
-          setNewTask={setNewTask} 
-          task={newTask.task} 
+        <CreateNewTask
+          setNewTask={setNewTask}
+          task={newTask.task}
           isEditing={!!newTask.task}
-          setRowData={setRowData}
           rowData={rowData}
         />
       )}
@@ -269,7 +313,6 @@ export const Task = () => {
         <DeleteModel
           setDeleteModel={setDeleteModel}
           deleteModel={deleteModel}
-          setRowData={setRowData}
           rowData={rowData}
         />
       )}
@@ -289,7 +332,7 @@ const ActionBtns = (props) => {
     console.log("View clicked for:", data);
     onView(data);
   };
-  
+
   const handleDelete = () => {
     console.log("Delete clicked for:", data);
     onDelete(data);
@@ -301,71 +344,95 @@ const ActionBtns = (props) => {
         className="font-semibold font-[var(--paraFont)] bg-[var(--button-color1)] text-white p-1 sm:p-1.5 lg:p-1.5 rounded-full border-none cursor-pointer"
         onClick={handleEdit}
       >
-        <Edit size={16} className="sm:w-[18px] sm:h-[18px] lg:w-[18px] lg:h-[18px]" />
+        <Edit
+          size={16}
+          className="sm:w-[18px] sm:h-[18px] lg:w-[18px] lg:h-[18px]"
+        />
       </button>
       <button
         className="font-semibold font-[var(--paraFont)] bg-[var(--button-color5)] text-white p-1 sm:p-1.5 lg:p-1.5 rounded-full border-none cursor-pointer"
         onClick={handleView}
       >
-        <Eye size={16} className="sm:w-[18px] sm:h-[18px] lg:w-[18px] lg:h-[18px]" />
+        <Eye
+          size={16}
+          className="sm:w-[18px] sm:h-[18px] lg:w-[18px] lg:h-[18px]"
+        />
       </button>
       <button
         className="font-semibold font-[var(--paraFont)] bg-[var(--Negative-color)] text-white p-1 sm:p-1.5 lg:p-1.5 rounded-full border-none cursor-pointer"
         onClick={handleDelete}
       >
-        <Trash size={16} className="sm:w-[18px] sm:h-[18px] lg:w-[18px] lg:h-[18px]" />
+        <Trash
+          size={16}
+          className="sm:w-[18px] sm:h-[18px] lg:w-[18px] lg:h-[18px]"
+        />
       </button>
     </div>
   );
 };
 
-const CreateNewTask = ({ setNewTask, task, isEditing, setRowData, rowData }) => {
+const CreateNewTask = ({
+  setNewTask,
+  task,
+  isEditing,
+  setRowData,
+  rowData,
+}) => {
   const [formData, setFormData] = useState({
-    TaskTitle: task?.TaskTitle || '',
-    Description: task?.Description || '',
-    EmployeeName: task?.EmployeeName || '',
-    DeadLine: task?.DeadLine || '',
-    Status: task?.Status || '-- Select Status --'
+    TaskTitle: task?.TaskTitle || "",
+    Description: task?.Description || "",
+    EmployeeName: task?.EmployeeName || "",
+    DeadLine: task?.DeadLine || "",
+    Status: task?.Status || "-- Select Status --",
   });
+  const queryClient = useQueryClient();
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleChange = (e) => {
     const { id, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [id]: value
+      [id]: value,
     }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (isEditing && task) {
-      const updatedTasks = rowData.map(t => 
-        t.TaskID === task.TaskID 
-          ? { ...t, ...formData, Status: formData.Status === '-- Select Status --' ? 'Pending' : formData.Status }
-          : t
+  const handleSubmit = async () => {
+    setIsSaving(true);
+    try {
+      const path = isEditing ? "" : "api/v1/user/employee-task-assign";
+      const reqAssignTask = await axiosInstance.post(path, {
+        employee_id: "688758d89f597e27951efbc2",
+        task_title: formData.TaskTitle,
+        task_details: formData.Description,
+        task_deadline: moment(formData.DeadLine).format("YYYY-MM-DD"),
+        status: formData.Status,
+      });
+
+      if (reqAssignTask.status === 200 && reqAssignTask.data) {
+        queryClient.invalidateQueries({
+          queryKey: ["get_tasks_lists"],
+        });
+        toast.success(reqAssignTask?.data?.message);
+        setNewTask({ status: false, task: null });
+      }
+    } catch (error) {
+      console.error(error?.resposne?.data);
+      toast.error(
+        error?.response?.data?.message ||
+          "Something went wrong, please try again."
       );
-      setRowData(updatedTasks);
-    } else {
-      const newTask = {
-        TaskID: `task-${Date.now()}`,
-        ...formData,
-        Status: formData.Status === '-- Select Status --' ? 'Pending' : formData.Status,
-        AssignedDate: new Date().toLocaleDateString('en-GB').replace(/\//g, '.'),
-        AssignedBy: 'Admin',
-        PhoneNumber: '9990124321',
-      };
-      setRowData([newTask, ...rowData]);
+    } finally {
+      setIsSaving(false);
     }
-    setNewTask({ status: false, task: null });
   };
-  
+
   return (
     <>
       <div className="fixed top-0 left-0 flex justify-center items-center w-full h-full bg-[#000]/20 backdrop-blur-xl z-50">
         <div className="bg-white rounded-lg p-3 sm:p-5 w-[95%] sm:w-[80%] lg:w-[60%] max-h-[95%] overflow-y-auto shadow mx-4">
           <div className="flex justify-between items-center w-full bg-[var(--sideMenu-color)] text-white p-2 sm:p-3 rounded-lg">
             <h3 className="text-lg sm:text-xl lg:text-[1.5dvw] font-[500]">
-              {isEditing ? 'Edit Task' : 'Create New Task'}
+              {isEditing ? "Edit Task" : "Create New Task"}
             </h3>
             <button
               className="cursor-pointer"
@@ -471,8 +538,9 @@ const CreateNewTask = ({ setNewTask, task, isEditing, setRowData, rowData }) => 
               type="button"
               className="w-full sm:w-auto bg-[var(--sideMenu-color)] text-white px-4 sm:px-5 py-2 sm:py-1.5 rounded-md flex justify-center items-center font-semibold text-sm sm:text-base lg:text-[1.2dvw] cursor-pointer hover:opacity-80 transition-all duration-300 disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-60"
               onClick={handleSubmit}
+              disabled={isSaving}
             >
-              Assign Task
+              {isSaving ? "Assigning..." : "Assign Task"}
             </button>
           </div>
         </div>

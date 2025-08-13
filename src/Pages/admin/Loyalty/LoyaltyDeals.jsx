@@ -5,10 +5,12 @@ import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { Loading } from "../../../components/UI/Loading/Loading";
 import { AgGridReact } from "ag-grid-react";
 import { Edit, Trash, X } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import axiosInstance from "../../../utils/axios-interceptor";
 import { useDeboune } from "../../../hooks/useDebounce";
+import moment from "moment";
+import { DeleteModel } from "../../../components/common/Models/DeleteMode";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 const rowSelection = {
@@ -57,6 +59,7 @@ export const LoyaltyDeals = () => {
   const [deleteModel, setDeleteModel] = useState({
     state: false,
     productId: null,
+    path: null,
   });
 
   const onEdit = (product) => {
@@ -73,10 +76,10 @@ export const LoyaltyDeals = () => {
     console.log(product, "view");
   };
   const onDelete = (product) => {
-    console.log(product, "delete 201");
     setDeleteModel({
       state: true,
-      productId: product.ID,
+      productId: product.id,
+      path: `api/v1/loyalty/deal-details/${product.id}`,
     });
   };
 
@@ -199,6 +202,18 @@ export const LoyaltyDeals = () => {
       {showModel.state && showModel.actionType === "Add" && (
         <EditAndAddModel showModel={showModel} setShowModel={setShowModel} />
       )}
+      {showModel.state &&
+        showModel.actionType === "Edit" &&
+        showModel.productData !== null && (
+          <EditAndAddModel showModel={showModel} setShowModel={setShowModel} />
+        )}
+      {deleteModel.state && deleteModel.path && deleteModel.productId && (
+        <DeleteModel
+          setDeleteModel={setDeleteModel}
+          productId={deleteModel.productId}
+          path={deleteModel.path}
+        />
+      )}
     </>
   );
 };
@@ -225,14 +240,20 @@ const ActionBtns = (props) => {
           className="font-semibold font-[var(--paraFont)] bg-[var(--button-color1)] text-white p-1 sm:p-1.5 lg:p-1.5 rounded-full border-none cursor-pointer"
           onClick={handleEdit}
         >
-          <Edit size={16} className="sm:w-[18px] sm:h-[18px] lg:w-[18px] lg:h-[18px]" />
+          <Edit
+            size={16}
+            className="sm:w-[18px] sm:h-[18px] lg:w-[18px] lg:h-[18px]"
+          />
         </button>
 
         <button
           className="font-semibold font-[var(--paraFont)] bg-[var(--Negative-color)] text-white p-1 sm:p-1.5 lg:p-1.5 rounded-full border-none cursor-pointer"
           onClick={handleDelete}
         >
-          <Trash size={16} className="sm:w-[18px] sm:h-[18px] lg:w-[18px] lg:h-[18px]" />
+          <Trash
+            size={16}
+            className="sm:w-[18px] sm:h-[18px] lg:w-[18px] lg:h-[18px]"
+          />
         </button>
       </div>
     </>
@@ -243,17 +264,25 @@ const EditAndAddModel = ({ showModel, setShowModel }) => {
   const [itemName, setItemName] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [searchResult, setSearchResult] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const queryClient = useQueryClient();
   const [error, setError] = useState("");
   const [loyaltyData, setLoyaltyData] = useState({
-    item_id: "",
-    item_name: "",
-    promocode: "",
-    amount_off: "",
-    minimum_quantity: "",
-    maximum_quantity: "",
-    status: "",
-    from_date: "",
-    to_date: "",
+    item_id: showModel?.productData?.item_id || "",
+    item_name: showModel?.productData?.item_name || "",
+    promocode: showModel?.productData?.promocode || "",
+    amount_off: showModel?.productData?.amount_off || "",
+    minimum_quantity: showModel?.productData?.minimum_quantity || "",
+    maximum_quantity: showModel?.productData?.maximum_quantity || "",
+    status: showModel?.productData?.status || "",
+    from_date:
+      moment(showModel?.productData?.from_date, "DD.MM.YYYY").format(
+        "YYYY-MM-DD"
+      ) || "",
+    to_date:
+      moment(showModel?.productData?.to_date, "DD.MM.YYYY").format(
+        "YYYY-MM-DD"
+      ) || "",
   });
   const [showItemList, setShowItemList] = useState(false);
 
@@ -283,7 +312,7 @@ const EditAndAddModel = ({ showModel, setShowModel }) => {
   }, 800);
 
   const generatePromocode = () => {
-    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    const characters = "0123456789";
     let result = "";
     for (let i = 0; i < 8; i++) {
       result += characters.charAt(
@@ -298,15 +327,20 @@ const EditAndAddModel = ({ showModel, setShowModel }) => {
     return result;
   };
 
+  //  for creating new deals...
   const handleSubmit = async () => {
+    setIsLoading(true);
+
     try {
       const reqSaveLoyaltyDeals = await axiosInstance.post(
-        "api/v1/loyalty/deal-add",
+        showModel.actionType === "Add"
+          ? "api/v1/loyalty/deal-add"
+          : `api/v1/loyalty/deal-update/${showModel?.productData?.id}`,
         {
           item_id: loyaltyData.item_id,
           promocode: loyaltyData.promocode,
-          from_date: loyaltyData.from_date,
-          to_date: loyaltyData.to_date,
+          from_date: moment(loyaltyData.from_date).format("DD.MM.YYYY"),
+          to_date: moment(loyaltyData.to_date).format("DD.MM.YYYY"),
           amount_off: loyaltyData.amount_off,
           minimum_quantity: loyaltyData.minimum_quantity,
           maximum_quantity: loyaltyData.maximum_quantity,
@@ -314,9 +348,21 @@ const EditAndAddModel = ({ showModel, setShowModel }) => {
         }
       );
 
-      console.log(reqSaveLoyaltyDeals?.data, "reqSaveLoyaltyDeals");
+      if (reqSaveLoyaltyDeals?.status === 200 && reqSaveLoyaltyDeals?.data) {
+        queryClient.invalidateQueries({ queryKey: ["get_loyalty_deals"] });
+        toast.success(
+          reqSaveLoyaltyDeals?.data?.message || "Deal added successfully"
+        );
+        setShowModel({
+          actionType: "",
+          productData: null,
+          state: false,
+        });
+      }
     } catch (error) {
       console.error(error.response.data.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -569,10 +615,19 @@ const EditAndAddModel = ({ showModel, setShowModel }) => {
 
             <div className="flex flex-col sm:flex-row justify-center sm:justify-end items-center gap-3 sm:gap-4 mt-5">
               <button
+                disabled={isLoading}
                 onClick={handleSubmit}
-                className="w-full sm:w-auto bg-[var(--button-color5)] text-white px-4 sm:px-5 py-2 sm:py-1.5 rounded-md flex justify-center items-center font-semibold text-sm sm:text-base lg:text-[1.1dvw] cursor-pointer hover:opacity-80 transition-all duration-300"
+                className="w-full sm:w-auto bg-[var(--button-color5)] text-white px-4 sm:px-5 py-2 sm:py-1.5 rounded-md flex justify-center items-center font-semibold text-sm sm:text-base lg:text-[1.1dvw] cursor-pointer hover:opacity-80 transition-all duration-300 disabled:pointer-events-none disabled:opacity-75"
               >
-                Save
+                {isLoading ? (
+                  <>
+                    {showModel?.actionType === "Edit"
+                      ? "Updating..."
+                      : "Saving..."}
+                  </>
+                ) : (
+                  <>{showModel?.actionType === "Edit" ? "Update" : "Save"}</>
+                )}
               </button>
               <button
                 onClick={() => {

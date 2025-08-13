@@ -10,6 +10,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import axiosInstance from "../../../utils/axios-interceptor";
 import { Loading } from "../../../components/UI/Loading/Loading";
+import { DeleteModel } from "../../../components/common/Models/DeleteMode";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -37,14 +38,20 @@ const ActionBtns = (props) => {
           className="font-semibold font-[var(--paraFont)] bg-[var(--button-color1)] text-white p-1 sm:p-1.5 lg:p-1.5 rounded-full border-none cursor-pointer"
           onClick={handleEdit}
         >
-          <Eye size={16} className="sm:w-[18px] sm:h-[18px] lg:w-[18px] lg:h-[18px]" />
+          <Eye
+            size={16}
+            className="sm:w-[18px] sm:h-[18px] lg:w-[18px] lg:h-[18px]"
+          />
         </button>
 
         <button
           className="font-semibold font-[var(--paraFont)] bg-[var(--Negative-color)] text-white p-1 sm:p-1.5 lg:p-1.5 rounded-full border-none cursor-pointer"
           onClick={handleDelete}
         >
-          <Trash size={16} className="sm:w-[18px] sm:h-[18px] lg:w-[18px] lg:h-[18px]" />
+          <Trash
+            size={16}
+            className="sm:w-[18px] sm:h-[18px] lg:w-[18px] lg:h-[18px]"
+          />
         </button>
       </div>
     </>
@@ -56,6 +63,7 @@ export const DeviceAndLocation = () => {
   const [deleteModel, setDeleteModel] = useState({
     state: false,
     productId: null,
+    path: null,
   });
   const [editModel, setEditModel] = useState({
     state: false,
@@ -121,6 +129,7 @@ export const DeviceAndLocation = () => {
     setDeleteModel({
       state: true,
       productId: products.id,
+      path: `api/v1/common/device-delete/${products.id}`,
     });
   };
 
@@ -150,7 +159,7 @@ export const DeviceAndLocation = () => {
   const defaultColDef = useMemo(() => {
     return {
       filter: true,
-     editable: false,
+      editable: false,
     };
   }, []);
 
@@ -183,7 +192,7 @@ export const DeviceAndLocation = () => {
                   </button>
                 </div>
               </div>
-              
+
               <div className="w-full h-[60vh] sm:h-[70vh] lg:h-[80dvh]">
                 <div className="w-full flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 lg:px-2.5 lg:py-2 h-full">
                   <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center py-1.5 shrink-0 gap-3 sm:gap-0 lg:flex-row lg:items-center lg:gap-0">
@@ -208,7 +217,9 @@ export const DeviceAndLocation = () => {
                         rowSelection={rowSelection}
                         onSelectionChanged={(event) => {
                           const selectedNodes = event.api.getSelectedNodes();
-                          const selectedData = selectedNodes.map(node => node.data);
+                          const selectedData = selectedNodes.map(
+                            (node) => node.data
+                          );
                           setSelectedRowData(selectedData);
                           console.log("Selected data updated:", selectedData);
                         }}
@@ -236,7 +247,8 @@ export const DeviceAndLocation = () => {
       {deleteModel.state && deleteModel.productId && (
         <DeleteModel
           setDeleteModel={setDeleteModel}
-          deleteModel={deleteModel}
+          productId={deleteModel.productId}
+          path={deleteModel.path}
         />
       )}
     </>
@@ -358,7 +370,10 @@ const AddNewDevice = ({ setEditModel, editModel }) => {
               }
               className="cursor-pointer"
             >
-              <CircleX size={24} className="sm:w-8 sm:h-8 lg:w-[35px] lg:h-[35px]" />
+              <CircleX
+                size={24}
+                className="sm:w-8 sm:h-8 lg:w-[35px] lg:h-[35px]"
+              />
             </button>
           </div>
 
@@ -463,92 +478,92 @@ const AddNewDevice = ({ setEditModel, editModel }) => {
 };
 
 // Responsive DeleteModel Component
-const DeleteModel = ({ setDeleteModel, deleteModel }) => {
-  const [isDeleting, setIsDeleting] = useState(false);
-  const queryClient = useQueryClient();
+// const DeleteModel = ({ setDeleteModel, deleteModel }) => {
+//   const [isDeleting, setIsDeleting] = useState(false);
+//   const queryClient = useQueryClient();
 
-  const handleDelete = async () => {
-    setIsDeleting(true);
-    try {
-      const reqDelete = await axiosInstance.post(
-        `/api/v1/common/device-delete`,
-        {
-          id: deleteModel.productId,
-        }
-      );
+//   const handleDelete = async () => {
+//     setIsDeleting(true);
+//     try {
+//       const reqDelete = await axiosInstance.get(
+//         `/api/v1/common/device-delete`,
+//         {
+//           id: deleteModel.productId,
+//         }
+//       );
 
-      if (reqDelete.status === 200 && reqDelete.data) {
-        toast.success(reqDelete.data.message || "Device deleted successfully!");
-        queryClient.invalidateQueries({
-          queryKey: ["device_and_location_list"],
-        });
-      }
-    } catch (error) {
-      console.error(error?.response?.data?.error);
-      toast.error(
-        error?.response?.data?.error ||
-          "Something went wrong! while deleting device"
-      );
-    } finally {
-      setDeleteModel({
-        state: false,
-        productId: null,
-      });
-      setIsDeleting(false);
-    }
-  };
+//       if (reqDelete.status === 200 && reqDelete.data) {
+//         toast.success(reqDelete.data.message || "Device deleted successfully!");
+//         queryClient.invalidateQueries({
+//           queryKey: ["device_and_location_list"],
+//         });
+//       }
+//     } catch (error) {
+//       console.error(error?.response?.data?.error);
+//       toast.error(
+//         error?.response?.data?.error ||
+//           "Something went wrong! while deleting device"
+//       );
+//     } finally {
+//       setDeleteModel({
+//         state: false,
+//         productId: null,
+//       });
+//       setIsDeleting(false);
+//     }
+//   };
 
-  return (
-    <>
-      <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center px-4 sm:px-6 lg:px-0">
-        <div className="w-full sm:w-[80%] lg:w-[50%] max-w-lg sm:max-w-2xl lg:max-w-none p-4 sm:p-5 lg:p-5 bg-white rounded-xl shadow-md flex flex-col gap-4">
-          <div className="flex justify-between items-center w-full p-2 sm:p-3 lg:p-3 rounded-md text-white bg-[var(--sideMenu-color)]">
-            <h3 className="text-base sm:text-lg lg:text-[1.5dvw] font-semibold">Delete Device</h3>
-            <button
-              onClick={() => {
-                setDeleteModel({
-                  state: false,
-                  productId: null,
-                });
-              }}
-              className="hover:text-[var(--Negative-color)] transition-all duration-300 ease-linear cursor-pointer"
-            >
-              <CircleX size={24} className="sm:w-7 sm:h-7 lg:w-[30px] lg:h-[30px]" />
-            </button>
-          </div>
+//   return (
+//     <>
+//       <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center px-4 sm:px-6 lg:px-0">
+//         <div className="w-full sm:w-[80%] lg:w-[50%] max-w-lg sm:max-w-2xl lg:max-w-none p-4 sm:p-5 lg:p-5 bg-white rounded-xl shadow-md flex flex-col gap-4">
+//           <div className="flex justify-between items-center w-full p-2 sm:p-3 lg:p-3 rounded-md text-white bg-[var(--sideMenu-color)]">
+//             <h3 className="text-base sm:text-lg lg:text-[1.5dvw] font-semibold">Delete Device</h3>
+//             <button
+//               onClick={() => {
+//                 setDeleteModel({
+//                   state: false,
+//                   productId: null,
+//                 });
+//               }}
+//               className="hover:text-[var(--Negative-color)] transition-all duration-300 ease-linear cursor-pointer"
+//             >
+//               <CircleX size={24} className="sm:w-7 sm:h-7 lg:w-[30px] lg:h-[30px]" />
+//             </button>
+//           </div>
 
-          <p className="text-sm sm:text-base lg:text-[1.2dvw] font-semibold font-[var(--paraFont)] text-center sm:text-left">
-            Device with ID{" "}
-            <span className="italic font-bold">"{deleteModel.productId}"</span>{" "}
-            will be{" "}
-            <span className="text-[var(--Negative-color)] font-bold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.3dvw]">
-              Permanently Deleted
-            </span>{" "}
-            from the system.
-          </p>
+//           <p className="text-sm sm:text-base lg:text-[1.2dvw] font-semibold font-[var(--paraFont)] text-center sm:text-left">
+//             Device with ID{" "}
+//             <span className="italic font-bold">"{deleteModel.productId}"</span>{" "}
+//             will be{" "}
+//             <span className="text-[var(--Negative-color)] font-bold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.3dvw]">
+//               Permanently Deleted
+//             </span>{" "}
+//             from the system.
+//           </p>
 
-          <div className="flex flex-col sm:flex-row justify-center sm:justify-end items-center gap-3 sm:gap-4">
-            <button
-              onClick={() => {
-                setDeleteModel({
-                  state: false,
-                  productId: null,
-                });
-              }}
-              className="w-full sm:w-auto bg-[var(--button-color4)] text-white px-4 sm:px-5 py-2 sm:py-1.5 rounded-md flex justify-center items-center font-semibold text-sm sm:text-base lg:text-[1.1dvw] cursor-pointer hover:opacity-80 transition-all duration-300"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleDelete}
-              disabled={isDeleting}
-              className="w-full sm:w-auto bg-[var(--Negative-color)] text-white px-4 sm:px-5 py-2 sm:py-1.5 rounded-md flex justify-center items-center font-semibold text-sm sm:text-base lg:text-[1.1dvw] cursor-pointer hover:opacity-80 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isDeleting ? "Deleting..." : "Delete"}
-            </button>
-          </div>
-        </div>
-      </div>
-    </>
-  );
-};
+//           <div className="flex flex-col sm:flex-row justify-center sm:justify-end items-center gap-3 sm:gap-4">
+//             <button
+//               onClick={() => {
+//                 setDeleteModel({
+//                   state: false,
+//                   productId: null,
+//                 });
+//               }}
+//               className="w-full sm:w-auto bg-[var(--button-color4)] text-white px-4 sm:px-5 py-2 sm:py-1.5 rounded-md flex justify-center items-center font-semibold text-sm sm:text-base lg:text-[1.1dvw] cursor-pointer hover:opacity-80 transition-all duration-300"
+//             >
+//               Cancel
+//             </button>
+//             <button
+//               onClick={handleDelete}
+//               disabled={isDeleting}
+//               className="w-full sm:w-auto bg-[var(--Negative-color)] text-white px-4 sm:px-5 py-2 sm:py-1.5 rounded-md flex justify-center items-center font-semibold text-sm sm:text-base lg:text-[1.1dvw] cursor-pointer hover:opacity-80 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+//             >
+//               {isDeleting ? "Deleting..." : "Delete"}
+//             </button>
+//           </div>
+//         </div>
+//       </div>
+//     </>
+//   );
+// };

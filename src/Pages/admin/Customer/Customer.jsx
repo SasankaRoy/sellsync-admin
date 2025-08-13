@@ -76,6 +76,7 @@ export const Customer = () => {
   const [deleteModel, setDeleteModel] = useState({
     state: false,
     userData: null,
+    path:null,
   });
 
   // get all customer list...
@@ -122,10 +123,10 @@ export const Customer = () => {
     });
   };
   const onDelete = (user) => {
-    console.log("delete user");
     setDeleteModel({
       state: true,
-      userData: user.ID,
+      userData: user.id,
+      path:`api/v1/customer/delete/${user.id}`
     });
   };
 
@@ -166,7 +167,10 @@ export const Customer = () => {
         <Loading />
       ) : (
         <Layout>
-          <div className="pb-14 w-full px-4 sm:px-6 lg:px-0 h-[calc(100vh-5rem)]" style={{ marginTop: 0 }}>
+          <div
+            className="pb-14 w-full px-4 sm:px-6 lg:px-0 h-[calc(100vh-5rem)]"
+            style={{ marginTop: 0 }}
+          >
             <div className="w-full">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-0">
                 <h3 className="text-2xl sm:text-3xl lg:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
@@ -195,28 +199,36 @@ export const Customer = () => {
                 cardValue="2"
                 percent="View"
                 className="lg:scale-95 lg:hover:scale-100 transition-transform duration-200"
-                icon={<StoreManagerIcon className="w-[8dvw] h-[8dvw] sm:w-12 sm:h-12 lg:w-10 lg:h-10" />}
+                icon={
+                  <StoreManagerIcon className="w-[8dvw] h-[8dvw] sm:w-12 sm:h-12 lg:w-10 lg:h-10" />
+                }
               />
               <Overviewcards
                 cardTitle="Inactive Customers"
                 cardValue="8"
                 percent="View"
                 className="lg:scale-95 lg:hover:scale-100 transition-transform duration-200"
-                icon={<CashierIcon className="w-[8dvw] h-[8dvw] sm:w-12 sm:h-12 lg:w-10 lg:h-10" />}
+                icon={
+                  <CashierIcon className="w-[8dvw] h-[8dvw] sm:w-12 sm:h-12 lg:w-10 lg:h-10" />
+                }
               />
               <Overviewcards
                 cardTitle="Customers with Promotions"
                 cardValue="4"
                 percent="View"
                 className="lg:scale-95 lg:hover:scale-100 transition-transform duration-200"
-                icon={<InventoryManagerIcon className="w-[8dvw] h-[8dvw] sm:w-12 sm:h-12 lg:w-10 lg:h-10" />}
+                icon={
+                  <InventoryManagerIcon className="w-[8dvw] h-[8dvw] sm:w-12 sm:h-12 lg:w-10 lg:h-10" />
+                }
               />
               <Overviewcards
                 cardTitle="Total Customers"
                 cardValue="8,593"
                 percent="View"
                 className="lg:scale-95 lg:hover:scale-100 transition-transform duration-200"
-                icon={<UsersIcon2 className="w-[8dvw] h-[8dvw] sm:w-12 sm:h-12 lg:w-10 lg:h-10" />}
+                icon={
+                  <UsersIcon2 className="w-[8dvw] h-[8dvw] sm:w-12 sm:h-12 lg:w-10 lg:h-10" />
+                }
               />
             </div>
 
@@ -281,6 +293,7 @@ export const Customer = () => {
         <DeleteModel
           setDeleteModel={setDeleteModel}
           productId={deleteModel.userData}
+          path={deleteModel.path}
         />
       )}
     </>
@@ -352,7 +365,9 @@ const EditUserModel = ({ setEditUserModel, userData, forState }) => {
       <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center">
         <div className="bg-white w-[95%] sm:w-[80%] md:w-[90%] lg:w-[50%] p-4 sm:p-5 rounded-lg shadow-md max-h-[90vh] overflow-y-auto">
           <div className="flex justify-between items-center w-full p-2.5 rounded-md bg-[var(--sideMenu-color)] text-white">
-            <h3 className="text-lg sm:text-xl md:text-2xl lg:text-[1.5dvw] font-semibold">{forState} User</h3>
+            <h3 className="text-lg sm:text-xl md:text-2xl lg:text-[1.5dvw] font-semibold">
+              {forState} User
+            </h3>
             <button
               onClick={() => {
                 setEditUserModel({
@@ -368,7 +383,9 @@ const EditUserModel = ({ setEditUserModel, userData, forState }) => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full p-3">
             <div className="w-full my-4 flex flex-col gap-2">
-              <label className="text-base sm:text-lg md:text-xl lg:text-[1dvw] font-normal paraFont">Name</label>
+              <label className="text-base sm:text-lg md:text-xl lg:text-[1dvw] font-normal paraFont">
+                Name
+              </label>
               <input
                 className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-base sm:text-lg md:text-xl lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                 type="text"
@@ -379,7 +396,9 @@ const EditUserModel = ({ setEditUserModel, userData, forState }) => {
               />
             </div>
             <div className="w-full my-4 flex flex-col gap-2">
-              <label className="text-base sm:text-lg md:text-xl lg:text-[1dvw] font-normal paraFont">Mobile</label>
+              <label className="text-base sm:text-lg md:text-xl lg:text-[1dvw] font-normal paraFont">
+                Mobile
+              </label>
               <input
                 className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-base sm:text-lg md:text-xl lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                 type="number"
@@ -391,7 +410,9 @@ const EditUserModel = ({ setEditUserModel, userData, forState }) => {
             </div>
 
             <div className="w-full my-4 flex flex-col gap-2">
-              <label className="text-base sm:text-lg md:text-xl lg:text-[1dvw] font-normal paraFont">Email</label>
+              <label className="text-base sm:text-lg md:text-xl lg:text-[1dvw] font-normal paraFont">
+                Email
+              </label>
               <input
                 className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-base sm:text-lg md:text-xl lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                 type="email"
@@ -402,7 +423,9 @@ const EditUserModel = ({ setEditUserModel, userData, forState }) => {
               />
             </div>
             <div className="w-full my-4 flex flex-col gap-2">
-              <label className="text-base sm:text-lg md:text-xl lg:text-[1dvw] font-normal paraFont">DOB</label>
+              <label className="text-base sm:text-lg md:text-xl lg:text-[1dvw] font-normal paraFont">
+                DOB
+              </label>
               <input
                 className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-base sm:text-lg md:text-xl lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                 type="date"
@@ -413,7 +436,9 @@ const EditUserModel = ({ setEditUserModel, userData, forState }) => {
             </div>
 
             <div className="w-full my-4 flex flex-col gap-2">
-              <label className="text-base sm:text-lg md:text-xl lg:text-[1dvw] font-normal paraFont">Address</label>
+              <label className="text-base sm:text-lg md:text-xl lg:text-[1dvw] font-normal paraFont">
+                Address
+              </label>
               <input
                 className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-base sm:text-lg md:text-xl lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                 type="text"
@@ -425,7 +450,9 @@ const EditUserModel = ({ setEditUserModel, userData, forState }) => {
             </div>
 
             <div className="w-full my-4 flex flex-col gap-2">
-              <label className="text-base sm:text-lg md:text-xl lg:text-[1dvw] font-normal paraFont">Zipcode</label>
+              <label className="text-base sm:text-lg md:text-xl lg:text-[1dvw] font-normal paraFont">
+                Zipcode
+              </label>
               <input
                 className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-base sm:text-lg md:text-xl lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                 type="text"
@@ -437,7 +464,9 @@ const EditUserModel = ({ setEditUserModel, userData, forState }) => {
             </div>
 
             <div className="w-full my-4 flex flex-col gap-2">
-              <label className="text-base sm:text-lg md:text-xl lg:text-[1dvw] font-normal paraFont">Points</label>
+              <label className="text-base sm:text-lg md:text-xl lg:text-[1dvw] font-normal paraFont">
+                Points
+              </label>
               <input
                 className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-base sm:text-lg md:text-xl lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                 type="number"
@@ -449,7 +478,9 @@ const EditUserModel = ({ setEditUserModel, userData, forState }) => {
             </div>
 
             <div className="w-full my-4 flex flex-col gap-2">
-              <label className="text-base sm:text-lg md:text-xl lg:text-[1dvw] font-normal paraFont">SMS & Email Promotions</label>
+              <label className="text-base sm:text-lg md:text-xl lg:text-[1dvw] font-normal paraFont">
+                SMS & Email Promotions
+              </label>
               <select
                 name="sms_email_promotions"
                 value={customerInfo.sms_email_promotions}
@@ -462,7 +493,9 @@ const EditUserModel = ({ setEditUserModel, userData, forState }) => {
               </select>
             </div>
             <div className="w-full sm:col-span-2 my-4 flex flex-col gap-2">
-              <label className="text-base sm:text-lg md:text-xl lg:text-[1dvw] font-normal paraFont">Status</label>
+              <label className="text-base sm:text-lg md:text-xl lg:text-[1dvw] font-normal paraFont">
+                Status
+              </label>
               <select
                 name="status"
                 value={customerInfo.status}

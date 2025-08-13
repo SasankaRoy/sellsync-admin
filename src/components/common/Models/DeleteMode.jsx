@@ -4,15 +4,13 @@ import axiosInstance from "../../../utils/axios-interceptor";
 import { toast } from "react-toastify";
 import { useQueryClient } from "@tanstack/react-query";
 
-export const DeleteModel = ({ setDeleteModel, productId }) => {
+export const DeleteModel = ({ setDeleteModel, productId, path }) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const queryClient = useQueryClient();
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
-      const reqDelete = await axiosInstance.get(
-        `/api/v1/user/employee-delete/${productId}`
-      );
+      const reqDelete = await axiosInstance.get(path);
 
       if (reqDelete.status === 200 && reqDelete.data) {
         toast.success(reqDelete.data.message || "Delete Successfully!");
@@ -64,10 +62,11 @@ export const DeleteModel = ({ setDeleteModel, productId }) => {
               Cancel
             </button>
             <button
+              disabled={isDeleting}
               onClick={handleDelete}
-              className="bg-[var(--Negative-color)] text-white px-5 py-1.5 rounded-md flex justify-center items-center font-semibold text-[1.1dvw] cursor-pointer"
+              className="bg-[var(--Negative-color)] text-white px-5 py-1.5 rounded-md flex justify-center items-center font-semibold text-[1.1dvw] cursor-pointer disabled:pointer-events-none disabled:opacity-75"
             >
-              Delete
+              {isDeleting ? "Deleting..." : "Delete"}
             </button>
           </div>
         </div>
