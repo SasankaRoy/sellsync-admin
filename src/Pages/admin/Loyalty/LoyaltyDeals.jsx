@@ -325,7 +325,7 @@ const EditAndAddModel = ({ showModel, setShowModel }) => {
       <div className="fixed top-0 left-0 flex justify-center items-center w-full h-full bg-[#000]/20 backdrop-blur-xl z-50">
         <div
           onClick={() => setShowItemList(false)}
-          className="bg-white rounded-lg p-3 sm:p-5 w-[95%] sm:w-[80%] lg:w-[65%] shadow mx-4"
+          className="bg-white rounded-lg p-3 sm:p-5 w-[95%] max-w-[95%] sm:max-w-[80%] lg:max-w-[65%] shadow mx-4 max-h-[90vh] overflow-y-auto"
         >
           <div className="flex justify-between items-center w-full bg-[var(--sideMenu-color)] text-white p-2 sm:p-3 rounded-lg">
             <h2 className="text-lg sm:text-xl lg:text-[1.5dvw] font-[500]">
@@ -346,7 +346,7 @@ const EditAndAddModel = ({ showModel, setShowModel }) => {
           </div>
 
           <div className="my-6 sm:my-8 lg:my-10 flex flex-col gap-6 sm:gap-8">
-            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-5 w-full">
+            <div className="flex flex-col sm:flex-row justify-between items-start gap-4 sm:gap-5 w-full">
               <div className="w-full sm:w-1/2 flex flex-col gap-1.5">
                 <label
                   htmlFor="itemsDeal"
@@ -421,7 +421,7 @@ const EditAndAddModel = ({ showModel, setShowModel }) => {
                 >
                   Promocode
                 </label>
-                <div className="flex justify-between items-center gap-3 sm:gap-5">
+                <div className="flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-5">
                   <input
                     id="promoCode"
                     className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] appearance-none focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
@@ -435,7 +435,7 @@ const EditAndAddModel = ({ showModel, setShowModel }) => {
                   />
                   <button
                     onClick={generatePromocode}
-                    className="shrink-0 bg-[var(--sideMenu-color)] text-white px-3 sm:px-4 py-1 sm:py-1.5 rounded-md paraFont font-normal cursor-pointer text-sm sm:text-base lg:text-[1.2dvw]"
+                    className="w-full sm:w-auto shrink-0 bg-[var(--sideMenu-color)] text-white px-3 sm:px-4 py-1 sm:py-1.5 rounded-md paraFont font-normal cursor-pointer text-sm sm:text-base lg:text-[1.2dvw]"
                   >
                     Generate Code
                   </button>
@@ -443,7 +443,7 @@ const EditAndAddModel = ({ showModel, setShowModel }) => {
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-5 w-full">
+            <div className="flex flex-col sm:flex-row justify-between items-start gap-4 sm:gap-5 w-full">
               <div className="w-full sm:w-1/2 flex flex-col gap-1.5">
                 <label
                   htmlFor="offAmount"
@@ -484,7 +484,7 @@ const EditAndAddModel = ({ showModel, setShowModel }) => {
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-5 w-full">
+            <div className="flex flex-col sm:flex-row justify-between items-start gap-4 sm:gap-5 w-full">
               <div className="w-full sm:w-1/2 flex flex-col gap-1.5">
                 <label
                   htmlFor="maxQty"
@@ -527,7 +527,7 @@ const EditAndAddModel = ({ showModel, setShowModel }) => {
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-5 w-full">
+            <div className="flex flex-col sm:flex-row justify-between items-start gap-4 sm:gap-5 w-full">
               <div className="w-full sm:w-1/2 flex flex-col gap-1.5">
                 <label
                   htmlFor="from"
