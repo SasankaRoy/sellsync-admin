@@ -42,18 +42,33 @@ export const Help = () => {
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6">
         <div className="w-full">
           <div className="flex justify-between items-center">
-            <h3 className="text-lg sm:text-xl md:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
+            <h3 className="text-lg sm:text-xl md:text-[1.4dvw]  sm:text-[1.2dvw]  md:portrait:text-[2.4dvw] md:landscape:text-[2.4dvw] font-semibold text-[var(--mainText-color)]">
               Help
             </h3>
           </div>
         </div>
-        <div className="border border-[#D4D4D4] my-4 px-2 sm:px-3 py-1 flex flex-col sm:flex-row justify-center gap-2 rounded-full bg-white w-full">
+        <div className="border border-[#D4D4D4] my-4 px-2 sm:px-3 py-1 flex flex-row justify-center items-center gap-2 rounded-full bg-white w-full">
           <input
-            className="flex-1 border-none px-2 sm:px-3 py-1 sm:py-1.5 outline-none font-[var(--paraFont)] font-semibold text-xs sm:text-sm md:text-base lg:text-[1dvw]"
+            className="flex-1 border-none px-2 sm:px-3 py-0.5 sm:py-1.5 outline-none font-[var(--paraFont)] font-semibold text-[0.75rem] sm:text-sm md:text-base lg:text-[1dvw]"
             placeholder="Search topics like 'barcode scanner issue,' 'payment failure,' etc."
             type="text"
           />
-          <button className="bg-[var(--button-color1)] text-white px-3 sm:px-4 md:px-5 lg:px-6 py-1 sm:py-1.5 rounded-full border-none outline-none cursor-pointer font-semibold text-xs sm:text-sm md:text-base lg:text-[1.1dvw] font-[var(--paraFont)]">
+          <div className="sm:hidden">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="cursor-pointer"
+            >
+              <path
+                d="M10.5 3C14.6421 3 18 6.35786 18 10.5C18 12.4057 17.2843 14.1426 16.1089 15.4632L20.3231 19.6774C20.7056 20.0598 20.7056 20.6749 20.3231 21.0574C19.9407 21.4398 19.3256 21.4398 18.9431 21.0574L14.7289 16.8432C13.4083 18.0186 11.6714 18.7343 9.7665 18.7343C5.62436 18.7343 2.2665 15.3764 2.2665 11.2343C2.2665 7.09214 5.62436 3.73428 9.7665 3.73428C9.7665 3 10.5 3 10.5 3ZM9.7665 4.76786C6.24214 4.76786 3.3 7.70999 3.3 11.2343C3.3 14.7587 6.24214 17.7007 9.7665 17.7007C13.2909 17.7007 16.2329 14.7587 16.2329 11.2343C16.2329 7.70999 13.2909 4.76786 9.7665 4.76786Z"
+                fill="#0052CC"
+              />
+            </svg>
+          </div>
+          <button className="hidden sm:block bg-[var(--button-color1)] text-white px-3 sm:px-4 md:px-5 lg:px-6 py-1 sm:py-1.5 rounded-full border-none outline-none cursor-pointer font-semibold text-xs sm:text-sm md:text-base lg:text-[1.1dvw] font-[var(--paraFont)]">
             Search
           </button>
         </div>
