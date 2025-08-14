@@ -534,7 +534,7 @@ const CreateNewTask = ({
                 <option>Completed</option>
               </select>
             </div>
-            <button
+            <button 
               type="button"
               className="w-full sm:w-auto bg-[var(--sideMenu-color)] text-white px-4 sm:px-5 py-2 sm:py-1.5 rounded-md flex justify-center items-center font-semibold text-sm sm:text-base lg:text-[1.2dvw] cursor-pointer hover:opacity-80 transition-all duration-300 disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-60"
               onClick={handleSubmit}
