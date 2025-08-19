@@ -8,7 +8,7 @@ import {
 } from "../../../assets/Svgs/AllSvgs";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
-import { CircleX, Edit, Plus, Trash } from "lucide-react";
+import { CircleX, Edit, Plus, Trash, Download } from "lucide-react";
 import { DeleteModel } from "../../../components/common/Models/DeleteMode"; // Corrected to match Category.jsx
 
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -152,7 +152,7 @@ export const Supplier = () => {
                 Add Supplier <PluseIcon />
               </button>
               <button className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
-                Export CSV <PluseIcon />
+                Export CSV <Download size={16} />
               </button>
             </div>
           </div>

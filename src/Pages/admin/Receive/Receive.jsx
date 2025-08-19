@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import { Layout } from "../../../components/common/Layout/Layout";
 import { FilterIcon, PluseIcon, SortIcon } from "../../../assets/Svgs/AllSvgs";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
+import { Download } from "lucide-react";
 // Core CSS
 import { AgGridReact } from "ag-grid-react";
 import { Edit, Trash } from "lucide-react";
@@ -514,9 +515,9 @@ export const Receive = () => {
               Receive
             </h3>
             <div className="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-3 sm:gap-5 w-full sm:w-auto">
-              <button className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
-                Export CSV <PluseIcon />
-              </button>
+            <button className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
+            Export CSV <Download size={16} />
+            </button>
             </div>
           </div>
         </div>

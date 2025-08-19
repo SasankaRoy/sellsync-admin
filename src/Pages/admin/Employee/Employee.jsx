@@ -14,7 +14,7 @@ import { Overviewcards } from "../../../components/common/Overviewcards/Overview
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import { DeleteModel } from "../../../components/common/Models/DeleteMode";
-import { CircleX, Edit, Trash } from "lucide-react";
+import { CircleX, Edit, Trash, Download,PlusIcon } from "lucide-react";
 import { toast } from "react-toastify";
 import axiosInstance from "../../../utils/axios-interceptor";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -122,6 +122,16 @@ export const Employee = () => {
     };
   }, []);
 
+  const handleImportCSV = () => {
+    console.log("Import CSV clicked");
+    // Add your import CSV logic here
+  };
+
+  const handleExportCSV = () => {
+    console.log("Export CSV clicked");
+    // Add your export CSV logic here
+  };
+
   return (
     <>
       {isLoading ? (
@@ -135,10 +145,10 @@ export const Employee = () => {
             >
               <div className="w-full">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-0">
-                  <h3 className="text-2xl sm:text-3xl lg:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
+                  <h3 className="text-2xl md:text-xl lg:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
                     Employees
                   </h3>
-                  <div className="w-full sm:w-auto flex justify-center sm:justify-end">
+                  <div className="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-3 sm:gap-5 w-full sm:w-auto lg:flex-row lg:w-auto lg:gap-5">
                     <button
                       onClick={() => {
                         setEditModel({
@@ -147,9 +157,21 @@ export const Employee = () => {
                           forStatus: "Add",
                         });
                       }}
-                      className="w-full sm:w-auto px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color1)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
+                      className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color1)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
                     >
                       Add Employee <PluseIcon className="w-4 h-4" />
+                    </button>
+                    <button 
+                      onClick={handleImportCSV}
+                      className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
+                    >
+                      Import CSV <PluseIcon className="w-4 h-4" />
+                    </button>
+                    <button 
+                      onClick={handleExportCSV}
+                      className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
+                    >
+                      Export CSV <Download size={16} />
                     </button>
                   </div>
                 </div>

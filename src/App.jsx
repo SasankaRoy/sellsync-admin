@@ -36,6 +36,10 @@ import { LoyaltyDeals } from "./Pages/admin/Loyalty/LoyaltyDeals";
 import { Purchase } from "./Pages/admin/Daily/Purchase";
 import { ExpenseList } from "./Pages/admin/Daily/Expense";
 import RouteGuard from "./Pages/auth/RouteGuard";
+import { Loyaltyreports } from "./Pages/admin/Loyalty/Loyaltyreports";
+import { Groups } from "./Pages/admin/Groups/Groups";
+
+
 
 
 function App() {
@@ -48,7 +52,11 @@ function App() {
             <Route path="/admin/sale" element={<Sale />} />
             <Route path="/admin/inventory/overview" element={<Inventory />} />
             <Route path="/admin/inventory/item-lists" element={<ItemsList />} />
-            <Route path="/admin/inventory/category" element={<Category />} />
+            <Route path="/admin/inventory/category" element={<Category />}
+            
+      />
+             <Route path="/admin/inventory/groups" element={<Groups />} />
+             
             <Route path="/admin/inventory/suppliers" element={<Supplier />} />
             <Route path="/admin/inventory/receive" element={<Receive />} />
             <Route path="/admin/inventory/order" element={<Orders />} />
@@ -102,6 +110,7 @@ function App() {
               element={<SalesReport />}
             />
             <Route path="/admin/loyalty/deals" element={<LoyaltyDeals />} />
+            <Route path="/admin/loyalty/reports" element={<Loyaltyreports />} />
 
             <Route path="/admin/settings" element={<Settings />} />
             <Route path="/admin/help" element={<Help />} />

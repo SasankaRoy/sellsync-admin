@@ -829,6 +829,31 @@ export const Layout = ({ children }) => {
               Category
             </NavLink>
             <NavLink
+              to="/admin/inventory/groups"
+              className={({ isActive }) => {
+                isActive && setSubMenuStateInventory(true);
+                return isActive
+                  ? `flex py-2 px-5 rounded-full font-[600] ${
+                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                    } paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink`
+                  : `flex py-2 px-5 rounded-full font-[600] ${
+                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                    } paraFont justify-start items-center gap-4 deActiveLink ${
+                      isMobile ? "text-white" : ""
+                    }`;
+              }}
+              onClick={() => handleNavigation("/admin/inventory/groups")}
+            >
+              Groups
+            </NavLink>
+
+
+
+
+
+
+
+            <NavLink
               to="/admin/inventory/suppliers"
               className={({ isActive }) => {
                 isActive && setSubMenuStateInventory(true);

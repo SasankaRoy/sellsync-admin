@@ -189,7 +189,8 @@
     }
   }
 
-  @media (max-width: 768px) {
+  // @media (max-width: 768px) {
+    @media (max-width: 1025px) {
     .layout__sideMenuMainWrapper {
       display: none !important;
       width: 0;
