@@ -406,7 +406,7 @@ const EditAndAddModel = ({ showModel, setShowModel }) => {
                     className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] appearance-none focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                     onChange={(e) => {
                       e.target.value && setIsSearching(true);
-                      e.target.value && debounceCallback(e.target.value);
+                      e.target.value && debounceCallback(e.target.value,"api/v1/product/list");
                       setShowItemList(true);
                       setItemName("");
                       handleOnChange(e);

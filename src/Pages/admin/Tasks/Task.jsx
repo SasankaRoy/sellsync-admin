@@ -12,6 +12,7 @@ import { toast } from "react-toastify";
 import axiosInstance from "../../../utils/axios-interceptor";
 import { Loading } from "../../../components/UI/Loading/Loading";
 import moment from "moment";
+import { useDeboune } from "../../../hooks/useDebounce";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -29,8 +30,8 @@ export const Task = () => {
   });
   const [editModel, setEditModel] = useState({
     status: false,
-    productData: null,
-    forStatus: null,
+    taskData: null,
+    actionType: null,
   });
 
   const {
@@ -175,6 +176,7 @@ export const Task = () => {
   // ]);
 
   const onEdit = (task) => {
+    console.log(task);
     setNewTask({
       status: true,
       task: task,
@@ -378,16 +380,24 @@ const CreateNewTask = ({
   setRowData,
   rowData,
 }) => {
+  console.log(task, "new task data");
   const [formData, setFormData] = useState({
-    TaskTitle: task?.TaskTitle || "",
-    Description: task?.Description || "",
-    EmployeeName: task?.EmployeeName || "",
-    DeadLine: task?.DeadLine || "",
-    Status: task?.Status || "-- Select Status --",
+    TaskTitle: task?.title || "",
+    Description: task?.task_details || "",
+    EmployeeName: task?.employee_name || "",
+    EmployeeId: task?.employee_id || "",
+    DeadLine: moment(task?.task_deadline).format("YYYY-MM-DD") || "",
+    Status: task?.task_status || "-- Select Status --",
   });
   const queryClient = useQueryClient();
   const [isSaving, setIsSaving] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  const [isError, setIsError] = useState("");
+  const [searchResult, setSearchResult] = useState([]);
+  const [employeeName, setEmployeeName] = useState("");
+  const [showEmployeeList, setShowEmployeeList] = useState(false);
 
+  // handle onChange function...
   const handleChange = (e) => {
     const { id, value } = e.target;
     setFormData((prev) => ({
@@ -396,16 +406,40 @@ const CreateNewTask = ({
     }));
   };
 
+  // search employee....
+  const debounceCallback = useDeboune((data, error) => {
+    if (data.length > 0 && error === null) {
+      console.log(data);
+      setIsSearching(false);
+      setSearchResult([...data]);
+      setIsError("");
+      return;
+    } else {
+      setIsSearching(false);
+    }
+    if (error) {
+      setIsError(error);
+      setSearchResult([]);
+      setIsSearching(false);
+      return;
+    }
+  }, 800);
+
+  // add task function....
   const handleSubmit = async () => {
     setIsSaving(true);
+    // console.log(formData)
+    // return
     try {
-      const path = isEditing ? "" : "api/v1/user/employee-task-assign";
+      const path = isEditing
+        ? `api/v1/user/employee-task-update/${task.id}`
+        : "api/v1/user/employee-task-assign";
       const reqAssignTask = await axiosInstance.post(path, {
-        employee_id: "688758d89f597e27951efbc2",
+        employee_id: formData?.EmployeeId,
         task_title: formData.TaskTitle,
         task_details: formData.Description,
         task_deadline: moment(formData.DeadLine).format("YYYY-MM-DD"),
-        status: formData.Status,
+        task_status: formData.Status,
       });
 
       if (reqAssignTask.status === 200 && reqAssignTask.data) {
@@ -429,7 +463,12 @@ const CreateNewTask = ({
   return (
     <>
       <div className="fixed top-0 left-0 flex justify-center items-center w-full h-full bg-[#000]/20 backdrop-blur-xl z-50">
-        <div className="bg-white rounded-lg p-3 sm:p-5 w-[95%] sm:w-[80%] lg:w-[60%] max-h-[95%] overflow-y-auto shadow mx-4">
+        <div
+          onClick={() => {
+            setShowEmployeeList(false);
+          }}
+          className="bg-white rounded-lg p-3 sm:p-5 w-[95%] sm:w-[80%] lg:w-[60%] max-h-[95%] overflow-y-auto shadow mx-4"
+        >
           <div className="flex justify-between items-center w-full bg-[var(--sideMenu-color)] text-white p-2 sm:p-3 rounded-lg">
             <h3 className="text-lg sm:text-xl lg:text-[1.5dvw] font-[500]">
               {isEditing ? "Edit Task" : "Create New Task"}
@@ -474,30 +513,69 @@ const CreateNewTask = ({
                 placeholder="Enter Task Description..."
               ></textarea>
             </div>
-            <div className="w-full flex flex-col gap-1.5">
+            <div className="w-full flex flex-col gap-1.5 relative">
               <label
                 className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
                 htmlFor="employeeName"
               >
                 Select Employee
               </label>
-              <select
-                id="EmployeeName"
+              <input
                 className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] appearance-none rounded-xl py-1.5 px-3"
-                value={formData.EmployeeName}
-                onChange={handleChange}
-              >
-                <option value="">-- Select Employee --</option>
-                <option value="Shasank">Shasank</option>
-                <option value="Neel">Neel</option>
-                <option value="Satpal">Satpal</option>
-                <option value="Tirtho">Tirtho</option>
-                <option value="Ram">Ram</option>
-                <option value="Rahul">Rahul</option>
-                <option value="John">John</option>
-                <option value="Mike">Mike</option>
-                <option value="Leo">Leo</option>
-              </select>
+                id="EmployeeName"
+                placeholder="Employee name..."
+                value={employeeName ? employeeName : formData.EmployeeName}
+                onChange={(e) => {
+                  e.target.value && setIsSearching(true);
+                  e.target.value &&
+                    debounceCallback(
+                      e.target.value,
+                      "api/v1/user/employee-list"
+                    );
+                  setShowEmployeeList(true);
+                  setEmployeeName("");
+                  handleChange(e);
+                }}
+              />
+
+              {showEmployeeList && (
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                  className="absolute top-[105%] flex flex-col justify-start gap-1 items-start left-0 w-full bg-white p-3 overflow-y-auto scroll-smooth max-h-[20vh]"
+                >
+                  {isError && (
+                    <p className="text-center mainFont text-gray-400 text-sm sm:text-base">
+                      {isError}
+                    </p>
+                  )}
+                  {isSearching ? (
+                    <p className="text-center mainFont text-gray-400 animate-pulse duration-200 ease-linear text-sm sm:text-base">
+                      Searching items...
+                    </p>
+                  ) : (
+                    <>
+                      {searchResult.map((employee, id) => (
+                        <button
+                          key={id}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setFormData({
+                              ...formData,
+                              EmployeeId: employee.id,
+                              EmployeeName: employee.name,
+                            });
+                          }}
+                          className="w-full py-2 sm:py-3 px-3 sm:px-5 cursor-pointer hover:bg-[#000]/15 transition-all duration-200 ease-linear bg-[#000]/5 border-b border-[var(--border-color)] mainFont font-semibold rounded text-start text-sm sm:text-base"
+                        >
+                          {employee.name}
+                        </button>
+                      ))}
+                    </>
+                  )}
+                </div>
+              )}
             </div>
             <div className="w-full flex flex-col gap-1.5">
               <label
@@ -528,14 +606,14 @@ const CreateNewTask = ({
                 onChange={handleChange}
               >
                 <option>-- Select Status --</option>
-                <option>Pending</option>
-                <option>On-going</option>
-                <option>Defer</option>
-                <option>Completed</option>
+                <option value="pending">Pending</option>
+                <option value="on-going">On-going</option>
+                <option value="defer">Defer</option>
+                <option value="completed">Completed</option>
               </select>
             </div>
             <div className="flex flex-col sm:flex-row gap-4 justify-end items-center">
-              <button 
+              <button
                 type="button"
                 className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300 disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-60"
                 onClick={handleSubmit}
@@ -543,7 +621,7 @@ const CreateNewTask = ({
               >
                 {isSaving ? "Assigning..." : "Assign Task"}
               </button>
-              <button 
+              <button
                 type="button"
                 className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color4)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300"
                 onClick={() => setNewTask({ status: false, task: null })}

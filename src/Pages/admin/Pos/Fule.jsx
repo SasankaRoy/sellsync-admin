@@ -32,6 +32,8 @@ export const Fule = () => {
     premium_cash: "",
     diesel_cash: "",
     diesel_credit: "",
+    ne_cash:'',
+    ne_credit:''
   });
   const queryClient = useQueryClient();
 
@@ -76,6 +78,8 @@ export const Fule = () => {
             premium_cash: getLatestPrice?.data?.fuelDetails?.premium_credit,
             diesel_cash: getLatestPrice?.data?.fuelDetails?.diesel_cash,
             diesel_credit: getLatestPrice?.data?.fuelDetails?.diesel_credit,
+            ne_cash:getLatestPrice?.data?.fuelDetails?.ne_cash,
+            ne_credit:getLatestPrice?.data?.fuelDetails?.ne_credit
           });
           // return getLatestPrice?.data?.fuelDetails;
         }
@@ -88,6 +92,8 @@ export const Fule = () => {
   // handleUpdate price function...
   const handleUpdate = async () => {
     setIsUpdating(true);
+    console.log(fuelPrice);
+    // return
     try {
       const reqUpdatePrice = await axiosInstance.post(
         "/api/v1/common/fuel-update",
@@ -100,6 +106,8 @@ export const Fule = () => {
           premium_credit: fuelPrice.premium_credit.toString(),
           diesel_cash: fuelPrice.diesel_cash.toString(),
           diesel_credit: fuelPrice.diesel_credit.toString(),
+          ne_cash:fuelPrice.ne_cash.toString(),
+          ne_credit:fuelPrice.ne_credit.toString(),
         }
       );
 
@@ -140,8 +148,8 @@ export const Fule = () => {
 
   // Column Definitions: Defines & controls grid columns.
   const [colDefs, setColDefs] = useState([
-    { field: "id" },
-    { field: "business_id" },
+    // { field: "id" },
+    // { field: "business_id" },
     { field: "date" },
     { field: "time" },
     { field: "regular_cash" },
@@ -152,6 +160,8 @@ export const Fule = () => {
     { field: "premium_credit" },
     { field: "diesel_cash" },
     { field: "diesel_credit" },
+    { field: "ne_cash" },
+    { field: "ne_credit" },
     { field: "status" },
   ]);
 
@@ -391,8 +401,8 @@ export const Fule = () => {
                           type="number"
                           placeholder="price.."
                           onChange={handleOnChange}
-                          value={fuelPrice.premium_cash}
-                          name="premium_cash"
+                          value={fuelPrice.ne_cash}
+                          name="ne_cash"
                         />
                       </div>
                       <div className="flex flex-col gap-2 sm:gap-3 flex-1 w-full">
@@ -404,8 +414,8 @@ export const Fule = () => {
                           type="number"
                           placeholder="price.."
                           onChange={handleOnChange}
-                          value={fuelPrice.premium_credit}
-                          name="premium_credit"
+                          value={fuelPrice.ne_credit}
+                          name="ne_credit"
                         />
                       </div>
                     </div>
