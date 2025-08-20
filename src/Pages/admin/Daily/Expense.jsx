@@ -177,8 +177,10 @@ export const ExpenseList = () => {
                   Add Expense <PluseIcon />
                 </button>
                 <button className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
-                Export CSV <Download size={16} />
+                Import CSV <PluseIcon />
                 </button>
+
+                
               </div>
             </div>
           </div>
@@ -202,7 +204,7 @@ export const ExpenseList = () => {
                   </div>
                 </div>
                 <div className="flex gap-2 sm:gap-4 justify-between items-center flex-wrap">
-                  <button
+                  {/*<button
                     onClick={handleToolbarEdit}
                     className="flex justify-between items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC] hover:bg-[#003d99] transition-all duration-300"
                   >
@@ -213,6 +215,9 @@ export const ExpenseList = () => {
                   </button>
                   <button className="flex justify-between items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC]">
                     Filter <FilterIcon />
+                  </button>*/}
+                  <button className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-1.5 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
+                  Export CSV <Download size={16} />
                   </button>
                   <button>
                     <DeleteIcon />

@@ -472,13 +472,13 @@ export const Inventory = () => {
                       </p>
                     </div>
                   </div>
-                  <div className="flex gap-1.5 sm:gap-2 md:gap-3 lg:gap-4 justify-between items-center flex-wrap">
-                    <button className="flex justify-between items-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-1 text-xs sm:text-sm md:text-base lg:text-[0.9dvw] xl:text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-semibold">
+                  <div className="flex gap-1.5 sm:gap-2 md:gap-3 lg:gap-4 justify-end items-center flex-wrap">
+                    {/*<button className="flex justify-between items-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-1 text-xs sm:text-sm md:text-base lg:text-[0.9dvw] xl:text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-semibold">
                       Sort <SortIcon className="w-3 h-3 sm:w-4 sm:h-4" />
                     </button>
                     <button className="flex justify-center items-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-1 text-xs sm:text-sm md:text-base lg:text-[0.9dvw] xl:text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-semibold bg-[#0052CC]">
                       Filter <FilterIcon className="w-3 h-3 sm:w-4 sm:h-4" />
-                    </button>
+                    </button>*/}
                     <button>
                       <DeleteIcon className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
                     </button>

@@ -4,7 +4,7 @@ import { PluseIcon } from "../../../assets/Svgs/AllSvgs";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { Loading } from "../../../components/UI/Loading/Loading";
 import { AgGridReact } from "ag-grid-react";
-import { Edit, Trash, X } from "lucide-react";
+import { Edit, Trash, X, Download } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import axiosInstance from "../../../utils/axios-interceptor";
@@ -148,6 +148,7 @@ export const LoyaltyDeals = () => {
                     Active Deals
                   </h3>
                   <div className="h-full w-full overflow-x-scroll overflow-y-auto lg:overflow-visible">
+                    
                     <div className="min-w-[800px] lg:min-w-0 h-full">
                       <AgGridReact
                         rowData={rowData}
@@ -165,6 +166,7 @@ export const LoyaltyDeals = () => {
                       />
                     </div>
                   </div>
+                  
                 </div>
               </div>
 

@@ -2,7 +2,7 @@ import React, { useMemo, useState } from "react";
 import { Layout } from "../../../components/common/Layout/Layout";
 //import { Plus, PlusIcon, X } from "lucide-react";
 import {PluseIcon} from "../../../assets/Svgs/AllSvgs";
-import {X} from "lucide-react"; 
+import {X,Download} from "lucide-react"; 
 import { Overviewcards } from "../../../components/common/Overviewcards/Overviewcards";
 
 import {
@@ -189,11 +189,14 @@ export const InventoryLottery = () => {
                 </div>
               </div>
               <div className="flex gap-2 sm:gap-4 justify-between items-center">
-                <button className="flex justify-between items-center gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-[600]">
+                {/*<button className="flex justify-between items-center gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-[600]">
                   Sort <SortIcon />
                 </button>
                 <button className="flex justify-between items-center gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC]">
                   Filter <FilterIcon />
+                </button>*/}
+                <button className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-1.5 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
+                  Export CSV <Download size={16} />
                 </button>
                 <button>
                   <DeleteIcon className="w-5 h-5" />
