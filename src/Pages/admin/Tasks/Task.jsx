@@ -184,18 +184,14 @@ export const Task = () => {
   };
 
   const onView = (task) => {
-    console.log("onView called with task:", task);
-    console.log("Navigating to:", `/admin/tasks/task-details/${task.TaskID}`);
-    navigate(`/admin/tasks/task-details/${task.TaskID}`, {
-      state: { taskData: task },
-      replace: false,
-    });
+    navigate(`/admin/tasks/task-details/${task.id}`);
   };
 
   const onDelete = (product) => {
+    console.log(product);
     setDeleteModel({
       status: true,
-      productData: product.TaskID,
+      productData: product.id,
     });
   };
 
@@ -311,11 +307,12 @@ export const Task = () => {
           rowData={rowData}
         />
       )}
-      {deleteModel.status && (
+      {deleteModel.status && deleteModel.productData && (
         <DeleteModel
           setDeleteModel={setDeleteModel}
-          deleteModel={deleteModel}
-          rowData={rowData}
+          path={`api/v1/user/task-delete/${deleteModel?.productData}`}
+          productId={deleteModel.productData}
+          // refetchQuery='get_tasks_lists'
         />
       )}
     </>

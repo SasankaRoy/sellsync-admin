@@ -26,6 +26,8 @@ export const Supplier = () => {
       Category: "Beer",
       Items: "500",
       Date: "12/05/2025",
+      Email:'test@gmail.com',
+      PhoneNumber:'8547993256',
       Action: ActionBtns,
     },
     {
@@ -35,6 +37,8 @@ export const Supplier = () => {
       Items: "300",
       Date: "12/06/2025",
       Action: ActionBtns,
+      Email:'test@gmail.com',
+      PhoneNumber:'8547993256',
     },
     {
       ID: "1281",
@@ -43,6 +47,8 @@ export const Supplier = () => {
       Items: "200",
       Date: "12/07/2025",
       Action: ActionBtns,
+      Email:'test@gmail.com',
+      PhoneNumber:'8547993256',
     },
     {
       ID: "1282",
@@ -51,6 +57,8 @@ export const Supplier = () => {
       Items: "400",
       Date: "12/08/2025",
       Action: ActionBtns,
+      Email:'test@gmail.com',
+      PhoneNumber:'8547993256',
     },
     {
       ID: "1283",
@@ -59,6 +67,8 @@ export const Supplier = () => {
       Items: "250",
       Date: "12/09/2025",
       Action: ActionBtns,
+      Email:'test@gmail.com',
+      PhoneNumber:'8547993256',
     },
   ]);
 
@@ -111,11 +121,13 @@ export const Supplier = () => {
 
   // Column Definitions: Defines & controls grid columns.
   const [colDefs, setColDefs] = useState([
-    { field: "ID" },
+    // { field: "ID" },
     { field: "SupplierName" },
     { field: "Category" },
     { field: "Items" },
-    { field: "Date" },
+    // { field: "Date" },
+    { field: "Email" },
+    { field: "PhoneNumber" },
     {
       headerName: "Actions",
       field: "actions",
