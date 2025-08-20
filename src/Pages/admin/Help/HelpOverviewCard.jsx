@@ -15,7 +15,7 @@ export const HelpOverviewCard = ({
       className={`bg-[${cardBgColor}] flex justify-between items-center w-full rounded-xl p-3`}
     >
       <div className="flex-1 shrink-0">
-        <h2 className="text-white font-semibold text-[1.6dvw] leading-[2dvw]">
+        <h2 className="text-white font-semibold xl:text-[1.6dvw] sm:text-[2.4dvw] md:text-[1.4dvw] leading-[2dvw]">
           {cardTitle}
         </h2>
         <button

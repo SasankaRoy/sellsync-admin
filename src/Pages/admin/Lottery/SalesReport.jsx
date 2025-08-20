@@ -146,10 +146,10 @@ export const SalesReport = () => {
             Sales Reports
           </h3>
           <div className="w-full flex justify-center sm:block sm:w-auto">
-            <button className="w-full sm:w-auto flex justify-center items-center gap-2 rounded-full bg-[var(--button-color5)] text-white mainFont px-6 py-3 sm:px-5 sm:py-2 cursor-pointer text-base sm:text-sm lg:text-base hover:opacity-90 transition-all duration-300">
+            {/*<button className="w-full sm:w-auto flex justify-center items-center gap-2 rounded-full bg-[var(--button-color5)] text-white mainFont px-6 py-3 sm:px-5 sm:py-2 cursor-pointer text-base sm:text-sm lg:text-base hover:opacity-90 transition-all duration-300">
               <Download size={20} className="w-5 h-5 sm:w-4 sm:h-4" />
               CSV
-            </button>
+            </button>*/}
           </div>
         </div>
         <div className="w-full flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-[60vh] sm:h-[70vh] lg:h-[85dvh]">
@@ -165,11 +165,14 @@ export const SalesReport = () => {
               </div>
             </div>
             <div className="flex gap-2 sm:gap-4 justify-between items-center flex-wrap">
-              <button className="flex justify-between items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-[600]">
+              {/*<button className="flex justify-between items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-[600]">
                 Sort <SortIcon className="w-4 h-4 sm:w-4 sm:h-4" />
               </button>
               <button className="flex justify-between items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC]">
                 Filter <FilterIcon className="w-4 h-4 sm:w-4 sm:h-4" />
+              </button>*/}
+              <button className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-1.5 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
+              Export CSV <Download size={16} />
               </button>
               <button aria-label="Delete selected entries">
                 <DeleteIcon className="w-5 h-5" />

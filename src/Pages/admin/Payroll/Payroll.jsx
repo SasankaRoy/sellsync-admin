@@ -298,13 +298,14 @@ export const Payroll = () => {
                 </p>
               </div>
             </div>
-            <div className="flex gap-2 sm:gap-4 justify-between items-center">
-              <button className="flex justify-between items-center gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-[600]">
+            <div className="flex gap-2 sm:gap-4 justify-end items-center">
+              {/*<button className="flex justify-between items-center gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-[600]">
                 Sort <SortIcon />
               </button>
               <button className="flex justify-between items-center gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC]">
                 Filter <FilterIcon />
-              </button>
+              </button>*/}
+
               <button>
                 <DeleteIcon />
               </button>
