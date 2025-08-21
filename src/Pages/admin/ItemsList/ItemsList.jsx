@@ -169,7 +169,6 @@ export const ItemsList = () => {
       BuyPrice: "$1.52",
       SellPrice: "$3.99",
       StockCode: "YELLOWSMALLPIPE",
-      SupplierID: "#202547",
       SupplierName: "Rahul Doe",
       Action: ActionBtns,
     },
@@ -358,8 +357,6 @@ export const ItemsList = () => {
                 <button className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
                   Import CSV <PluseIcon />
                 </button>
-              
-
               </div>
             </div>
           </div>
@@ -380,22 +377,9 @@ export const ItemsList = () => {
                   </div>
                 </div>
                 <div className="flex gap-2 sm:gap-4 justify-between items-center flex-wrap">
-                  {/*<button
-                    onClick={handleToolbarEdit}
-                    className="flex justify-between items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC] hover:bg-[#003d99] transition-all duration-300"
-                  >
-                    <Edit size={14} className="sm:w-4 sm:h-4" /> Edit
-                  </button>
-                  <button className="flex justify-between items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-[600]">
-                    Sort <SortIcon />
-                  </button>
-                  <button className="flex justify-between items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC]">
-                    Filter <FilterIcon />
-                  </button>*/}
                   <button className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-1.5 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
-                  Export CSV <Download size={16} />
-                </button>
-
+                    Export CSV <Download size={16} />
+                  </button>
                   <button>
                     <DeleteIcon />
                   </button>
@@ -406,7 +390,6 @@ export const ItemsList = () => {
                   <AgGridReact
                     rowData={rowData}
                     columnDefs={colDefs}
-                    // loading={loading}
                     defaultColDef={defaultColDef}
                     pagination={true}
                     rowSelection={rowSelection}
@@ -508,13 +491,13 @@ const EditAndViewModel = ({ productData, setShowModel, actionType }) => {
   const handleRenderTab = (currentTab) => {
     switch (currentTab) {
       case "Details":
-        return <DetailsTab />;
+        return <DetailsTab actionType={actionType} />;
       case "Options":
         return <OptionsTab />;
       case "Promotions":
         return <PromotionsTab />;
       default:
-        return <DetailsTab />;
+        return <DetailsTab actionType={actionType} />;
     }
   };
 
@@ -588,64 +571,102 @@ const EditAndViewModel = ({ productData, setShowModel, actionType }) => {
   );
 };
 
-const DetailsTab = () => {
-  const [addStockData, setAddStockData] = useState([1]);
+const DetailsTab = ({ actionType }) => {
   const [addQuantityData, setQuantityData] = useState([1]);
+  const [images, setImages] = useState([]);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const files = Array.from(e.dataTransfer.files).filter((file) =>
+      file.type.startsWith("image/")
+    );
+    setImages((prevImages) => [
+      ...prevImages,
+      ...files.map((file) => ({
+        file,
+        preview: URL.createObjectURL(file),
+      })),
+    ]);
+  };
+
+  const handleFileInput = (e) => {
+    const files = Array.from(e.target.files).filter((file) =>
+      file.type.startsWith("image/")
+    );
+    setImages((prevImages) => [
+      ...prevImages,
+      ...files.map((file) => ({
+        file,
+        preview: URL.createObjectURL(file),
+      })),
+    ]);
+  };
+
+  const handleRemoveImage = (index) => {
+    setImages((prevImages) => {
+      const updatedImages = prevImages.filter((_, i) => i !== index);
+      return updatedImages;
+    });
+  };
+
+  // Clean up preview URLs to prevent memory leaks
+  React.useEffect(() => {
+    return () => {
+      images.forEach((image) => URL.revokeObjectURL(image.preview));
+    };
+  }, [images]);
+
   return (
     <>
       <div className="w-full p-2">
-        <div className="relative">
-          <button
-            onClick={() =>
-              setAddStockData([...addStockData, addStockData.length + 1])
-            }
-            className="absolute top-0 right-0 p-1 flex justify-center items-center bg-[var(--button-color1)] text-white rounded-full cursor-pointer"
-          >
-            <Plus size={20} />
-          </button>
-          {addStockData.map((cur, id) => (
-            <div key={id} className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
-              <div className="flex flex-col gap-2 w-full">
-                <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-                  Stockcode
-                  <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
-                    *
-                  </span>
-                </label>
-                <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-
-                  type="text"
-                />
-              </div>
-              <div className="flex flex-col gap-2 w-full">
-                <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-                  Qty on Hand (Items)
-                  <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
-                    *
-                  </span>
-                </label>
-                <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-
-                  type="number"
-                />
-              </div>
-              <div className="flex flex-col gap-2 w-full">
-                <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-                  Qty on Hand (Cases)
-                  <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
-                    *
-                  </span>
-                </label>
-                <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                  
-                  type="number"
-                />
-              </div>
-            </div>
-          ))}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+          <div className="flex flex-col gap-2 w-full">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+              Stockcode
+              <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
+                *
+              </span>
+            </label>
+            <input
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              type="text"
+            />
+          </div>
+          <div className="flex flex-col gap-2 w-full">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+              Qty on Hand (Items)
+              <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
+                *
+              </span>
+            </label>
+            <input
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              type="number"
+            />
+          </div>
+          <div className="flex flex-col gap-2 w-full">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+              Qty on Hand (Cases)
+              <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
+                *
+              </span>
+            </label>
+            <input
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              type="number"
+            />
+          </div>
         </div>
 
         <div className="w-full my-4 flex flex-col gap-2">
@@ -659,21 +680,22 @@ const DetailsTab = () => {
           />
         </div>
 
-        <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 gap-2 my-4 relative">
-          <button
-            onClick={() =>
-              setQuantityData([...addQuantityData, addQuantityData.length + 1])
-            }
-            className="absolute -top-[4%] sm:-top-[2%] cursor-pointer -right-[0%] p-1 flex justify-center items-center bg-[var(--button-color1)] text-white rounded-full"
-          >
-            <Plus size={20} />
-          </button>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 my-4">
           <div className="w-full flex flex-col gap-1.5">
             <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Qty
               <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
                 *
               </span>
+            </label>
+            <input
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              type="number"
+            />
+          </div>
+          <div className="w-full flex flex-col gap-1.5">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+              Qty Extra
             </label>
             <input
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
@@ -691,7 +713,19 @@ const DetailsTab = () => {
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="number"
             />
-            </div>
+          </div>
+          <div className="w-full flex flex-col gap-1.5">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+              Price Extra
+            </label>
+            <input
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              type="number"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 my-4">
           <div className="w-full flex flex-col gap-1.5">
             <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Avg Cost
@@ -704,14 +738,12 @@ const DetailsTab = () => {
               type="number"
             />
           </div>
-
           <div className="w-full flex flex-col gap-1.5">
             <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Margin</label>
             <input
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="number"
             />
-
           </div>
           <div className="w-full flex flex-col gap-1.5">
             <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Markup</label>
@@ -720,7 +752,6 @@ const DetailsTab = () => {
               type="number"
             />
           </div>
-
           <div className="w-full flex flex-col gap-1.5">
             <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Latest Cost
@@ -737,8 +768,6 @@ const DetailsTab = () => {
               type="number"
             />
           </div>
-
-   
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
@@ -853,10 +882,90 @@ const DetailsTab = () => {
             />
           </div>
         </div>
+
+        <div className="w-full flex flex-col gap-2 mt-4">
+          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+            Upload Images
+          </label>
+          <div
+            className={`w-full border-2 border-dashed rounded-lg p-4 transition-colors duration-300 cursor-pointer ${
+              isDragging
+                ? "border-blue-500 bg-blue-50"
+                : "border-gray-300 bg-gray-50 hover:bg-gray-100"
+            } ${actionType === "View" ? "opacity-50 pointer-events-none" : ""}`}
+            onDragEnter={actionType !== "View" ? handleDragOver : undefined}
+            onDragLeave={actionType !== "View" ? handleDragLeave : undefined}
+            onDragOver={actionType !== "View" ? handleDragOver : undefined}
+            onDrop={actionType !== "View" ? handleDrop : undefined}
+            onClick={
+              actionType !== "View"
+                ? () => document.getElementById("file-input").click()
+                : undefined
+            }
+          >
+            <div className="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-4">
+              <div className="flex flex-col items-center justify-center space-y-2">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                  <svg
+                    className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-gray-600 text-sm sm:text-base">
+                    {isDragging ? "Drop files here" : "Upload images"}
+                  </p>
+                </div>
+              </div>
+              {images.length > 0 && (
+                <div className="relative flex items-center space-x-2">
+                  {images.map((image, index) => (
+                    <div key={index} className="relative">
+                      <img
+                        src={image.preview}
+                        alt={`Uploaded ${index}`}
+                        className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-md"
+                      />
+                      {actionType !== "View" && (
+                        <button
+                          onClick={() => handleRemoveImage(index)}
+                          className="absolute -top-2 -right-2 bg-[var(--Negative-color)] text-white rounded-full p-1 hover:bg-red-700 transition-all duration-300"
+                          title="Remove image"
+                        >
+                          <CircleX size={14} className="sm:w-4 sm:h-4" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            {actionType !== "View" && (
+              <input
+                id="file-input"
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                onChange={handleFileInput}
+              />
+            )}
+          </div>
+        </div>
       </div>
     </>
   );
 };
+
 const OptionsTab = () => {
   return (
     <>
@@ -1097,6 +1206,7 @@ const OptionsTab = () => {
     </>
   );
 };
+
 const PromotionsTab = () => {
   const [rowData, setRowData] = useState([
     {
@@ -1149,7 +1259,6 @@ const PromotionsTab = () => {
               <AgGridReact
                 rowData={rowData}
                 columnDefs={colDefs}
-                // loading={loading}
                 defaultColDef={defaultColDef}
                 pagination={true}
                 rowSelection={rowSelection}
