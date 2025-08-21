@@ -167,21 +167,21 @@ export const Layout = ({ children }) => {
           </button>
           <div className="flex flex-col gap-2 w-full">
             <label className="text-sm lg:text-[1dvw] font-normal paraFont">
-              Stockcode 
+              Stockcode
               <span className="text-xs lg:text-[.9dvw] text-[var(--Negative-color)]">
                 *
               </span>
             </label>
             <div className="flex flex-col gap-2 w-full">
-                <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                  placeholder="Enter the code"
-                  type="text"
-                  onChange={(e) =>
-                    handleStockFieldChange(0, "stockCode", e.target.value)
-                  }
-                />
-              </div>
+              <input
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                placeholder="Enter the code"
+                type="text"
+                onChange={(e) =>
+                  handleStockFieldChange(0, "stockCode", e.target.value)
+                }
+              />
+            </div>
           </div>
           <div className="flex flex-col gap-2 w-full">
             <label className="text-sm lg:text-[1dvw] font-normal paraFont">
@@ -191,15 +191,15 @@ export const Layout = ({ children }) => {
               </span>
             </label>
             <div className="flex flex-col gap-2 w-full">
-                <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                  placeholder="Enter Qty"
-                  type="text"
-                  onChange={(e) =>
-                    handleStockFieldChange(0, "qtyItems", e.target.value)
-                  }
-                />
-              </div>
+              <input
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                placeholder="Enter Qty"
+                type="text"
+                onChange={(e) =>
+                  handleStockFieldChange(0, "qtyItems", e.target.value)
+                }
+              />
+            </div>
           </div>
           <div className="flex flex-col gap-2 w-full">
             <label className="text-sm lg:text-[1dvw] font-normal paraFont">
@@ -209,15 +209,15 @@ export const Layout = ({ children }) => {
               </span>
             </label>
             <div className="flex flex-col gap-2 w-full">
-                <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                  placeholder="Enter Cases"
-                  type="text"
-                  onChange={(e) =>
-                    handleStockFieldChange(0, "qtyCases", e.target.value)
-                  }
-                />
-              </div>
+              <input
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                placeholder="Enter Cases"
+                type="text"
+                onChange={(e) =>
+                  handleStockFieldChange(0, "qtyCases", e.target.value)
+                }
+              />
+            </div>
           </div>
         </div>
 
@@ -251,13 +251,12 @@ export const Layout = ({ children }) => {
                 *
               </span>
             </label>
-               <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
-                <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                  type="number"
-                 
-                />
-              </div>
+            <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
+              <input
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                type="number"
+              />
+            </div>
           </div>
           <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
             <label className="text-xs sm:text-sm lg:text-[1dvw] font-normal paraFont">
@@ -267,12 +266,11 @@ export const Layout = ({ children }) => {
               </span>
             </label>
             <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
-                <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                  type="number"
-                 
-                />
-              </div>
+              <input
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                type="number"
+              />
+            </div>
           </div>
           <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
             <label className="text-xs sm:text-sm lg:text-[1dvw] font-normal paraFont">
@@ -282,61 +280,55 @@ export const Layout = ({ children }) => {
               </span>
             </label>
             <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
-                <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                  type="number"
-                 
-                />
-              </div>
+              <input
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                type="number"
+              />
+            </div>
           </div>
           <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
             <label className="text-xs sm:text-sm lg:text-[1dvw] font-normal paraFont">
               Margin
             </label>
             <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
-                <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                  type="number"
-                 
-                />
-              </div>
+              <input
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                type="number"
+              />
+            </div>
           </div>
           <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
             <label className="text-xs sm:text-sm lg:text-[1dvw] font-normal paraFont">
               Markup
             </label>
             <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
-                <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                  type="number"
-                 
-                />
-              </div>
+              <input
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                type="number"
+              />
+            </div>
           </div>
           <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
             <label className="text-xs sm:text-sm lg:text-[1dvw] font-normal paraFont">
               Latest Cost
             </label>
             <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
-                <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                  type="number"
-                 
-                />
-              </div>
-            
+              <input
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                type="number"
+              />
+            </div>
           </div>
           <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
             <label className="text-xs sm:text-sm lg:text-[1dvw] font-normal paraFont">
               Qty
             </label>
             <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
-                <input
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                  type="number"
-                 
-                />
-              </div>
+              <input
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                type="number"
+              />
+            </div>
           </div>
         </div>
 
@@ -578,7 +570,8 @@ export const Layout = ({ children }) => {
     };
 
     return (
-      <ErrorBoundary>
+      <>
+        {/* // <ErrorBoundary> */}
         <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center p-4">
           <div className="bg-white w-full max-w-4xl lg:w-[70%] max-h-[90vh] overflow-y-auto p-3 sm:p-5 rounded-lg shadow-md">
             <div className="flex justify-between items-center w-full p-2.5 rounded-md bg-[var(--sideMenu-color)] text-white">
@@ -618,7 +611,8 @@ export const Layout = ({ children }) => {
             </div>
           </div>
         </div>
-      </ErrorBoundary>
+        {/* </ErrorBoundary> */}
+      </>
     );
   };
 
@@ -631,10 +625,18 @@ export const Layout = ({ children }) => {
           className={({ isActive }) =>
             isActive
               ? `flex py-2 px-5 rounded-full font-[600] ${
-                  isTablet ? 'text-[30px]' : isMobile ? 'text-[20px]' : 'text-sm lg:text-[1.2dvw]'
+                  isTablet
+                    ? "text-[30px]"
+                    : isMobile
+                    ? "text-[20px]"
+                    : "text-sm lg:text-[1.2dvw]"
                 } paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink`
               : `flex py-2 px-5 rounded-full font-[600] ${
-                  isTablet ? 'text-[30px]' : isMobile ? 'text-[20px]' : 'text-sm lg:text-[1.2dvw]'
+                  isTablet
+                    ? "text-[30px]"
+                    : isMobile
+                    ? "text-[20px]"
+                    : "text-sm lg:text-[1.2dvw]"
                 } paraFont justify-start items-center gap-4 deActiveLink ${
                   isMobile ? "text-white" : ""
                 }`
@@ -650,12 +652,20 @@ export const Layout = ({ children }) => {
           className={({ isActive }) =>
             isActive
               ? `flex py-2 px-5 rounded-full font-[600] ${
-                  isTablet ? 'text-[30px]' : isMobile ? 'text-[20px]' : 'text-sm lg:text-[1.2dvw]'
+                  isTablet
+                    ? "text-[30px]"
+                    : isMobile
+                    ? "text-[20px]"
+                    : "text-sm lg:text-[1.2dvw]"
                 } paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink`
               : `flex py-2 px-5 rounded-full font-[600] ${
-                  isTablet ? 'text-[30px]' : isMobile ? 'text-[20px]' : 'text-sm lg:text-[1.2dvw]'
+                  isTablet
+                    ? "text-[30px]"
+                    : isMobile
+                    ? "text-[20px]"
+                    : "text-sm lg:text-[1.2dvw]"
                 } paraFont justify-start items-center gap-4 deActiveLink ${
-                  isMobile ? 'text-white' : ""
+                  isMobile ? "text-white" : ""
                 }`
           }
           onClick={() => handleNavigation("/admin/sale")}
@@ -672,7 +682,11 @@ export const Layout = ({ children }) => {
               setSubMenuStateDaily(!subMenuStateDaily);
             }}
             className={`flex py-2 px-5 rounded-full cursor-pointer font-[600] ${
-              isTablet ? 'text-[30px]' : isMobile ? 'text-[20px]' : 'text-sm lg:text-[1.2dvw]'
+              isTablet
+                ? "text-[30px]"
+                : isMobile
+                ? "text-[20px]"
+                : "text-sm lg:text-[1.2dvw]"
             } paraFont justify-start items-center gap-4 deActiveLink ${
               isMobile ? "text-white" : ""
             }`}
@@ -688,9 +702,7 @@ export const Layout = ({ children }) => {
           </div>
           <div
             className={`bg-[#0052cc]/50 w-[80%] mx-auto rounded-md flex flex-col gap-2 ${
-              subMenuStateDaily
-                ? "h-auto opacity-100 p-2"
-                : "h-0 opacity-0"
+              subMenuStateDaily ? "h-auto opacity-100 p-2" : "h-0 opacity-0"
             } transition-all duration-300 ease-linear overflow-hidden`}
           >
             <NavLink
@@ -703,10 +715,18 @@ export const Layout = ({ children }) => {
                 isActive && setSubMenuStateDaily(true);
                 return isActive
                   ? `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink`
                   : `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 deActiveLink ${
                       isMobile ? "text-white" : ""
                     }`;
@@ -724,10 +744,18 @@ export const Layout = ({ children }) => {
                 isActive && setSubMenuStateDaily(true);
                 return isActive
                   ? `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink`
                   : `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 deActiveLink ${
                       isMobile ? "text-white" : ""
                     }`;
@@ -745,7 +773,11 @@ export const Layout = ({ children }) => {
               setSubMenuStateInventory(!subMenuStateInventory);
             }}
             className={`flex py-2 px-5 rounded-full cursor-pointer font-[600] ${
-              isTablet ? 'text-[30px]' : isMobile ? 'text-[20px]' : 'text-sm lg:text-[1.2dvw]'
+              isTablet
+                ? "text-[30px]"
+                : isMobile
+                ? "text-[20px]"
+                : "text-sm lg:text-[1.2dvw]"
             } paraFont justify-start items-center gap-4 deActiveLink ${
               isMobile ? "text-white" : ""
             }`}
@@ -763,9 +795,7 @@ export const Layout = ({ children }) => {
           </div>
           <div
             className={`bg-[#0052cc]/50 w-[80%] mx-auto rounded-md flex flex-col gap-2 ${
-              subMenuStateInventory
-                ? "h-auto opacity-100 p-2"
-                : "h-0 opacity-0"
+              subMenuStateInventory ? "h-auto opacity-100 p-2" : "h-0 opacity-0"
             } transition-all duration-300 ease-linear overflow-hidden`}
           >
             <NavLink
@@ -778,10 +808,18 @@ export const Layout = ({ children }) => {
                 isActive && setSubMenuStateInventory(true);
                 return isActive
                   ? `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink`
                   : `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 deActiveLink ${
                       isMobile ? "text-white" : ""
                     }`;
@@ -799,10 +837,18 @@ export const Layout = ({ children }) => {
                 isActive && setSubMenuStateInventory(true);
                 return isActive
                   ? `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink`
                   : `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 deActiveLink ${
                       isMobile ? "text-white" : ""
                     }`;
@@ -816,10 +862,18 @@ export const Layout = ({ children }) => {
                 isActive && setSubMenuStateInventory(true);
                 return isActive
                   ? `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink`
                   : `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 deActiveLink ${
                       isMobile ? "text-white" : ""
                     }`;
@@ -834,10 +888,18 @@ export const Layout = ({ children }) => {
                 isActive && setSubMenuStateInventory(true);
                 return isActive
                   ? `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink`
                   : `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 deActiveLink ${
                       isMobile ? "text-white" : ""
                     }`;
@@ -847,22 +909,24 @@ export const Layout = ({ children }) => {
               Groups
             </NavLink>
 
-
-
-
-
-
-
             <NavLink
               to="/admin/inventory/suppliers"
               className={({ isActive }) => {
                 isActive && setSubMenuStateInventory(true);
                 return isActive
                   ? `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink`
                   : `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 deActiveLink ${
                       isMobile ? "text-white" : ""
                     }`;
@@ -877,10 +941,18 @@ export const Layout = ({ children }) => {
                 isActive && setSubMenuStateInventory(true);
                 return isActive
                   ? `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink`
                   : `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 deActiveLink ${
                       isMobile ? "text-white" : ""
                     }`;
@@ -895,10 +967,18 @@ export const Layout = ({ children }) => {
                 isActive && setSubMenuStateInventory(true);
                 return isActive
                   ? `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink`
                   : `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 deActiveLink ${
                       isMobile ? "text-white" : ""
                     }`;
@@ -915,10 +995,18 @@ export const Layout = ({ children }) => {
           className={({ isActive }) =>
             isActive
               ? `flex py-2 px-5 rounded-full font-[600] ${
-                  isTablet ? 'text-[30px]' : isMobile ? 'text-[20px]' : 'text-sm lg:text-[1.2dvw]'
+                  isTablet
+                    ? "text-[30px]"
+                    : isMobile
+                    ? "text-[20px]"
+                    : "text-sm lg:text-[1.2dvw]"
                 } paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink`
               : `flex py-2 px-5 rounded-full font-[600] ${
-                  isTablet ? 'text-[30px]' : isMobile ? 'text-[20px]' : 'text-sm lg:text-[1.2dvw]'
+                  isTablet
+                    ? "text-[30px]"
+                    : isMobile
+                    ? "text-[20px]"
+                    : "text-sm lg:text-[1.2dvw]"
                 } paraFont justify-start items-center gap-4 deActiveLink ${
                   isMobile ? "text-white" : ""
                 }`
@@ -938,7 +1026,11 @@ export const Layout = ({ children }) => {
               setSubMenuStateUser(!subMenuStateUser);
             }}
             className={`flex py-2 px-5 rounded-full cursor-pointer font-[600] ${
-              isTablet ? 'text-[30px]' : isMobile ? 'text-[20px]' : 'text-sm lg:text-[1.2dvw]'
+              isTablet
+                ? "text-[30px]"
+                : isMobile
+                ? "text-[20px]"
+                : "text-sm lg:text-[1.2dvw]"
             } paraFont justify-start items-center gap-4 deActiveLink ${
               isMobile ? "text-white" : ""
             }`}
@@ -956,9 +1048,7 @@ export const Layout = ({ children }) => {
           </div>
           <div
             className={`bg-[#0052cc]/50 w-[80%] mx-auto rounded-md flex flex-col gap-2 ${
-              subMenuStateUser
-                ? "h-auto opacity-100 p-2"
-                : "h-0 opacity-0"
+              subMenuStateUser ? "h-auto opacity-100 p-2" : "h-0 opacity-0"
             } transition-all duration-300 ease-linear overflow-hidden`}
           >
             <NavLink
@@ -971,10 +1061,18 @@ export const Layout = ({ children }) => {
                 isActive && setSubMenuStateUser(true);
                 return isActive
                   ? `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink`
                   : `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 deActiveLink ${
                       isMobile ? "text-white" : ""
                     }`;
@@ -992,10 +1090,18 @@ export const Layout = ({ children }) => {
                 isActive && setSubMenuStateUser(true);
                 return isActive
                   ? `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink`
                   : `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 deActiveLink ${
                       isMobile ? "text-white" : ""
                     }`;
@@ -1013,7 +1119,11 @@ export const Layout = ({ children }) => {
               setSunMenuStatePos(!subMenuStatePos);
             }}
             className={`flex py-2 px-5 rounded-full cursor-pointer font-[600] ${
-              isTablet ? 'text-[30px]' : isMobile ? 'text-[20px]' : 'text-sm lg:text-[1.2dvw]'
+              isTablet
+                ? "text-[30px]"
+                : isMobile
+                ? "text-[20px]"
+                : "text-sm lg:text-[1.2dvw]"
             } paraFont justify-start items-center gap-4 deActiveLink ${
               isMobile ? "text-white" : ""
             }`}
@@ -1031,9 +1141,7 @@ export const Layout = ({ children }) => {
           </div>
           <div
             className={`bg-[#0052cc]/50 w-[80%] mx-auto rounded-md flex flex-col gap-2 ${
-              subMenuStatePos
-                ? "h-auto opacity-100 p-2 "
-                : "h-0 opacity-0"
+              subMenuStatePos ? "h-auto opacity-100 p-2 " : "h-0 opacity-0"
             } transition-all duration-300 ease-linear overflow-hidden`}
           >
             <NavLink
@@ -1046,10 +1154,18 @@ export const Layout = ({ children }) => {
                 isActive && setSunMenuStatePos(true);
                 return isActive
                   ? `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink line-clamp-1`
                   : `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 deActiveLink line-clamp-1 ${
                       isMobile ? "text-white" : ""
                     }`;
@@ -1067,10 +1183,18 @@ export const Layout = ({ children }) => {
                 isActive && setSunMenuStatePos(true);
                 return isActive
                   ? `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink line-clamp-1`
                   : `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 deActiveLink line-clamp-1 ${
                       isMobile ? "text-white" : ""
                     }`;
@@ -1088,10 +1212,18 @@ export const Layout = ({ children }) => {
                 isActive && setSunMenuStatePos(true);
                 return isActive
                   ? `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink line-clamp-1`
                   : `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 deActiveLink line-clamp-1 ${
                       isMobile ? "text-white" : ""
                     }`;
@@ -1109,10 +1241,18 @@ export const Layout = ({ children }) => {
                 isActive && setSunMenuStatePos(true);
                 return isActive
                   ? `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink line-clamp-1`
                   : `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 deActiveLink line-clamp-1 ${
                       isMobile ? "text-white" : ""
                     }`;
@@ -1130,10 +1270,18 @@ export const Layout = ({ children }) => {
                 isActive && setSunMenuStatePos(true);
                 return isActive
                   ? `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink line-clamp-1`
                   : `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 deActiveLink line-clamp-1 ${
                       isMobile ? "text-white" : ""
                     }`;
@@ -1151,10 +1299,18 @@ export const Layout = ({ children }) => {
                 isActive && setSunMenuStatePos(true);
                 return isActive
                   ? `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink line-clamp-1`
                   : `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 deActiveLink line-clamp-1 ${
                       isMobile ? "text-white" : ""
                     }`;
@@ -1172,10 +1328,18 @@ export const Layout = ({ children }) => {
                 isActive && setSunMenuStatePos(true);
                 return isActive
                   ? `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink line-clamp-1`
                   : `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 deActiveLink line-clamp-1 ${
                       isMobile ? "text-white" : ""
                     }`;
@@ -1193,10 +1357,18 @@ export const Layout = ({ children }) => {
                 isActive && setSunMenuStatePos(true);
                 return isActive
                   ? `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink line-clamp-1`
                   : `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 deActiveLink line-clamp-1 ${
                       isMobile ? "text-white" : ""
                     }`;
@@ -1214,10 +1386,18 @@ export const Layout = ({ children }) => {
                 isActive && setSunMenuStatePos(true);
                 return isActive
                   ? `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink line-clamp-1`
                   : `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 deActiveLink line-clamp-1 ${
                       isMobile ? "text-white" : ""
                     }`;
@@ -1235,7 +1415,11 @@ export const Layout = ({ children }) => {
               setSubMenuStateLottery(!subMenuStateLottery);
             }}
             className={`flex py-2 px-5 rounded-full cursor-pointer font-[600] ${
-              isTablet ? 'text-[30px]' : isMobile ? 'text-[20px]' : 'text-sm lg:text-[1.2dvw]'
+              isTablet
+                ? "text-[30px]"
+                : isMobile
+                ? "text-[20px]"
+                : "text-sm lg:text-[1.2dvw]"
             } paraFont justify-start items-center gap-4 deActiveLink ${
               isMobile ? "text-white" : ""
             }`}
@@ -1251,9 +1435,7 @@ export const Layout = ({ children }) => {
           </div>
           <div
             className={`bg-[#0052cc]/50 w-[80%] mx-auto rounded-md flex flex-col gap-2 ${
-              subMenuStateLottery
-                ? "h-auto opacity-100 p-2"
-                : "h-0 opacity-0"
+              subMenuStateLottery ? "h-auto opacity-100 p-2" : "h-0 opacity-0"
             } transition-all duration-300 ease-linear overflow-hidden`}
           >
             <NavLink
@@ -1266,10 +1448,18 @@ export const Layout = ({ children }) => {
                 isActive && setSubMenuStateLottery(true);
                 return isActive
                   ? `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink`
                   : `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 deActiveLink ${
                       isMobile ? "text-white" : ""
                     }`;
@@ -1287,10 +1477,18 @@ export const Layout = ({ children }) => {
                 isActive && setSubMenuStateLottery(true);
                 return isActive
                   ? `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink`
                   : `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 deActiveLink ${
                       isMobile ? "text-white" : ""
                     }`;
@@ -1308,10 +1506,18 @@ export const Layout = ({ children }) => {
                 isActive && setSubMenuStateLottery(true);
                 return isActive
                   ? `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink`
                   : `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 deActiveLink ${
                       isMobile ? "text-white" : ""
                     }`;
@@ -1329,7 +1535,11 @@ export const Layout = ({ children }) => {
               setSubMenuStateLoyalty(!subMenuStateLoyalty);
             }}
             className={`flex py-2 px-5 rounded-full cursor-pointer font-[600] ${
-              isTablet ? 'text-[30px]' : isMobile ? 'text-[20px]' : 'text-sm lg:text-[1.2dvw]'
+              isTablet
+                ? "text-[30px]"
+                : isMobile
+                ? "text-[20px]"
+                : "text-sm lg:text-[1.2dvw]"
             } paraFont justify-start items-center gap-4 deActiveLink ${
               isMobile ? "text-white" : ""
             }`}
@@ -1345,9 +1555,7 @@ export const Layout = ({ children }) => {
           </div>
           <div
             className={`bg-[#0052cc]/50 w-[80%] mx-auto rounded-md flex flex-col gap-2 ${
-              subMenuStateLoyalty
-                ? "h-auto opacity-100 p-2"
-                : "h-0 opacity-0"
+              subMenuStateLoyalty ? "h-auto opacity-100 p-2" : "h-0 opacity-0"
             } transition-all duration-300 ease-linear overflow-hidden`}
           >
             <NavLink
@@ -1360,10 +1568,18 @@ export const Layout = ({ children }) => {
                 isActive && setSubMenuStateLoyalty(true);
                 return isActive
                   ? `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink`
                   : `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 deActiveLink ${
                       isMobile ? "text-white" : ""
                     }`;
@@ -1381,10 +1597,18 @@ export const Layout = ({ children }) => {
                 isActive && setSubMenuStateLoyalty(true);
                 return isActive
                   ? `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink`
                   : `flex py-2 px-5 rounded-full font-[600] ${
-                      isTablet ? 'text-[25px]' : isMobile ? 'text-[16px]' : 'text-xs lg:text-[1dvw]'
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
                     } paraFont justify-start items-center gap-4 deActiveLink ${
                       isMobile ? "text-white" : ""
                     }`;
@@ -1400,10 +1624,18 @@ export const Layout = ({ children }) => {
           className={({ isActive }) =>
             isActive
               ? `flex py-2 px-5 rounded-full font-[600] ${
-                  isTablet ? 'text-[30px]' : isMobile ? 'text-[20px]' : 'text-sm lg:text-[1.2dvw]'
+                  isTablet
+                    ? "text-[30px]"
+                    : isMobile
+                    ? "text-[20px]"
+                    : "text-sm lg:text-[1.2dvw]"
                 } paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink`
               : `flex py-2 px-5 rounded-full font-[600] ${
-                  isTablet ? 'text-[30px]' : isMobile ? 'text-[20px]' : 'text-sm lg:text-[1.2dvw]'
+                  isTablet
+                    ? "text-[30px]"
+                    : isMobile
+                    ? "text-[20px]"
+                    : "text-sm lg:text-[1.2dvw]"
                 } paraFont justify-start items-center gap-4 deActiveLink ${
                   isMobile ? "text-white" : ""
                 }`
@@ -1421,10 +1653,18 @@ export const Layout = ({ children }) => {
           className={({ isActive }) =>
             isActive
               ? `flex py-2 px-5 rounded-full font-[600] ${
-                  isTablet ? 'text-[30px]' : isMobile ? 'text-[20px]' : 'text-sm lg:text-[1.2dvw]'
+                  isTablet
+                    ? "text-[30px]"
+                    : isMobile
+                    ? "text-[20px]"
+                    : "text-sm lg:text-[1.2dvw]"
                 } paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink`
               : `flex py-2 px-5 rounded-full font-[600] ${
-                  isTablet ? 'text-[30px]' : isMobile ? 'text-[20px]' : 'text-sm lg:text-[1.2dvw]'
+                  isTablet
+                    ? "text-[30px]"
+                    : isMobile
+                    ? "text-[20px]"
+                    : "text-sm lg:text-[1.2dvw]"
                 } paraFont justify-start items-center gap-4 deActiveLink ${
                   isMobile ? "text-white" : ""
                 }`
@@ -1442,10 +1682,18 @@ export const Layout = ({ children }) => {
           className={({ isActive }) =>
             isActive
               ? `flex py-2 px-5 rounded-full font-[600] ${
-                  isTablet ? 'text-[30px]' : isMobile ? 'text-[20px]' : 'text-sm lg:text-[1.2dvw]'
+                  isTablet
+                    ? "text-[30px]"
+                    : isMobile
+                    ? "text-[20px]"
+                    : "text-sm lg:text-[1.2dvw]"
                 } paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink`
               : `flex py-2 px-5 rounded-full font-[600] ${
-                  isTablet ? 'text-[30px]' : isMobile ? 'text-[20px]' : 'text-sm lg:text-[1.2dvw]'
+                  isTablet
+                    ? "text-[30px]"
+                    : isMobile
+                    ? "text-[20px]"
+                    : "text-sm lg:text-[1.2dvw]"
                 } paraFont justify-start items-center gap-4 deActiveLink ${
                   isMobile ? "text-white" : ""
                 }`
@@ -1463,10 +1711,18 @@ export const Layout = ({ children }) => {
           className={({ isActive }) =>
             isActive
               ? `flex py-2 px-5 rounded-full font-[600] ${
-                  isTablet ? 'text-[30px]' : isMobile ? 'text-[20px]' : 'text-sm lg:text-[1.2dvw]'
+                  isTablet
+                    ? "text-[30px]"
+                    : isMobile
+                    ? "text-[20px]"
+                    : "text-sm lg:text-[1.2dvw]"
                 } paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink`
               : `flex py-2 px-5 rounded-full font-[600] ${
-                  isTablet ? 'text-[30px]' : isMobile ? 'text-[20px]' : 'text-sm lg:text-[1.2dvw]'
+                  isTablet
+                    ? "text-[30px]"
+                    : isMobile
+                    ? "text-[20px]"
+                    : "text-sm lg:text-[1.2dvw]"
                 } paraFont justify-start items-center gap-4 deActiveLink ${
                   isMobile ? "text-white" : ""
                 }`
@@ -1484,10 +1740,18 @@ export const Layout = ({ children }) => {
           className={({ isActive }) =>
             isActive
               ? `flex py-2 px-5 rounded-full font-[600] ${
-                  isTablet ? 'text-[30px]' : isMobile ? 'text-[20px]' : 'text-sm lg:text-[1.2dvw]'
+                  isTablet
+                    ? "text-[30px]"
+                    : isMobile
+                    ? "text-[20px]"
+                    : "text-sm lg:text-[1.2dvw]"
                 } paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink`
               : `flex py-2 px-5 rounded-full font-[600] ${
-                  isTablet ? 'text-[30px]' : isMobile ? 'text-[20px]' : 'text-sm lg:text-[1.2dvw]'
+                  isTablet
+                    ? "text-[30px]"
+                    : isMobile
+                    ? "text-[20px]"
+                    : "text-sm lg:text-[1.2dvw]"
                 } paraFont justify-start items-center gap-4 deActiveLink ${
                   isMobile ? "text-white" : ""
                 }`
@@ -1503,7 +1767,7 @@ export const Layout = ({ children }) => {
           <>
             <button
               className={`flex py-3 px-5 rounded-full font-[600] ${
-                isTablet ? 'text-[30px]' : 'text-[20px]'
+                isTablet ? "text-[30px]" : "text-[20px]"
               } paraFont justify-start items-center gap-4 bg-[var(--button-color1)] text-[var(--primary-color)] my-2 mx-2 hover:opacity-90 transition-all duration-300`}
               onClick={handleAddProduct}
             >
@@ -1512,9 +1776,11 @@ export const Layout = ({ children }) => {
               </div>
               Add Product
             </button>
-            <div className={`flex py-3 px-5 rounded-full font-[600] ${
-              isTablet ? 'text-[30px]' : 'text-[20px]'
-            } paraFont justify-start items-center gap-4 deActiveLink my-2 text-white`}>
+            <div
+              className={`flex py-3 px-5 rounded-full font-[600] ${
+                isTablet ? "text-[30px]" : "text-[20px]"
+              } paraFont justify-start items-center gap-4 deActiveLink my-2 text-white`}
+            >
               <Avatar style={{ filter: "brightness(0) invert(1)" }} />
               Profile
             </div>
@@ -1523,7 +1789,11 @@ export const Layout = ({ children }) => {
 
         <button
           className={`bg-[#E74C3C] py-3 px-6 gap-4 font-[var(--paraFont)] cursor-pointer text-[var(--primary-color)] rounded-full flex justify-start items-center mt-[10%] ${
-            isTablet ? 'text-[30px]' : isMobile ? 'text-[20px]' : 'text-sm lg:text-[1.1dvw]'
+            isTablet
+              ? "text-[30px]"
+              : isMobile
+              ? "text-[20px]"
+              : "text-sm lg:text-[1.1dvw]"
           } ${isMobile ? "text-white" : ""}`}
           onClick={() => handleNavigation("/logout")}
         >
@@ -1568,15 +1838,17 @@ export const Layout = ({ children }) => {
             ></div>
             <div className="mobile-sidebar fixed left-0 top-0 h-full w-full bg-[var(--sideMenu-color)] transform transition-transform duration-300 ease-in-out flex flex-col">
               {/* Mobile Logo Header with Enhanced Padding */}
-              <div className={`flex items-center justify-between h-16 w-full ${
-                isTablet ? 'px-8 py-22' : 'px-4 py-10'
-              }`}>
+              <div
+                className={`flex items-center justify-between h-16 w-full ${
+                  isTablet ? "px-8 py-22" : "px-4 py-10"
+                }`}
+              >
                 <div className="flex items-center justify-center flex-1">
                   <img
                     alt="sellsync.com"
                     src={SellsyncLogo}
                     className={`${
-                      isTablet ? 'h-25 w-auto mt-4' : 'h-15 w-auto mt-4'
+                      isTablet ? "h-25 w-auto mt-4" : "h-15 w-auto mt-4"
                     }`}
                   />
                 </div>
@@ -1587,21 +1859,20 @@ export const Layout = ({ children }) => {
                       setIsMobileMenuOpen(false);
                     }}
                     className={`flex items-center justify-center ${
-                      isTablet ? 'w-12 h-12' : 'w-10 h-10'
+                      isTablet ? "w-12 h-12" : "w-10 h-10"
                     } rounded-full hover:bg-white/10 transition-colors`}
                   >
-                    <X 
-                      size={isTablet ? 28 : 24} 
-                      className="text-white" 
-                    />
+                    <X size={isTablet ? 28 : 24} className="text-white" />
                   </button>
                 </div>
               </div>
 
               {/* Mobile Navigation with Enhanced Spacing */}
-              <div className={`flex-1 overflow-y-auto ${
-                isTablet ? 'pt-6' : 'pt-4'
-              }`}>
+              <div
+                className={`flex-1 overflow-y-auto ${
+                  isTablet ? "pt-6" : "pt-4"
+                }`}
+              >
                 <SidebarNavigation />
               </div>
             </div>
@@ -1671,7 +1942,7 @@ export const Layout = ({ children }) => {
               isMobile ? "h-[calc(100%-80px)]" : "h-[87%]"
             } overflow-y-auto overflow-x-hidden`}
           >
-            <ErrorBoundary>{children}</ErrorBoundary>
+            {children}
           </div>
         </div>
       </div>

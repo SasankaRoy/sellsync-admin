@@ -10,26 +10,11 @@ import { toast } from "react-toastify";
 import moment from "moment";
 
 export const ViewTask = () => {
-  const location = useLocation();
   const navigate = useNavigate();
   const { tid } = useParams(); // Get task ID from URL parameter
-  const [taskData, setTaskData] = useState(null);
-  const [comments, setComments] = useState([
-    {
-      id: 1,
-      author: "Shasank",
-      message: "The message",
-      date: "07/02",
-    },
-    {
-      id: 2,
-      author: "Shasank",
-      message: "The message",
-      date: "07/02",
-    },
-  ]);
   const [newComment, setNewComment] = useState("");
   const queryClient = useQueryClient();
+  const [isSaving, setIsSaving] = useState(false);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["get_task_info", tid],
@@ -48,17 +33,46 @@ export const ViewTask = () => {
       }
     },
   });
+
+  const {
+    data: comments = [],
+    isLoading: loadingComment,
+    error: errorComment,
+  } = useQuery({
+    queryKey: ["get_comments_list", tid],
+    queryFn: async () => {
+      try {
+        const getCommentList = await axiosInstance.post(
+          "api/v1/user/comment-list",
+          {
+            task_id: tid,
+            page: 1,
+            limit: 10,
+          }
+        );
+
+        if (getCommentList.status === 200 && getCommentList.data) {
+          // console.log(getCommentList.data);
+          return getCommentList.data.results;
+        }
+      } catch (error) {
+        console.error(error);
+        throw new Error(error);
+      }
+    },
+  });
   const [statusUpdate, setStatusUpdate] = useState("");
 
   useEffect(() => {
     if (error) {
       toast.error(error.message);
     }
-    setStatusUpdate(data?.task_status);
   }, [error]);
   useEffect(() => {
-    setStatusUpdate(data?.task_status);
-  }, [data]);
+    if (data?.task_status) {
+      setStatusUpdate(data.task_status);
+    }
+  }, [data?.task_status]);
 
   const handleStatusChange = async (e) => {
     try {
@@ -85,24 +99,41 @@ export const ViewTask = () => {
     }
   };
 
-  const handleCommentSubmit = () => {
+  const handleCommentChange = (e) => {
+    setNewComment(e.target.value);
+  };
+
+  const handleCommentSubmit = async () => {
+    setIsSaving(true);
     if (newComment.trim()) {
-      const comment = {
-        id: comments.length + 1,
-        author: "Current User", // You can replace this with actual user name
-        message: newComment,
-        date: new Date().toLocaleDateString("en-GB", {
-          day: "2-digit",
-          month: "2-digit",
-        }),
-      };
-      setComments([...comments, comment]);
-      setNewComment("");
+      try {
+        const reqUpdateComment = await axiosInstance.post(
+          "api/v1/user/comment-on-task",
+          {
+            task_id: tid,
+            comment: newComment,
+          }
+        );
+
+        if (reqUpdateComment.data && reqUpdateComment.status === 200) {
+          queryClient.invalidateQueries({
+            queryKey: ["get_comments_list"],
+          });
+          setNewComment("");
+        }
+      } catch (error) {
+        console.error(error);
+        toast.error(error.response.data.message || "Something went wrong!");
+        throw new Error(error);
+      } finally {
+        setIsSaving(false);
+      }
     }
   };
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
+      e.preventDefault();
       handleCommentSubmit();
     }
   };
@@ -183,7 +214,9 @@ export const ViewTask = () => {
                   setStatusUpdate(e.target.value);
                   handleStatusChange(e);
                 }}
-                className={"bg-[#F3F3F3] disabled:pointer-events-none disabled:opacity-75 disabled:cursor-not-allowed w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] appearance-none rounded-xl py-1.5 px-3"}
+                className={
+                  "bg-[#F3F3F3] disabled:pointer-events-none disabled:opacity-75 disabled:cursor-not-allowed w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] appearance-none rounded-xl py-1.5 px-3"
+                }
               >
                 <option value="pending">Pending</option>
                 <option value="on-going">On-going</option>
@@ -196,43 +229,56 @@ export const ViewTask = () => {
           <div className="border border-[#d4d4d4] rounded-md bg-white p-5">
             <h3 className="text-[1.3dvw] font-[500]">Comments</h3>
             <div className="w-full min-h-[20vw] max-h-[60vh] overflow-y-auto bg-[var(--border-color)]/40 flex flex-col gap-6 justify-end items-start p-4 capitalize rounded-md mt-5">
-              {comments.map((comment) => (
-                <div
-                  key={comment.id}
-                  className="flex justify-center items-start gap-3"
-                >
-                  <div>
-                    <Avatar />
-                  </div>
-                  <div className="flex justify-start items-start flex-col">
-                    <div className="flex justify-start items-center gap-1">
-                      <h4 className="mainFont font-[500] text-black text-[.9vw]">
-                        {comment.author}
-                      </h4>
-                      <Dot />
-                      <span className="paraFont text-[.9dvw] text-gray-500">
-                        {comment.date}
-                      </span>
-                    </div>
-                    <p className="text-black paraFont text-[1.2vw]">
-                      {comment.message}
-                    </p>
-                  </div>
+              {comments.length === 0 ? (
+                <div className="">
+                  <p className="text-[1.5dvw] text-center mainFont text-gray-400/80 font-medium">
+                    No Comments Found...
+                  </p>
                 </div>
-              ))}
+              ) : (
+                <>
+                  {comments.map((comment) => (
+                    <div
+                      key={comment.id}
+                      className="flex justify-center items-start gap-3"
+                    >
+                      <div>
+                        <Avatar />
+                      </div>
+                      <div className="flex justify-start items-start flex-col">
+                        <div className="flex justify-start items-center gap-1">
+                          <h4 className="mainFont font-[500] text-black text-[.9vw]">
+                            {comment.created_by.name}
+                          </h4>
+                          <Dot />
+                          <span className="paraFont text-[.9dvw] text-gray-500">
+                            {comment.createdAt}
+                          </span>
+                        </div>
+                        <p className="text-black paraFont text-[1.2vw]">
+                          {comment.comment}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
             </div>
             <div className="flex justify-center items-center gap-4 w-full my-3">
               <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] appearance-none rounded-xl py-1.5 px-3"
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] appearance-none rounded-xl py-1.5 px-3 disabled:pointer-events-none disabled:opacity-70 disabled:cursor-not-allowed"
                 type="text"
                 placeholder="enter comments.."
                 value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                onKeyPress={handleKeyPress}
+                onChange={handleCommentChange}
+                onKeyUp={handleKeyPress}
+                disabled={isSaving}
               />
               <button
+                disabled={isSaving}
+                type="button"
                 onClick={handleCommentSubmit}
-                className="mainFont bg-[var(--button-color1)] text-white px-5 py-1.5 rounded-md cursor-pointer font-[500]"
+                className="mainFont disabled:pointer-events-none disabled:opacity-70 disabled:cursor-not-allowed bg-[var(--button-color1)] text-white px-5 py-1.5 rounded-md cursor-pointer font-[500]"
               >
                 Send
               </button>

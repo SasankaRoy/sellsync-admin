@@ -114,8 +114,7 @@ export const Vendors = () => {
     setCurrentPage(1); // Reset to first page when searching
   }, 800);
 
-  const onEdit = (vendor) => {
-    console.log("Edit Button Clicked", vendor);
+  const onEdit = (vendor) => {    
     setEditModel({
       state: true,
       productData: vendor,
