@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Layout } from "../../../components/common/Layout/Layout";
 import {
   DeleteIcon,
@@ -10,6 +10,10 @@ import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import { CircleX, Edit, Plus, Trash, Download } from "lucide-react";
 import { DeleteModel } from "../../../components/common/Models/DeleteMode"; // Corrected to match Category.jsx
+import { useQuery } from "@tanstack/react-query";
+import axiosInstance from "../../../utils/axios-interceptor";
+import { Loading } from "../../../components/UI/Loading/Loading";
+import { toast } from "react-toastify";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -19,58 +23,92 @@ const rowSelection = {
 };
 
 export const Supplier = () => {
-  const [rowData, setRowData] = useState([
-    {
-      ID: "1279",
-      SupplierName: "A.B. BEVRAGE INC. (BUDWEISER)",
-      Category: "Beer",
-      Items: "500",
-      Date: "12/05/2025",
-      Email:'test@gmail.com',
-      PhoneNumber:'8547993256',
-      Action: ActionBtns,
+  // const [rowData, setRowData] = useState([
+  //   {
+  //     ID: "1279",
+  //     SupplierName: "A.B. BEVRAGE INC. (BUDWEISER)",
+  //     Category: "Beer",
+  //     Items: "500",
+  //     Date: "12/05/2025",
+  //     Email: "test@gmail.com",
+  //     PhoneNumber: "8547993256",
+  //     Action: ActionBtns,
+  //   },
+  //   {
+  //     ID: "1280",
+  //     SupplierName: "VINO DISTRIBUTORS",
+  //     Category: "Wine",
+  //     Items: "300",
+  //     Date: "12/06/2025",
+  //     Action: ActionBtns,
+  //     Email: "test@gmail.com",
+  //     PhoneNumber: "8547993256",
+  //   },
+  //   {
+  //     ID: "1281",
+  //     SupplierName: "SPIRIT CO.",
+  //     Category: "Spirits",
+  //     Items: "200",
+  //     Date: "12/07/2025",
+  //     Action: ActionBtns,
+  //     Email: "test@gmail.com",
+  //     PhoneNumber: "8547993256",
+  //   },
+  //   {
+  //     ID: "1282",
+  //     SupplierName: "CRAFT BEER SUPPLY",
+  //     Category: "Beer",
+  //     Items: "400",
+  //     Date: "12/08/2025",
+  //     Action: ActionBtns,
+  //     Email: "test@gmail.com",
+  //     PhoneNumber: "8547993256",
+  //   },
+  //   {
+  //     ID: "1283",
+  //     SupplierName: "PREMIUM LIQUORS",
+  //     Category: "Spirits",
+  //     Items: "250",
+  //     Date: "12/09/2025",
+  //     Action: ActionBtns,
+  //     Email: "test@gmail.com",
+  //     PhoneNumber: "8547993256",
+  //   },
+  // ]);
+  const {
+    data: rowData = [],
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["get_suppliers_list"],
+    queryFn: async () => {
+      try {
+        const getSupplierList = await axiosInstance.post(
+          "api/v1/supplier/list",
+          {
+            page: 1,
+            limit: 10,
+            // search_text: "one",
+          }
+        );
+        if (getSupplierList.status === 200 && getSupplierList.data) {
+          return getSupplierList?.data?.results || getSupplierList?.data || [];
+        }
+        return [];
+      } catch (error) {
+        throw new Error(
+          error?.response?.data?.error || "Failed to fetch Suppliers"
+        );
+      }
     },
-    {
-      ID: "1280",
-      SupplierName: "VINO DISTRIBUTORS",
-      Category: "Wine",
-      Items: "300",
-      Date: "12/06/2025",
-      Action: ActionBtns,
-      Email:'test@gmail.com',
-      PhoneNumber:'8547993256',
-    },
-    {
-      ID: "1281",
-      SupplierName: "SPIRIT CO.",
-      Category: "Spirits",
-      Items: "200",
-      Date: "12/07/2025",
-      Action: ActionBtns,
-      Email:'test@gmail.com',
-      PhoneNumber:'8547993256',
-    },
-    {
-      ID: "1282",
-      SupplierName: "CRAFT BEER SUPPLY",
-      Category: "Beer",
-      Items: "400",
-      Date: "12/08/2025",
-      Action: ActionBtns,
-      Email:'test@gmail.com',
-      PhoneNumber:'8547993256',
-    },
-    {
-      ID: "1283",
-      SupplierName: "PREMIUM LIQUORS",
-      Category: "Spirits",
-      Items: "250",
-      Date: "12/09/2025",
-      Action: ActionBtns,
-      Email:'test@gmail.com',
-      PhoneNumber:'8547993256',
-    },
-  ]);
+  });
+
+  useEffect(() => {
+    if (error) {
+      console.log(error);
+      toast.error(error.message || "Failed to fetch suppliers");
+    }
+  }, [error]);
 
   const [showModel, setShowModel] = useState({
     state: false,
@@ -122,12 +160,39 @@ export const Supplier = () => {
   // Column Definitions: Defines & controls grid columns.
   const [colDefs, setColDefs] = useState([
     // { field: "ID" },
-    { field: "SupplierName" },
-    { field: "Category" },
-    { field: "Items" },
+    { field: "name", headerName: "Supplier Name" },
+    { field: "email", headerName: "Email" },
+    { field: "mobile", headerName: "Mobile" },
     // { field: "Date" },
-    { field: "Email" },
-    { field: "PhoneNumber" },
+    {
+      field: "address",
+      headerName: "Address",
+      valueGetter: (params) => {
+        const data = params.data;
+        if (data?.address) {
+          if (typeof data.address === "string") return data.address;
+          if (typeof data.address === "object") {
+            const addr = data.address;
+            return `${addr.street || ""} ${addr.city || ""} ${
+              addr.state || ""
+            } ${addr.zip || ""}`.trim();
+          }
+        }
+        return "";
+      },
+    },
+    {
+      field: "createdAt",
+      headerName: "Created Date",
+      valueGetter: (params) => {
+        const date = params.data?.createdAt || params.data?.LastOrderDate;
+        if (date) {
+          return new Date(date).toLocaleDateString();
+        }
+        return "";
+      },
+    },
+    { field: "status", headerName: "Status" },
     {
       headerName: "Actions",
       field: "actions",
@@ -150,94 +215,94 @@ export const Supplier = () => {
 
   return (
     <Layout>
-      <div className="pb-14 w-full px-4 sm:px-6 lg:px-0">
-        <div className="w-full">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-0">
-            <h3 className="text-2xl md:text-xl lg:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
-              Suppliers List
-            </h3>
-            <div className="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-3 sm:gap-5 w-full sm:w-auto">
-              <button
-                onClick={onAddSupplier}
-                className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color1)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
-              >
-                Add Supplier <PluseIcon />
-              </button>
-              {/*<button className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <div className="pb-14 w-full px-4 sm:px-6 lg:px-0">
+          <div className="w-full">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-0">
+              <h3 className="text-2xl md:text-xl lg:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
+                Suppliers List
+              </h3>
+              <div className="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-3 sm:gap-5 w-full sm:w-auto">
+                <button
+                  onClick={onAddSupplier}
+                  className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color1)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
+                >
+                  Add Supplier <PluseIcon />
+                </button>
+                {/*<button className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
                 Export CSV <Download size={16} />
               </button>*/}
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="w-full h-[60vh] sm:h-[70vh] lg:h-[75vh]">
-          <div className="w-full flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-full">
-            <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center py-1.5 shrink-0 gap-3 sm:gap-0">
-              <div className="flex justify-between sm:justify-center items-center gap-3 w-full sm:w-auto">
-                <select className="font-[500] mainFont px-4 border-none outline-none text-sm lg:text-base">
-                  <option>All Categories</option>
-                  <option>Beer</option>
-                  <option>Wine</option>
-                  <option>Spirits</option>
-                </select>
-                <div className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-[1.8dvw] lg:w-[1.8dvw] bg-[var(--counterBg-color)] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem] sm:min-w-[1.75rem] sm:min-h-[1.75rem] md:min-w-[2rem] md:min-h-[2rem]">
-                  <p className="text-xs sm:text-xs md:text-sm lg:text-[1dvw] font-[500] text-white">
-                    {rowData.length}
-                  </p>
+          <div className="w-full h-[60vh] sm:h-[70vh] lg:h-[75vh]">
+            <div className="w-full flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-full">
+              <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center py-1.5 shrink-0 gap-3 sm:gap-0">
+                <div className="flex justify-between sm:justify-center items-center gap-3 w-full sm:w-auto">
+                  <select className="font-[500] mainFont px-4 border-none outline-none text-sm lg:text-base">
+                    <option>All Categories</option>
+                    <option>Beer</option>
+                    <option>Wine</option>
+                    <option>Spirits</option>
+                  </select>
+                  <div className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-[1.8dvw] lg:w-[1.8dvw] bg-[var(--counterBg-color)] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem] sm:min-w-[1.75rem] sm:min-h-[1.75rem] md:min-w-[2rem] md:min-h-[2rem]">
+                    <p className="text-xs sm:text-xs md:text-sm lg:text-[1dvw] font-[500] text-white">
+                      {rowData.length}
+                    </p>
+                  </div>
                 </div>
-              </div>
-              <div className="flex gap-2 sm:gap-4 justify-between items-center flex-wrap">
-                {/*<button className="flex justify-between items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-[600]">
+                <div className="flex gap-2 sm:gap-4 justify-between items-center flex-wrap">
+                  {/*<button className="flex justify-between items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-[600]">
                   Sort <SortIcon />
                 </button>
                 <button className="flex justify-between items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC]">
                   Filter <FilterIcon />
                 </button>*/}
-                <button className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-1.5 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
-                  Export CSV <Download size={16} />
-                </button>
-                <button>
-                  <DeleteIcon />
-                </button>
+                  <button className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-1.5 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
+                    Export CSV <Download size={16} />
+                  </button>
+                  <button>
+                    <DeleteIcon />
+                  </button>
+                </div>
               </div>
-            </div>
-            <div className="h-full w-full overflow-x-scroll overflow-y-auto">
-              <div className="min-w-[800px] h-full">
-                <AgGridReact
-                  rowData={rowData}
-                  columnDefs={colDefs}
-                  defaultColDef={defaultColDef}
-                  pagination={true}
-                  rowSelection={rowSelection}
-                  onSelectionChanged={(event) => console.log("Row Selected!")}
-                  onCellValueChanged={(event) =>
-                    console.log(`New Cell Value: ${event.value}`)
-                  }
-                  className="w-full h-full text-sm"
-                />
+              <div className="h-full w-full overflow-x-scroll overflow-y-auto">
+                <div className="min-w-[800px] h-full">
+                  <AgGridReact
+                    rowData={rowData}
+                    columnDefs={colDefs}
+                    defaultColDef={defaultColDef}
+                    pagination={true}
+                    rowSelection={rowSelection}
+                    onSelectionChanged={(event) => console.log("Row Selected!")}
+                    onCellValueChanged={(event) =>
+                      console.log(`New Cell Value: ${event.value}`)
+                    }
+                    className="w-full h-full text-sm"
+                  />
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {showModel.state && (
-          <EditAndAddModel
-            productData={showModel.productData || {}}
-            setShowModel={setShowModel}
-            actionType={showModel.actionType}
-            setRowData={setRowData}
-            rowData={rowData}
-          />
-        )}
-        {deleteModel.state && deleteModel.productId && (
-          <DeleteModel
-            setDeleteModel={setDeleteModel}
-            productId={deleteModel.productId}
-            setRowData={setRowData}
-            rowData={rowData}
-          />
-        )}
-      </div>
+          {showModel.state && (
+            <EditAndAddModel
+              productData={showModel.productData || {}}
+              setShowModel={setShowModel}
+              actionType={showModel.actionType}
+            />
+          )}
+          {deleteModel.state && deleteModel.productId && (
+            <DeleteModel
+              setDeleteModel={setDeleteModel}
+              productId={deleteModel.productId}
+            />
+          )}
+        </div>
+      )}
     </Layout>
   );
 };
@@ -272,7 +337,13 @@ const ActionBtns = (props) => {
   );
 };
 
-const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowData, rowData }) => {
+const EditAndAddModel = ({
+  productData = {},
+  setShowModel,
+  actionType,
+  setRowData,
+  rowData,
+}) => {
   const [showNewSupplierInput, setShowNewSupplierInput] = useState(false);
   const [showNewCategoryInput, setShowNewCategoryInput] = useState(false);
   const [supplierFields, setSupplierFields] = useState([
@@ -303,14 +374,14 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
   // Items is now a number input, so we don't need predefined options
 
   const formatDateForInput = (dateString) => {
-    if (!dateString) return '';
-    const [month, day, year] = dateString.split('/');
-    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    if (!dateString) return "";
+    const [month, day, year] = dateString.split("/");
+    return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
   };
 
   const formatDateForDisplay = (dateString) => {
-    if (!dateString) return '';
-    const [year, month, day] = dateString.split('-');
+    if (!dateString) return "";
+    const [year, month, day] = dateString.split("-");
     return `${month}/${day}/${year}`;
   };
 
@@ -335,7 +406,9 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
 
   const handleRemoveField = (indexToRemove) => {
     if (supplierFields.length > 1) {
-      setSupplierFields(supplierFields.filter((_, index) => index !== indexToRemove));
+      setSupplierFields(
+        supplierFields.filter((_, index) => index !== indexToRemove)
+      );
     }
   };
 
@@ -371,7 +444,10 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
         }))
         .filter(
           (supplier) =>
-            supplier.SupplierName && supplier.Category && supplier.Items && supplier.Date
+            supplier.SupplierName &&
+            supplier.Category &&
+            supplier.Items &&
+            supplier.Date
         );
       setRowData([...rowData, ...newSuppliers]);
     } else if (actionType === "Edit") {
@@ -423,7 +499,13 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
                       <input
                         type="text"
                         value={field.SupplierName}
-                        onChange={(e) => handleFieldChange(index, 'SupplierName', e.target.value)}
+                        onChange={(e) =>
+                          handleFieldChange(
+                            index,
+                            "SupplierName",
+                            e.target.value
+                          )
+                        }
                         className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                         placeholder="Enter supplier name"
                         autoFocus
@@ -432,7 +514,9 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
                         type="button"
                         onClick={() => {
                           if (field.SupplierName.trim()) {
-                            setSupplierOptions(prev => [...new Set([...prev, field.SupplierName.trim()])]);
+                            setSupplierOptions((prev) => [
+                              ...new Set([...prev, field.SupplierName.trim()]),
+                            ]);
                           }
                           setShowNewSupplierInput(false);
                         }}
@@ -447,11 +531,17 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
                       <select
                         value={field.SupplierName}
                         onChange={(e) => {
-                          if (e.target.value === 'custom') {
+                          if (e.target.value === "custom") {
                             setShowNewSupplierInput(true);
-                            handleFieldChange(index, 'SupplierName', '');
+                            handleFieldChange(index, "SupplierName", "");
                           } else {
-                            handleSelectChange(index, 'SupplierName', e.target.value, setSupplierOptions, supplierOptions);
+                            handleSelectChange(
+                              index,
+                              "SupplierName",
+                              e.target.value,
+                              setSupplierOptions,
+                              supplierOptions
+                            );
                           }
                         }}
                         className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 pl-3 pr-8 appearance-none"
@@ -462,11 +552,23 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
                             {option}
                           </option>
                         ))}
-                        <option value="custom" className="text-blue-500">➕ Add New Supplier</option>
+                        <option value="custom" className="text-blue-500">
+                          ➕ Add New Supplier
+                        </option>
                       </select>
                       <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                        <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                          <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                        <svg
+                          className="h-5 w-5 text-gray-400"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                          aria-hidden="true"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                            clipRule="evenodd"
+                          />
                         </svg>
                       </div>
                     </div>
@@ -481,7 +583,9 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
                       <input
                         type="text"
                         value={field.Category}
-                        onChange={(e) => handleFieldChange(index, 'Category', e.target.value)}
+                        onChange={(e) =>
+                          handleFieldChange(index, "Category", e.target.value)
+                        }
                         className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                         placeholder="Enter category name"
                         autoFocus
@@ -490,7 +594,9 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
                         type="button"
                         onClick={() => {
                           if (field.Category.trim()) {
-                            setCategoryOptions(prev => [...new Set([...prev, field.Category.trim()])]);
+                            setCategoryOptions((prev) => [
+                              ...new Set([...prev, field.Category.trim()]),
+                            ]);
                           }
                           setShowNewCategoryInput(false);
                         }}
@@ -505,11 +611,17 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
                       <select
                         value={field.Category}
                         onChange={(e) => {
-                          if (e.target.value === 'custom') {
+                          if (e.target.value === "custom") {
                             setShowNewCategoryInput(true);
-                            handleFieldChange(index, 'Category', '');
+                            handleFieldChange(index, "Category", "");
                           } else {
-                            handleSelectChange(index, 'Category', e.target.value, setCategoryOptions, categoryOptions);
+                            handleSelectChange(
+                              index,
+                              "Category",
+                              e.target.value,
+                              setCategoryOptions,
+                              categoryOptions
+                            );
                           }
                         }}
                         className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 pl-3 pr-8 appearance-none"
@@ -520,36 +632,54 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
                             {option}
                           </option>
                         ))}
-                        <option value="custom" className="text-blue-500">➕ Add New Category</option>
+                        <option value="custom" className="text-blue-500">
+                          ➕ Add New Category
+                        </option>
                       </select>
                       <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                        <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                          <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                        <svg
+                          className="h-5 w-5 text-gray-400"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                          aria-hidden="true"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                            clipRule="evenodd"
+                          />
                         </svg>
                       </div>
                     </div>
                   )}
                 </div>
                 <div className="w-full flex flex-col gap-2">
-                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Items</label>
+                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+                    Items
+                  </label>
                   <input
                     type="text"
                     value={field.Items}
                     onChange={(e) => {
-                      handleFieldChange(index, 'Items', e.target.value);
+                      handleFieldChange(index, "Items", e.target.value);
                     }}
                     className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                     placeholder="Enter items"
                   />
                 </div>
                 <div className="w-full flex flex-col gap-2">
-                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Date</label>
+                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+                    Date
+                  </label>
                   <input
                     type="date"
                     value={formatDateForInput(field.Date)}
                     onChange={(e) => {
-                      const formattedDate = formatDateForDisplay(e.target.value);
-                      handleFieldChange(index, 'Date', formattedDate);
+                      const formattedDate = formatDateForDisplay(
+                        e.target.value
+                      );
+                      handleFieldChange(index, "Date", formattedDate);
                     }}
                     className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                     required
