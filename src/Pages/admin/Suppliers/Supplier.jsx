@@ -10,7 +10,7 @@ import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import { CircleX, Edit, Plus, Trash, Download } from "lucide-react";
 import { DeleteModel } from "../../../components/common/Models/DeleteMode"; // Corrected to match Category.jsx
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "../../../utils/axios-interceptor";
 import { Loading } from "../../../components/UI/Loading/Loading";
 import { toast } from "react-toastify";
@@ -337,27 +337,65 @@ const ActionBtns = (props) => {
   );
 };
 
-const EditAndAddModel = ({
-  productData = {},
-  setShowModel,
-  actionType,
-  
-}) => {
-  const [] = useState({
-    supplierName:'',
-    phoneNumber:'',
-    email:'',
-    city:'',
-    zipCode:'',
-    state:'',
-    street:'',
-    status:'',
-    role:''
-  })
+const EditAndAddModel = ({ productData = {}, setShowModel, actionType }) => {
+  const [supplierInfo, setSupplierInfo] = useState({
+    supplierName: "",
+    phoneNumber: "",
+    email: "",
+    city: "",
+    zipCode: "",
+    state: "",
+    street: "",
+    status: "",
+    role: "",
+  });
+  const [isSaving, setIsSaving] = useState(false);
+  const queryClient = useQueryClient();
 
+  const handleOnChange = (e) => {
+    const { name, value } = e.target;
+    setSupplierInfo({
+      ...supplierInfo,
+      [name]: value,
+    });
+  };
 
+  const handleSubmitInfo = async () => {
+    setIsSaving(true);
+    try {
+      const reqSupplierUpdate = await axiosInstance.post(
+        "api/v1/supplier/add",
+        {
+          full_name: supplierInfo?.supplierName,
+          email: supplierInfo?.email,
+          role: supplierInfo?.role,
+          phone: supplierInfo?.phoneNumber,
+          status: supplierInfo?.status,
+          address: {
+            street: supplierInfo?.street,
+            city: supplierInfo?.city,
+            state: supplierInfo?.state,
+            zip: supplierInfo?.zipCode,
+          },
+        }
+      );
 
-
+      if (reqSupplierUpdate.status === 200 && reqSupplierUpdate.data) {
+        console.log(reqSupplierUpdate.data);
+        setIsSaving(false);
+        toast.success(reqSupplierUpdate?.data?.message || "Supplier added");
+        queryClient.invalidateQueries({
+          queryKey: ["get_suppliers_list"],
+        });
+      }
+    } catch (error) {
+      console.error(error || "somethink went wrong");
+      setIsSaving(false);
+    }
+    finally {
+      handleCloseModel();
+    }
+  };
 
   const handleCloseModel = () => {
     setShowModel({
@@ -394,8 +432,9 @@ const EditAndAddModel = ({
               id="supplierName"
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base md:text-lg lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-2 sm:px-3"
               placeholder="Enter supplier name..."
-              value=""
               name="supplierName"
+              value={supplierInfo.supplierName}
+              onChange={handleOnChange}
             />
           </div>
           <div className="w-full my-2 sm:my-3 flex flex-col gap-1 sm:gap-2">
@@ -409,12 +448,13 @@ const EditAndAddModel = ({
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base md:text-lg lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-2 sm:px-3"
               type="tel"
               placeholder="Phone number..."
-              name="phone"
+              name="phoneNumber"
               required
               id="phoneNumber"
+              value={supplierInfo.phoneNumber}
+              onChange={handleOnChange}
             />
           </div>
-
 
           <div className="w-full my-2 sm:my-3 flex flex-col gap-1 sm:gap-2 col-span-2">
             <label
@@ -430,88 +470,117 @@ const EditAndAddModel = ({
               name="email"
               required
               id="email"
+              value={supplierInfo.email}
+              onChange={handleOnChange}
             />
           </div>
 
-
+          <div className="w-full my-2 sm:my-3 flex flex-col gap-1 sm:gap-2">
+            <label
+              htmlFor="street"
+              className="text-sm sm:text-base md:text-lg lg:text-[1dvw] font-normal paraFont"
+            >
+              Street Address
+            </label>
+            <input
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base md:text-lg lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-2 sm:px-3"
+              type="text"
+              placeholder="Enter Street Address..."
+              name="street"
+              id="street"
+              value={supplierInfo.street}
+              onChange={handleOnChange}
+            />
+          </div>
+          <div className="w-full my-2 sm:my-3 flex flex-col gap-1 sm:gap-2">
+            <label
+              htmlFor="zip"
+              className="text-sm sm:text-base md:text-lg lg:text-[1dvw] font-normal paraFont"
+            >
+              Zip Code
+            </label>
+            <input
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base md:text-lg lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-2 sm:px-3"
+              type="text"
+              placeholder="Enter Zip Code..."
+              name="zipCode"
+              id="zip"
+              value={supplierInfo.zipCode}
+              onChange={handleOnChange}
+            />
+          </div>
+          <div className="w-full my-2 sm:my-3 flex flex-col gap-1 sm:gap-2">
+            <label
+              htmlFor="city"
+              className="text-sm sm:text-base md:text-lg lg:text-[1dvw] font-normal paraFont"
+            >
+              City
+            </label>
+            <input
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base md:text-lg lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-2 sm:px-3"
+              type="text"
+              placeholder="Enter City..."
+              name="city"
+              id="city"
+              value={supplierInfo.city}
+              onChange={handleOnChange}
+            />
+          </div>
+          <div className="w-full my-2 sm:my-3 flex flex-col gap-1 sm:gap-2">
+            <label
+              id="state"
+              className="text-sm sm:text-base md:text-lg lg:text-[1dvw] font-normal paraFont"
+            >
+              State
+            </label>
+            <input
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base md:text-lg lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-2 sm:px-3"
+              type="text"
+              placeholder="Enter State..."
+              name="state"
+              id="state"
+              value={supplierInfo.state}
+              onChange={handleOnChange}
+            />
+          </div>
 
           <div className="w-full my-2 sm:my-3 flex flex-col gap-1 sm:gap-2">
-              <label htmlFor="street" className="text-sm sm:text-base md:text-lg lg:text-[1dvw] font-normal paraFont">
-                Street Address
-              </label>
-              <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base md:text-lg lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-2 sm:px-3"
-                type="text"
-                placeholder="Enter Street Address..."
-                name="street"
-                id="street"
-              />
-            </div>
-            <div className="w-full my-2 sm:my-3 flex flex-col gap-1 sm:gap-2">
-              <label htmlFor="zip" className="text-sm sm:text-base md:text-lg lg:text-[1dvw] font-normal paraFont">
-                Zip Code
-              </label>
-              <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base md:text-lg lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-2 sm:px-3"
-                type="text"
-                placeholder="Enter Zip Code..."
-                name="zip"
-                id="zip"
-              />
-            </div>
-            <div className="w-full my-2 sm:my-3 flex flex-col gap-1 sm:gap-2">
-              <label htmlFor="city" className="text-sm sm:text-base md:text-lg lg:text-[1dvw] font-normal paraFont">
-                City
-              </label>
-              <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base md:text-lg lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-2 sm:px-3"
-                type="text"
-                placeholder="Enter City..."
-                name="city"
-                id="city"
-              />
-            </div>
-            <div className="w-full my-2 sm:my-3 flex flex-col gap-1 sm:gap-2">
-              <label id="state" className="text-sm sm:text-base md:text-lg lg:text-[1dvw] font-normal paraFont">
-                State
-              </label>
-              <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base md:text-lg lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-2 sm:px-3"
-                type="text"
-                placeholder="Enter State..."
-                name="state"
-                id="state"
-              />
-            </div>
-
-            <div className="w-full my-2 sm:my-3 flex flex-col gap-1 sm:gap-2">
-              <label htmlFor="role" className="text-sm sm:text-base md:text-lg lg:text-[1dvw] font-normal paraFont">
-                Role
-              </label>
-              <select
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base md:text-lg lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-2 sm:px-3"
-                name="role"
+            <label
+              htmlFor="role"
+              className="text-sm sm:text-base md:text-lg lg:text-[1dvw] font-normal paraFont"
+            >
+              Role
+            </label>
+            <select
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base md:text-lg lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-2 sm:px-3"
+              name="role"
               id="role"
-              >
-                <option value="">Select Vendor Role</option>
-                <option value="vendor">Vendor</option>
-              </select>
-            </div>
-            <div className="w-full my-2 sm:my-3 flex flex-col gap-1 sm:gap-2">
-                
-              <label htmlFor="status" className="text-sm sm:text-base md:text-lg lg:text-[1dvw] font-normal paraFont">
-                Status
-              </label>
-              <select
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base md:text-lg lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-2 sm:px-3"
-                name="status"
-                id="status"
-              >
-                <option value="">Select Vendor Status</option>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </select>
-            </div>
+              value={supplierInfo.role}
+              onChange={handleOnChange}
+            >
+              <option value="">Select Role</option>
+              <option value="supplier">Supplier</option>
+            </select>
+          </div>
+          <div className="w-full my-2 sm:my-3 flex flex-col gap-1 sm:gap-2">
+            <label
+              htmlFor="status"
+              className="text-sm sm:text-base md:text-lg lg:text-[1dvw] font-normal paraFont"
+            >
+              Status
+            </label>
+            <select
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base md:text-lg lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-2 sm:px-3"
+              name="status"
+              id="status"
+              value={supplierInfo.status}
+              onChange={handleOnChange}
+            >
+              <option value="">Select Vendor Status</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
         </div>
 
         <div className="flex flex-col sm:flex-row justify-end items-center gap-4 mt-6">
@@ -522,10 +591,14 @@ const EditAndAddModel = ({
             Cancel
           </button>
           <button
-            // onClick={handleSubmit}
+            onClick={handleSubmitInfo}
             className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300"
           >
-            {actionType === "Add" ? "Create" : "Update"}
+            {isSaving ? (
+              "Saving ...."
+            ) : (
+              <>{actionType === "Add" ? "Create" : "Update"}</>
+            )}
           </button>
         </div>
       </div>
