@@ -31,6 +31,9 @@ import {
   X,
 } from "lucide-react";
 import { useSelector } from "react-redux";
+import AddProductModel from "../../Common/AddProductModel/AddProductModel";
+import Notifications from "../Notification/Notifications";
+
 
 export const Layout = ({ children }) => {
   const clientData = useSelector((state) => state.loggedUser);
@@ -42,6 +45,8 @@ export const Layout = ({ children }) => {
   const [subMenuStateDaily, setSubMenuStateDaily] = useState(false);
   const [showProductModel, setShowProductModel] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [notificationCount, setNotificationCount] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
   const navigate = useNavigate();
@@ -237,101 +242,6 @@ export const Layout = ({ children }) => {
           />
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-2 my-4 relative">
-          <button
-            onClick={handleAddQuantityField}
-            className="absolute -top-[2%] cursor-pointer -right-[0%] p-1 flex justify-center items-center bg-[var(--button-color1)] text-white rounded-full z-10"
-          >
-            <Plus size={20} />
-          </button>
-          <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
-            <label className="text-xs sm:text-sm lg:text-[1dvw] font-normal paraFont">
-              Qty
-              <span className="text-xs lg:text-[.9dvw] text-[var(--Negative-color)]">
-                *
-              </span>
-            </label>
-            <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
-              <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                type="number"
-              />
-            </div>
-          </div>
-          <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
-            <label className="text-xs sm:text-sm lg:text-[1dvw] font-normal paraFont">
-              Price
-              <span className="text-xs lg:text-[.9dvw] text-[var(--Negative-color)]">
-                *
-              </span>
-            </label>
-            <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
-              <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                type="number"
-              />
-            </div>
-          </div>
-          <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
-            <label className="text-xs sm:text-sm lg:text-[1dvw] font-normal paraFont">
-              Avg Cost
-              <span className="text-xs lg:text-[.9dvw] text-[var(--Negative-color)]">
-                *
-              </span>
-            </label>
-            <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
-              <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                type="number"
-              />
-            </div>
-          </div>
-          <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
-            <label className="text-xs sm:text-sm lg:text-[1dvw] font-normal paraFont">
-              Margin
-            </label>
-            <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
-              <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                type="number"
-              />
-            </div>
-          </div>
-          <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
-            <label className="text-xs sm:text-sm lg:text-[1dvw] font-normal paraFont">
-              Markup
-            </label>
-            <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
-              <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                type="number"
-              />
-            </div>
-          </div>
-          <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
-            <label className="text-xs sm:text-sm lg:text-[1dvw] font-normal paraFont">
-              Latest Cost
-            </label>
-            <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
-              <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                type="number"
-              />
-            </div>
-          </div>
-          <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
-            <label className="text-xs sm:text-sm lg:text-[1dvw] font-normal paraFont">
-              Qty
-            </label>
-            <div className="w-full flex flex-col gap-1.5 min-w-[120px]">
-              <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                type="number"
-              />
-            </div>
-          </div>
-        </div>
-
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
           <div className="flex flex-col gap-2">
             <label className="text-sm lg:text-[1dvw] font-normal paraFont">
@@ -492,127 +402,6 @@ export const Layout = ({ children }) => {
           </div>
         </div>
       </div>
-    );
-  };
-
-  const AddProductModel = () => {
-    const [stockFields, setStockFields] = useState([
-      { id: 1, stockCode: "", qtyItems: "", qtyCases: "" },
-    ]);
-    const [quantityFields, setQuantityFields] = useState([
-      {
-        id: 1,
-        qty: "",
-        price: "",
-        avgCost: "",
-        margin: "",
-        markup: "",
-        latestCost: "",
-        qty2: "",
-      },
-    ]);
-    const [productDetails, setProductDetails] = useState({
-      name: "",
-      size: "",
-      vendorItemNo: "",
-      category: "",
-      supplier: "",
-      sku: "",
-      unitsPerCase: "",
-      caseCostTotal: "",
-      tax: "",
-      reorderPoint: "",
-      reorderValue: "",
-      rank: "",
-    });
-
-    const handleCloseModel = () => {
-      setShowProductModel(false);
-      // Reset state to avoid stale data
-      setStockFields([{ id: 1, stockCode: "", qtyItems: "", qtyCases: "" }]);
-      setQuantityFields([
-        {
-          id: 1,
-          qty: "",
-          price: "",
-          avgCost: "",
-          margin: "",
-          markup: "",
-          latestCost: "",
-          qty2: "",
-        },
-      ]);
-      setProductDetails({
-        name: "",
-        size: "",
-        vendorItemNo: "",
-        category: "",
-        supplier: "",
-        sku: "",
-        unitsPerCase: "",
-        caseCostTotal: "",
-        tax: "",
-        reorderPoint: "",
-        reorderValue: "",
-        rank: "",
-      });
-    };
-
-    const handleSubmit = () => {
-      console.log("Product Data:", {
-        stockFields,
-        quantityFields,
-        productDetails,
-      });
-      handleCloseModel();
-      // Optionally navigate to refresh the page
-      navigate(window.location.pathname);
-    };
-
-    return (
-      <>
-        {/* // <ErrorBoundary> */}
-        <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center p-4">
-          <div className="bg-white w-full max-w-4xl lg:w-[70%] max-h-[90vh] overflow-y-auto p-3 sm:p-5 rounded-lg shadow-md">
-            <div className="flex justify-between items-center w-full p-2.5 rounded-md bg-[var(--sideMenu-color)] text-white">
-              <h3 className="text-lg sm:text-xl lg:text-[1.5dvw] font-semibold">
-                Add Product
-              </h3>
-              <button
-                onClick={handleCloseModel}
-                className="hover:text-[var(--Negative-color)] transition-all duration-300 ease-linear cursor-pointer"
-              >
-                <CircleX size={24} className="sm:w-[30px] sm:h-[30px]" />
-              </button>
-            </div>
-
-            <DetailsTab
-              stockFields={stockFields}
-              setStockFields={setStockFields}
-              quantityFields={quantityFields}
-              setQuantityFields={setQuantityFields}
-              productDetails={productDetails}
-              setProductDetails={setProductDetails}
-            />
-
-            <div className="flex flex-col sm:flex-row justify-end items-center gap-3 sm:gap-5 my-4">
-              <button
-                className="w-full sm:w-auto px-4 sm:px-5 py-2 sm:py-1 rounded-md cursor-pointer text-white font-semibold bg-[var(--button-color4)] text-sm sm:text-base lg:text-[1.2dvw] hover:opacity-80 transition-all duration-300"
-                onClick={handleCloseModel}
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSubmit}
-                className="w-full sm:w-auto px-4 sm:px-5 py-2 sm:py-1 rounded-md cursor-pointer text-white font-semibold bg-[var(--button-color5)] text-sm sm:text-base lg:text-[1.2dvw] hover:opacity-80 transition-all duration-300"
-              >
-                Create
-              </button>
-            </div>
-          </div>
-        </div>
-        {/* </ErrorBoundary> */}
-      </>
     );
   };
 
@@ -1895,14 +1684,22 @@ export const Layout = ({ children }) => {
                 <button className="p-1 sm:p-[5px] border border-[#7f7f7f] rounded-full">
                   <SearchIcon />
                 </button>
-                <button className="p-1 sm:p-[5px] border border-[#7f7f7f] rounded-full">
+                <button 
+                  className="p-1 sm:p-[5px] border border-[#7f7f7f] rounded-full relative"
+                  onClick={() => setIsNotificationOpen(true)}
+                >
                   <NotificationIcon />
+                  {notificationCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+                      {notificationCount}
+                    </span>
+                  )}
                 </button>
                 <button
                   className="addProduct__BTN bg-[var(--button-color1)] text-[var(--primary-color)] flex justify-center items-center gap-1 sm:gap-[5px] px-3 py-2 sm:px-[25px] sm:py-[10px] font-[var(--mainFont)] font-medium text-xs sm:text-sm lg:text-[1dvw] border-none outline-none rounded-full cursor-pointer"
                   onClick={handleAddProduct}
                 >
-                  Add Product
+                  Add Product 
                   <PluseIcon />
                 </button>
                 <button className="p-1 sm:p-[5px] border border-[#7f7f7f] rounded-full">
@@ -1915,6 +1712,11 @@ export const Layout = ({ children }) => {
               </div>
             </nav>
           )}
+          <Notifications 
+            isOpen={isNotificationOpen} 
+            onClose={() => setIsNotificationOpen(false)}
+            onNotificationCountChange={setNotificationCount}
+          />
 
           {/* Mobile Header with Hamburger */}
           {isMobile && (
@@ -1946,7 +1748,9 @@ export const Layout = ({ children }) => {
           </div>
         </div>
       </div>
-      {showProductModel && <AddProductModel />}
+      {showProductModel && <AddProductModel onClose={() => setShowProductModel(false)} />}
     </>
   );
 };
+
+export default Layout;
