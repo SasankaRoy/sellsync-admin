@@ -539,6 +539,7 @@ const VendorEditModel = ({ forState, setEditVendorModel, productData, rowData, r
                 </div>
               )}
             </div>
+
             <div className="w-full my-2 sm:my-3 flex flex-col gap-1 sm:gap-2">
               <label className="text-sm sm:text-base md:text-lg lg:text-[1dvw] font-normal paraFont">
                 Street Address
@@ -595,6 +596,7 @@ const VendorEditModel = ({ forState, setEditVendorModel, productData, rowData, r
                 disabled={forState === "View"}
               />
             </div>
+
             <div className="w-full my-2 sm:my-3 flex flex-col gap-1 sm:gap-2">
               <label className="text-sm sm:text-base md:text-lg lg:text-[1dvw] font-normal paraFont">
                 Role
@@ -628,6 +630,7 @@ const VendorEditModel = ({ forState, setEditVendorModel, productData, rowData, r
                 <option value="inactive">Inactive</option>
               </select>
             </div>
+            
           </div>
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-end items-center my-3 sm:my-4">
             <button

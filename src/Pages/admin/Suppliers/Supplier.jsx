@@ -341,49 +341,23 @@ const EditAndAddModel = ({
   productData = {},
   setShowModel,
   actionType,
-  setRowData,
-  rowData,
+  
 }) => {
-  const [showNewSupplierInput, setShowNewSupplierInput] = useState(false);
-  const [showNewCategoryInput, setShowNewCategoryInput] = useState(false);
-  const [supplierFields, setSupplierFields] = useState([
-    {
-      id: 1,
-      SupplierName: productData.SupplierName || "",
-      Category: productData.Category || "",
-      Items: productData.Items || "",
-      Date: productData.Date || "",
-    },
-  ]);
+  const [] = useState({
+    supplierName:'',
+    phoneNumber:'',
+    email:'',
+    city:'',
+    zipCode:'',
+    state:'',
+    street:'',
+    status:'',
+    role:''
+  })
 
-  // Predefined options for dropdowns
-  const [supplierOptions, setSupplierOptions] = useState([
-    "A.B. BEVRAGE INC. (BUDWEISER)",
-    "VINO DISTRIBUTORS",
-    "SPIRIT CO.",
-    "CRAFT BEER SUPPLY",
-    "PREMIUM LIQUORS",
-  ]);
 
-  const [categoryOptions, setCategoryOptions] = useState([
-    "Beer",
-    "Wine",
-    "Spirits",
-  ]);
 
-  // Items is now a number input, so we don't need predefined options
 
-  const formatDateForInput = (dateString) => {
-    if (!dateString) return "";
-    const [month, day, year] = dateString.split("/");
-    return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
-  };
-
-  const formatDateForDisplay = (dateString) => {
-    if (!dateString) return "";
-    const [year, month, day] = dateString.split("-");
-    return `${month}/${day}/${year}`;
-  };
 
   const handleCloseModel = () => {
     setShowModel({
@@ -393,75 +367,9 @@ const EditAndAddModel = ({
     });
   };
 
-  const handleAddField = () => {
-    const newField = {
-      id: supplierFields.length + 1,
-      SupplierName: "",
-      Category: "",
-      Items: "",
-      Date: "",
-    };
-    setSupplierFields([...supplierFields, newField]);
-  };
-
-  const handleRemoveField = (indexToRemove) => {
-    if (supplierFields.length > 1) {
-      setSupplierFields(
-        supplierFields.filter((_, index) => index !== indexToRemove)
-      );
-    }
-  };
-
-  const handleFieldChange = (index, field, value) => {
-    const updatedFields = supplierFields.map((item, i) =>
-      i === index ? { ...item, [field]: value } : item
-    );
-    setSupplierFields(updatedFields);
-  };
-
-  const handleSelectChange = (index, field, value, setter, options) => {
-    if (value === "custom") {
-      const newValue = prompt(`Enter new ${field}:`);
-      if (newValue && newValue.trim()) {
-        setter([...options, newValue.trim()]);
-        handleFieldChange(index, field, newValue.trim());
-      }
-    } else {
-      handleFieldChange(index, field, value);
-    }
-  };
-
-  const handleSubmit = () => {
-    if (actionType === "Add") {
-      const newSuppliers = supplierFields
-        .map((field) => ({
-          ID: (Math.floor(Math.random() * 9000) + 1000).toString(),
-          SupplierName: field.SupplierName,
-          Category: field.Category,
-          Items: field.Items,
-          Date: field.Date,
-          Action: ActionBtns,
-        }))
-        .filter(
-          (supplier) =>
-            supplier.SupplierName &&
-            supplier.Category &&
-            supplier.Items &&
-            supplier.Date
-        );
-      setRowData([...rowData, ...newSuppliers]);
-    } else if (actionType === "Edit") {
-      const updatedRowData = rowData.map((item) =>
-        item.ID === productData.ID ? { ...item, ...supplierFields[0] } : item
-      );
-      setRowData(updatedRowData);
-    }
-    handleCloseModel();
-  };
-
   return (
     <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center p-4">
-      <div className="bg-white rounded-md shadow p-4 sm:p-5 w-full sm:w-[90%] md:w-[80%] lg:w-[70%] max-h-[95%] overflow-auto">
+      <div className="bg-white rounded-md shadow p-4 sm:p-5 w-full sm:w-[90%] md:w-[80%] lg:w-[55%] max-h-[95%] overflow-auto">
         <div className="flex justify-between items-center w-full p-2 sm:p-2.5 rounded-md bg-[var(--sideMenu-color)] text-white">
           <h3 className="text-lg sm:text-xl lg:text-[1.5dvw] font-semibold">
             {actionType === "Add" ? "Add Suppliers" : `${actionType} Supplier`}
@@ -474,220 +382,136 @@ const EditAndAddModel = ({
           </button>
         </div>
 
-        <div className="w-full p-2 sm:p-3 space-y-6">
-          {supplierFields.map((field, index) => (
-            <div
-              key={field.id}
-              className="border border-gray-200 rounded-lg p-3 sm:p-4 relative"
+        <div className="w-full grid grid-cols-2 gap-5 my-4">
+          <div className="w-full my-2 sm:my-3 flex flex-col gap-1 sm:gap-2">
+            <label
+              className="text-sm sm:text-base md:text-lg lg:text-[1dvw] font-normal paraFont"
+              htmlFor="supplierName"
             >
-              {supplierFields.length > 1 && (
-                <button
-                  onClick={() => handleRemoveField(index)}
-                  className="absolute -top-2 -right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all duration-300"
-                  title="Remove Field Set"
-                >
-                  <CircleX size={16} />
-                </button>
-              )}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="w-full flex flex-col gap-2">
-                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-                    Supplier Name
-                  </label>
-                  {showNewSupplierInput ? (
-                    <div className="relative">
-                      <input
-                        type="text"
-                        value={field.SupplierName}
-                        onChange={(e) =>
-                          handleFieldChange(
-                            index,
-                            "SupplierName",
-                            e.target.value
-                          )
-                        }
-                        className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                        placeholder="Enter supplier name"
-                        autoFocus
-                      />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (field.SupplierName.trim()) {
-                            setSupplierOptions((prev) => [
-                              ...new Set([...prev, field.SupplierName.trim()]),
-                            ]);
-                          }
-                          setShowNewSupplierInput(false);
-                        }}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-blue-500 hover:text-blue-700"
-                        title="Save new supplier"
-                      >
-                        Save
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="relative">
-                      <select
-                        value={field.SupplierName}
-                        onChange={(e) => {
-                          if (e.target.value === "custom") {
-                            setShowNewSupplierInput(true);
-                            handleFieldChange(index, "SupplierName", "");
-                          } else {
-                            handleSelectChange(
-                              index,
-                              "SupplierName",
-                              e.target.value,
-                              setSupplierOptions,
-                              supplierOptions
-                            );
-                          }
-                        }}
-                        className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 pl-3 pr-8 appearance-none"
-                      >
-                        <option value="">Select Supplier Name</option>
-                        {supplierOptions.map((option, optIndex) => (
-                          <option key={optIndex} value={option}>
-                            {option}
-                          </option>
-                        ))}
-                        <option value="custom" className="text-blue-500">
-                          ➕ Add New Supplier
-                        </option>
-                      </select>
-                      <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                        <svg
-                          className="h-5 w-5 text-gray-400"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                          aria-hidden="true"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                  )}
-                </div>
-                <div className="w-full flex flex-col gap-2">
-                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-                    Category
-                  </label>
-                  {showNewCategoryInput ? (
-                    <div className="relative">
-                      <input
-                        type="text"
-                        value={field.Category}
-                        onChange={(e) =>
-                          handleFieldChange(index, "Category", e.target.value)
-                        }
-                        className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                        placeholder="Enter category name"
-                        autoFocus
-                      />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (field.Category.trim()) {
-                            setCategoryOptions((prev) => [
-                              ...new Set([...prev, field.Category.trim()]),
-                            ]);
-                          }
-                          setShowNewCategoryInput(false);
-                        }}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-blue-500 hover:text-blue-700"
-                        title="Save new category"
-                      >
-                        Save
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="relative">
-                      <select
-                        value={field.Category}
-                        onChange={(e) => {
-                          if (e.target.value === "custom") {
-                            setShowNewCategoryInput(true);
-                            handleFieldChange(index, "Category", "");
-                          } else {
-                            handleSelectChange(
-                              index,
-                              "Category",
-                              e.target.value,
-                              setCategoryOptions,
-                              categoryOptions
-                            );
-                          }
-                        }}
-                        className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 pl-3 pr-8 appearance-none"
-                      >
-                        <option value="">Select Category</option>
-                        {categoryOptions.map((option, optIndex) => (
-                          <option key={optIndex} value={option}>
-                            {option}
-                          </option>
-                        ))}
-                        <option value="custom" className="text-blue-500">
-                          ➕ Add New Category
-                        </option>
-                      </select>
-                      <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                        <svg
-                          className="h-5 w-5 text-gray-400"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                          aria-hidden="true"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                  )}
-                </div>
-                <div className="w-full flex flex-col gap-2">
-                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-                    Items
-                  </label>
-                  <input
-                    type="text"
-                    value={field.Items}
-                    onChange={(e) => {
-                      handleFieldChange(index, "Items", e.target.value);
-                    }}
-                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                    placeholder="Enter items"
-                  />
-                </div>
-                <div className="w-full flex flex-col gap-2">
-                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-                    Date
-                  </label>
-                  <input
-                    type="date"
-                    value={formatDateForInput(field.Date)}
-                    onChange={(e) => {
-                      const formattedDate = formatDateForDisplay(
-                        e.target.value
-                      );
-                      handleFieldChange(index, "Date", formattedDate);
-                    }}
-                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                    required
-                  />
-                </div>
-              </div>
+              Supplier Name
+            </label>
+            <input
+              id="supplierName"
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base md:text-lg lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-2 sm:px-3"
+              placeholder="Enter supplier name..."
+              value=""
+              name="supplierName"
+            />
+          </div>
+          <div className="w-full my-2 sm:my-3 flex flex-col gap-1 sm:gap-2">
+            <label
+              htmlFor="phoneNumber"
+              className="text-sm sm:text-base md:text-lg lg:text-[1dvw] font-normal paraFont"
+            >
+              Phone
+            </label>
+            <input
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base md:text-lg lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-2 sm:px-3"
+              type="tel"
+              placeholder="Phone number..."
+              name="phone"
+              required
+              id="phoneNumber"
+            />
+          </div>
+
+
+          <div className="w-full my-2 sm:my-3 flex flex-col gap-1 sm:gap-2 col-span-2">
+            <label
+              htmlFor="email"
+              className="text-sm sm:text-base md:text-lg lg:text-[1dvw] font-normal paraFont"
+            >
+              Email
+            </label>
+            <input
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base md:text-lg lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-2 sm:px-3"
+              type="email"
+              placeholder="Enter email..."
+              name="email"
+              required
+              id="email"
+            />
+          </div>
+
+
+
+          <div className="w-full my-2 sm:my-3 flex flex-col gap-1 sm:gap-2">
+              <label htmlFor="street" className="text-sm sm:text-base md:text-lg lg:text-[1dvw] font-normal paraFont">
+                Street Address
+              </label>
+              <input
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base md:text-lg lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-2 sm:px-3"
+                type="text"
+                placeholder="Enter Street Address..."
+                name="street"
+                id="street"
+              />
             </div>
-          ))}
+            <div className="w-full my-2 sm:my-3 flex flex-col gap-1 sm:gap-2">
+              <label htmlFor="zip" className="text-sm sm:text-base md:text-lg lg:text-[1dvw] font-normal paraFont">
+                Zip Code
+              </label>
+              <input
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base md:text-lg lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-2 sm:px-3"
+                type="text"
+                placeholder="Enter Zip Code..."
+                name="zip"
+                id="zip"
+              />
+            </div>
+            <div className="w-full my-2 sm:my-3 flex flex-col gap-1 sm:gap-2">
+              <label htmlFor="city" className="text-sm sm:text-base md:text-lg lg:text-[1dvw] font-normal paraFont">
+                City
+              </label>
+              <input
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base md:text-lg lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-2 sm:px-3"
+                type="text"
+                placeholder="Enter City..."
+                name="city"
+                id="city"
+              />
+            </div>
+            <div className="w-full my-2 sm:my-3 flex flex-col gap-1 sm:gap-2">
+              <label id="state" className="text-sm sm:text-base md:text-lg lg:text-[1dvw] font-normal paraFont">
+                State
+              </label>
+              <input
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base md:text-lg lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-2 sm:px-3"
+                type="text"
+                placeholder="Enter State..."
+                name="state"
+                id="state"
+              />
+            </div>
+
+            <div className="w-full my-2 sm:my-3 flex flex-col gap-1 sm:gap-2">
+              <label htmlFor="role" className="text-sm sm:text-base md:text-lg lg:text-[1dvw] font-normal paraFont">
+                Role
+              </label>
+              <select
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base md:text-lg lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-2 sm:px-3"
+                name="role"
+              id="role"
+              >
+                <option value="">Select Vendor Role</option>
+                <option value="vendor">Vendor</option>
+              </select>
+            </div>
+            <div className="w-full my-2 sm:my-3 flex flex-col gap-1 sm:gap-2">
+                
+              <label htmlFor="status" className="text-sm sm:text-base md:text-lg lg:text-[1dvw] font-normal paraFont">
+                Status
+              </label>
+              <select
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base md:text-lg lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-2 sm:px-3"
+                name="status"
+                id="status"
+              >
+                <option value="">Select Vendor Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
         </div>
 
         <div className="flex flex-col sm:flex-row justify-end items-center gap-4 mt-6">
@@ -698,7 +522,7 @@ const EditAndAddModel = ({
             Cancel
           </button>
           <button
-            onClick={handleSubmit}
+            // onClick={handleSubmit}
             className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300"
           >
             {actionType === "Add" ? "Create" : "Update"}
