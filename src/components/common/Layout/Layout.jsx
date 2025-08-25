@@ -31,9 +31,8 @@ import {
   X,
 } from "lucide-react";
 import { useSelector } from "react-redux";
-import AddProductModel from "../../common/AddProductModel/AddProductModel";
+import { AddProductModel } from "../../common/AddProductModel/AddProductModel";
 import Notifications from "../Notification/Notifications";
-
 
 export const Layout = ({ children }) => {
   const clientData = useSelector((state) => state.loggedUser);
@@ -43,7 +42,11 @@ export const Layout = ({ children }) => {
   const [subMenuStateLottery, setSubMenuStateLottery] = useState(false);
   const [subMenuStateLoyalty, setSubMenuStateLoyalty] = useState(false);
   const [subMenuStateDaily, setSubMenuStateDaily] = useState(false);
-  const [showProductModel, setShowProductModel] = useState(false);
+  const [showProductModel, setShowProductModel] = useState({
+    state: false,
+    productData: null,
+    actionType: "",
+  });
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [notificationCount, setNotificationCount] = useState(0);
@@ -91,7 +94,11 @@ export const Layout = ({ children }) => {
 
   const handleAddProduct = () => {
     console.log("Add Product clicked from Layout");
-    setShowProductModel(true);
+    setShowProductModel({
+      state: true,
+      productData: null,
+      actionType: "Add",
+    });
     if (isMobile) {
       setIsMobileMenuOpen(false);
     }
@@ -1684,7 +1691,7 @@ export const Layout = ({ children }) => {
                 <button className="p-1 sm:p-[5px] border border-[#7f7f7f] rounded-full">
                   <SearchIcon />
                 </button>
-                <button 
+                <button
                   className="p-1 sm:p-[5px] border border-[#7f7f7f] rounded-full relative"
                   onClick={() => setIsNotificationOpen(true)}
                 >
@@ -1699,7 +1706,7 @@ export const Layout = ({ children }) => {
                   className="addProduct__BTN bg-[var(--button-color1)] text-[var(--primary-color)] flex justify-center items-center gap-1 sm:gap-[5px] px-3 py-2 sm:px-[25px] sm:py-[10px] font-[var(--mainFont)] font-medium text-xs sm:text-sm lg:text-[1dvw] border-none outline-none rounded-full cursor-pointer"
                   onClick={handleAddProduct}
                 >
-                  Add Product 
+                  Add Product
                   <PluseIcon />
                 </button>
                 <button className="p-1 sm:p-[5px] border border-[#7f7f7f] rounded-full">
@@ -1712,8 +1719,8 @@ export const Layout = ({ children }) => {
               </div>
             </nav>
           )}
-          <Notifications 
-            isOpen={isNotificationOpen} 
+          <Notifications
+            isOpen={isNotificationOpen}
             onClose={() => setIsNotificationOpen(false)}
             onNotificationCountChange={setNotificationCount}
           />
@@ -1736,7 +1743,7 @@ export const Layout = ({ children }) => {
                 </h2>
               </div>
               <div className="w-8 flex justify-end">
-                <button 
+                <button
                   className="relative p-1"
                   onClick={() => setIsNotificationOpen(true)}
                 >
@@ -1760,7 +1767,13 @@ export const Layout = ({ children }) => {
           </div>
         </div>
       </div>
-      {showProductModel && <AddProductModel onClose={() => setShowProductModel(false)} />}
+      {showProductModel.state && showProductModel.actionType === "Add" && (
+        <AddProductModel
+          productData={showProductModel.productData}
+          setShowModel={setShowProductModel}
+          actionType={showProductModel.actionType}
+        />
+      )}
     </>
   );
 };
