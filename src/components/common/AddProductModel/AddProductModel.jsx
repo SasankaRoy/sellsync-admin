@@ -551,27 +551,27 @@ const AddProductModel = ({ onClose }) => {
           </button>
         </div>
 
-        
-
-        <div className="w-full p-2 border border-[var(--border-color)] rounded-md">
-          <DetailsTab
-            productData={productData}
-            setProductData={setProductData}
-            actionType="Add"
-          />
-          <div className="flex flex-col sm:flex-row gap-4 justify-end items-center mt-6">
-            <button
-              onClick={handleSubmit}
-              className="w-full sm:w-auto px-4 sm:px-6 py-1.5 sm:py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300"
-            >
-              Update
-            </button>
-            <button
-              onClick={handleCloseModel}
-              className="w-full sm:w-auto px-4 sm:px-6 py-1.5 sm:py-2 bg-[var(--button-color4)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300"
-            >
-              Cancel
-            </button>
+        <div className="mt-5">
+          <div className="w-full p-2 border border-[var(--border-color)] rounded-md">
+            <DetailsTab
+              productData={productData}
+              setProductData={setProductData}
+              actionType="Add"
+            />
+            <div className="flex flex-col sm:flex-row gap-4 justify-end items-center mt-6">
+              <button
+                onClick={handleSubmit}
+                className="w-full sm:w-auto px-4 sm:px-6 py-1.5 sm:py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300"
+              >
+                Update
+              </button>
+              <button
+                onClick={handleCloseModel}
+                className="w-full sm:w-auto px-4 sm:px-6 py-1.5 sm:py-2 bg-[var(--button-color4)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       </div>
