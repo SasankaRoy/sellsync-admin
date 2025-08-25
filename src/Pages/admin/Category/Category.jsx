@@ -119,9 +119,13 @@ export const Category = () => {
       productData: {
         ID: "",
         CategoryName: "",
-        Group: "",
-        Stock: "",
-        Supplier: "",
+        AgeVerification: "",
+        DefaultMargin: "",
+        AllowEBT: false,
+        DoNotDiscount: false,
+        DoNotShowToWebstore: false,
+        ExcludeDualPrice: false,
+        ExcludeLoyaltyReward: false,
       },
       actionType: "Add",
     };
@@ -311,14 +315,17 @@ const ActionBtns = (props) => {
 
 const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowData, rowData }) => {
   const [showNewCategoryInput, setShowNewCategoryInput] = useState(false);
-  const [showNewSupplierInput, setShowNewSupplierInput] = useState(false);
   const [categoryFields, setCategoryFields] = useState([
     {
       id: 1,
       CategoryName: productData.CategoryName || "",
-      Group: productData.Group || "",
-      Stock: productData.Stock || "",
-      Supplier: productData.Supplier || "",
+      AgeVerification: productData.Stock || "", // Changed from Stock to AgeVerification
+      DefaultMargin: productData.DefaultMargin || "",
+      AllowEBT: productData.AllowEBT || false,
+      DoNotDiscount: productData.DoNotDiscount || false,
+      DoNotShowToWebstore: productData.DoNotShowToWebstore || false,
+      ExcludeDualPrice: productData.ExcludeDualPrice || false,
+      ExcludeLoyaltyReward: productData.ExcludeLoyaltyReward || false,
     }
   ]);
 
@@ -336,27 +343,6 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
     "TEQUILA SILVER 750ML"
   ]);
 
-  const [groupOptions, setGroupOptions] = useState([
-    "Beer",
-    "Wine", 
-    "Spirits",
-    "Beverages",
-    "Alcohol"
-  ]);
-
-  const [stockOptions, setStockOptions] = useState([
-    "0", "5", "8", "10", "12", "15", "18", "20", "25", "30", "-8", "-5"
-  ]);
-
-  const [supplierOptions, setSupplierOptions] = useState([
-    "Rahul Doe",
-    "John Smith",
-    "Mike Johnson", 
-    "Sarah Wilson",
-    "David Brown",
-    "Lisa Davis"
-  ]);
-
   const handleCloseModel = () => {
     setShowModel({
       state: false,
@@ -369,9 +355,13 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
     const newField = {
       id: categoryFields.length + 1,
       CategoryName: "",
-      Group: "",
-      Stock: "",
-      Supplier: "",
+      AgeVerification: "",
+      DefaultMargin: "",
+      AllowEBT: false,
+      DoNotDiscount: false,
+      DoNotShowToWebstore: false,
+      ExcludeDualPrice: false,
+      ExcludeLoyaltyReward: false,
     };
     setCategoryFields([...categoryFields, newField]);
   };
@@ -383,6 +373,13 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
   };
 
   const handleFieldChange = (index, field, value) => {
+    const updatedFields = categoryFields.map((item, i) => 
+      i === index ? { ...item, [field]: value } : item
+    );
+    setCategoryFields(updatedFields);
+  };
+
+  const handleCheckboxChange = (index, field, value) => {
     const updatedFields = categoryFields.map((item, i) => 
       i === index ? { ...item, [field]: value } : item
     );
@@ -406,11 +403,15 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
       const newCategories = categoryFields.map(field => ({
         ID: (Math.floor(Math.random() * 9000) + 1000).toString(),
         CategoryName: field.CategoryName,
-        Group: field.Group,
-        Stock: field.Stock,
-        Supplier: field.Supplier,
+        AgeVerification: field.AgeVerification,
+        DefaultMargin: field.DefaultMargin,
+        AllowEBT: field.AllowEBT,
+        DoNotDiscount: field.DoNotDiscount,
+        DoNotShowToWebstore: field.DoNotShowToWebstore,
+        ExcludeDualPrice: field.ExcludeDualPrice,
+        ExcludeLoyaltyReward: field.ExcludeLoyaltyReward,
         Action: ActionBtns,
-      })).filter(category => category.CategoryName && category.Group && category.Stock && category.Supplier);
+      })).filter(category => category.CategoryName && category.AgeVerification);
       
       setRowData([...rowData, ...newCategories]);
     } else if (actionType === "Edit") {
@@ -457,151 +458,87 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
                   <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
                     Category Name
                   </label>
-                  {showNewCategoryInput ? (
-                    <div className="relative">
-                      <input
-                        type="text"
-                        value={field.CategoryName}
-                        onChange={(e) => handleFieldChange(index, 'CategoryName', e.target.value)}
-                        className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                        placeholder="Enter new category name"
-                        autoFocus
-                      />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (field.CategoryName.trim()) {
-                            setCategoryOptions(prev => [...new Set([...prev, field.CategoryName.trim()])]);
-                          }
-                          setShowNewCategoryInput(false);
-                        }}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-blue-500 hover:text-blue-700"
-                        title="Save new category"
-                      >
-                        Save
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="relative">
-                      <div className="relative">
-                        <select
-                          value={field.CategoryName}
-                          onChange={(e) => {
-                            if (e.target.value === 'custom') {
-                              setShowNewCategoryInput(true);
-                              handleFieldChange(index, 'CategoryName', '');
-                            } else {
-                              handleSelectChange(index, 'CategoryName', e.target.value, setCategoryOptions, categoryOptions);
-                            }
-                          }}
-                          className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 pl-3 pr-8 appearance-none"
-                        >
-                          <option value="">Select Category Name</option>
-                          {categoryOptions.map((option, optIndex) => (
-                            <option key={optIndex} value={option}>{option}</option>
-                          ))}
-                          <option value="custom" className="text-blue-500">➕ Add New Category</option>
-                        </select>
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                          <svg className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                            <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-                  )}
+                  <input
+                    type="text"
+                    value={field.CategoryName}
+                    onChange={(e) => handleFieldChange(index, 'CategoryName', e.target.value)}
+                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                    placeholder="Enter category name"
+                  />
                 </div>
                 
                 <div className="w-full flex flex-col gap-2">
-                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Group</label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={field.Group}
-                      onChange={(e) => handleFieldChange(index, 'Group', e.target.value)}
-                      className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                      placeholder="Enter Group Name"
-                    />
-                    {!groupOptions.includes(field.Group) && field.Group && (
-                      <button
-                        type="button"
-                        onClick={() => setGroupOptions([...groupOptions, field.Group])}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-blue-500 hover:text-blue-700"
-                        title="Add to group options"
-                      >
-                        Save
-                      </button>
-                    )}
-                  </div>
-                </div>
-                
-                <div className="w-full flex flex-col gap-2">
-                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Stock</label>
+                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Age Verification</label>
                   <input
                     type="number"
-                    value={field.Stock}
-                    onChange={(e) => handleFieldChange(index, 'Stock', e.target.value)}
+                    value={field.AgeVerification}
+                    onChange={(e) => handleFieldChange(index, 'AgeVerification', e.target.value)}
                     className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                    placeholder="Enter stock quantity"
+                    placeholder="Enter age verification"
                     step="1"
                   />
                 </div>
                 
                 <div className="w-full flex flex-col gap-2">
                   <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-                    Supplier
+                    Default Margin
                   </label>
-                  {showNewSupplierInput ? (
-                    <div className="relative">
-                      <input
-                        type="text"
-                        value={field.Supplier}
-                        onChange={(e) => handleFieldChange(index, 'Supplier', e.target.value)}
-                        className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                        placeholder="Enter new supplier name"
-                        autoFocus
-                      />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (field.Supplier.trim()) {
-                            setSupplierOptions(prev => [...new Set([...prev, field.Supplier.trim()])]);
-                          }
-                          setShowNewSupplierInput(false);
-                        }}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-blue-500 hover:text-blue-700"
-                        title="Save new supplier"
-                      >
-                        Save
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="relative">
-                      <select
-                        value={field.Supplier}
-                        onChange={(e) => {
-                          if (e.target.value === 'custom') {
-                            setShowNewSupplierInput(true);
-                            handleFieldChange(index, 'Supplier', '');
-                          } else {
-                            handleSelectChange(index, 'Supplier', e.target.value, setSupplierOptions, supplierOptions);
-                          }
-                        }}
-                        className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 pl-3 pr-8 appearance-none"
-                      >
-                        <option value="">Select Supplier</option>
-                        {supplierOptions.map((option, optIndex) => (
-                          <option key={optIndex} value={option}>{option}</option>
-                        ))}
-                        <option value="custom" className="text-blue-500">➕ Add New Supplier</option>
-                      </select>
-                      <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                        <svg className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                          <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                        </svg>
-                      </div>
-                    </div>
-                  )}
+                  <input
+                    type="number"
+                    value={field.DefaultMargin}
+                    onChange={(e) => handleFieldChange(index, 'DefaultMargin', e.target.value)}
+                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                    placeholder="Enter default margin"
+                    step="0.01"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-4">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={field.AllowEBT}
+                    onChange={(e) => handleCheckboxChange(index, 'AllowEBT', e.target.checked)}
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Allow EBT</label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={field.DoNotDiscount}
+                    onChange={(e) => handleCheckboxChange(index, 'DoNotDiscount', e.target.checked)}
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Do Not Discount</label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={field.DoNotShowToWebstore}
+                    onChange={(e) => handleCheckboxChange(index, 'DoNotShowToWebstore', e.target.checked)}
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Do Not Show to Webstore</label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={field.ExcludeDualPrice}
+                    onChange={(e) => handleCheckboxChange(index, 'ExcludeDualPrice', e.target.checked)}
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Exclude Dual Price</label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={field.ExcludeLoyaltyReward}
+                    onChange={(e) => handleCheckboxChange(index, 'ExcludeLoyaltyReward', e.target.checked)}
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Exclude Loyalty Reward</label>
                 </div>
               </div>
             </div>
