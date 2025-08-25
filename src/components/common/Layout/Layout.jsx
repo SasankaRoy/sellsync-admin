@@ -31,7 +31,7 @@ import {
   X,
 } from "lucide-react";
 import { useSelector } from "react-redux";
-import AddProductModel from "../../Common/AddProductModel/AddProductModel";
+import AddProductModel from "../../common/AddProductModel/AddProductModel";
 import Notifications from "../Notification/Notifications";
 
 
