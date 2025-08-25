@@ -78,7 +78,6 @@ const DetailsTab = ({ productData, setProductData, actionType }) => {
             onChange={handleInputChange}
             className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
             type="text"
-          
           />
         </div>
         <div className="flex flex-col gap-2 w-full">
@@ -94,7 +93,6 @@ const DetailsTab = ({ productData, setProductData, actionType }) => {
             onChange={handleInputChange}
             className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
             type="number"
-            
           />
         </div>
         <div className="flex flex-col gap-2 w-full">
@@ -110,7 +108,6 @@ const DetailsTab = ({ productData, setProductData, actionType }) => {
             onChange={handleInputChange}
             className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
             type="number"
-            
           />
         </div>
       </div>
@@ -118,7 +115,9 @@ const DetailsTab = ({ productData, setProductData, actionType }) => {
       <div className="w-full my-4 flex flex-col gap-2">
         <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
           Name
-          <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">*</span>
+          <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
+            *
+          </span>
         </label>
         <input
           name="name"
@@ -126,7 +125,6 @@ const DetailsTab = ({ productData, setProductData, actionType }) => {
           onChange={handleInputChange}
           className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
           type="text"
-          
         />
       </div>
 
@@ -204,7 +202,9 @@ const DetailsTab = ({ productData, setProductData, actionType }) => {
           />
         </div>
         <div className="w-full flex flex-col gap-1.5">
-          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Margin</label>
+          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+            Margin
+          </label>
           <input
             name="margin"
             value={productData.margin || ""}
@@ -214,7 +214,9 @@ const DetailsTab = ({ productData, setProductData, actionType }) => {
           />
         </div>
         <div className="w-full flex flex-col gap-1.5">
-          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Markup</label>
+          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+            Markup
+          </label>
           <input
             name="markup"
             value={productData.markup || ""}
@@ -236,7 +238,9 @@ const DetailsTab = ({ productData, setProductData, actionType }) => {
           />
         </div>
         <div className="w-full flex flex-col gap-1.5">
-          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Qty</label>
+          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+            Qty
+          </label>
           <input
             name="qty2"
             value={productData.qty2 || ""}
@@ -249,7 +253,9 @@ const DetailsTab = ({ productData, setProductData, actionType }) => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
         <div className="flex flex-col gap-2">
-          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Size</label>
+          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+            Size
+          </label>
           <input
             name="size"
             value={productData.size || ""}
@@ -273,7 +279,9 @@ const DetailsTab = ({ productData, setProductData, actionType }) => {
       </div>
 
       <div className="w-full flex flex-col gap-2 my-4">
-        <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Category</label>
+        <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+          Category
+        </label>
         <select
           name="category"
           value={productData.category || ""}
@@ -289,7 +297,9 @@ const DetailsTab = ({ productData, setProductData, actionType }) => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full my-4">
         <div className="w-full flex flex-col gap-2">
-          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Supplier</label>
+          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+            Supplier
+          </label>
           <select
             name="supplier"
             value={productData.supplier || ""}
@@ -306,7 +316,9 @@ const DetailsTab = ({ productData, setProductData, actionType }) => {
           </select>
         </div>
         <div className="w-full flex flex-col gap-2">
-          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">SKU</label>
+          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+            SKU
+          </label>
           <input
             name="sku"
             value={productData.sku || ""}
@@ -343,7 +355,9 @@ const DetailsTab = ({ productData, setProductData, actionType }) => {
           />
         </div>
         <div className="w-full flex flex-col gap-2">
-          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Tax</label>
+          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+            Tax
+          </label>
           <input
             name="tax"
             value={productData.tax || ""}
@@ -377,7 +391,9 @@ const DetailsTab = ({ productData, setProductData, actionType }) => {
           />
         </div>
         <div className="w-full flex flex-col gap-2">
-          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Rank</label>
+          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+            Rank
+          </label>
           <input
             name="rank"
             value={productData.rank || ""}
@@ -471,6 +487,8 @@ const DetailsTab = ({ productData, setProductData, actionType }) => {
 };
 
 const AddProductModel = ({ onClose }) => {
+  console.log(onClose)
+  const [currentActiveTab, setCurrentActiveTab] = useState("Details");
   const [productData, setProductData] = useState({
     stockCode: "",
     qtyItems: "",
@@ -530,6 +548,38 @@ const AddProductModel = ({ onClose }) => {
     });
   };
 
+  const handleChangeTab = (currentTab) => {
+    // if (actionType === "Add" && currentTab !== "Details") {
+    //   return; // Prevent changing tabs when actionType is "Add"
+    // }
+    setCurrentActiveTab(currentTab);
+  };
+
+  const handleRenderTab = (currentTab) => {
+    switch (currentTab) {
+      case "Details":
+        return (
+          <DetailsTab
+            productData={productData}
+            setProductData={setProductData}
+            actionType="Add"
+          />
+        );
+      case "Options":
+        return <OptionsTab />;
+      case "Promotions":
+        return <PromotionsTab />;
+      default:
+        return (
+          <DetailsTab
+            productData={productData}
+            setProductData={setProductData}
+            actionType="Add"
+          />
+        );
+    }
+  };
+
   const handleSubmit = () => {
     console.log("Product Data:", productData);
     handleCloseModel();
@@ -551,13 +601,61 @@ const AddProductModel = ({ onClose }) => {
           </button>
         </div>
 
+        <div className="bg-[#E6E6E6] p-2 rounded-full w-auto my-5 inline-flex flex-wrap gap-2 sm:gap-3">
+          <button
+            onClick={() => handleChangeTab("Details")}
+            className={` ${
+              currentActiveTab === "Details"
+                ? "bg-[var(--sideMenu-color)] text-white"
+                : "bg-transparent text-[#333333]/70"
+            } border-none outline-none px-4 sm:px-8 py-1 text-sm sm:text-base lg:text-[.9dvw] cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
+          >
+            Details
+          </button>
+          <button
+            onClick={() => handleChangeTab("Options")}
+            className={` ${
+              currentActiveTab === "Options"
+                ? "bg-[var(--sideMenu-color)] text-white"
+                : "bg-transparent text-[#333333]/70"
+            } border-none outline-none px-4 sm:px-8 py-1 text-sm sm:text-base lg:text-[.9dvw] cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
+          >
+            Options
+          </button>
+          {/* {actionType !== "Add" && (
+            <>
+              <button
+                  onClick={() => handleChangeTab("Options")}
+                  className={` ${
+                    currentActiveTab === "Options"
+                      ? "bg-[var(--sideMenu-color)] text-white"
+                      : "bg-transparent text-[#333333]/70"
+                  } border-none outline-none px-4 sm:px-8 py-1 text-sm sm:text-base lg:text-[.9dvw] cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
+                >
+                  Options
+                </button>
+              <button
+                onClick={() => handleChangeTab("Promotions")}
+                className={` ${
+                  currentActiveTab === "Promotions"
+                    ? "bg-[var(--sideMenu-color)] text-white"
+                    : "bg-transparent text-[#333333]/70"
+                } border-none outline-none px-4 sm:px-8 py-1 text-sm sm:text-base lg:text-[.9dvw] cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
+              >
+                Promotions
+              </button>
+            </>
+          )} */}
+        </div>
+
         <div className="mt-5">
           <div className="w-full p-2 border border-[var(--border-color)] rounded-md">
-            <DetailsTab
+            {/* <DetailsTab
               productData={productData}
               setProductData={setProductData}
               actionType="Add"
-            />
+            /> */}
+            {handleRenderTab(currentActiveTab)}
             <div className="flex flex-col sm:flex-row gap-4 justify-end items-center mt-6">
               <button
                 onClick={handleSubmit}
@@ -580,3 +678,249 @@ const AddProductModel = ({ onClose }) => {
 };
 
 export default AddProductModel;
+
+
+const OptionsTab = () => {
+  return (
+    <>
+      <div className="w-full p-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 w-full gap-2 sm:gap-4">
+          <div className="flex justify-start items-center gap-3">
+            <input
+              id="autoUpdate"
+              type="checkbox"
+              className="h-4 w-4 sm:h-5 sm:w-5 lg:h-[1.2dvw] lg:w-[1.2dvw]"
+            />
+            <label
+              htmlFor="autoUpdate"
+              className="text-sm sm:text-base lg:text-[1.2dvw] font-semibold cursor-pointer"
+            >
+              Do Not Auto Update
+            </label>
+          </div>
+          <div className="flex justify-start items-center gap-3">
+            <input
+              id="trackInventory"
+              type="checkbox"
+              className="h-4 w-4 sm:h-5 sm:w-5 lg:h-[1.2dvw] lg:w-[1.2dvw]"
+            />
+            <label
+              htmlFor="trackInventory"
+              className="text-sm sm:text-base lg:text-[1.2dvw] font-semibold cursor-pointer"
+            >
+              Do Not Track Inventory
+            </label>
+          </div>
+          <div className="flex justify-start items-center gap-3">
+            <input
+              id="shortcutKeys"
+              type="checkbox"
+              className="h-4 w-4 sm:h-5 sm:w-5 lg:h-[1.2dvw] lg:w-[1.2dvw]"
+            />
+            <label
+              htmlFor="shortcutKeys"
+              className="text-sm sm:text-base lg:text-[1.2dvw] font-semibold cursor-pointer"
+            >
+              Add to Shortcut Keys
+            </label>
+          </div>
+          <div className="flex justify-start items-center gap-3">
+            <input
+              id="outItem"
+              type="checkbox"
+              className="h-4 w-4 sm:h-5 sm:w-5 lg:h-[1.2dvw] lg:w-[1.2dvw]"
+            />
+            <label
+              htmlFor="outItem"
+              className="text-sm sm:text-base lg:text-[1.2dvw] font-semibold cursor-pointer"
+            >
+              Close Out Item
+            </label>
+          </div>
+          <div className="flex justify-start items-center gap-3">
+            <input
+              id="manualDiscount"
+              type="checkbox"
+              className="h-4 w-4 sm:h-5 sm:w-5 lg:h-[1.2dvw] lg:w-[1.2dvw]"
+            />
+            <label
+              htmlFor="manualDiscount"
+              className="text-sm sm:text-base lg:text-[1.2dvw] font-semibold cursor-pointer"
+            >
+              Do Not Apply Manual Discount
+            </label>
+          </div>
+          <div className="flex justify-start items-center gap-3">
+            <input
+              id="promotionsDiscount"
+              type="checkbox"
+              className="h-4 w-4 sm:h-5 sm:w-5 lg:h-[1.2dvw] lg:w-[1.2dvw]"
+            />
+            <label
+              htmlFor="promotionsDiscount"
+              className="text-sm sm:text-base lg:text-[1.2dvw] font-semibold cursor-pointer"
+            >
+              Exclude from Promotions Discount
+            </label>
+          </div>
+          <div className="flex justify-start items-center gap-3">
+            <input
+              id="showWebstore"
+              type="checkbox"
+              className="h-4 w-4 sm:h-5 sm:w-5 lg:h-[1.2dvw] lg:w-[1.2dvw]"
+            />
+            <label
+              htmlFor="showWebstore"
+              className="text-sm sm:text-base lg:text-[1.2dvw] font-semibold cursor-pointer"
+            >
+              Do Not Show to Webstore
+            </label>
+          </div>
+          <div className="flex justify-start items-center gap-3">
+            <input
+              id="hideInventory"
+              type="checkbox"
+              className="h-4 w-4 sm:h-5 sm:w-5 lg:h-[1.2dvw] lg:w-[1.2dvw]"
+            />
+            <label
+              htmlFor="hideInventory"
+              className="text-sm sm:text-base lg:text-[1.2dvw] font-semibold cursor-pointer"
+            >
+              Hide Inventory
+            </label>
+          </div>
+          <div className="flex justify-start items-center gap-3">
+            <input
+              id="EBTEligible"
+              type="checkbox"
+              className="h-4 w-4 sm:h-5 sm:w-5 lg:h-[1.2dvw] lg:w-[1.2dvw]"
+            />
+            <label
+              htmlFor="EBTEligible"
+              className="text-sm sm:text-base lg:text-[1.2dvw] font-semibold cursor-pointer"
+            >
+              EBT Eligible
+            </label>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
+          <div className="w-full my-4 flex flex-col gap-2">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+              Default Qty
+            </label>
+            <input
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              type="text"
+              placeholder="Enter Quantity..."
+            />
+          </div>
+          <div className="w-full my-4 flex flex-col gap-2">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+              Min Price
+            </label>
+            <input
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              type="number"
+              placeholder="Min Price..."
+            />
+          </div>
+
+          <div className="w-full my-4 flex flex-col gap-2">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+              Remind Date
+            </label>
+            <input
+              className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              type="date"
+            />
+          </div>
+          <div className="w-full my-4 flex flex-col gap-2">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+              Vendor Item Name
+            </label>
+            <input
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              type="text"
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2 w-full my-4">
+          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+            Notes
+          </label>
+          <textarea
+            className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+            rows={5}
+            placeholder="Enter Notes..."
+          ></textarea>
+        </div>
+
+        <div className="flex flex-col gap-2 w-full my-4">
+          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+            Tags
+          </label>
+          <input
+            className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+            type="text"
+            placeholder="Tags"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 w-full gap-4">
+          <div className="flex flex-col gap-2 w-full my-4">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+              Points Multiplier
+            </label>
+            <select
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              placeholder="Tags"
+            >
+              <option>Select Multiplier</option>
+              <option>1x</option>
+              <option>2x</option>
+              <option>3x</option>
+              <option>4x</option>
+              <option>5x</option>
+            </select>
+          </div>
+          <div className="flex flex-col gap-2 w-full my-4">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+              Points Required
+            </label>
+            <input
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              type="text"
+              placeholder="Enter points"
+            />
+          </div>
+          <div className="flex flex-col gap-2 w-full my-4">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+              Item Type
+            </label>
+            <select
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              placeholder="Tags"
+            >
+              <option>Select Item Type</option>
+              <option>Inventory Item</option>
+              <option>Free Item</option>
+              <option>Negative Item</option>
+              <option>Lotto Sale</option>
+              <option>Lotto Payout</option>
+              <option>Deposit Return</option>
+              <option>Gift Item</option>
+              <option>Online Lottery</option>
+              <option>Online Payout</option>
+              <option>Manual Item</option>
+              <option>House Pay</option>
+              <option>Coupon ($)</option>
+              <option>Coupon (%)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};

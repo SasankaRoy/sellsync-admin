@@ -482,9 +482,9 @@ const EditAndViewModel = ({ productData, setShowModel, actionType }) => {
     });
   };
   const handleChangeTab = (currentTab) => {
-    if (actionType === "Add" && currentTab !== "Details") {
-      return; // Prevent changing tabs when actionType is "Add"
-    }
+    // if (actionType === "Add" && currentTab !== "Details") {
+    //   return; // Prevent changing tabs when actionType is "Add"
+    // }
     setCurrentActiveTab(currentTab);
   };
 
@@ -528,9 +528,19 @@ const EditAndViewModel = ({ productData, setShowModel, actionType }) => {
             >
               Details
             </button>
+            <button
+              onClick={() => handleChangeTab("Options")}
+              className={` ${
+                currentActiveTab === "Options"
+                  ? "bg-[var(--sideMenu-color)] text-white"
+                  : "bg-transparent text-[#333333]/70"
+              } border-none outline-none px-4 sm:px-8 py-1 text-sm sm:text-base lg:text-[.9dvw] cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
+            >
+              Options
+            </button>
             {actionType !== "Add" && (
               <>
-                <button
+                {/* <button
                   onClick={() => handleChangeTab("Options")}
                   className={` ${
                     currentActiveTab === "Options"
@@ -539,7 +549,7 @@ const EditAndViewModel = ({ productData, setShowModel, actionType }) => {
                   } border-none outline-none px-4 sm:px-8 py-1 text-sm sm:text-base lg:text-[.9dvw] cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
                 >
                   Options
-                </button>
+                </button> */}
                 <button
                   onClick={() => handleChangeTab("Promotions")}
                   className={` ${
@@ -672,7 +682,9 @@ const DetailsTab = ({ actionType }) => {
         <div className="w-full my-4 flex flex-col gap-2">
           <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
             Name
-            <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">*</span>
+            <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
+              *
+            </span>
           </label>
           <input
             className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
@@ -739,14 +751,18 @@ const DetailsTab = ({ actionType }) => {
             />
           </div>
           <div className="w-full flex flex-col gap-1.5">
-            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Margin</label>
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+              Margin
+            </label>
             <input
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="number"
             />
           </div>
           <div className="w-full flex flex-col gap-1.5">
-            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Markup</label>
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+              Markup
+            </label>
             <input
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="number"
@@ -762,7 +778,9 @@ const DetailsTab = ({ actionType }) => {
             />
           </div>
           <div className="w-full flex flex-col gap-1.5">
-            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Qty</label>
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+              Qty
+            </label>
             <input
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="number"
@@ -772,7 +790,9 @@ const DetailsTab = ({ actionType }) => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
           <div className="flex flex-col gap-2">
-            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Size</label>
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+              Size
+            </label>
             <input
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
@@ -790,7 +810,9 @@ const DetailsTab = ({ actionType }) => {
         </div>
 
         <div className="w-full flex flex-col gap-2 my-4">
-          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Category</label>
+          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+            Category
+          </label>
           <select className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3">
             <option>Select Category</option>
             <option>Select Category</option>
@@ -805,7 +827,9 @@ const DetailsTab = ({ actionType }) => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full my-4">
           <div className="w-full flex flex-col gap-2">
-            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Supplier</label>
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+              Supplier
+            </label>
             <select className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3">
               <option>Select Supplier</option>
               <option>Select Supplier</option>
@@ -821,7 +845,9 @@ const DetailsTab = ({ actionType }) => {
             </select>
           </div>
           <div className="w-full flex flex-col gap-2">
-            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">SKU</label>
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+              SKU
+            </label>
             <input
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
@@ -849,7 +875,9 @@ const DetailsTab = ({ actionType }) => {
             />
           </div>
           <div className="w-full flex flex-col gap-2">
-            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Tax</label>
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+              Tax
+            </label>
             <input
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
@@ -875,7 +903,9 @@ const DetailsTab = ({ actionType }) => {
             />
           </div>
           <div className="w-full flex flex-col gap-2">
-            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Rank</label>
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+              Rank
+            </label>
             <input
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
@@ -1133,7 +1163,9 @@ const OptionsTab = () => {
         </div>
 
         <div className="flex flex-col gap-2 w-full my-4">
-          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Notes</label>
+          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+            Notes
+          </label>
           <textarea
             className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
             rows={5}
@@ -1142,7 +1174,9 @@ const OptionsTab = () => {
         </div>
 
         <div className="flex flex-col gap-2 w-full my-4">
-          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Tags</label>
+          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+            Tags
+          </label>
           <input
             className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
             type="text"
@@ -1282,7 +1316,9 @@ const DeleteModel = ({ setDeleteModel, productId }) => {
       <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center p-4">
         <div className="w-full sm:w-[80%] md:w-[60%] lg:w-[50%] p-4 sm:p-5 bg-white rounded-xl shadow-md flex flex-col gap-4">
           <div className="flex justify-between items-center w-full p-1">
-            <h3 className="text-lg sm:text-xl lg:text-[1.5dvw] font-semibold">Delete Item</h3>
+            <h3 className="text-lg sm:text-xl lg:text-[1.5dvw] font-semibold">
+              Delete Item
+            </h3>
             <button
               onClick={() => {
                 setDeleteModel({
