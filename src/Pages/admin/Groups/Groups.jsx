@@ -46,89 +46,7 @@ const rowSelection = {
 };
 
 export const Groups = () => {
-  const [rowData, setRowData] = useState([
-    {
-      ID: "1001",
-      GroupName: "Beer",
-      Stock: "63",
-      BuyPrice: "$25.50",
-      SellPrice: "$35.00",
-      Action: ActionBtns,
-    },
-    {
-      ID: "1002",
-      GroupName: "Wine",
-      Stock: "41",
-      BuyPrice: "$45.00",
-      SellPrice: "$65.00",
-      Action: ActionBtns,
-    },
-    {
-      ID: "1003",
-      GroupName: "Spirits",
-      Stock: "28",
-      BuyPrice: "$55.75",
-      SellPrice: "$85.00",
-      Action: ActionBtns,
-    },
-    {
-      ID: "1004",
-      GroupName: "Beverages",
-      Stock: "150",
-      BuyPrice: "$2.50",
-      SellPrice: "$4.00",
-      Action: ActionBtns,
-    },
-    {
-      ID: "1005",
-      GroupName: "Snacks",
-      Stock: "89",
-      BuyPrice: "$1.25",
-      SellPrice: "$2.50",
-      Action: ActionBtns,
-    },
-    {
-      ID: "1006",
-      GroupName: "Tobacco",
-      Stock: "45",
-      BuyPrice: "$8.00",
-      SellPrice: "$12.00",
-      Action: ActionBtns,
-    },
-    {
-      ID: "1007",
-      GroupName: "Energy Drinks",
-      Stock: "72",
-      BuyPrice: "$1.80",
-      SellPrice: "$3.50",
-      Action: ActionBtns,
-    },
-    {
-      ID: "1008",
-      GroupName: "Mixers",
-      Stock: "35",
-      BuyPrice: "$1.50",
-      SellPrice: "$3.00",
-      Action: ActionBtns,
-    },
-    {
-      ID: "1009",
-      GroupName: "Craft Beer",
-      Stock: "24",
-      BuyPrice: "$4.25",
-      SellPrice: "$7.50",
-      Action: ActionBtns,
-    },
-    {
-      ID: "1010",
-      GroupName: "Premium Spirits",
-      Stock: "18",
-      BuyPrice: "$85.00",
-      SellPrice: "$125.00",
-      Action: ActionBtns,
-    },
-  ]);
-
+  const [rowData, setRowData] = useState([]);
   const [showModel, setShowModel] = useState({
     state: false,
     productData: null,
@@ -139,6 +57,52 @@ export const Groups = () => {
     state: false,
     productId: null,
   });
+
+  const queryClient = useQueryClient();
+
+  // Fetch groups data on component mount
+  useEffect(() => {
+    const fetchGroups = async () => {
+      try {
+        const response = await axiosInstance.post("api/v1/group/list", {
+          page: 1,
+          limit: 10,
+        });
+        console.log("API Response:", response.data); // Log the full response for debugging
+        if (response.status === 200 && response.data?.results?.length > 0) {
+          const formattedData = response.data.results.map((group) => {
+            // Log all available keys for debugging
+            console.log("Group Keys:", Object.keys(group));
+            // Try to find any date-related field
+            const dateFields = Object.keys(group).filter(key =>
+              key.toLowerCase().includes("date") || key.toLowerCase().includes("time") || key.toLowerCase().includes("created")
+            );
+            let createdAtValue = "";
+            if (dateFields.length > 0) {
+              createdAtValue = group[dateFields[0]] || ""; // Use the first matching date field
+            }
+            return {
+              ID: group.id || "",
+              group_name: group.group_name || "",
+              Items: group.items || group.Items || "",
+              Status: group.status || group.Status || "",
+              CreatedAt: createdAtValue || group.created_at || group.CreatedAt || group.creation_date || group.date_created || group.createdOn || group.createDate || group.timestamp || "", 
+              Action: ActionBtns,
+            };
+          });
+          setRowData(formattedData);
+          console.log("Formatted Row Data:", formattedData); // Log formatted data for verification
+        } else {
+          setRowData([]);
+          console.log("No results found in API response");
+        }
+      } catch (error) {
+        console.error("Failed to fetch groups:", error);
+        setRowData([]);
+      }
+    };
+    fetchGroups();
+  }, []);
 
   const onAddGroup = () => {
     console.log("Create Group button clicked");
@@ -192,11 +156,10 @@ export const Groups = () => {
 
   // Column Definitions: Defines & controls grid columns.
   const [colDefs, setColDefs] = useState([
-    //{ field: "ID" },
-    { field: "GroupName", headerName: "Group Name" },
-    { field: "Stock" },
-    { field: "BuyPrice", headerName: "Buy Price" },
-    { field: "SellPrice", headerName: "Sell Price" },
+    { field: "group_name", headerName: "Group Name" },
+    { field: "Items" },
+    { field: "Status" },
+    { field: "CreatedAt" },
     {
       headerName: "Actions",
       field: "actions",
@@ -352,7 +315,7 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
   const [groupFields, setGroupFields] = useState([
     {
       id: 1,
-      GroupName: productData.GroupName || "",
+      GroupName: productData.group_name || "",
       ItemName: productData.ItemName || "",
       Status: productData.Status || "Active",
       ProductIds: productData.ProductIds || [], // Array to store multiple product IDs
@@ -459,7 +422,7 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
     } else if (actionType === "Edit") {
       const updatedRowData = rowData.map((item) =>
         item.ID === productData.ID
-          ? { ...item, GroupName: groupFields[0].GroupName, Status: groupFields[0].Status }
+          ? { ...item, group_name: groupFields[0].GroupName, Status: groupFields[0].Status }
           : item
       );
       setRowData(updatedRowData);
@@ -512,7 +475,7 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
 
   return (
     <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center p-4">
-      <div className="bg-white w-full sm:w-[90%] md:w-[60%] lg:w-[50%] max-h-[90vh] overflow-y-auto p-4 sm:p-5 rounded-lg shadow-md">
+      <div className="bg-white w-full sm:w-[90%] md:w-[60%] lg:w-[50%] max-h-[90vh] min-h-[70vh] overflow-y-auto p-4 sm:p-5 rounded-lg shadow-md">
         <div className="flex justify-between items-center w-full p-2.5 rounded-md bg-[var(--sideMenu-color)] text-white">
           <h3 className="text-lg sm:text-xl lg:text-[1.5dvw] font-semibold">
             {actionType === "Add" ? "Add Group" : `${actionType} Group`}
@@ -582,7 +545,7 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
                     value={itemSearch}
                     onChange={(e) => {
                       const value = e.target.value;
-                      console.log("Input value:", value); 
+                      console.log("Input value:", value); // Debug log to verify full input
                       setItemSearch(value);
                       if (value) {
                         setIsSearching(true);
