@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect, useRef } from "react";
 import { Layout } from "../../../components/common/Layout/Layout";
 import {
   DeleteIcon,
@@ -8,8 +8,36 @@ import {
 } from "../../../assets/Svgs/AllSvgs";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
-import { CircleX, Edit, Trash, Plus, Download } from "lucide-react";
+import { CircleX, Edit, Trash, Plus, Download, X } from "lucide-react";
 import { DeleteModel } from "../../../components/common/Models/DeleteMode";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
+import axiosInstance from "../../../utils/axios-interceptor";
+import { toast } from "react-toastify";
+
+// Temporary inline useDebounce hook (replace with proper import when available)
+function useDebounce(callback, delay) {
+  const timerRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
+  }, []);
+
+  const debouncedCallback = (...args) => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+    timerRef.current = setTimeout(() => {
+      callback(...args);
+    }, delay);
+  };
+
+  return debouncedCallback;
+}
+
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 const rowSelection = {
@@ -100,13 +128,13 @@ export const Groups = () => {
       Action: ActionBtns,
     },
   ]);
-  
+
   const [showModel, setShowModel] = useState({
     state: false,
     productData: null,
     actionType: "",
   });
-  
+
   const [deleteModel, setDeleteModel] = useState({
     state: false,
     productId: null,
@@ -204,15 +232,13 @@ export const Groups = () => {
               >
                 Create Group <PluseIcon />
               </button>
-              <button 
+              <button
                 onClick={handleImportCSV}
                 className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
               >
                 Import CSV <PluseIcon />
               </button>
-              
             </div>
-            
           </div>
         </div>
 
@@ -236,15 +262,12 @@ export const Groups = () => {
                 </div>
               </div>
               <div className="flex gap-2 sm:gap-4 justify-between items-center flex-wrap lg:gap-4">
-                {/*<button className="flex justify-between items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-[600]">
-                  Sort <SortIcon />
+                <button
+                  className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-1.5 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
+                  onClick={handleExportCSV}
+                >
+                  Export CSV <Download size={16} />
                 </button>
-                <button className="flex justify-between items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC]">
-                  Filter <FilterIcon />
-                </button>*/}
-                <button className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-1.5 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
-                Export CSV <Download size={16} />
-              </button>
                 <button>
                   <DeleteIcon />
                 </button>
@@ -325,18 +348,30 @@ const ActionBtns = (props) => {
 };
 
 const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowData, rowData }) => {
+  const queryClient = useQueryClient();
   const [groupFields, setGroupFields] = useState([
     {
       id: 1,
       GroupName: productData.GroupName || "",
       ItemName: productData.ItemName || "",
-    }
+      Status: productData.Status || "Active",
+      ProductIds: productData.ProductIds || [], // Array to store multiple product IDs
+      selectedItems: productData.ProductIds
+        ? productData.ProductIds.map((id) => ({ id, name: "Unknown" })) // Placeholder until API data is available
+        : [],
+    },
   ]);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  const [isError, setIsError] = useState("");
+  const [searchResult, setSearchResult] = useState([]);
+  const [itemSearch, setItemSearch] = useState("");
+  const [showItemList, setShowItemList] = useState(false);
 
   // Predefined options for dropdowns
   const [groupNameOptions, setGroupNameOptions] = useState([
     "Beer",
-    "Wine", 
+    "Wine",
     "Spirits",
     "Beverages",
     "Snacks",
@@ -344,21 +379,10 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
     "Energy Drinks",
     "Mixers",
     "Craft Beer",
-    "Premium Spirits"
+    "Premium Spirits",
   ]);
 
-  const [itemNameOptions, setItemNameOptions] = useState([
-    "AW ROOR BEER 2LITER BTL",
-    "RED WINE BOTTLE 750ML", 
-    "WHISKEY PREMIUM 1LITER",
-    "VODKA CLASSIC 750ML",
-    "CHAMPAGNE BOTTLE 750ML",
-    "CRAFT BEER 330ML CAN",
-    "RUM GOLD 1LITER",
-    "WHITE WINE 750ML",
-    "LAGER BEER 500ML BTL",
-    "TEQUILA SILVER 750ML"
-  ]);
+  const [statusOptions] = useState(["Active", "Inactive"]);
 
   const handleCloseModel = () => {
     setShowModel({
@@ -366,36 +390,124 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
       productData: null,
       actionType: "",
     });
+    setItemSearch("");
+    setSearchResult([]);
+    setShowItemList(false);
   };
 
   const handleFieldChange = (index, field, value) => {
-    const updatedFields = groupFields.map((item, i) => 
+    const updatedFields = groupFields.map((item, i) =>
       i === index ? { ...item, [field]: value } : item
     );
     setGroupFields(updatedFields);
   };
 
+  // Debounced search for items
+  const debounceCallback = useDebounce(async (value, path) => {
+    console.log("Searching with value:", value); // Debug log to verify full input
+    try {
+      const response = await axiosInstance.post(path, {
+        page: 1,
+        limit: 10,
+        search_text: value, // Ensure full text is sent
+      });
+      if (response.status === 200 && response.data?.results?.length > 0) {
+        setIsSearching(false);
+        setSearchResult(response.data.results);
+        setIsError("");
+      } else {
+        throw new Error("No products found");
+      }
+    } catch (error) {
+      setIsSearching(false);
+      setSearchResult([]);
+      setIsError(error.message || "Failed to search products");
+    }
+  }, 800);
+
+  // Mutation for adding a group
+  const addGroupMutation = useMutation({
+    mutationFn: async (groupData) => {
+      const response = await axiosInstance.post("api/v1/group/add", groupData);
+      if (response.status === 200 && response.data) {
+        return response.data;
+      }
+      throw new Error(response.data?.message || "Failed to add group");
+    },
+    onSuccess: (data) => {
+      toast.success(data.message || "Group added successfully");
+      queryClient.invalidateQueries({ queryKey: ["get_groups_lists"] });
+      handleCloseModel();
+    },
+    onError: (error) => {
+      toast.error(error.message || "Something went wrong, please try again.");
+    },
+    onSettled: () => {
+      setIsSaving(false);
+    },
+  });
+
   const handleSubmit = () => {
     if (actionType === "Add") {
-      const newGroups = groupFields.map(field => ({
-        ID: (Math.floor(Math.random() * 9000) + 1000).toString(),
-        GroupName: field.GroupName,
-        Stock: "0", // Default stock value
-        BuyPrice: "$0.00", // Default buy price
-        SellPrice: "$0.00", // Default sell price
-        Action: ActionBtns,
-      })).filter(group => group.GroupName);
-      
-      setRowData([...rowData, ...newGroups]);
+      setIsSaving(true);
+      const groupData = {
+        group_name: groupFields[0].GroupName,
+        status: groupFields[0].Status.toLowerCase(),
+        productIds: groupFields[0].ProductIds,
+      };
+      addGroupMutation.mutate(groupData);
     } else if (actionType === "Edit") {
-      const updatedRowData = rowData.map(item => 
-        item.ID === productData.ID 
-          ? { ...item, GroupName: groupFields[0].GroupName }
+      const updatedRowData = rowData.map((item) =>
+        item.ID === productData.ID
+          ? { ...item, GroupName: groupFields[0].GroupName, Status: groupFields[0].Status }
           : item
       );
       setRowData(updatedRowData);
+      handleCloseModel();
     }
-    handleCloseModel();
+  };
+
+  // Handle adding a selected item
+  const handleAddItem = (product) => {
+    setGroupFields((prev) =>
+      prev.map((item, i) =>
+        i === 0
+          ? {
+              ...item,
+              ProductIds: [...item.ProductIds, product.id],
+              selectedItems: [
+                ...item.selectedItems,
+                { id: product.id, name: product.name },
+              ],
+              ItemName: item.selectedItems
+                .concat({ id: product.id, name: product.name })
+                .map((item) => item.name)
+                .join(", "),
+            }
+          : item
+      )
+    );
+    setItemSearch("");
+    setShowItemList(false);
+  };
+
+  // Handle removing an item
+  const handleRemoveItem = (idToRemove) => {
+    setGroupFields((prev) =>
+      prev.map((item, i) =>
+        i === 0
+          ? {
+              ...item,
+              ProductIds: item.ProductIds.filter((id) => id !== idToRemove),
+              selectedItems: item.selectedItems.filter((item) => item.id !== idToRemove),
+              ItemName: item.selectedItems
+                .filter((item) => item.id !== idToRemove)
+                .map((item) => item.name)
+                .join(", ") || "",
+            }
+          : item
+      )
+    );
   };
 
   return (
@@ -416,7 +528,6 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
         <div className="w-full p-2 sm:p-3 space-y-4 sm:space-y-6">
           {groupFields.map((field, index) => (
             <div key={field.id} className="border border-gray-200 rounded-lg p-3 sm:p-4 relative">
-              
               <div className="grid grid-cols-1 gap-3">
                 <div className="w-full flex flex-col gap-2">
                   <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
@@ -425,23 +536,101 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
                   <input
                     type="text"
                     value={field.GroupName}
-                    onChange={(e) => handleFieldChange(index, 'GroupName', e.target.value)}
+                    onChange={(e) => handleFieldChange(index, "GroupName", e.target.value)}
                     className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                     placeholder="Enter Group Name"
                   />
                 </div>
-                
                 <div className="w-full flex flex-col gap-2">
+                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+                    Status
+                  </label>
+                  <select
+                    value={field.Status}
+                    onChange={(e) => handleFieldChange(index, "Status", e.target.value)}
+                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  >
+                    {statusOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="w-full flex flex-col gap-2 relative">
                   <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
                     Item Name
                   </label>
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    {groupFields[0].selectedItems.map((item) => (
+                      <div
+                        key={item.id}
+                        className="flex items-center bg-[#F3F3F3] text-sm sm:text-base lg:text-[1.1dvw] font-semibold font-[var(--paraFont)] px-2 py-1 rounded-full border border-[#d4d4d4]"
+                      >
+                        {item.name}
+                        <button
+                          onClick={() => handleRemoveItem(item.id)}
+                          className="ml-2 text-[var(--Negative-color)] hover:text-red-700"
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                   <input
                     type="text"
-                    value={field.ItemName}
-                    onChange={(e) => handleFieldChange(index, 'ItemName', e.target.value)}
-                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                    placeholder="Enter Item Name"
+                    value={itemSearch}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      console.log("Input value:", value); 
+                      setItemSearch(value);
+                      if (value) {
+                        setIsSearching(true);
+                        debounceCallback(value, "api/v1/product/list");
+                        setShowItemList(true);
+                      } else {
+                        setShowItemList(false);
+                        setSearchResult([]);
+                        setIsError("");
+                      }
+                    }}
+                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                    placeholder="Enter Item Name..."
                   />
+                  {showItemList && (
+                    <div
+                      onClick={(e) => e.stopPropagation()}
+                      className="absolute top-[105%] flex flex-col justify-start gap-1 items-start left-0 w-full bg-white p-3 overflow-y-auto scroll-smooth max-h-[20vh]"
+                    >
+                      {isError && (
+                        <p className="text-center mainFont text-gray-400 text-sm sm:text-base">
+                          {isError}
+                        </p>
+                      )}
+                      {isSearching ? (
+                        <p className="text-center mainFont text-gray-400 animate-pulse duration-200 ease-linear text-sm sm:text-base">
+                          Searching items...
+                        </p>
+                      ) : (
+                        <>
+                          {searchResult
+                            .filter((product) => !groupFields[0].ProductIds.includes(product.id))
+                            .map((product, id) => (
+                              <button
+                                key={id}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleAddItem(product);
+                                }}
+                                className="w-full py-2 sm:py-3 px-3 sm:px-5 cursor-pointer hover:bg-[#000]/15 transition-all duration-200 ease-linear bg-[#000]/5 border-b border-[var(--border-color)] mainFont font-semibold rounded text-start text-sm sm:text-base"
+                              >
+                                {product.name}
+                              </button>
+                            ))}
+                        </>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -455,11 +644,12 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
           >
             Cancel
           </button>
-          <button 
+          <button
             onClick={handleSubmit}
             className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300"
+            disabled={isSaving}
           >
-            {actionType === "Add" ? "Create" : "Update"}
+            {isSaving ? "Saving..." : actionType === "Add" ? "Create" : "Update"}
           </button>
         </div>
       </div>
