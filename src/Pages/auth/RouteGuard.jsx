@@ -35,7 +35,7 @@ const RouteGuard = () => {
 
   useEffect(() => {
     if (error) {
-      toast.error(error.message || "Something went wrong !");
+      toast.error(error.message || "Un-authorised ! Please Login ");
     }
   }, [error]);
 

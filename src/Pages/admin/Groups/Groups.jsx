@@ -10,33 +10,13 @@ import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import { CircleX, Edit, Trash, Plus, Download, X } from "lucide-react";
 import { DeleteModel } from "../../../components/common/Models/DeleteMode";
-import { useQueryClient, useMutation } from "@tanstack/react-query";
+import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import axiosInstance from "../../../utils/axios-interceptor";
 import { toast } from "react-toastify";
-
-// Temporary inline useDebounce hook (replace with proper import when available)
-function useDebounce(callback, delay) {
-  const timerRef = useRef(null);
-
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
-    };
-  }, []);
-
-  const debouncedCallback = (...args) => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
-    timerRef.current = setTimeout(() => {
-      callback(...args);
-    }, delay);
-  };
-
-  return debouncedCallback;
-}
+import moment from "moment/moment";
+import { Loading } from "../../../components/UI/Loading/Loading";
+import { useDeboune } from "../../../hooks/useDebounce";
+import ProductImg from "../.././../assets/images/ProductImg1.png";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -46,7 +26,7 @@ const rowSelection = {
 };
 
 export const Groups = () => {
-  const [rowData, setRowData] = useState([]);
+  // const [rowData, setRowData] = useState([]);
   const [showModel, setShowModel] = useState({
     state: false,
     productData: null,
@@ -58,51 +38,37 @@ export const Groups = () => {
     productId: null,
   });
 
-  const queryClient = useQueryClient();
+  const getGroupLists = async () => {
+    try {
+      const reqGroupList = await axiosInstance.post("api/v1/group/list", {
+        page: 1,
+        limit: 20,
+      });
 
-  // Fetch groups data on component mount
-  useEffect(() => {
-    const fetchGroups = async () => {
-      try {
-        const response = await axiosInstance.post("api/v1/group/list", {
-          page: 1,
-          limit: 10,
-        });
-        console.log("API Response:", response.data); // Log the full response for debugging
-        if (response.status === 200 && response.data?.results?.length > 0) {
-          const formattedData = response.data.results.map((group) => {
-            // Log all available keys for debugging
-            console.log("Group Keys:", Object.keys(group));
-            // Try to find any date-related field
-            const dateFields = Object.keys(group).filter(key =>
-              key.toLowerCase().includes("date") || key.toLowerCase().includes("time") || key.toLowerCase().includes("created")
-            );
-            let createdAtValue = "";
-            if (dateFields.length > 0) {
-              createdAtValue = group[dateFields[0]] || ""; // Use the first matching date field
-            }
-            return {
-              ID: group.id || "",
-              group_name: group.group_name || "",
-              Items: group.items || group.Items || "",
-              Status: group.status || group.Status || "",
-              CreatedAt: createdAtValue || group.created_at || group.CreatedAt || group.creation_date || group.date_created || group.createdOn || group.createDate || group.timestamp || "", 
-              Action: ActionBtns,
-            };
-          });
-          setRowData(formattedData);
-          console.log("Formatted Row Data:", formattedData); // Log formatted data for verification
-        } else {
-          setRowData([]);
-          console.log("No results found in API response");
-        }
-      } catch (error) {
-        console.error("Failed to fetch groups:", error);
-        setRowData([]);
+      if (reqGroupList.data && reqGroupList.status === 200) {
+        console.log(reqGroupList.data.results);
+        return reqGroupList.data.results || [];
       }
-    };
-    fetchGroups();
-  }, []);
+    } catch (error) {
+      console.error(error);
+      throw new Error(error);
+    }
+  };
+
+  const {
+    data: rowData = [],
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["get_groups_list"],
+    queryFn: getGroupLists,
+  });
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error.message || "Failed to fetch Group List");
+    }
+  }, [error]);
 
   const onAddGroup = () => {
     console.log("Create Group button clicked");
@@ -157,9 +123,36 @@ export const Groups = () => {
   // Column Definitions: Defines & controls grid columns.
   const [colDefs, setColDefs] = useState([
     { field: "group_name", headerName: "Group Name" },
-    { field: "Items" },
-    { field: "Status" },
-    { field: "CreatedAt" },
+    { field: "number_of_product", headerName: "Items" },
+    {
+      headerName: "CreatedAt",
+      field: "createdAt",
+      cellRenderer: (time) => {
+        return moment(time.value).format("lll");
+      },
+    },
+    {
+      field: "status",
+      headerName: "Status",
+      cellRenderer: (data) => {
+        return (
+          <>
+            <div
+              className={`capitalize font-semibold  flex justify-center items-center gap-3`}
+            >
+              <div
+                className={`h-2 w-2 ${
+                  data.value === "active"
+                    ? "bg-[var(--Positive-color)]"
+                    : "bg-[var(--Negative-color)]"
+                } rounded-full`}
+              ></div>
+              <p>{data.value}</p>
+            </div>
+          </>
+        );
+      },
+    },
     {
       headerName: "Actions",
       field: "actions",
@@ -181,99 +174,106 @@ export const Groups = () => {
   }, []);
 
   return (
-    <Layout onAddProduct={handleAddProduct}>
-      <div className="pb-14 w-full px-4 sm:px-6 lg:px-0">
-        <div className="w-full">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-0 lg:flex-row lg:items-center lg:gap-0 lg:mb-0">
-            <h3 className="text-2xl md:text-xl lg:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
-              All Groups
-            </h3>
-            <div className="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-3 sm:gap-5 w-full sm:w-auto lg:flex-row lg:w-auto lg:gap-5">
-              <button
-                onClick={onAddGroup}
-                className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color1)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
-              >
-                Create Group <PluseIcon />
-              </button>
-              <button
-                onClick={handleImportCSV}
-                className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
-              >
-                Import CSV <PluseIcon />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="w-full h-[60vh] sm:h-[70vh] lg:h-[75vh]">
-          <div className="w-full flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-full">
-            <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center py-1.5 shrink-0 gap-3 sm:gap-0 lg:flex-row lg:items-center lg:gap-0">
-              <div className="flex justify-between sm:justify-center items-center gap-3 w-full sm:w-auto lg:justify-center lg:w-auto">
-                <select className="font-[500] mainFont px-4 justify-between border-none outline-none text-sm lg:text-base">
-                  <option>All Groups</option>
-                  <option>Beer</option>
-                  <option>Wine</option>
-                  <option>Spirits</option>
-                  <option>Beverages</option>
-                  <option>Snacks</option>
-                  <option>Tobacco</option>
-                </select>
-                <div className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-[1.8dvw] lg:w-[1.8dvw] bg-[var(--counterBg-color)] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem] sm:min-w-[1.75rem] sm:min-h-[1.75rem] md:min-w-[2rem] md:min-h-[2rem]">
-                  <p className="text-xs sm:text-xs md:text-sm lg:text-[1dvw] font-[500] text-white">
-                    {rowData.length}
-                  </p>
+    <>
+      <Layout onAddProduct={handleAddProduct}>
+        {isLoading ? (
+          <Loading />
+        ) : (
+          <div className="pb-14 w-full px-4 sm:px-6 lg:px-0">
+            <div className="w-full">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-0 lg:flex-row lg:items-center lg:gap-0 lg:mb-0">
+                <h3 className="text-2xl md:text-xl lg:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
+                  All Groups
+                </h3>
+                <div className="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-3 sm:gap-5 w-full sm:w-auto lg:flex-row lg:w-auto lg:gap-5">
+                  <button
+                    onClick={onAddGroup}
+                    className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color1)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
+                  >
+                    Create Group <PluseIcon />
+                  </button>
+                  <button
+                    onClick={handleImportCSV}
+                    className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
+                  >
+                    Import CSV <PluseIcon />
+                  </button>
                 </div>
               </div>
-              <div className="flex gap-2 sm:gap-4 justify-between items-center flex-wrap lg:gap-4">
-                <button
-                  className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-1.5 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
-                  onClick={handleExportCSV}
-                >
-                  Export CSV <Download size={16} />
-                </button>
-                <button>
-                  <DeleteIcon />
-                </button>
-              </div>
             </div>
-            <div className="h-full w-full overflow-x-scroll overflow-y-auto lg:overflow-x-visible">
-              <div className="min-w-[800px] h-full lg:min-w-0">
-                <AgGridReact
-                  rowData={rowData}
-                  columnDefs={colDefs}
-                  defaultColDef={defaultColDef}
-                  pagination={true}
-                  rowSelection={rowSelection}
-                  onSelectionChanged={(event) => console.log("Row Selected!")}
-                  onCellValueChanged={(event) =>
-                    console.log(`New Cell Value: ${event.value}`)
-                  }
-                  className="w-full h-full text-sm"
-                />
+
+            <div className="w-full h-[60vh] sm:h-[70vh] lg:h-[75vh]">
+              <div className="w-full flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-full">
+                <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center py-1.5 shrink-0 gap-3 sm:gap-0 lg:flex-row lg:items-center lg:gap-0">
+                  <div className="flex justify-between sm:justify-center items-center gap-3 w-full sm:w-auto lg:justify-center lg:w-auto">
+                    <select className="font-[500] mainFont px-4 justify-between border-none outline-none text-sm lg:text-base">
+                      <option>All Groups</option>
+                      <option>Beer</option>
+                      <option>Wine</option>
+                      <option>Spirits</option>
+                      <option>Beverages</option>
+                      <option>Snacks</option>
+                      <option>Tobacco</option>
+                    </select>
+                    <div className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-[1.8dvw] lg:w-[1.8dvw] bg-[var(--counterBg-color)] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem] sm:min-w-[1.75rem] sm:min-h-[1.75rem] md:min-w-[2rem] md:min-h-[2rem]">
+                      <p className="text-xs sm:text-xs md:text-sm lg:text-[1dvw] font-[500] text-white">
+                        {rowData.length}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-2 sm:gap-4 justify-between items-center flex-wrap lg:gap-4">
+                    <button
+                      className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-1.5 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
+                      onClick={handleExportCSV}
+                    >
+                      Export CSV <Download size={16} />
+                    </button>
+                    <button>
+                      <DeleteIcon />
+                    </button>
+                  </div>
+                </div>
+                <div className="h-full w-full overflow-x-scroll overflow-y-auto lg:overflow-x-visible">
+                  <div className="min-w-[800px] h-full lg:min-w-0">
+                    <AgGridReact
+                      rowData={rowData}
+                      columnDefs={colDefs}
+                      defaultColDef={defaultColDef}
+                      pagination={true}
+                      rowSelection={rowSelection}
+                      onSelectionChanged={(event) =>
+                        console.log("Row Selected!")
+                      }
+                      onCellValueChanged={(event) =>
+                        console.log(`New Cell Value: ${event.value}`)
+                      }
+                      className="w-full h-full text-sm"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-
+        )}
+      </Layout>
       {showModel.state && (
         <EditAndAddModel
           productData={showModel.productData || {}}
           setShowModel={setShowModel}
           actionType={showModel.actionType}
-          setRowData={setRowData}
-          rowData={rowData}
+          // setRowData={setRowData}
+          // rowData={rowData}
         />
       )}
       {deleteModel.state && deleteModel.productId && (
         <DeleteModel
           setDeleteModel={setDeleteModel}
           productId={deleteModel.productId}
-          setRowData={setRowData}
-          rowData={rowData}
+          // setRowData={setRowData}
+          // rowData={rowData}
         />
       )}
-    </Layout>
+    </>
   );
 };
 
@@ -310,40 +310,25 @@ const ActionBtns = (props) => {
   );
 };
 
-const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowData, rowData }) => {
+const EditAndAddModel = ({
+  productData = {},
+  setShowModel,
+  actionType,
+  setRowData,
+  rowData,
+}) => {
   const queryClient = useQueryClient();
-  const [groupFields, setGroupFields] = useState([
-    {
-      id: 1,
-      GroupName: productData.group_name || "",
-      ItemName: productData.ItemName || "",
-      Status: productData.Status || "Active",
-      ProductIds: productData.ProductIds || [], // Array to store multiple product IDs
-      selectedItems: productData.ProductIds
-        ? productData.ProductIds.map((id) => ({ id, name: "Unknown" })) // Placeholder until API data is available
-        : [],
-    },
-  ]);
+  const [groupInfo, setGroupInfo] = useState({
+    groupName: "",
+    groupStatus: "active",
+    productList: [],
+  });
   const [isSaving, setIsSaving] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [isError, setIsError] = useState("");
   const [searchResult, setSearchResult] = useState([]);
   const [itemSearch, setItemSearch] = useState("");
   const [showItemList, setShowItemList] = useState(false);
-
-  // Predefined options for dropdowns
-  const [groupNameOptions, setGroupNameOptions] = useState([
-    "Beer",
-    "Wine",
-    "Spirits",
-    "Beverages",
-    "Snacks",
-    "Tobacco",
-    "Energy Drinks",
-    "Mixers",
-    "Craft Beer",
-    "Premium Spirits",
-  ]);
 
   const [statusOptions] = useState(["Active", "Inactive"]);
 
@@ -365,26 +350,20 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
     setGroupFields(updatedFields);
   };
 
-  // Debounced search for items
-  const debounceCallback = useDebounce(async (value, path) => {
-    console.log("Searching with value:", value); // Debug log to verify full input
-    try {
-      const response = await axiosInstance.post(path, {
-        page: 1,
-        limit: 10,
-        search_text: value, // Ensure full text is sent
-      });
-      if (response.status === 200 && response.data?.results?.length > 0) {
-        setIsSearching(false);
-        setSearchResult(response.data.results);
-        setIsError("");
-      } else {
-        throw new Error("No products found"); 
-      }
-    } catch (error) {
+  const debounceCallback = useDeboune((data, error) => {
+    if (data.length > 0 && error === null) {
       setIsSearching(false);
-      setSearchResult([]);
-      setIsError(error.message || "Failed to search products");
+      setSearchResult([...data]);
+      setIsError("");
+      return;
+    } else {
+      setIsSearching(false);
+    }
+
+    if (error) {
+      setIsSearching(false);
+      console.log(error);
+      setIsError(error);
     }
   }, 800);
 
@@ -422,7 +401,11 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
     } else if (actionType === "Edit") {
       const updatedRowData = rowData.map((item) =>
         item.ID === productData.ID
-          ? { ...item, group_name: groupFields[0].GroupName, Status: groupFields[0].Status }
+          ? {
+              ...item,
+              group_name: groupFields[0].GroupName,
+              Status: groupFields[0].Status,
+            }
           : item
       );
       setRowData(updatedRowData);
@@ -432,50 +415,59 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
 
   // Handle adding a selected item
   const handleAddItem = (product) => {
-    setGroupFields((prev) =>
-      prev.map((item, i) =>
-        i === 0
-          ? {
-              ...item,
-              ProductIds: [...item.ProductIds, product.id],
-              selectedItems: [
-                ...item.selectedItems,
-                { id: product.id, name: product.name },
-              ],
-              ItemName: item.selectedItems
-                .concat({ id: product.id, name: product.name })
-                .map((item) => item.name)
-                .join(", "),
-            }
-          : item
-      )
-    );
-    setItemSearch("");
-    setShowItemList(false);
+    const stringifySelectedProductList = JSON.stringify(groupInfo.productList);
+    const copyList = JSON.parse(stringifySelectedProductList);
+
+    if (copyList.length === 0) {
+      copyList.push({
+        id: product.id,
+        name: product.name,
+      });
+
+      setGroupInfo({
+        ...groupInfo,
+        productList: copyList,
+      });
+    } else {
+      const checkExist = copyList.filter((item) => item.id === product.id)[0];
+      if (checkExist) {
+        toast.warn("Item already exists");
+        return;
+      }
+
+      copyList.push({
+        id: product.id,
+        name: product.name,
+      });
+
+      setGroupInfo({
+        ...groupInfo,
+        productList: copyList,
+      });
+    }
   };
 
   // Handle removing an item
   const handleRemoveItem = (idToRemove) => {
-    setGroupFields((prev) =>
-      prev.map((item, i) =>
-        i === 0
-          ? {
-              ...item,
-              ProductIds: item.ProductIds.filter((id) => id !== idToRemove),
-              selectedItems: item.selectedItems.filter((item) => item.id !== idToRemove),
-              ItemName: item.selectedItems
-                .filter((item) => item.id !== idToRemove)
-                .map((item) => item.name)
-                .join(", ") || "",
-            }
-          : item
-      )
-    );
+    const stringifySelectedProductList = JSON.stringify(groupInfo.productList);
+    const copyList = JSON.parse(stringifySelectedProductList);
+
+    const filterList = copyList.filter((item) => item.id !== idToRemove);
+
+    setGroupInfo({
+      ...groupInfo,
+      productList: filterList,
+    });
   };
 
   return (
     <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center p-4">
-      <div className="bg-white w-full sm:w-[90%] md:w-[60%] lg:w-[50%] max-h-[90vh] min-h-[70vh] overflow-y-auto p-4 sm:p-5 rounded-lg shadow-md">
+      <div
+        onClick={() => {
+          setShowItemList(false);
+        }}
+        className="bg-white w-full sm:w-[90%] md:w-[60%] lg:w-[50%] max-h-[90vh] min-h-[70vh] overflow-y-auto p-4 sm:p-5 rounded-lg shadow-md"
+      >
         <div className="flex justify-between items-center w-full p-2.5 rounded-md bg-[var(--sideMenu-color)] text-white">
           <h3 className="text-lg sm:text-xl lg:text-[1.5dvw] font-semibold">
             {actionType === "Add" ? "Add Group" : `${actionType} Group`}
@@ -489,8 +481,11 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
         </div>
 
         <div className="w-full p-2 sm:p-3 space-y-4 sm:space-y-6">
-          {groupFields.map((field, index) => (
-            <div key={field.id} className="border border-gray-200 rounded-lg p-3 sm:p-4 relative">
+          {/* {groupFields.map((field, index) => (
+            <div
+              key={field.id}
+              className="border border-gray-200 rounded-lg p-3 sm:p-4 relative"
+            >
               <div className="grid grid-cols-1 gap-3">
                 <div className="w-full flex flex-col gap-2">
                   <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
@@ -499,7 +494,9 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
                   <input
                     type="text"
                     value={field.GroupName}
-                    onChange={(e) => handleFieldChange(index, "GroupName", e.target.value)}
+                    onChange={(e) =>
+                      handleFieldChange(index, "GroupName", e.target.value)
+                    }
                     className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                     placeholder="Enter Group Name"
                   />
@@ -510,7 +507,9 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
                   </label>
                   <select
                     value={field.Status}
-                    onChange={(e) => handleFieldChange(index, "Status", e.target.value)}
+                    onChange={(e) =>
+                      handleFieldChange(index, "Status", e.target.value)
+                    }
                     className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                   >
                     {statusOptions.map((option) => (
@@ -528,7 +527,7 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
                     {groupFields[0].selectedItems.map((item) => (
                       <div
                         key={item.id}
-                        className="flex items-center bg-[#F3F3F3] text-sm sm:text-base lg:text-[1.1dvw] font-semibold font-[var(--paraFont)] px-2 py-1 rounded-full border border-[#d4d4d4]"
+                        className="flex items-center bg-[#F3F3F3] text-sm sm:text-base lg:text-[1.1dvw] font-normal paraFont px-4 py-1.5 rounded-full border border-[#d4d4d4]"
                       >
                         {item.name}
                         <button
@@ -545,16 +544,11 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
                     value={itemSearch}
                     onChange={(e) => {
                       const value = e.target.value;
-                      console.log("Input value:", value); // Debug log to verify full input
                       setItemSearch(value);
                       if (value) {
                         setIsSearching(true);
                         debounceCallback(value, "api/v1/product/list");
                         setShowItemList(true);
-                      } else {
-                        setShowItemList(false);
-                        setSearchResult([]);
-                        setIsError("");
                       }
                     }}
                     className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
@@ -576,20 +570,35 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
                         </p>
                       ) : (
                         <>
-                          {searchResult
-                            .filter((product) => !groupFields[0].ProductIds.includes(product.id))
-                            .map((product, id) => (
-                              <button
-                                key={id}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleAddItem(product);
-                                }}
-                                className="w-full py-2 sm:py-3 px-3 sm:px-5 cursor-pointer hover:bg-[#000]/15 transition-all duration-200 ease-linear bg-[#000]/5 border-b border-[var(--border-color)] mainFont font-semibold rounded text-start text-sm sm:text-base"
-                              >
-                                {product.name}
-                              </button>
-                            ))}
+                          {searchResult.length === 0 ? (
+                            <>
+                              <p className="text-center mainFont text-gray-400 animate-pulse duration-200 ease-linear text-sm sm:text-base">
+                                No Item Found
+                              </p>
+                            </>
+                          ) : (
+                            <>
+                              {searchResult
+                                .filter(
+                                  (product) =>
+                                    !groupFields[0].ProductIds.includes(
+                                      product.id
+                                    )
+                                )
+                                .map((product, id) => (
+                                  <button
+                                    key={id}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleAddItem(product);
+                                    }}
+                                    className="w-full py-2 sm:py-3 px-3 sm:px-5 cursor-pointer hover:bg-[#000]/15 transition-all duration-200 ease-linear bg-[#000]/5 border-b border-[var(--border-color)] mainFont font-semibold rounded text-start text-sm sm:text-base"
+                                  >
+                                    {product.name}
+                                  </button>
+                                ))}
+                            </>
+                          )}
                         </>
                       )}
                     </div>
@@ -597,7 +606,145 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
                 </div>
               </div>
             </div>
-          ))}
+          ))} */}
+          <div className="w-full flex flex-col gap-2">
+            <label
+              className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
+              htmlFor="groupName"
+            >
+              Group Name
+            </label>
+            <input
+              className="bg-[#F3F3F3] w-full font-normal paraFont text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              placeholder="Enter Group Name"
+              id="groupName"
+            />
+          </div>
+
+          <div className="w-full flex flex-col gap-2">
+            <label
+              className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
+              htmlFor="groupStatus"
+            >
+              Group Status
+            </label>
+            <select
+              className="bg-[#F3F3F3] w-full font-normal paraFont text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              placeholder="Enter Group Name"
+              id="groupStatus"
+            >
+              <option value="active">Active</option>
+              <option value="in-active">In-active</option>
+            </select>
+          </div>
+
+          {/* shows the selected items/products list start */}
+          {groupInfo.productList.length > 0 && (
+            <div>
+              <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+                Selected Items lists
+              </label>
+              <div className="flex flex-wrap justify-start items-center gap-2 my-4">
+                {groupInfo.productList.map((sItem, id) => (
+                  <div
+                    key={id}
+                    className="bg-[var(--border-color)]/20 shrink-0 px-3 py-1.5 rounded border border-[var(--border-color)]  shadow-inner flex justify-between items-center gap-3"
+                  >
+                  <img src={ProductImg} alt="product-image" className="h-[3dvw] w-[3dvw]" />
+                    <p className="text-[1.1dvw] font-medium paraFont ">
+                      {sItem.name}
+                    </p>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRemoveItem(sItem.id);
+                      }}
+                      className="cursor-pointer text-[var(--Negative-color)] font-bold hover:scale-110 transition-all duration-200 ease-linear"
+                    >
+                      <X size={18} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* shows the selected items/products list end */}
+
+          <div className="w-full flex flex-col gap-2 relative">
+            <label
+              className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
+              htmlFor="itemName"
+            >
+              Add Items to Group
+            </label>
+            <input
+              className="bg-[#F3F3F3] w-full font-normal paraFont text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              placeholder="beer, wine,cigarettes ..."
+              id="itemName"
+              onChange={(e) => {
+                setIsSearching(true);
+                e.target.value && setShowItemList(true);
+                e.target.value &&
+                  debounceCallback(e.target.value, "api/v1/product/list");
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            />
+
+            {/* search list show up start */}
+            {showItemList && (
+              <div className="absolute top-[105%] p-3 left-0 w-full min-h-[10vh] max-h-[30vh] overflow-auto flex flex-col gap-1 bg-white hideScrollbar">
+                {isError && (
+                  <p className="text-center mainFont text-gray-400 text-sm sm:text-base">
+                    {isError}
+                  </p>
+                )}
+
+                {isSearching ? (
+                  <div className="w-full">
+                    <p className="text-start mainFont text-gray-400 animate-pulse duration-200 ease-linear text-sm sm:text-base">
+                      Searching items...
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    {searchResult.length === 0 ? (
+                      <>
+                        <p className="text-center mainFont text-gray-400 animate-pulse duration-200 ease-linear text-sm sm:text-base">
+                          No Item Found
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        {searchResult.map((fData, id) => (
+                          <button
+                            key={id}
+                            className="w-full py-2 sm:py-3 px-3 sm:px-5 cursor-pointer hover:bg-[#000]/15 transition-all duration-200 ease-linear bg-[#000]/5 border-b border-[var(--border-color)] mainFont font-semibold rounded text-start text-sm sm:text-base capitalize flex justify-start items-center gap-3 "
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleAddItem(fData);
+                            }}
+                          >
+                            <img
+                              src={ProductImg}
+                              className="h-[3dvw] w-[3dvw] shrink-0"
+                              alt="product-img"
+                            />
+                            <div className="w-full ">
+                              <p className="line-clamp-1 ">{fData.name}</p>
+                            </div>
+                          </button>
+                        ))}
+                      </>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
+            {/* search list show up end */}
+          </div>
         </div>
 
         <div className="flex flex-col sm:flex-row justify-end items-center gap-4 my-4">
@@ -612,7 +759,11 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
             className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300"
             disabled={isSaving}
           >
-            {isSaving ? "Saving..." : actionType === "Add" ? "Create" : "Update"}
+            {isSaving
+              ? "Saving..."
+              : actionType === "Add"
+              ? "Create"
+              : "Update"}
           </button>
         </div>
       </div>
