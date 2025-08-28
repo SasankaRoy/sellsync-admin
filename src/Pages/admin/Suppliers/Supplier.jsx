@@ -119,6 +119,7 @@ export const Supplier = () => {
   const [deleteModel, setDeleteModel] = useState({
     state: false,
     productId: null,
+    path: "",
   });
 
   const onAddSupplier = () => {
@@ -153,7 +154,8 @@ export const Supplier = () => {
     console.log(product, "delete");
     setDeleteModel({
       state: true,
-      productId: product.ID,
+      productId: product.id,
+      path: `api/v1/supplier/delete/${product.id}`,
     });
   };
 
@@ -295,10 +297,11 @@ export const Supplier = () => {
               actionType={showModel.actionType}
             />
           )}
-          {deleteModel.state && deleteModel.productId && (
+          {deleteModel.state && deleteModel.productId && deleteModel.path && (
             <DeleteModel
               setDeleteModel={setDeleteModel}
               productId={deleteModel.productId}
+              path={deleteModel.path}
             />
           )}
         </div>
@@ -338,16 +341,17 @@ const ActionBtns = (props) => {
 };
 
 const EditAndAddModel = ({ productData = {}, setShowModel, actionType }) => {
+  console.log(productData);
   const [supplierInfo, setSupplierInfo] = useState({
-    supplierName: "",
-    phoneNumber: "",
-    email: "",
-    city: "",
-    zipCode: "",
-    state: "",
-    street: "",
-    status: "",
-    role: "",
+    supplierName: productData?.name || "",
+    phoneNumber: productData?.mobile || "",
+    email: productData?.email || "",
+    city: productData?.address?.city || "",
+    zipCode: productData?.address?.zip || "",
+    state: productData?.address?.state || "",
+    street: productData?.address?.street || "",
+    status: productData?.status || "",
+    role: productData?.role || "supplier",
   });
   const [isSaving, setIsSaving] = useState(false);
   const queryClient = useQueryClient();
@@ -364,7 +368,9 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType }) => {
     setIsSaving(true);
     try {
       const reqSupplierUpdate = await axiosInstance.post(
-        "api/v1/supplier/add",
+        actionType === "Add"
+          ? "api/v1/supplier/add"
+          : `api/v1/supplier/update/${productData.id}`,
         {
           full_name: supplierInfo?.supplierName,
           email: supplierInfo?.email,
@@ -391,8 +397,7 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType }) => {
     } catch (error) {
       console.error(error || "somethink went wrong");
       setIsSaving(false);
-    }
-    finally {
+    } finally {
       handleCloseModel();
     }
   };

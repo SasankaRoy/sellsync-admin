@@ -26,7 +26,12 @@ const rowSelection = {
 };
 
 export const Groups = () => {
-  // const [rowData, setRowData] = useState([]);
+  const [gridApi, setGridApi] = useState(null);
+
+  const [tableLimiter, setTableLimiter] = useState({
+    page: 1,
+    limit: 20,
+  });
   const [showModel, setShowModel] = useState({
     state: false,
     productData: null,
@@ -38,15 +43,20 @@ export const Groups = () => {
     productId: null,
   });
 
+  const onGridReady = (params) => {
+    setGridApi(params.api);
+  };
+
+  console.log(tableLimiter,'api')
   const getGroupLists = async () => {
     try {
       const reqGroupList = await axiosInstance.post("api/v1/group/list", {
-        page: 1,
-        limit: 20,
+        page: Number(tableLimiter.page),
+        limit: Number(tableLimiter.limit),
       });
 
       if (reqGroupList.data && reqGroupList.status === 200) {
-        console.log(reqGroupList.data.results);
+        // console.log(reqGroupList.data.results);
         return reqGroupList.data.results || [];
       }
     } catch (error) {
@@ -60,7 +70,7 @@ export const Groups = () => {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["get_groups_list"],
+    queryKey: ["get_groups_lists",tableLimiter.limit],
     queryFn: getGroupLists,
   });
 
@@ -172,6 +182,18 @@ export const Groups = () => {
       editable: false,
     };
   }, []);
+  const onPaginationChanged = () => {
+    if (gridApi) {
+      const page = gridApi.paginationGetCurrentPage() + 1; // 👈 API page (1-based)
+      const limit = gridApi.paginationGetPageSize(); // 👈 API limit (page size)
+
+      console.log(page,limit);
+      // setTableLimiter({
+      //   page:page,
+      //   limit:limit,
+      // });
+    }
+  };
 
   return (
     <>
@@ -248,6 +270,9 @@ export const Groups = () => {
                         console.log(`New Cell Value: ${event.value}`)
                       }
                       className="w-full h-full text-sm"
+                      paginationPageSize={tableLimiter.limit}
+                      onGridReady={onGridReady}
+                      onPaginationChanged={onPaginationChanged}
                     />
                   </div>
                 </div>
@@ -261,8 +286,6 @@ export const Groups = () => {
           productData={showModel.productData || {}}
           setShowModel={setShowModel}
           actionType={showModel.actionType}
-          // setRowData={setRowData}
-          // rowData={rowData}
         />
       )}
       {deleteModel.state && deleteModel.productId && (
@@ -310,13 +333,7 @@ const ActionBtns = (props) => {
   );
 };
 
-const EditAndAddModel = ({
-  productData = {},
-  setShowModel,
-  actionType,
-  setRowData,
-  rowData,
-}) => {
+const EditAndAddModel = ({ setShowModel, actionType }) => {
   const queryClient = useQueryClient();
   const [groupInfo, setGroupInfo] = useState({
     groupName: "",
@@ -327,10 +344,7 @@ const EditAndAddModel = ({
   const [isSearching, setIsSearching] = useState(false);
   const [isError, setIsError] = useState("");
   const [searchResult, setSearchResult] = useState([]);
-  const [itemSearch, setItemSearch] = useState("");
   const [showItemList, setShowItemList] = useState(false);
-
-  const [statusOptions] = useState(["Active", "Inactive"]);
 
   const handleCloseModel = () => {
     setShowModel({
@@ -338,35 +352,30 @@ const EditAndAddModel = ({
       productData: null,
       actionType: "",
     });
-    setItemSearch("");
+
     setSearchResult([]);
     setShowItemList(false);
   };
 
-  const handleFieldChange = (index, field, value) => {
-    const updatedFields = groupFields.map((item, i) =>
-      i === index ? { ...item, [field]: value } : item
-    );
-    setGroupFields(updatedFields);
+  const handleOnchnage = (e) => {
+    const { name, value } = e.target;
+    setGroupInfo({
+      ...groupInfo,
+      [name]: value,
+    });
   };
 
-  // Debounced search for items
-  const debounceCallback = useDebounce(async (value, path) => {
-    console.log("Searching with value:", value); // Debug log to verify full input
-    try {
-      const response = await axiosInstance.post(path, {
-        page: 1,
-        limit: 10,
-        search_text: value, // Ensure full text is sent
-      });
-      if (response.status === 200 && response.data?.results?.length > 0) {
-        setIsSearching(false);
-        setSearchResult(response.data.results);
-        setIsError("");
-      } else {
-        throw new Error("No products found"); 
-      }
-    } catch (error) {
+  const debounceCallback = useDeboune((data, error) => {
+    if (data.length > 0 && error === null) {
+      setIsSearching(false);
+      setSearchResult([...data]);
+      setIsError("");
+      return;
+    } else {
+      setIsSearching(false);
+    }
+
+    if (error) {
       setIsSearching(false);
       console.log(error);
       setIsError(error);
@@ -375,8 +384,8 @@ const EditAndAddModel = ({
 
   // Mutation for adding a group
   const addGroupMutation = useMutation({
-    mutationFn: async (groupData) => {
-      const response = await axiosInstance.post("api/v1/group/add", groupData);
+    mutationFn: async ({ groupData, path }) => {
+      const response = await axiosInstance.post(path, groupData);
       if (response.status === 200 && response.data) {
         return response.data;
       }
@@ -397,25 +406,16 @@ const EditAndAddModel = ({
 
   const handleSubmit = () => {
     if (actionType === "Add") {
-      setIsSaving(true);
-      const groupData = {
-        group_name: groupFields[0].GroupName,
-        status: groupFields[0].Status.toLowerCase(),
-        productIds: groupFields[0].ProductIds,
+      const itemsIds = groupInfo.productList.map((item) => item.id) || [];
+
+      const bodyObj = {
+        group_name: groupInfo.groupName,
+        status: groupInfo.groupStatus,
+        productIds: [...itemsIds],
       };
-      addGroupMutation.mutate(groupData);
+      // console.log(bodyObj);
+      addGroupMutation.mutate({ groupData: bodyObj, path: "api/v1/group/add" });
     } else if (actionType === "Edit") {
-      const updatedRowData = rowData.map((item) =>
-        item.ID === productData.ID
-          ? {
-              ...item,
-              group_name: groupFields[0].GroupName,
-              Status: groupFields[0].Status,
-            }
-          : item
-      );
-      setRowData(updatedRowData);
-      handleCloseModel();
     }
   };
 
@@ -487,132 +487,6 @@ const EditAndAddModel = ({
         </div>
 
         <div className="w-full p-2 sm:p-3 space-y-4 sm:space-y-6">
-          {/* {groupFields.map((field, index) => (
-            <div
-              key={field.id}
-              className="border border-gray-200 rounded-lg p-3 sm:p-4 relative"
-            >
-              <div className="grid grid-cols-1 gap-3">
-                <div className="w-full flex flex-col gap-2">
-                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-                    Group Name
-                  </label>
-                  <input
-                    type="text"
-                    value={field.GroupName}
-                    onChange={(e) =>
-                      handleFieldChange(index, "GroupName", e.target.value)
-                    }
-                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                    placeholder="Enter Group Name"
-                  />
-                </div>
-                <div className="w-full flex flex-col gap-2">
-                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-                    Status
-                  </label>
-                  <select
-                    value={field.Status}
-                    onChange={(e) =>
-                      handleFieldChange(index, "Status", e.target.value)
-                    }
-                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                  >
-                    {statusOptions.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="w-full flex flex-col gap-2 relative">
-                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-                    Item Name
-                  </label>
-                  <div className="flex flex-wrap gap-2 mb-2">
-                    {groupFields[0].selectedItems.map((item) => (
-                      <div
-                        key={item.id}
-                        className="flex items-center bg-[#F3F3F3] text-sm sm:text-base lg:text-[1.1dvw] font-normal paraFont px-4 py-1.5 rounded-full border border-[#d4d4d4]"
-                      >
-                        {item.name}
-                        <button
-                          onClick={() => handleRemoveItem(item.id)}
-                          className="ml-2 text-[var(--Negative-color)] hover:text-red-700"
-                        >
-                          <X size={16} />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                  <input
-                    type="text"
-                    value={itemSearch}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      setItemSearch(value);
-                      if (value) {
-                        setIsSearching(true);
-                        debounceCallback(value, "api/v1/product/list");
-                        setShowItemList(true);
-                      }
-                    }}
-                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                    placeholder="Enter Item Name..."
-                  />
-                  {showItemList && (
-                    <div
-                      onClick={(e) => e.stopPropagation()}
-                      className="absolute top-[105%] flex flex-col justify-start gap-1 items-start left-0 w-full bg-white p-3 overflow-y-auto scroll-smooth max-h-[20vh]"
-                    >
-                      {isError && (
-                        <p className="text-center mainFont text-gray-400 text-sm sm:text-base">
-                          {isError}
-                        </p>
-                      )}
-                      {isSearching ? (
-                        <p className="text-center mainFont text-gray-400 animate-pulse duration-200 ease-linear text-sm sm:text-base">
-                          Searching items...
-                        </p>
-                      ) : (
-                        <>
-                          {searchResult.length === 0 ? (
-                            <>
-                              <p className="text-center mainFont text-gray-400 animate-pulse duration-200 ease-linear text-sm sm:text-base">
-                                No Item Found
-                              </p>
-                            </>
-                          ) : (
-                            <>
-                              {searchResult
-                                .filter(
-                                  (product) =>
-                                    !groupFields[0].ProductIds.includes(
-                                      product.id
-                                    )
-                                )
-                                .map((product, id) => (
-                                  <button
-                                    key={id}
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleAddItem(product);
-                                    }}
-                                    className="w-full py-2 sm:py-3 px-3 sm:px-5 cursor-pointer hover:bg-[#000]/15 transition-all duration-200 ease-linear bg-[#000]/5 border-b border-[var(--border-color)] mainFont font-semibold rounded text-start text-sm sm:text-base"
-                                  >
-                                    {product.name}
-                                  </button>
-                                ))}
-                            </>
-                          )}
-                        </>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))} */}
           <div className="w-full flex flex-col gap-2">
             <label
               className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
@@ -624,6 +498,9 @@ const EditAndAddModel = ({
               className="bg-[#F3F3F3] w-full font-normal paraFont text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               placeholder="Enter Group Name"
               id="groupName"
+              value={groupInfo.groupName}
+              name="groupName"
+              onChange={handleOnchnage}
             />
           </div>
 
@@ -635,6 +512,9 @@ const EditAndAddModel = ({
               Group Status
             </label>
             <select
+              value={groupInfo.groupStatus}
+              name="groupStatus"
+              onChange={handleOnchnage}
               className="bg-[#F3F3F3] w-full font-normal paraFont text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               placeholder="Enter Group Name"
               id="groupStatus"
@@ -656,7 +536,11 @@ const EditAndAddModel = ({
                     key={id}
                     className="bg-[var(--border-color)]/20 shrink-0 px-3 py-1.5 rounded border border-[var(--border-color)]  shadow-inner flex justify-between items-center gap-3"
                   >
-                  <img src={ProductImg} alt="product-image" className="h-[3dvw] w-[3dvw]" />
+                    <img
+                      src={ProductImg}
+                      alt="product-image"
+                      className="h-[3dvw] w-[3dvw]"
+                    />
                     <p className="text-[1.1dvw] font-medium paraFont ">
                       {sItem.name}
                     </p>
