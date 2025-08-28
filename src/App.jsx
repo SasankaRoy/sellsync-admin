@@ -38,6 +38,7 @@ import { ExpenseList } from "./Pages/admin/Daily/Expense";
 import RouteGuard from "./Pages/auth/RouteGuard";
 import { Loyaltyreports } from "./Pages/admin/Loyalty/Loyaltyreports";
 import { Groups } from "./Pages/admin/Groups/Groups";
+import  SellerDashboard  from "./Pages/seller/SellerDashboard";
 
 
 
@@ -46,7 +47,10 @@ function App() {
   return (
     <>
       <BrowserRouter>
+
         <Routes>
+
+
           <Route element={<RouteGuard />}>
             <Route path="/" element={<AdminDashboard />} />
             <Route path="/admin/sale" element={<Sale />} />
@@ -118,11 +122,15 @@ function App() {
             <Route path="/admin/payroll" element={<Payroll />} />
             <Route path="/admin/item-report/:id" element={<ItemReport />} />
           </Route>
+          <Route>
+            <Route path="/seller/dashboard" element={<SellerDashboard />} />
+          </Route>
 
           <Route path="/auth/login" element={<Login />} />
           <Route path="/auth/register" element={<Register />} />
         </Routes>
       </BrowserRouter>
+
     </>
   );
 }

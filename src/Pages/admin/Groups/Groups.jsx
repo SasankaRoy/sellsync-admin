@@ -350,17 +350,23 @@ const EditAndAddModel = ({
     setGroupFields(updatedFields);
   };
 
-  const debounceCallback = useDeboune((data, error) => {
-    if (data.length > 0 && error === null) {
-      setIsSearching(false);
-      setSearchResult([...data]);
-      setIsError("");
-      return;
-    } else {
-      setIsSearching(false);
-    }
-
-    if (error) {
+  // Debounced search for items
+  const debounceCallback = useDebounce(async (value, path) => {
+    console.log("Searching with value:", value); // Debug log to verify full input
+    try {
+      const response = await axiosInstance.post(path, {
+        page: 1,
+        limit: 10,
+        search_text: value, // Ensure full text is sent
+      });
+      if (response.status === 200 && response.data?.results?.length > 0) {
+        setIsSearching(false);
+        setSearchResult(response.data.results);
+        setIsError("");
+      } else {
+        throw new Error("No products found"); 
+      }
+    } catch (error) {
       setIsSearching(false);
       console.log(error);
       setIsError(error);
