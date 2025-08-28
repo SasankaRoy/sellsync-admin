@@ -379,7 +379,7 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
         setSearchResult(response.data.results);
         setIsError("");
       } else {
-        throw new Error("No products found"); 
+        throw new Error("No products found");
       }
     } catch (error) {
       setIsSearching(false);
