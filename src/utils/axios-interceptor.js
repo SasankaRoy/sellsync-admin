@@ -1,5 +1,7 @@
 import axios from "axios";
 import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 // Create axios instance
 const axiosInstance = axios.create({
@@ -35,7 +37,13 @@ axiosInstance.interceptors.response.use(
   },
   (error) => {
     // Handle response error
-    // console.log(error)
+    if (error.status === 403) {
+      setTimeout(() => {
+        window.location.href = "/auth/login";
+      }, 800);
+      toast.error("Un-authenticated");
+    }
+
     return Promise.reject(error);
   }
 );
