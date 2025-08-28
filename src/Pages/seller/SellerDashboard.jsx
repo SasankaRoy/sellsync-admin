@@ -1,57 +1,35 @@
 import React, { useState } from 'react';
-import { Search, Bell, BarChart3, Package, TrendingUp, CreditCard, Camera, Eye, Edit, Home, PieChart, Users, Settings, Menu } from 'lucide-react';
+import { Search, Bell, BarChart3, Package, TrendingUp, CreditCard, Camera, Eye, Edit, Home, PieChart, Users, Settings, Menu, Download, ArrowUpRight, DollarSign, ShoppingCart } from 'lucide-react';
 import ProductImg1 from "../../assets/images/ProductImg1.png";
+import Layout from '../../components/common/Layout/Layout';
+import { Overviewcards } from "../../components/common/Overviewcards/Overviewcards";
+import { NetsaleAmountIcon, OverviewCardIcon1, RefundIcon } from "../../assets/Svgs/AllSvgs";
 
 const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('transactions');
 
-  const stats = [
-    {
-      title: "Total Sales Today",
-      value: "$4,567",
-      subtitle: "32 Transactions",
-      icon: <BarChart3 className="w-8 h-8" />,
-      bgColor: "bg-blue-500",
-      textColor: "text-blue-600"
-    },
-    {
-      title: "Best-Selling Product",
-      value: "Espresso Coffee",
-      subtitle: "15 sold",
-      icon: <Package className="w-8 h-8" />,
-      bgColor: "bg-orange-400",
-      textColor: "text-orange-600"
-    },
-    {
-      title: "Total Revenue Weekly",
-      value: "$34,455",
-      subtitle: "+12.5% from last week",
-      icon: <TrendingUp className="w-8 h-8" />,
-      bgColor: "bg-green-500",
-      textColor: "text-green-600"
-    },
-    {
-      title: "Top Payment Method",
-      value: "Credit Card",
-      subtitle: "78% of transactions",
-      icon: <CreditCard className="w-8 h-8" />,
-      bgColor: "bg-purple-500",
-      textColor: "text-purple-600"
-    }
-  ];
-
   const transactions = [
     { contact: "Andy Smith", id: "TXN202403", method: "Credit card", time: "Mar 2, 5:20 PM", amount: "$150", status: "Complete" },
-    { contact: "Andy Smith", id: "TXN202403", method: "Credit card", time: "Mar 2, 5:20 PM", amount: "$35", status: "Refund" },
-    { contact: "Andy Smith", id: "TXN202403", method: "Credit card", time: "Mar 2, 5:20 PM", amount: "$435", status: "Complete" }
+    { contact: "Sarah Johnson", id: "TXN202404", method: "Debit card", time: "Mar 2, 4:35 PM", amount: "$85", status: "Complete" },
+    { contact: "Mike Wilson", id: "TXN202405", method: "Cash", time: "Mar 2, 3:45 PM", amount: "$35", status: "Refund" },
+    { contact: "Emily Davis", id: "TXN202406", method: "Credit card", time: "Mar 2, 2:20 PM", amount: "$220", status: "Complete" },
+    { contact: "John Brown", id: "TXN202407", method: "Digital wallet", time: "Mar 2, 1:15 PM", amount: "$435", status: "Complete" },
+    { contact: "Lisa Garcia", id: "TXN202408", method: "Credit card", time: "Mar 2, 12:30 PM", amount: "$95", status: "Complete" },
+    { contact: "David Martinez", id: "TXN202409", method: "Debit card", time: "Mar 2, 11:45 AM", amount: "$180", status: "Complete" },
+    { contact: "Jennifer Lee", id: "TXN202410", method: "Cash", time: "Mar 2, 10:20 AM", amount: "$65", status: "Refund" }
   ];
 
   const stocks = [
     { name: "Whipped Cream", stock: 0, price: 5, status: "Out of Stock", image: "productImg1" },
     { name: "Budweiser Magnum", stock: 4, price: 2, status: "Current Stock", image: "productImg1" },
     { name: "Mocha Beans", stock: 2, price: 20, status: "Current Stock", image: "productImg1" },
-    { name: "Almonds", stock: 4, price: 15, status: "Current Stock", image: "productImg1" }
+    { name: "Almonds", stock: 4, price: 15, status: "Current Stock", image: "productImg1" },
+    { name: "Organic Honey", stock: 8, price: 12, status: "In Stock", image: "productImg1" },
+    { name: "Dark Chocolate Bar", stock: 15, price: 4, status: "In Stock", image: "productImg1" },
+    { name: "Vanilla Extract", stock: 3, price: 8, status: "Low Stock", image: "productImg1" },
+    { name: "Coconut Milk", stock: 0, price: 3, status: "Out of Stock", image: "productImg1" },
+    { name: "Cinnamon Sticks", stock: 7, price: 6, status: "In Stock", image: "productImg1" }
   ];
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -78,238 +56,297 @@ const Dashboard = () => {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  return (
-    <div className="min-h-screen bg-gray-50 flex">
-      {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}>
-        <div className="flex items-center justify-center h-16 bg-blue-600">
-          <span className="text-white text-xl font-bold">Dashboard</span>
-        </div>
-        <nav className="mt-5 px-2">
-          <div className="space-y-1">
-            <a href="#" className="bg-blue-100 text-blue-900 group flex items-center px-2 py-2 text-sm font-medium rounded-md">
-              <Home className="mr-3 h-5 w-5" />
-              Home
-            </a>
-            <a href="#" className="text-gray-600 hover:bg-gray-50 hover:text-gray-900 group flex items-center px-2 py-2 text-sm font-medium rounded-md">
-              <PieChart className="mr-3 h-5 w-5" />
-              Analytics
-            </a>
-            <a href="#" className="text-gray-600 hover:bg-gray-50 hover:text-gray-900 group flex items-center px-2 py-2 text-sm font-medium rounded-md">
-              <Users className="mr-3 h-5 w-5" />
-              Customers
-            </a>
-            <a href="#" className="text-gray-600 hover:bg-gray-50 hover:text-gray-900 group flex items-center px-2 py-2 text-sm font-medium rounded-md">
-              <Package className="mr-3 h-5 w-5" />
-              Inventory
-            </a>
-            <a href="#" className="text-gray-600 hover:bg-gray-50 hover:text-gray-900 group flex items-center px-2 py-2 text-sm font-medium rounded-md">
-              <Settings className="mr-3 h-5 w-5" />
-              Settings
-            </a>
-          </div>
-        </nav>
-      </div>
+  // Action buttons component for transactions table
+  const TransactionActionBtns = ({ data }) => {
+    const handleView = () => {
+      console.log('View transaction:', data);
+      // Add view logic here
+    };
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col h-screen overflow-hidden">
-        {/* Header */}
-        <header className="bg-white shadow-sm border-b border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center py-4">
-              <div className="flex items-center">
-                <button
-                  onClick={() => setSidebarOpen(!sidebarOpen)}
-                  className="lg:hidden -ml-2 mr-2 h-10 w-10 rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
-                >
-                  <Menu className="h-6 w-6" />
-                </button>
-                <div className="flex items-center space-x-4">
-                  <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                    <span className="text-white font-semibold">JS</span>
+    return (
+      <button 
+        onClick={handleView}
+        className="text-blue-600 hover:text-blue-900 font-medium text-sm"
+      >
+        View Details
+      </button>
+    );
+  };
+
+  return (
+    <Layout>
+      <div className="w-full">
+        <div className="w-full">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-lg sm:text-xl md:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
+              Seller Dashboard
+            </h3>
+          </div>
+        </div>
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <Overviewcards 
+            cardTitle="Total Sales Today"
+            cardValue="$4,567"
+            percent="32"
+            subtitle="32 Transactions"
+
+            icon={<OverviewCardIcon1 />}
+          />
+          <Overviewcards 
+            cardTitle="Best Selling Product"
+            cardValue="Espresso Coffee"
+            percent="15"
+            subtitle="15 sold"
+            icon={<RefundIcon />}
+          />
+          <Overviewcards 
+            cardTitle="Total Revenue Weekly"
+            cardValue="$34,455"
+            percent="12"
+            subtitle="+12% from last week"
+            icon={<NetsaleAmountIcon />}
+          />
+        </div>
+
+        {/* Tab Content */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+          {/* Tabs Header */}
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 sm:p-6 border-b border-gray-200">
+            <div className="bg-[#E6E6E6] p-1.5 rounded-full w-full sm:w-auto mb-4 sm:mb-0 flex overflow-x-auto flex-shrink-0">
+              <button
+                onClick={() => setActiveTab('transactions')}
+                className={`${
+                  activeTab === 'transactions'
+                    ? 'bg-white text-black'
+                    : 'bg-transparent text-[#333333]/70'
+                } border-none outline-none px-6 py-1.5 text-sm cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear whitespace-nowrap`}
+              >
+                Recent Transactions
+              </button>
+              <button
+                onClick={() => setActiveTab('stocks')}
+                className={`${
+                  activeTab === 'stocks'
+                    ? 'bg-white text-black'
+                    : 'bg-transparent text-[#333333]/70'
+                } border-none outline-none px-6 py-1.5 text-sm cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear whitespace-nowrap`}
+              >
+                Stocks
+              </button>
+            </div>
+            <button className="bg-[var(--button-color1)]  text-white font-semibold py-2.5 px-6 rounded-full flex items-center justify-center space-x-2 transition-colors shadow-sm whitespace-nowrap">
+              <Camera className="h-4 w-4" />
+              <span>Scan Products</span>
+            </button>
+          </div>
+
+          {/* Tab Panels */}
+          {activeTab === 'transactions' && (
+            <div className="w-full border border-gray-200 rounded-lg">
+              {/* Table Header Controls */}
+              <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center py-3 px-4 shrink-0 gap-3 sm:gap-0">
+                <div className="flex justify-between sm:justify-center items-center gap-3 w-full sm:w-auto">
+                  <select className="font-medium px-4 py-2 border border-gray-300 rounded-lg outline-none text-sm lg:text-base bg-white">
+                    <option>All Transactions</option>
+                    <option>Completed</option>
+                    <option>Refund</option>
+                    <option>Pending</option>
+                  </select>
+                  <div className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 bg-[var(--counterBg-color)] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem] sm:min-w-[1.75rem] sm:min-h-[1.75rem] md:min-w-[2rem] md:min-h-[2rem]">
+                    <p className="text-xs sm:text-xs md:text-sm font-medium text-white">
+                      {transactions.length}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-2 sm:gap-4 justify-between items-center flex-wrap">
+                  <button className="px-4 sm:px-5 py-1.5 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 text-white font-medium cursor-pointer text-sm transition-all duration-300 ease-linear">
+                    Export CSV <Download size={16} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Table */}
+              <div className="overflow-x-auto">
+                <div className="min-w-[900px]">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap w-[180px]">
+                          Payer Name
+                        </th>
+                        <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap w-[150px]">
+                          Transaction ID
+                        </th>
+                        <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap w-[150px]">
+                          Payment Method
+                        </th>
+                        <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap w-[150px]">
+                          Time
+                        </th>
+                        <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap w-[100px]">
+                          Amount
+                        </th>
+                        <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap w-[120px]">
+                          Status
+                        </th>
+                        <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap w-[150px]">
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {currentTransactions.map((transaction, index) => (
+                        <tr key={index} className="hover:bg-[#f5f8ff] transition-colors duration-150">
+                          <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            {transaction.contact}
+                          </td>
+                          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                            #{transaction.id}
+                          </td>
+                          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {transaction.method}
+                          </td>
+                          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {transaction.time}
+                          </td>
+                          <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            {transaction.amount}
+                          </td>
+                          <td className="px-4 py-4 whitespace-nowrap">
+                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(transaction.status)}`}>
+                              {transaction.status}
+                            </span>
+                          </td>
+                          <td className="px-4 py-4 whitespace-nowrap text-sm font-medium">
+                            <TransactionActionBtns data={transaction} />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Pagination */}
+              <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+                <div className="flex-1 flex justify-between sm:hidden">
+                  <button
+                    onClick={() => paginate(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Previous
+                  </button>
+                  <button
+                    onClick={() => paginate(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Next
+                  </button>
+                </div>
+                <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                  <div>
+                    <p className="text-sm text-gray-700">
+                      Showing <span className="font-medium">{indexOfFirstItem + 1}</span> to{' '}
+                      <span className="font-medium">
+                        {Math.min(indexOfLastItem, transactions.length)}
+                      </span>{' '}
+                      of <span className="font-medium">{transactions.length}</span> results
+                    </p>
                   </div>
                   <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Hello John Smith</h1>
-                    <p className="text-gray-600">Welcome Back!</p>
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center space-x-4">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-                  <input
-                    type="text"
-                    placeholder="Search..."
-                    className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-                <button className="relative p-2 text-gray-600 hover:text-gray-900">
-                  <Bell className="h-6 w-6" />
-                  <span className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full"></span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        {/* Dashboard Content */}
-        <main className="flex-1 overflow-y-auto">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              {stats.map((stat, index) => (
-                <div key={index} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className={`p-3 rounded-lg ${stat.bgColor.replace('500', '100')} ${stat.textColor}`}>
-                      {stat.icon}
-                    </div>
-                  </div>
-                  <h3 className="text-sm font-medium text-gray-600 mb-2">{stat.title}</h3>
-                  <p className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</p>
-                  <p className="text-sm text-gray-500">{stat.subtitle}</p>
-                </div>
-              ))}
-            </div>
-
-            {/* Tab Content - Single Wrapper with Integrated Tabs */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-              {/* Tabs Header */}
-              <div className="flex items-center justify-between p-6 border-b border-gray-200">
-                <div className="flex space-x-1 bg-gray-100 rounded-lg p-1">
-                  <button
-                    onClick={() => setActiveTab('transactions')}
-                    className={`px-6 py-3 font-medium text-sm rounded-md transition-all duration-200 ${
-                      activeTab === 'transactions' 
-                        ? 'bg-white text-gray-900 shadow-sm' 
-                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                    }`}
-                  >
-                    Recent Transactions
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('stocks')}
-                    className={`px-6 py-3 font-medium text-sm rounded-md transition-all duration-200 ${
-                      activeTab === 'stocks' 
-                        ? 'bg-white text-gray-900 shadow-sm' 
-                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                    }`}
-                  >
-                    Stocks
-                  </button>
-                </div>
-                <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg flex items-center justify-center space-x-2 transition-colors shadow-sm">
-                  <Camera className="h-5 w-5" />
-                  <span>Scan Products</span>
-                </button>
-              </div>
-              {activeTab === 'transactions' && (
-                <div>
-                  <div className="overflow-x-auto">
-                    <div className="divide-y divide-gray-200">
-                      {currentTransactions.map((transaction, index) => (
-                        <div key={index} className="grid grid-cols-8 gap-6 p-4 hover:bg-gray-50 transition-colors items-center">
-                          <div>{transaction.contact}</div>
-                          <div>{`#${transaction.id}`}</div>
-                          <div>{transaction.method}</div>
-                          <div>{transaction.time}</div>
-                          <div>{transaction.amount}</div>
-                          {transaction.status === 'Complete' && (
-                            <div>
-                              <button className="bg-green-400 hover:bg-green-500 text-white py-1 px-4 rounded-full">
-                                Complete
-                              </button>
-                            </div>
-                          )}
-                          {transaction.status === 'Refund' && (
-                            <div>
-                              <button className="bg-red-400 hover:bg-red-500 text-white py-1 px-4 rounded-full">
-                                Refund
-                              </button>
-                            </div>
-                          )}
-                          <div>
-                            <button className="bg-blue-500 hover:bg-blue-600 text-white py-1 px-4 rounded-full whitespace-nowrap">
-                              View Details
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="p-4 flex justify-center items-center space-x-2">
-                    <button
-                      onClick={() => paginate(currentPage - 1)}
-                      disabled={currentPage === 1}
-                      className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-                    >
-                      Previous
-                    </button>
-                    <span>{currentPage} of {totalPages}</span>
-                    <button
-                      onClick={() => paginate(currentPage + 1)}
-                      disabled={currentPage === totalPages}
-                      className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-                    >
-                      Next
-                    </button>
-                  </div>
-                </div>
-              )}
-              
-              {activeTab === 'stocks' && (
-                <div>
-                  <div className="flex items-center justify-between p-6 border-b border-gray-200">
-                    <h2 className="text-xl font-semibold text-gray-900">Stocks</h2>
-                    <button className="text-blue-600 hover:text-blue-700 font-medium">See All</button>
-                  </div>
-                  <div className="p-6 space-y-4">
-                    {stocks.map((item, index) => (
-                      <div key={index} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow flex justify-between items-center">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 bg-gray-200 rounded-full overflow-hidden">
-                            <img 
-                              src={ProductImg1} 
-                              alt={item.name}
-                              className="w-full h-full object-cover"
-                              onError={(e) => {
-                                e.target.onerror = null;
-                                e.target.src = "https://via.placeholder.com/40";
-                              }}
-                            />
-                          </div>
-                          <div>
-                            <h3 className="font-medium text-gray-900">{item.name}</h3>
-                          </div>
-                        </div>
-                        <div className="flex items-center space-x-4">
-                          <div className="text-right">
-                            <p className={`font-bold text-lg ${getStockColor(item.stock)}`}>{item.stock}</p>
-                            <p className="text-xs text-gray-500">{item.status}</p>
-                            <p className="text-sm text-gray-600">${item.price}</p>
-                          </div>
-                          <button className="bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors flex items-center justify-center space-x-2">
-                            <Edit className="h-4 w-4" />
-                            <span>Edit</span>
+                    <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                      <button
+                        onClick={() => paginate(currentPage - 1)}
+                        disabled={currentPage === 1}
+                        className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <span className="sr-only">Previous</span>
+                        <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                          <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      </button>
+                      
+                      {/* Page Numbers */}
+                      {[...Array(totalPages)].map((_, index) => {
+                        const pageNumber = index + 1;
+                        return (
+                          <button
+                            key={pageNumber}
+                            onClick={() => paginate(pageNumber)}
+                            className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
+                              currentPage === pageNumber
+                                ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
+                                : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                            }`}
+                          >
+                            {pageNumber}
                           </button>
-                        </div>
-                      </div>
-                    ))}
+                        );
+                      })}
+                      
+                      <button
+                        onClick={() => paginate(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                        className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <span className="sr-only">Next</span>
+                        <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                          <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                        </svg>
+                      </button>
+                    </nav>
                   </div>
                 </div>
-              )}
+              </div>
             </div>
-          </div>
-        </main>
-      </div>
+          )}
 
-      {/* Sidebar overlay for mobile */}
-      {sidebarOpen && (
-        <div 
-          className="fixed inset-0 z-40 bg-black bg-opacity-25 lg:hidden" 
-          onClick={() => setSidebarOpen(false)}
-        ></div>
-      )}
-    </div>
+          {activeTab === 'stocks' && (
+            <div className="p-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {stocks.map((item, index) => (
+                  <div key={index} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                    <div className="flex flex-col items-center space-y-3 mb-3">
+                      <div className="w-20 h-20 bg-gray-200 rounded-lg overflow-hidden">
+                        <img 
+                          src={ProductImg1} 
+                          alt={item.name}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = "https://via.placeholder.com/80";
+                          }}
+                        />
+                      </div>
+                      <h3 className="font-medium text-gray-900 text-center">{item.name}</h3>
+                    </div>
+                    <div className="flex justify-between items-center mt-2">
+                      <div>
+                        <p className={`text-base font-medium ${getStockColor(item.stock)}`}>
+                          {item.stock} in stock
+                        </p>
+                        <p className="text-xl font-semibold text-gray-800">${item.price}</p>
+                      </div>
+                      <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded">
+                        {item.status}
+                      </span>
+                    </div>
+                    <button className="mt-3 w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-full flex items-center justify-center space-x-2 transition-colors shadow-sm text-sm">
+                      <Edit className="h-4 w-4" />
+                      <span>Edit</span>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </Layout>
   );
 };
 
