@@ -14,6 +14,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "../../../utils/axios-interceptor";
 import { Loading } from "../../../components/UI/Loading/Loading";
 import { toast } from "react-toastify";
+import moment from "moment";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -186,15 +187,32 @@ export const Supplier = () => {
     {
       field: "createdAt",
       headerName: "Created Date",
-      valueGetter: (params) => {
-        const date = params.data?.createdAt || params.data?.LastOrderDate;
-        if (date) {
-          return new Date(date).toLocaleDateString();
-        }
-        return "";
+      cellRenderer: (time) => {
+        return moment(time.value).format("lll");
       },
     },
-    { field: "status", headerName: "Status" },
+    {
+      field: "status",
+      headerName: "Status",
+      cellRenderer: (data) => {
+        return (
+          <>
+            <div
+              className={`capitalize font-semibold  flex justify-center items-center gap-3`}
+            >
+              <div
+                className={`h-2 w-2 ${
+                  data.value === "active"
+                    ? "bg-[var(--Positive-color)]"
+                    : "bg-[var(--Negative-color)]"
+                } rounded-full`}
+              ></div>
+              <p>{data.value}</p>
+            </div>
+          </>
+        );
+      },
+    },
     {
       headerName: "Actions",
       field: "actions",

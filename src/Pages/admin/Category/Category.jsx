@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Layout } from "../../../components/common/Layout/Layout";
 import {
   DeleteIcon,
@@ -10,6 +10,10 @@ import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import { CircleX, Edit, Trash, Plus, Download } from "lucide-react";
 import { DeleteModel } from "../../../components/common/Models/DeleteMode";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import axiosInstance from "../../../utils/axios-interceptor";
+import { toast } from "react-toastify";
+import { Loading } from "../../../components/UI/Loading/Loading";
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 const rowSelection = {
@@ -18,99 +22,51 @@ const rowSelection = {
 };
 
 export const Category = () => {
-  const [rowData, setRowData] = useState([
-    {
-      ID: "1279",
-      CategoryName: "AW ROOR BEER 2LITER BTL",
-      Group: "Beer",
-      Stock: "-8",
-      Supplier: "Rahul Doe",
-      Action: ActionBtns,
-    },
-    {
-      ID: "1280",
-      CategoryName: "RED WINE BOTTLE 750ML",
-      Group: "Wine",
-      Stock: "15",
-      Supplier: "John Smith",
-      Action: ActionBtns,
-    },
-    {
-      ID: "1281",
-      CategoryName: "WHISKEY PREMIUM 1LITER",
-      Group: "Spirits",
-      Stock: "5",
-      Supplier: "Mike Johnson",
-      Action: ActionBtns,
-    },
-    {
-      ID: "1282",
-      CategoryName: "VODKA CLASSIC 750ML",
-      Group: "Spirits",
-      Stock: "12",
-      Supplier: "Sarah Wilson",
-      Action: ActionBtns,
-    },
-    {
-      ID: "1283",
-      CategoryName: "CHAMPAGNE BOTTLE 750ML",
-      Group: "Wine",
-      Stock: "8",
-      Supplier: "David Brown",
-      Action: ActionBtns,
-    },
-    {
-      ID: "1284",
-      CategoryName: "CRAFT BEER 330ML CAN",
-      Group: "Beer",
-      Stock: "25",
-      Supplier: "Rahul Doe",
-      Action: ActionBtns,
-    },
-    {
-      ID: "1285",
-      CategoryName: "RUM GOLD 1LITER",
-      Group: "Spirits",
-      Stock: "7",
-      Supplier: "Lisa Davis",
-      Action: ActionBtns,
-    },
-    {
-      ID: "1286",
-      CategoryName: "WHITE WINE 750ML",
-      Group: "Wine",
-      Stock: "18",
-      Supplier: "John Smith",
-      Action: ActionBtns,
-    },
-    {
-      ID: "1287",
-      CategoryName: "LAGER BEER 500ML BTL",
-      Group: "Beer",
-      Stock: "30",
-      Supplier: "Mike Johnson",
-      Action: ActionBtns,
-    },
-    {
-      ID: "1288",
-      CategoryName: "TEQUILA SILVER 750ML",
-      Group: "Spirits",
-      Stock: "4",
-      Supplier: "Sarah Wilson",
-      Action: ActionBtns,
-    },
-  ]);
-  
   const [showModel, setShowModel] = useState({
     state: false,
     productData: null,
     actionType: "",
   });
-  
+
   const [deleteModel, setDeleteModel] = useState({
     state: false,
     productId: null,
+    path: "",
   });
+  const handleGetCategoryList = async () => {
+    try {
+      const getCategoryList = await axiosInstance.post(
+        "api/v1/common/category-list",
+        {
+          page: 1,
+          limit: 10,
+        }
+      );
+
+      if (getCategoryList.data && getCategoryList.status === 200) {
+        return getCategoryList.data.results || [];
+      }
+      return [];
+    } catch (error) {
+      console.error(error);
+      throw new Error(error);
+    }
+  };
+
+  const {
+    data: rowData = [],
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["get_category_list"],
+    queryFn: handleGetCategoryList,
+  });
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error.message || "Failed to fetch category list");
+    }
+  }, [error]);
 
   const onAddCategory = () => {
     console.log("Create Category button clicked");
@@ -154,17 +110,39 @@ export const Category = () => {
     console.log(product, "delete");
     setDeleteModel({
       state: true,
-      productId: product.ID,
+      productId: product.id,
+      path: ``,
     });
   };
 
   // Column Definitions: Defines & controls grid columns.
   const [colDefs, setColDefs] = useState([
-    { field: "ID" },
-    { field: "CategoryName" },
-    { field: "Group" },
-    { field: "Stock" },
-    { field: "Supplier" },
+    { field: "_id", headerName: "Category Id" },
+    { field: "category_name", headerName: "Category Name" },
+    { field: "number_of_product", headerName: "Number of Items" },
+    { field: "category_slug", headerName: "Slug" },
+    {
+      field: "status",
+      headerName: "Status",
+      cellRenderer: (data) => {
+        return (
+          <>
+            <div
+              className={`capitalize font-semibold  flex justify-center items-center gap-3`}
+            >
+              <div
+                className={`h-2 w-2 ${
+                  data.value === "active"
+                    ? "bg-[var(--Positive-color)]"
+                    : "bg-[var(--Negative-color)]"
+                } rounded-full`}
+              ></div>
+              <p>{data.value}</p>
+            </div>
+          </>
+        );
+      },
+    },
     {
       headerName: "Actions",
       field: "actions",
@@ -187,85 +165,90 @@ export const Category = () => {
 
   return (
     <Layout onAddProduct={handleAddProduct}>
-      <div className="pb-14 w-full px-4 sm:px-6 lg:px-0">
-        <div className="w-full">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-0 lg:flex-row lg:items-center lg:gap-0 lg:mb-0">
-            <h3 className="text-2xl md:text-xl lg:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
-              Categories List
-            </h3>
-            <div className="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-3 sm:gap-5 w-full sm:w-auto lg:flex-row lg:w-auto lg:gap-5">
-              <button
-                onClick={onAddCategory}
-                className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color1)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
-              >
-                Create Category <PluseIcon />
-              </button>
-              <button className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
-                Import CSV <PluseIcon />
-              </button>
-              
-            </div>
-          </div>
-        </div>
-
-        <div className="w-full h-[60vh] sm:h-[70vh] lg:h-[75vh]">
-          <div className="w-full flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-full">
-            <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center py-1.5 shrink-0 gap-3 sm:gap-0 lg:flex-row lg:items-center lg:gap-0">
-              <div className="flex justify-between sm:justify-center items-center gap-3 w-full sm:w-auto lg:justify-center lg:w-auto">
-                <select className="font-[500] mainFont px-4 justify-between border-none outline-none text-sm lg:text-base">
-                  <option>All Category</option>
-                  <option>Beer</option>
-                  <option>Wine</option>
-                  <option>Spirits</option>
-                </select>
-                <div className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-[1.8dvw] lg:w-[1.8dvw] bg-[var(--counterBg-color)] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem] sm:min-w-[1.75rem] sm:min-h-[1.75rem] md:min-w-[2rem] md:min-h-[2rem]">
-                  <p className="text-xs sm:text-xs md:text-sm lg:text-[1dvw] font-[500] text-white">
-                    {rowData.length}
-                  </p>
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <>
+          <div className="pb-14 w-full px-4 sm:px-6 lg:px-0">
+            <div className="w-full">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-0 lg:flex-row lg:items-center lg:gap-0 lg:mb-0">
+                <h3 className="text-2xl md:text-xl lg:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
+                  Categories List
+                </h3>
+                <div className="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-3 sm:gap-5 w-full sm:w-auto lg:flex-row lg:w-auto lg:gap-5">
+                  <button
+                    onClick={onAddCategory}
+                    className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color1)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
+                  >
+                    Create Category <PluseIcon />
+                  </button>
+                  <button className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
+                    Import CSV <PluseIcon />
+                  </button>
                 </div>
               </div>
-              <div className="flex gap-2 sm:gap-4 justify-between items-center flex-wrap lg:gap-4">
-                {/*<button className="flex justify-between items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-[600]">
+            </div>
+
+            <div className="w-full h-[60vh] sm:h-[70vh] lg:h-[75vh]">
+              <div className="w-full flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-full">
+                <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center py-1.5 shrink-0 gap-3 sm:gap-0 lg:flex-row lg:items-center lg:gap-0">
+                  <div className="flex justify-between sm:justify-center items-center gap-3 w-full sm:w-auto lg:justify-center lg:w-auto">
+                    <select className="font-[500] mainFont px-4 justify-between border-none outline-none text-sm lg:text-base">
+                      <option>All Category</option>
+                      <option>Beer</option>
+                      <option>Wine</option>
+                      <option>Spirits</option>
+                    </select>
+                    <div className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-[1.8dvw] lg:w-[1.8dvw] bg-[var(--counterBg-color)] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem] sm:min-w-[1.75rem] sm:min-h-[1.75rem] md:min-w-[2rem] md:min-h-[2rem]">
+                      <p className="text-xs sm:text-xs md:text-sm lg:text-[1dvw] font-[500] text-white">
+                        {rowData.length}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-2 sm:gap-4 justify-between items-center flex-wrap lg:gap-4">
+                    {/*<button className="flex justify-between items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-[600]">
                   Sort <SortIcon />
                 </button>
                 <button className="flex justify-between items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC]">
                   Filter <FilterIcon />
                 </button>*/}
-                <button className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-1.5 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
-                Export CSV <Download size={16} />
-              </button>
-                <button>
-                  <DeleteIcon />
-                </button>
-              </div>
-            </div>
-            <div className="h-full w-full overflow-x-scroll overflow-y-auto lg:overflow-x-visible">
-              <div className="min-w-[800px] h-full lg:min-w-0">
-                <AgGridReact
-                  rowData={rowData}
-                  columnDefs={colDefs}
-                  defaultColDef={defaultColDef}
-                  pagination={true}
-                  rowSelection={rowSelection}
-                  onSelectionChanged={(event) => console.log("Row Selected!")}
-                  onCellValueChanged={(event) =>
-                    console.log(`New Cell Value: ${event.value}`)
-                  }
-                  className="w-full h-full text-sm"
-                />
+                    <button className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-1.5 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
+                      Export CSV <Download size={16} />
+                    </button>
+                    <button>
+                      <DeleteIcon />
+                    </button>
+                  </div>
+                </div>
+                <div className="h-full w-full overflow-x-scroll overflow-y-auto lg:overflow-x-visible">
+                  <div className="min-w-[800px] h-full lg:min-w-0">
+                    <AgGridReact
+                      rowData={rowData}
+                      columnDefs={colDefs}
+                      defaultColDef={defaultColDef}
+                      pagination={true}
+                      rowSelection={rowSelection}
+                      onSelectionChanged={(event) =>
+                        console.log("Row Selected!")
+                      }
+                      onCellValueChanged={(event) =>
+                        console.log(`New Cell Value: ${event.value}`)
+                      }
+                      className="w-full h-full text-sm"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        </>
+      )}
 
       {showModel.state && (
         <EditAndAddModel
           productData={showModel.productData || {}}
           setShowModel={setShowModel}
           actionType={showModel.actionType}
-          setRowData={setRowData}
-          rowData={rowData}
         />
       )}
       {deleteModel.state && deleteModel.productId && (
@@ -313,35 +296,18 @@ const ActionBtns = (props) => {
   );
 };
 
-const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowData, rowData }) => {
-  const [showNewCategoryInput, setShowNewCategoryInput] = useState(false);
-  const [categoryFields, setCategoryFields] = useState([
-    {
-      id: 1,
-      CategoryName: productData.CategoryName || "",
-      AgeVerification: productData.Stock || "", // Changed from Stock to AgeVerification
-      DefaultMargin: productData.DefaultMargin || "",
-      AllowEBT: productData.AllowEBT || false,
-      DoNotDiscount: productData.DoNotDiscount || false,
-      DoNotShowToWebstore: productData.DoNotShowToWebstore || false,
-      ExcludeDualPrice: productData.ExcludeDualPrice || false,
-      ExcludeLoyaltyReward: productData.ExcludeLoyaltyReward || false,
-    }
-  ]);
-
-  // Predefined options for dropdowns
-  const [categoryOptions, setCategoryOptions] = useState([
-    "AW ROOR BEER 2LITER BTL",
-    "RED WINE BOTTLE 750ML", 
-    "WHISKEY PREMIUM 1LITER",
-    "VODKA CLASSIC 750ML",
-    "CHAMPAGNE BOTTLE 750ML",
-    "CRAFT BEER 330ML CAN",
-    "RUM GOLD 1LITER",
-    "WHITE WINE 750ML",
-    "LAGER BEER 500ML BTL",
-    "TEQUILA SILVER 750ML"
-  ]);
+const EditAndAddModel = ({ productData = {}, setShowModel, actionType }) => {
+  const [categoryFields, setCategoryFields] = useState({
+    CategoryName: productData.CategoryName || "",
+    AgeVerification: productData.Stock || "", // Changed from Stock to AgeVerification
+    DefaultMargin: productData.DefaultMargin || "",
+    AllowEBT: productData.AllowEBT || false,
+    DoNotDiscount: productData.DoNotDiscount || false,
+    DoNotShowToWebstore: productData.DoNotShowToWebstore || false,
+    ExcludeDualPrice: productData.ExcludeDualPrice || false,
+    ExcludeLoyaltyReward: productData.ExcludeLoyaltyReward || false,
+  });
+  const queryClient = useQueryClient();
 
   const handleCloseModel = () => {
     setShowModel({
@@ -351,78 +317,58 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
     });
   };
 
-  const handleAddField = () => {
-    const newField = {
-      id: categoryFields.length + 1,
-      CategoryName: "",
-      AgeVerification: "",
-      DefaultMargin: "",
-      AllowEBT: false,
-      DoNotDiscount: false,
-      DoNotShowToWebstore: false,
-      ExcludeDualPrice: false,
-      ExcludeLoyaltyReward: false,
-    };
-    setCategoryFields([...categoryFields, newField]);
-  };
+  const handleOnchange = (e) => {
+    const { name, value, type, checked } = e.target;
 
-  const handleRemoveField = (indexToRemove) => {
-    if (categoryFields.length > 1) {
-      setCategoryFields(categoryFields.filter((_, index) => index !== indexToRemove));
+    if (type === "checkbox") {
+      setCategoryFields({
+        ...categoryFields,
+        [name]: checked,
+      });
+      return;
     }
+    setCategoryFields({
+      ...categoryFields,
+      [name]: value,
+    });
   };
 
-  const handleFieldChange = (index, field, value) => {
-    const updatedFields = categoryFields.map((item, i) => 
-      i === index ? { ...item, [field]: value } : item
-    );
-    setCategoryFields(updatedFields);
-  };
-
-  const handleCheckboxChange = (index, field, value) => {
-    const updatedFields = categoryFields.map((item, i) => 
-      i === index ? { ...item, [field]: value } : item
-    );
-    setCategoryFields(updatedFields);
-  };
-
-  const handleSelectChange = (index, field, value, setter, options) => {
-    if (value === "custom") {
-      const newValue = prompt(`Enter new ${field}:`);
-      if (newValue && newValue.trim()) {
-        setter([...options, newValue.trim()]);
-        handleFieldChange(index, field, newValue.trim());
+  const mutationFn = useMutation({
+    mutationFn: async ({ bodyObj, path }) => {
+      const reqSaveCategory = await axiosInstance.post(path, bodyObj);
+      if (reqSaveCategory.data && reqSaveCategory.status === 200) {
+        queryClient.invalidateQueries({
+          queryKey: ["get_category_list"],
+        });
+        return reqSaveCategory.data;
       }
-    } else {
-      handleFieldChange(index, field, value);
-    }
-  };
+      throw new Error(response.data?.message || "Failed to add group");
+    },
+    onError: (error) => {
+      toast.error(error?.message || "Failed to save the category !");
+    },
+    onSuccess: (data) => {
+      toast.success(data.message || "Category added successfully");
+    },
+    onSettled: () => {
+      handleCloseModel();
+    },
+  });
 
   const handleSubmit = () => {
     if (actionType === "Add") {
-      const newCategories = categoryFields.map(field => ({
-        ID: (Math.floor(Math.random() * 9000) + 1000).toString(),
-        CategoryName: field.CategoryName,
-        AgeVerification: field.AgeVerification,
-        DefaultMargin: field.DefaultMargin,
-        AllowEBT: field.AllowEBT,
-        DoNotDiscount: field.DoNotDiscount,
-        DoNotShowToWebstore: field.DoNotShowToWebstore,
-        ExcludeDualPrice: field.ExcludeDualPrice,
-        ExcludeLoyaltyReward: field.ExcludeLoyaltyReward,
-        Action: ActionBtns,
-      })).filter(category => category.CategoryName && category.AgeVerification);
-      
-      setRowData([...rowData, ...newCategories]);
-    } else if (actionType === "Edit") {
-      const updatedRowData = rowData.map(item => 
-        item.ID === productData.ID 
-          ? { ...item, ...categoryFields[0] }
-          : item
-      );
-      setRowData(updatedRowData);
+      const bodyObj = {
+        category_name: categoryFields.CategoryName,
+        age_verification: categoryFields.AgeVerification,
+        default_margin: categoryFields.DefaultMargin,
+        allow_ebt: categoryFields.AllowEBT,
+        do_not_discount: categoryFields.DoNotDiscount,
+        do_not_show_to_webstore: categoryFields.DoNotShowToWebstore,
+        exclude_dial_price: categoryFields.ExcludeDualPrice,
+        exclude_loyalty_reward: categoryFields.ExcludeLoyaltyReward,
+      };
+      mutationFn.mutate({ bodyObj, path: "api/v1/common/category-add" });
     }
-    handleCloseModel();
   };
 
   return (
@@ -441,108 +387,149 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
         </div>
 
         <div className="w-full p-2 sm:p-3 space-y-4 sm:space-y-6">
-          {categoryFields.map((field, index) => (
-            <div key={field.id} className="border border-gray-200 rounded-lg p-3 sm:p-4 relative">
-              {categoryFields.length > 1 && (
-                <button
-                  onClick={() => handleRemoveField(index)}
-                  className="absolute -top-2 -right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all duration-300"
-                  title="Remove Field Set"
-                >
-                  <CircleX size={16} />
-                </button>
-              )}
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="w-full flex flex-col gap-2">
-                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-                    Category Name
-                  </label>
-                  <input
-                    type="text"
-                    value={field.CategoryName}
-                    onChange={(e) => handleFieldChange(index, 'CategoryName', e.target.value)}
-                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                    placeholder="Enter category name"
-                  />
-                </div>
-                
-                <div className="w-full flex flex-col gap-2">
-                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Age Verification</label>
-                  <input
-                    type="number"
-                    value={field.AgeVerification}
-                    onChange={(e) => handleFieldChange(index, 'AgeVerification', e.target.value)}
-                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                    placeholder="Enter age verification"
-                    step="1"
-                  />
-                </div>
-                
-                <div className="w-full flex flex-col gap-2">
-                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-                    Default Margin
-                  </label>
-                  <input
-                    type="number"
-                    value={field.DefaultMargin}
-                    onChange={(e) => handleFieldChange(index, 'DefaultMargin', e.target.value)}
-                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                    placeholder="Enter default margin"
-                    step="0.01"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-4">
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={field.AllowEBT}
-                    onChange={(e) => handleCheckboxChange(index, 'AllowEBT', e.target.checked)}
-                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Allow EBT</label>
-                </div>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={field.DoNotDiscount}
-                    onChange={(e) => handleCheckboxChange(index, 'DoNotDiscount', e.target.checked)}
-                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Do Not Discount</label>
-                </div>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={field.DoNotShowToWebstore}
-                    onChange={(e) => handleCheckboxChange(index, 'DoNotShowToWebstore', e.target.checked)}
-                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Do Not Show to Webstore</label>
-                </div>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={field.ExcludeDualPrice}
-                    onChange={(e) => handleCheckboxChange(index, 'ExcludeDualPrice', e.target.checked)}
-                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Exclude Dual Price</label>
-                </div>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={field.ExcludeLoyaltyReward}
-                    onChange={(e) => handleCheckboxChange(index, 'ExcludeLoyaltyReward', e.target.checked)}
-                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Exclude Loyalty Reward</label>
-                </div>
-              </div>
+          <div className="border border-gray-200 rounded-lg p-3 sm:p-4 relative grid grid-cols-2 gap-4 w-full">
+            <div className="w-full flex flex-col gap-2 col-span-2">
+              <label
+                htmlFor="categoryName"
+                className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
+              >
+                Category Name
+              </label>
+              <input
+                placeholder="Enter category name...
+              "
+                type="text"
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                onChange={handleOnchange}
+                value={categoryFields.CategoryName}
+                name="CategoryName"
+                id="categoryName"
+              />
             </div>
-          ))}
+
+            <div className="w-full flex flex-col gap-2">
+              <label
+                htmlFor="ageLimit"
+                className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
+              >
+                Age Verification (age limit)
+              </label>
+              <input
+                placeholder="Enter age limit...
+              "
+                type="number"
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                onChange={handleOnchange}
+                value={categoryFields.AgeVerification}
+                name="AgeVerification"
+                id="ageLimit"
+              />
+            </div>
+
+            <div className="w-full flex flex-col gap-2">
+              <label
+                htmlFor="defaultMargin"
+                className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
+              >
+                Default Margin
+              </label>
+              <input
+                placeholder="Enter margin...
+              "
+                type="number"
+                onChange={handleOnchange}
+                value={categoryFields.DefaultMargin}
+                name="DefaultMargin"
+                id="defaultMargin"
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              />
+            </div>
+
+            <div className="w-full flex flex-row justify-start items-center gap-4">
+              <label
+                htmlFor="allowEBT"
+                className="text-sm sm:text-base lg:text-[1.2dvw] font-medium paraFont"
+              >
+                Allow EBT -
+              </label>
+              <input
+                type="checkbox"
+                checked={categoryFields.AllowEBT}
+                id="allowEBT"
+                onChange={handleOnchange}
+                name="AllowEBT"
+                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+              />
+            </div>
+
+            <div className="w-full flex flex-row justify-start items-center gap-4">
+              <label
+                htmlFor="discount"
+                className="text-sm sm:text-base lg:text-[1.2dvw] font-medium paraFont"
+              >
+                Do Not Discount -
+              </label>
+              <input
+                type="checkbox"
+                checked={categoryFields.DoNotDiscount}
+                onChange={handleOnchange}
+                name="DoNotDiscount"
+                id="discount"
+                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+              />
+            </div>
+
+            <div className="w-full flex flex-row justify-start items-center gap-4">
+              <label
+                htmlFor="Webstore"
+                className="text-sm sm:text-base lg:text-[1.2dvw] font-medium paraFont"
+              >
+                Do Not Show to Webstore -
+              </label>
+              <input
+                type="checkbox"
+                checked={categoryFields.DoNotShowToWebstore}
+                onChange={handleOnchange}
+                name="DoNotShowToWebstore"
+                id="Webstore"
+                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+              />
+            </div>
+
+            <div className="w-full flex flex-row justify-start items-center gap-4">
+              <label
+                htmlFor="dualPrice"
+                className="text-sm sm:text-base lg:text-[1.2dvw] font-medium paraFont"
+              >
+                Exclude Dual Price -
+              </label>
+              <input
+                type="checkbox"
+                checked={categoryFields.ExcludeDualPrice}
+                onChange={handleOnchange}
+                name="ExcludeDualPrice"
+                id="dualPrice"
+                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+              />
+            </div>
+
+            <div className="w-full flex flex-row justify-start items-center gap-4">
+              <label
+                htmlFor="loyaltyReward"
+                className="text-sm sm:text-base lg:text-[1.2dvw] font-medium paraFont"
+              >
+                Exclude Loyalty Reward -
+              </label>
+              <input
+                type="checkbox"
+                checked={categoryFields.ExcludeLoyaltyReward}
+                onChange={handleOnchange}
+                name="ExcludeLoyaltyReward"
+                id="loyaltyReward"
+                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+              />
+            </div>
+          </div>
         </div>
 
         <div className="flex flex-col sm:flex-row justify-end items-center gap-4 my-4">
@@ -552,9 +539,10 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType, setRowDat
           >
             Cancel
           </button>
-          <button 
+          <button
             onClick={handleSubmit}
-            className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300"
+            disabled={!categoryFields.CategoryName}
+            className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300 disabled:pointer-events-none disabled:opacity-75 disabled:cursor-not-allowed"
           >
             {actionType === "Add" ? "Create" : "Update"}
           </button>

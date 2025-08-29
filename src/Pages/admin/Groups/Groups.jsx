@@ -41,13 +41,14 @@ export const Groups = () => {
   const [deleteModel, setDeleteModel] = useState({
     state: false,
     productId: null,
+    path: "",
   });
 
   const onGridReady = (params) => {
     setGridApi(params.api);
   };
 
-  console.log(tableLimiter,'api')
+  console.log(tableLimiter, "api");
   const getGroupLists = async () => {
     try {
       const reqGroupList = await axiosInstance.post("api/v1/group/list", {
@@ -70,7 +71,7 @@ export const Groups = () => {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["get_groups_lists",tableLimiter.limit],
+    queryKey: ["get_groups_lists", tableLimiter.limit],
     queryFn: getGroupLists,
   });
 
@@ -113,10 +114,10 @@ export const Groups = () => {
   };
 
   const onDelete = (product) => {
-    console.log(product, "delete");
     setDeleteModel({
       state: true,
-      productId: product.ID,
+      productId: product.id,
+      path: `api/v1/group/delete/${product.id}`,
     });
   };
 
@@ -187,7 +188,7 @@ export const Groups = () => {
       const page = gridApi.paginationGetCurrentPage() + 1; // 👈 API page (1-based)
       const limit = gridApi.paginationGetPageSize(); // 👈 API limit (page size)
 
-      console.log(page,limit);
+      // console.log(page, limit);
       // setTableLimiter({
       //   page:page,
       //   limit:limit,
@@ -288,12 +289,11 @@ export const Groups = () => {
           actionType={showModel.actionType}
         />
       )}
-      {deleteModel.state && deleteModel.productId && (
+      {deleteModel.state && deleteModel.productId && deleteModel.path && (
         <DeleteModel
           setDeleteModel={setDeleteModel}
           productId={deleteModel.productId}
-          // setRowData={setRowData}
-          // rowData={rowData}
+          path={deleteModel.path}
         />
       )}
     </>
@@ -333,7 +333,7 @@ const ActionBtns = (props) => {
   );
 };
 
-const EditAndAddModel = ({ setShowModel, actionType }) => {
+const EditAndAddModel = ({ productData, setShowModel, actionType }) => {
   const queryClient = useQueryClient();
   const [groupInfo, setGroupInfo] = useState({
     groupName: "",
@@ -345,6 +345,7 @@ const EditAndAddModel = ({ setShowModel, actionType }) => {
   const [isError, setIsError] = useState("");
   const [searchResult, setSearchResult] = useState([]);
   const [showItemList, setShowItemList] = useState(false);
+  const [isFetching, setIsFetching] = useState(false);
 
   const handleCloseModel = () => {
     setShowModel({
@@ -416,6 +417,18 @@ const EditAndAddModel = ({ setShowModel, actionType }) => {
       // console.log(bodyObj);
       addGroupMutation.mutate({ groupData: bodyObj, path: "api/v1/group/add" });
     } else if (actionType === "Edit") {
+      const itemsIds = groupInfo.productList.map((item) => item.id) || [];
+
+      const bodyObj = {
+        group_name: groupInfo.groupName,
+        status: groupInfo.groupStatus,
+        productIds: [...itemsIds],
+      };
+      // console.log(bodyObj);
+      addGroupMutation.mutate({
+        groupData: bodyObj,
+        path: `api/v1/group/update/${productData.id}`,
+      });
     }
   };
 
@@ -466,197 +479,243 @@ const EditAndAddModel = ({ setShowModel, actionType }) => {
     });
   };
 
+  // edit  functions start here...
+  const getGroupDetails = async () => {
+    try {
+      const reqGroupData = await axiosInstance.get(
+        `api/v1/group/details/${productData.id}`
+      );
+      if (reqGroupData.status === 200 && reqGroupData.data) {
+        setIsFetching(false);
+        console.log(reqGroupData.data);
+        setGroupInfo({
+          groupName: reqGroupData?.data?.groupDetails?.group_name,
+          groupStatus: reqGroupData?.data?.groupDetails?.status,
+          productList: [...reqGroupData?.data?.groupDetails?.products],
+        });
+      }
+    } catch (error) {
+      console.log(error?.response?.data);
+      setIsFetching(false);
+      toast.error(
+        error?.response?.data?.message || "Failed to Fetch Group details!"
+      );
+    }
+  };
+
+  useEffect(() => {
+    if (actionType === "Edit" && productData.id) {
+      setIsFetching(true);
+      getGroupDetails();
+    }
+  }, [actionType, productData]);
+
   return (
-    <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center p-4">
-      <div
-        onClick={() => {
-          setShowItemList(false);
-        }}
-        className="bg-white w-full sm:w-[90%] md:w-[60%] lg:w-[50%] max-h-[90vh] min-h-[70vh] overflow-y-auto p-4 sm:p-5 rounded-lg shadow-md"
-      >
-        <div className="flex justify-between items-center w-full p-2.5 rounded-md bg-[var(--sideMenu-color)] text-white">
-          <h3 className="text-lg sm:text-xl lg:text-[1.5dvw] font-semibold">
-            {actionType === "Add" ? "Add Group" : `${actionType} Group`}
-          </h3>
-          <button
-            onClick={handleCloseModel}
-            className="hover:text-[var(--Negative-color)] transition-all duration-300 ease-linear cursor-pointer"
-          >
-            <CircleX size={24} className="sm:w-[30px] sm:h-[30px]" />
-          </button>
-        </div>
-
-        <div className="w-full p-2 sm:p-3 space-y-4 sm:space-y-6">
-          <div className="w-full flex flex-col gap-2">
-            <label
-              className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
-              htmlFor="groupName"
-            >
-              Group Name
-            </label>
-            <input
-              className="bg-[#F3F3F3] w-full font-normal paraFont text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-              placeholder="Enter Group Name"
-              id="groupName"
-              value={groupInfo.groupName}
-              name="groupName"
-              onChange={handleOnchnage}
-            />
-          </div>
-
-          <div className="w-full flex flex-col gap-2">
-            <label
-              className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
-              htmlFor="groupStatus"
-            >
-              Group Status
-            </label>
-            <select
-              value={groupInfo.groupStatus}
-              name="groupStatus"
-              onChange={handleOnchnage}
-              className="bg-[#F3F3F3] w-full font-normal paraFont text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-              placeholder="Enter Group Name"
-              id="groupStatus"
-            >
-              <option value="active">Active</option>
-              <option value="in-active">In-active</option>
-            </select>
-          </div>
-
-          {/* shows the selected items/products list start */}
-          {groupInfo.productList.length > 0 && (
-            <div>
-              <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-                Selected Items lists
-              </label>
-              <div className="flex flex-wrap justify-start items-center gap-2 my-4">
-                {groupInfo.productList.map((sItem, id) => (
-                  <div
-                    key={id}
-                    className="bg-[var(--border-color)]/20 shrink-0 px-3 py-1.5 rounded border border-[var(--border-color)]  shadow-inner flex justify-between items-center gap-3"
-                  >
-                    <img
-                      src={ProductImg}
-                      alt="product-image"
-                      className="h-[3dvw] w-[3dvw]"
-                    />
-                    <p className="text-[1.1dvw] font-medium paraFont ">
-                      {sItem.name}
-                    </p>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleRemoveItem(sItem.id);
-                      }}
-                      className="cursor-pointer text-[var(--Negative-color)] font-bold hover:scale-110 transition-all duration-200 ease-linear"
-                    >
-                      <X size={18} />
-                    </button>
-                  </div>
-                ))}
+    <>
+      <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center p-4">
+        <div
+          onClick={() => {
+            setShowItemList(false);
+          }}
+          className="bg-white w-full sm:w-[90%] md:w-[60%] lg:w-[50%] max-h-[90vh] min-h-[70vh] overflow-y-auto p-4 sm:p-5 rounded-lg shadow-md"
+        >
+          {isFetching ? (
+            <>
+              <Loading />
+            </>
+          ) : (
+            <>
+              <div className="flex justify-between items-center w-full p-2.5 rounded-md bg-[var(--sideMenu-color)] text-white">
+                <h3 className="text-lg sm:text-xl lg:text-[1.5dvw] font-semibold">
+                  {actionType === "Add" ? "Add Group" : `${actionType} Group`}
+                </h3>
+                <button
+                  onClick={handleCloseModel}
+                  className="hover:text-[var(--Negative-color)] transition-all duration-300 ease-linear cursor-pointer"
+                >
+                  <CircleX size={24} className="sm:w-[30px] sm:h-[30px]" />
+                </button>
               </div>
-            </div>
-          )}
 
-          {/* shows the selected items/products list end */}
+              <div className="w-full p-2 sm:p-3 space-y-4 sm:space-y-6">
+                <div className="w-full flex flex-col gap-2">
+                  <label
+                    className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
+                    htmlFor="groupName"
+                  >
+                    Group Name
+                  </label>
+                  <input
+                    className="bg-[#F3F3F3] w-full font-normal paraFont text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                    placeholder="Enter Group Name"
+                    id="groupName"
+                    value={groupInfo.groupName}
+                    name="groupName"
+                    onChange={handleOnchnage}
+                  />
+                </div>
 
-          <div className="w-full flex flex-col gap-2 relative">
-            <label
-              className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
-              htmlFor="itemName"
-            >
-              Add Items to Group
-            </label>
-            <input
-              className="bg-[#F3F3F3] w-full font-normal paraFont text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-              placeholder="beer, wine,cigarettes ..."
-              id="itemName"
-              onChange={(e) => {
-                setIsSearching(true);
-                e.target.value && setShowItemList(true);
-                e.target.value &&
-                  debounceCallback(e.target.value, "api/v1/product/list");
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
-            />
+                <div className="w-full flex flex-col gap-2">
+                  <label
+                    className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
+                    htmlFor="groupStatus"
+                  >
+                    Group Status
+                  </label>
+                  <select
+                    value={groupInfo.groupStatus}
+                    name="groupStatus"
+                    onChange={handleOnchnage}
+                    className="bg-[#F3F3F3] w-full font-normal paraFont text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                    placeholder="Enter Group Name"
+                    id="groupStatus"
+                  >
+                    <option value="active">Active</option>
+                    <option value="in-active">In-active</option>
+                  </select>
+                </div>
 
-            {/* search list show up start */}
-            {showItemList && (
-              <div className="absolute top-[105%] p-3 left-0 w-full min-h-[10vh] max-h-[30vh] overflow-auto flex flex-col gap-1 bg-white hideScrollbar">
-                {isError && (
-                  <p className="text-center mainFont text-gray-400 text-sm sm:text-base">
-                    {isError}
-                  </p>
-                )}
-
-                {isSearching ? (
-                  <div className="w-full">
-                    <p className="text-start mainFont text-gray-400 animate-pulse duration-200 ease-linear text-sm sm:text-base">
-                      Searching items...
-                    </p>
-                  </div>
-                ) : (
-                  <>
-                    {searchResult.length === 0 ? (
-                      <>
-                        <p className="text-center mainFont text-gray-400 animate-pulse duration-200 ease-linear text-sm sm:text-base">
-                          No Item Found
-                        </p>
-                      </>
-                    ) : (
-                      <>
-                        {searchResult.map((fData, id) => (
+                {/* shows the selected items/products list start */}
+                {groupInfo.productList.length > 0 && (
+                  <div>
+                    <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont flex justify-start items-center gap-2">
+                      Selected Items lists{" "}
+                      <div className="mainFont font-medium text-[1.1dvw] bg-[var(--counterBg-color)] shrink-0 h-[2dvw] w-[2dvw] flex justify-center items-center text-white rounded-full">
+                        {groupInfo.productList.length}
+                      </div>
+                    </label>
+                    <div className="flex flex-wrap justify-start items-center gap-2 my-4">
+                      {groupInfo.productList.map((sItem, id) => (
+                        <div
+                          key={id}
+                          className="bg-[var(--border-color)]/20 shrink-0 px-3 py-1.5 rounded border border-[var(--border-color)]  shadow-inner flex justify-between items-center gap-3"
+                        >
+                          <img
+                            src={ProductImg}
+                            alt="product-image"
+                            className="h-[3dvw] w-[3dvw]"
+                          />
+                          <p className="text-[1.1dvw] font-medium paraFont ">
+                            {sItem.name}
+                          </p>
                           <button
-                            key={id}
-                            className="w-full py-2 sm:py-3 px-3 sm:px-5 cursor-pointer hover:bg-[#000]/15 transition-all duration-200 ease-linear bg-[#000]/5 border-b border-[var(--border-color)] mainFont font-semibold rounded text-start text-sm sm:text-base capitalize flex justify-start items-center gap-3 "
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleAddItem(fData);
+                              handleRemoveItem(sItem.id);
                             }}
+                            className="cursor-pointer text-[var(--Negative-color)] font-bold hover:scale-110 transition-all duration-200 ease-linear"
                           >
-                            <img
-                              src={ProductImg}
-                              className="h-[3dvw] w-[3dvw] shrink-0"
-                              alt="product-img"
-                            />
-                            <div className="w-full ">
-                              <p className="line-clamp-1 ">{fData.name}</p>
-                            </div>
+                            <X size={18} />
                           </button>
-                        ))}
-                      </>
-                    )}
-                  </>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 )}
-              </div>
-            )}
-            {/* search list show up end */}
-          </div>
-        </div>
 
-        <div className="flex flex-col sm:flex-row justify-end items-center gap-4 my-4">
-          <button
-            className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color4)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300"
-            onClick={handleCloseModel}
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSubmit}
-            className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300"
-            disabled={isSaving}
-          >
-            {isSaving
-              ? "Saving..."
-              : actionType === "Add"
-              ? "Create"
-              : "Update"}
-          </button>
+                {/* shows the selected items/products list end */}
+
+                <div className="w-full flex flex-col gap-2 relative">
+                  <label
+                    className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
+                    htmlFor="itemName"
+                  >
+                    Add Items to Group
+                  </label>
+                  <input
+                    className="bg-[#F3F3F3] w-full font-normal paraFont text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                    placeholder="beer, wine,cigarettes ..."
+                    id="itemName"
+                    onChange={(e) => {
+                      setIsSearching(true);
+                      e.target.value && setShowItemList(true);
+                      e.target.value &&
+                        debounceCallback(e.target.value, "api/v1/product/list");
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                  />
+
+                  {/* search list show up start */}
+                  {showItemList && (
+                    <div className="absolute top-[105%] p-3 left-0 w-full min-h-[10vh] max-h-[30vh] overflow-auto flex flex-col gap-1 bg-white hideScrollbar">
+                      {isError && (
+                        <p className="text-center mainFont text-gray-400 text-sm sm:text-base">
+                          {isError}
+                        </p>
+                      )}
+
+                      {isSearching ? (
+                        <div className="w-full">
+                          <p className="text-start mainFont text-gray-400 animate-pulse duration-200 ease-linear text-sm sm:text-base">
+                            Searching items...
+                          </p>
+                        </div>
+                      ) : (
+                        <>
+                          {searchResult.length === 0 ? (
+                            <>
+                              <p className="text-center mainFont text-gray-400 animate-pulse duration-200 ease-linear text-sm sm:text-base">
+                                No Item Found
+                              </p>
+                            </>
+                          ) : (
+                            <>
+                              {searchResult.map((fData, id) => (
+                                <button
+                                  key={id}
+                                  className="w-full py-2 sm:py-3 px-3 sm:px-5 cursor-pointer hover:bg-[#000]/15 transition-all duration-200 ease-linear bg-[#000]/5 border-b border-[var(--border-color)] mainFont font-semibold rounded text-start text-sm sm:text-base capitalize flex justify-start items-center gap-3 "
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleAddItem(fData);
+                                  }}
+                                >
+                                  <img
+                                    src={ProductImg}
+                                    className="h-[3dvw] w-[3dvw] shrink-0"
+                                    alt="product-img"
+                                  />
+                                  <div className="w-full ">
+                                    <p className="line-clamp-1 ">
+                                      {fData.name}
+                                    </p>
+                                  </div>
+                                </button>
+                              ))}
+                            </>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  )}
+                  {/* search list show up end */}
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row justify-end items-center gap-4 my-4">
+                <button
+                  className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color4)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300"
+                  onClick={handleCloseModel}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSubmit}
+                  className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300"
+                  disabled={isSaving}
+                >
+                  {isSaving
+                    ? "Saving..."
+                    : actionType === "Add"
+                    ? "Create"
+                    : "Update"}
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
-    </div>
+    </>
   );
 };
