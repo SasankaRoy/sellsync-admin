@@ -406,6 +406,8 @@ const EditAndAddModel = ({ productData, setShowModel, actionType }) => {
     },
   });
 
+  
+
   const handleSubmit = () => {
     if (actionType === "Add") {
       const itemsIds = groupInfo.productList.map((item) => item.id) || [];
@@ -434,6 +436,9 @@ const EditAndAddModel = ({ productData, setShowModel, actionType }) => {
       });
     }
   };
+
+
+
 
   // Handle adding a selected item
   const handleAddItem = (product) => {
