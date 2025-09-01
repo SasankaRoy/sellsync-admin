@@ -136,8 +136,8 @@ const Dashboard = () => {
                 Stocks
               </button>
             </div>
-            <button className="bg-[var(--button-color1)]  text-white font-semibold py-2.5 px-6 rounded-full flex items-center justify-center space-x-2 transition-colors shadow-sm whitespace-nowrap">
-              <Camera className="h-4 w-4" />
+            <button className="bg-[var(--button-color1)]  text-white font-[500] mainFont py-2.5 px-6 rounded-full flex items-center justify-center space-x-2 transition-colors shadow-sm whitespace-nowrap">
+              <Camera className="h-6 w-6" />
               <span>Scan Products</span>
             </button>
           </div>
@@ -148,7 +148,7 @@ const Dashboard = () => {
               {/* Table Header Controls */}
               <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center py-3 px-4 shrink-0 gap-3 sm:gap-0">
                 <div className="flex justify-between sm:justify-center items-center gap-3 w-full sm:w-auto">
-                  <select className="font-medium px-4 py-2 border border-gray-300 rounded-lg outline-none text-sm lg:text-base bg-white">
+                  <select className="font-[500] mainFont px-4 py-2 border-0 outline-none text-sm lg:text-base bg-transparent">
                     <option>All Transactions</option>
                     <option>Completed</option>
                     <option>Refund</option>
@@ -161,7 +161,7 @@ const Dashboard = () => {
                   </div>
                 </div>
                 <div className="flex gap-2 sm:gap-4 justify-between items-center flex-wrap">
-                  <button className="px-4 sm:px-5 py-1.5 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 text-white font-medium cursor-pointer text-sm transition-all duration-300 ease-linear">
+                  <button className="px-4 sm:px-5 py-1.5 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 text-white font-[500] mainFont cursor-pointer text-sm transition-all duration-300 ease-linear">
                     Export CSV <Download size={16} />
                   </button>
                 </div>
@@ -335,7 +335,7 @@ const Dashboard = () => {
                         {item.status}
                       </span>
                     </div>
-                    <button className="mt-3 w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-full flex items-center justify-center space-x-2 transition-colors shadow-sm text-sm">
+                    <button className="mt-3 w-full bg-gray-600 hover:bg-gray-700 text-white font-[500] mainFont py-2 px-4 rounded-full flex items-center justify-center space-x-2 transition-colors shadow-sm text-sm">
                       <Edit className="h-4 w-4" />
                       <span>Edit</span>
                     </button>

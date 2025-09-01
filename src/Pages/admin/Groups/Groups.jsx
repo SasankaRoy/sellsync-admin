@@ -8,7 +8,7 @@ import {
 } from "../../../assets/Svgs/AllSvgs";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
-import { CircleX, Edit, Trash, Plus, Download, X } from "lucide-react";
+import { CircleX, Edit, Trash, Plus, Download, X, Camera } from "lucide-react";
 import { DeleteModel } from "../../../components/common/Models/DeleteMode";
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import axiosInstance from "../../../utils/axios-interceptor";
@@ -338,6 +338,7 @@ const EditAndAddModel = ({ productData, setShowModel, actionType }) => {
   const [groupInfo, setGroupInfo] = useState({
     groupName: "",
     groupStatus: "active",
+    deals: "",
     productList: [],
   });
   const [isSaving, setIsSaving] = useState(false);
@@ -412,6 +413,7 @@ const EditAndAddModel = ({ productData, setShowModel, actionType }) => {
       const bodyObj = {
         group_name: groupInfo.groupName,
         status: groupInfo.groupStatus,
+        deals: groupInfo.deals,
         productIds: [...itemsIds],
       };
       // console.log(bodyObj);
@@ -422,6 +424,7 @@ const EditAndAddModel = ({ productData, setShowModel, actionType }) => {
       const bodyObj = {
         group_name: groupInfo.groupName,
         status: groupInfo.groupStatus,
+        deals: groupInfo.deals,
         productIds: [...itemsIds],
       };
       // console.log(bodyObj);
@@ -491,6 +494,7 @@ const EditAndAddModel = ({ productData, setShowModel, actionType }) => {
         setGroupInfo({
           groupName: reqGroupData?.data?.groupDetails?.group_name,
           groupStatus: reqGroupData?.data?.groupDetails?.status,
+          deals: reqGroupData?.data?.groupDetails?.deals,
           productList: [...reqGroupData?.data?.groupDetails?.products],
         });
       }
@@ -575,6 +579,24 @@ const EditAndAddModel = ({ productData, setShowModel, actionType }) => {
                   </select>
                 </div>
 
+                <div className="w-full flex flex-col gap-2">
+                  <label
+                    className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
+                    htmlFor="deals"
+                  >
+                    Deals
+                  </label>
+                  <input
+                    type="text"
+                    className="bg-[#F3F3F3] w-full font-normal paraFont text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                    placeholder="Enter deals"
+                    id="deals"
+                    value={groupInfo.deals || ''}
+                    name="deals"
+                    onChange={handleOnchnage}
+                  />
+                </div>
+
                 {/* shows the selected items/products list start */}
                 {groupInfo.productList.length > 0 && (
                   <div>
@@ -616,12 +638,24 @@ const EditAndAddModel = ({ productData, setShowModel, actionType }) => {
                 {/* shows the selected items/products list end */}
 
                 <div className="w-full flex flex-col gap-2 relative">
-                  <label
-                    className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
-                    htmlFor="itemName"
-                  >
-                    Add Items to Group
-                  </label>
+                  <div className="flex justify-between items-center">
+                    <label
+                      className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
+                      htmlFor="itemName"
+                    >
+                      Add Items to Group
+                    </label>
+                    <button 
+                      className="bg-[var(--button-color1)] text-white font-[500] mainFont py-1.5 px-4 rounded-full flex items-center justify-center space-x-1 transition-colors shadow-sm text-sm"
+                      onClick={() => {
+                        // Add scan functionality here
+                        console.log('Scan button clicked');
+                      }}
+                    >
+                      <Camera className="h-6 w-8" />
+                      <span>Scan</span>
+                    </button>
+                  </div>
                   <input
                     className="bg-[#F3F3F3] w-full font-normal paraFont text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                     placeholder="beer, wine,cigarettes ..."

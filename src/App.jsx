@@ -1,3 +1,4 @@
+
 import { BrowserRouter, Route, Router, Routes } from "react-router-dom";
 import { AdminDashboard } from "./Pages/admin/AdminDashboard/AdminDashboard";
 import { Sale } from "./Pages/admin/sales/Sale";
@@ -39,6 +40,12 @@ import RouteGuard from "./Pages/auth/RouteGuard";
 import { Loyaltyreports } from "./Pages/admin/Loyalty/Loyaltyreports";
 import { Groups } from "./Pages/admin/Groups/Groups";
 import  SellerDashboard  from "./Pages/seller/SellerDashboard";
+import Sales from "./Pages/seller/Sales";
+
+import InventorySeller from "./Pages/seller/Inventory";
+import SettingSeller from "./Pages/seller/setting";
+
+
 
 
 
@@ -124,6 +131,9 @@ function App() {
           </Route>
           <Route>
             <Route path="/seller/dashboard" element={<SellerDashboard />} />
+            <Route path="/seller/sales"   element={<Sales />}/>
+            <Route path="/seller/inventory" element={<InventorySeller />} />
+            <Route path="/seller/settings" element={<SettingSeller />} />
           </Route>
 
           <Route path="/auth/login" element={<Login />} />
