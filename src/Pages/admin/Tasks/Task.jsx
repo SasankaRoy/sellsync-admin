@@ -13,6 +13,7 @@ import axiosInstance from "../../../utils/axios-interceptor";
 import { Loading } from "../../../components/UI/Loading/Loading";
 import moment from "moment";
 import { useDeboune } from "../../../hooks/useDebounce";
+import { useBulkDelete } from "../../../utils/apis/BulkDelete";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -24,6 +25,8 @@ const rowSelection = {
 export const Task = () => {
   const navigate = useNavigate();
   const [newTask, setNewTask] = useState({ status: false, task: null });
+  const [bulkDeleteIds, setBulkDeleteIds] = useState([]);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [deleteModel, setDeleteModel] = useState({
     status: false,
     productData: null,
@@ -33,6 +36,7 @@ export const Task = () => {
     taskData: null,
     actionType: null,
   });
+  const bulkDelete = useBulkDelete();
 
   const {
     data: rowData = [],
@@ -229,6 +233,7 @@ export const Task = () => {
   }, []);
 
 
+
   return (
     <>
       <Layout>
@@ -272,7 +277,22 @@ export const Task = () => {
                     <button className="flex justify-center items-center gap-2 px-3 sm:px-4 py-1 sm:py-1.5 text-sm sm:text-base lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC]">
                       Filter <FilterIcon className="sm:w-5 sm:h-5" />
                     </button>*/}
-                    <button>
+                    <button
+                      onClick={async () => {
+                        setIsDeleting(true);
+                        const result = bulkDelete.mutate({
+                          path: "api/v1/user/bulk-task-delete",
+                          idList: {
+                            employeeTaskIds: bulkDeleteIds,
+                          },
+                          queryKey: "get_tasks_lists",
+                          isDeleting:setIsDeleting
+                        });
+                       
+                      }}
+                      className="disabled:cursor-not-allowed  disabled:opacity-30 cursor-pointer disabled:pointer-events-none"
+                      disabled={bulkDeleteIds.length === 0 ? true : false}
+                    >
                       <DeleteIcon className="sm:w-5 sm:h-5" />
                     </button>
                   </div>
@@ -285,9 +305,14 @@ export const Task = () => {
                       defaultColDef={defaultColDef}
                       pagination={true}
                       rowSelection={rowSelection}
-                      onSelectionChanged={(event) =>
-                        console.log("Row Selected!")
-                      }
+                      onSelectionChanged={(event) => {
+                        let bulkIds = [];
+                        event.selectedNodes.forEach((item) => {
+                          bulkIds.push(item.data.id);
+                        });
+                        const uniqueSet = new Set(bulkIds);
+                        setBulkDeleteIds([...uniqueSet]);
+                      }}
                       onCellValueChanged={(event) =>
                         console.log(`New Cell Value: ${event.value}`)
                       }

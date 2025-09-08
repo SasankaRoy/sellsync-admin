@@ -15,6 +15,7 @@ import axiosInstance from "../../../utils/axios-interceptor";
 import { Loading } from "../../../components/UI/Loading/Loading";
 import { toast } from "react-toastify";
 import moment from "moment";
+import { useBulkDelete } from "../../../utils/apis/BulkDelete";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -24,58 +25,9 @@ const rowSelection = {
 };
 
 export const Supplier = () => {
-  // const [rowData, setRowData] = useState([
-  //   {
-  //     ID: "1279",
-  //     SupplierName: "A.B. BEVRAGE INC. (BUDWEISER)",
-  //     Category: "Beer",
-  //     Items: "500",
-  //     Date: "12/05/2025",
-  //     Email: "test@gmail.com",
-  //     PhoneNumber: "8547993256",
-  //     Action: ActionBtns,
-  //   },
-  //   {
-  //     ID: "1280",
-  //     SupplierName: "VINO DISTRIBUTORS",
-  //     Category: "Wine",
-  //     Items: "300",
-  //     Date: "12/06/2025",
-  //     Action: ActionBtns,
-  //     Email: "test@gmail.com",
-  //     PhoneNumber: "8547993256",
-  //   },
-  //   {
-  //     ID: "1281",
-  //     SupplierName: "SPIRIT CO.",
-  //     Category: "Spirits",
-  //     Items: "200",
-  //     Date: "12/07/2025",
-  //     Action: ActionBtns,
-  //     Email: "test@gmail.com",
-  //     PhoneNumber: "8547993256",
-  //   },
-  //   {
-  //     ID: "1282",
-  //     SupplierName: "CRAFT BEER SUPPLY",
-  //     Category: "Beer",
-  //     Items: "400",
-  //     Date: "12/08/2025",
-  //     Action: ActionBtns,
-  //     Email: "test@gmail.com",
-  //     PhoneNumber: "8547993256",
-  //   },
-  //   {
-  //     ID: "1283",
-  //     SupplierName: "PREMIUM LIQUORS",
-  //     Category: "Spirits",
-  //     Items: "250",
-  //     Date: "12/09/2025",
-  //     Action: ActionBtns,
-  //     Email: "test@gmail.com",
-  //     PhoneNumber: "8547993256",
-  //   },
-  // ]);
+  const [bulkDeleteIds, setBulkDeleteIds] = useState([]);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const bulkDelete = useBulkDelete();
   const {
     data: rowData = [],
     isLoading,
@@ -284,7 +236,21 @@ export const Supplier = () => {
                   <button className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-1.5 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
                     Export CSV <Download size={16} />
                   </button>
-                  <button>
+                  <button
+                    onClick={async () => {
+                      setIsDeleting(true);
+                      const result = bulkDelete.mutate({
+                        path: "api/v1/supplier/bulk-delete",
+                        idList: {
+                          supplierIds: bulkDeleteIds,
+                        },
+                        queryKey: "get_suppliers_list",
+                        isDeleting: setIsDeleting,
+                      });
+                    }}
+                    className="disabled:cursor-not-allowed  disabled:opacity-30 cursor-pointer disabled:pointer-events-none"
+                    disabled={bulkDeleteIds.length === 0 ? true : false}
+                  >
                     <DeleteIcon />
                   </button>
                 </div>
@@ -297,7 +263,14 @@ export const Supplier = () => {
                     defaultColDef={defaultColDef}
                     pagination={true}
                     rowSelection={rowSelection}
-                    onSelectionChanged={(event) => console.log("Row Selected!")}
+                    onSelectionChanged={(event) => {
+                      let bulkIds = [];
+                      event.selectedNodes.forEach((item) => {
+                        bulkIds.push(item.data.id);
+                      });
+                      const uniqueSet = new Set(bulkIds);
+                      setBulkDeleteIds([...uniqueSet]);
+                    }}
                     onCellValueChanged={(event) =>
                       console.log(`New Cell Value: ${event.value}`)
                     }

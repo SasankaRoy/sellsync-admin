@@ -129,6 +129,7 @@ function App() {
             <Route path="/admin/payroll" element={<Payroll />} />
             <Route path="/admin/item-report/:id" element={<ItemReport />} />
           </Route>
+          
           <Route>
             <Route path="/seller/dashboard" element={<SellerDashboard />} />
             <Route path="/seller/sales"   element={<Sales />}/>

@@ -1,5 +1,10 @@
 import React, { useMemo, useState, useEffect } from "react";
-import { DeleteIcon, FilterIcon, SortIcon, PluseIcon } from "../../../assets/Svgs/AllSvgs";
+import {
+  DeleteIcon,
+  FilterIcon,
+  SortIcon,
+  PluseIcon,
+} from "../../../assets/Svgs/AllSvgs";
 import { Edit, Eye, Trash, Download, CircleX } from "lucide-react";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
@@ -10,12 +15,13 @@ import { toast } from "react-toastify";
 import axiosInstance from "../../../utils/axios-interceptor";
 import { Loading } from "../../../components/UI/Loading/Loading";
 import { useDeboune } from "../../../hooks/useDebounce";
+import { useBulkDelete } from "../../../utils/apis/BulkDelete";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 const rowSelection = {
   mode: "multiRow",
-  headerCheckbox: false,
+  headerCheckbox: true,
 };
 
 const ActionBtns = (props) => {
@@ -41,19 +47,28 @@ const ActionBtns = (props) => {
           className="font-semibold font-[var(--paraFont)] bg-[var(--button-color1)] text-white p-1 sm:p-1.5 lg:p-1.5 rounded-full border-none cursor-pointer"
           onClick={handleEdit}
         >
-          <Edit size={16} className="sm:w-[18px] sm:h-[18px] lg:w-[18px] lg:h-[18px]" />
+          <Edit
+            size={16}
+            className="sm:w-[18px] sm:h-[18px] lg:w-[18px] lg:h-[18px]"
+          />
         </button>
         <button
           className="font-semibold font-[var(--paraFont)] bg-[var(--button-color5)] text-white p-1 sm:p-1.5 lg:p-1.5 rounded-full border-none cursor-pointer"
           onClick={handleView}
         >
-          <Eye size={16} className="sm:w-[18px] sm:h-[18px] lg:w-[18px] lg:h-[18px]" />
+          <Eye
+            size={16}
+            className="sm:w-[18px] sm:h-[18px] lg:w-[18px] lg:h-[18px]"
+          />
         </button>
         <button
           className="font-semibold font-[var(--paraFont)] bg-[var(--Negative-color)] text-white p-1 sm:p-1.5 lg:p-1.5 rounded-full border-none cursor-pointer"
           onClick={handleDelete}
         >
-          <Trash size={16} className="sm:w-[18px] sm:h-[18px] lg:w-[18px] lg:h-[18px]" />
+          <Trash
+            size={16}
+            className="sm:w-[18px] sm:h-[18px] lg:w-[18px] lg:h-[18px]"
+          />
         </button>
       </div>
     </>
@@ -75,6 +90,9 @@ export const Vendors = () => {
   const [searchText, setSearchText] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [limit, setLimit] = useState(10);
+  const [bulkDeleteIds, setBulkDeleteIds] = useState([]);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const bulkDelete = useBulkDelete();
 
   // Fetch vendors data using React Query
   const {
@@ -92,11 +110,15 @@ export const Vendors = () => {
           search_text: searchText,
         });
         if (reqVendorList.status === 200 && reqVendorList.data) {
-          return reqVendorList?.data?.results || reqVendorList?.data?.data || [];
+          return (
+            reqVendorList?.data?.results || reqVendorList?.data?.data || []
+          );
         }
         return [];
       } catch (error) {
-        throw new Error(error?.response?.data?.message || "Failed to fetch vendors");
+        throw new Error(
+          error?.response?.data?.message || "Failed to fetch vendors"
+        );
       }
     },
   });
@@ -114,7 +136,7 @@ export const Vendors = () => {
     setCurrentPage(1); // Reset to first page when searching
   }, 800);
 
-  const onEdit = (vendor) => {    
+  const onEdit = (vendor) => {
     setEditModel({
       state: true,
       productData: vendor,
@@ -130,7 +152,7 @@ export const Vendors = () => {
       forStatus: "View",
     });
   };
-  
+
   const onDelete = (vendor) => {
     console.log(vendor, "delete");
     setDeleteModel({
@@ -142,46 +164,50 @@ export const Vendors = () => {
 
   // Column Definitions: Defines & controls grid columns.
   const [colDefs, setColDefs] = useState([
-    { 
-      field: "name", 
+    {
+      field: "name",
       headerName: "Vendor Name",
-      valueGetter: (params) => params.data?.name || params.data?.VendorName || ""
+      valueGetter: (params) =>
+        params.data?.name || params.data?.VendorName || "",
     },
-    { 
-      field: "email", 
+    {
+      field: "email",
       headerName: "Email",
-      valueGetter: (params) => params.data?.email || params.data?.Email || ""
+      valueGetter: (params) => params.data?.email || params.data?.Email || "",
     },
-    { 
-      field: "phone", 
+    {
+      field: "phone",
       headerName: "Contact Number",
-      valueGetter: (params) => params.data?.mobile || params.data?.ContactNumber || ""
+      valueGetter: (params) =>
+        params.data?.mobile || params.data?.ContactNumber || "",
     },
-    { 
-      field: "address", 
+    {
+      field: "address",
       headerName: "Address",
       valueGetter: (params) => {
         const data = params.data;
         if (data?.address) {
-          if (typeof data.address === 'string') return data.address;
-          if (typeof data.address === 'object') {
+          if (typeof data.address === "string") return data.address;
+          if (typeof data.address === "object") {
             const addr = data.address;
-            return `${addr.street || ''} ${addr.city || ''} ${addr.state || ''} ${addr.zip || ''}`.trim();
+            return `${addr.street || ""} ${addr.city || ""} ${
+              addr.state || ""
+            } ${addr.zip || ""}`.trim();
           }
         }
         return "";
-      }
+      },
     },
-    { 
-      field: "status", 
+    {
+      field: "status",
       headerName: "Status",
       cellRenderer: (params) => {
         const status = params.data?.status || params.data?.Status || "";
         return <span>{status}</span>;
-      }
+      },
     },
-    { 
-      field: "createdAt", 
+    {
+      field: "createdAt",
       headerName: "Created Date",
       valueGetter: (params) => {
         const date = params.data?.createdAt || params.data?.LastOrderDate;
@@ -189,7 +215,7 @@ export const Vendors = () => {
           return new Date(date).toLocaleDateString();
         }
         return "";
-      }
+      },
     },
     {
       headerName: "Actions",
@@ -257,7 +283,7 @@ export const Vendors = () => {
                   >
                     Add Vendor <PluseIcon className="w-4 h-4" />
                   </button>
-                  <button 
+                  <button
                     onClick={handleImportCSV}
                     className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
                   >
@@ -266,12 +292,12 @@ export const Vendors = () => {
                 </div>
               </div>
             </div>
-            
+
             <div className="w-full h-[60vh] sm:h-[70vh] lg:h-[75vh]">
-            <div className="w-full flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-full">
-              <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center py-1.5 shrink-0 gap-3 sm:gap-0">
-                <div className="flex justify-between sm:justify-center items-center gap-3 w-full sm:w-auto">
-                  <select className="font-[500] mainFont px-4 border-none outline-none text-sm lg:text-base">
+              <div className="w-full flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-full">
+                <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center py-1.5 shrink-0 gap-3 sm:gap-0">
+                  <div className="flex justify-between sm:justify-center items-center gap-3 w-full sm:w-auto">
+                    <select className="font-[500] mainFont px-4 border-none outline-none text-sm lg:text-base">
                       <option>All Vendors</option>
                       <option>Active Vendors</option>
                       <option>Inactive Vendors</option>
@@ -283,14 +309,28 @@ export const Vendors = () => {
                     </div>
                   </div>
                   <div className="flex gap-2 sm:gap-4 justify-between items-center flex-wrap lg:justify-center lg:gap-4">
-                   
-                    <button 
+                    <button
                       onClick={handleExportCSV}
                       className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-1.5 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
                     >
                       Export CSV <Download size={16} />
                     </button>
-                    <button>
+                    <button
+                    onClick={async () => {
+                        setIsDeleting(true);
+                        const result = bulkDelete.mutate({
+                          path: "api/v1/vendor/bulk-delete",
+                          idList: {
+                            vendorIds: bulkDeleteIds,
+                          },
+                          queryKey: "get_vendors_list",
+                          isDeleting:setIsDeleting
+                        });
+                       
+                      }}
+                      className="disabled:cursor-not-allowed  disabled:opacity-30 cursor-pointer disabled:pointer-events-none"
+                      disabled={bulkDeleteIds.length === 0 ? true : false}
+                    >
                       <DeleteIcon className="w-5 h-5 lg:w-auto lg:h-auto" />
                     </button>
                   </div>
@@ -304,15 +344,19 @@ export const Vendors = () => {
                       pagination={true}
                       rowSelection={rowSelection}
                       onSelectionChanged={(event) => {
-                        const selectedNodes = event.api.getSelectedNodes();
-                        const selectedData = selectedNodes.map(node => node.data);
-                        setSelectedRowData(selectedData);
-                        console.log("Selected data updated:", selectedData);
+                        let bulkIds = [];
+                        event.selectedNodes.forEach((item) => {
+                          bulkIds.push(item.data.id);
+                        });
+                        const uniqueSet = new Set(bulkIds);
+                        setBulkDeleteIds([...uniqueSet]);
                       }}
                       onCellValueChanged={(event) =>
                         console.log(`New Cell Value: ${event.value}`)
                       }
-                      getRowId={(params) => params.data.id?.toString() || Math.random().toString()}
+                      getRowId={(params) =>
+                        params.data.id?.toString() || Math.random().toString()
+                      }
                       className="w-full h-full text-sm lg:text-base"
                     />
                   </div>
@@ -345,7 +389,13 @@ export const Vendors = () => {
   );
 };
 
-const VendorEditModel = ({ forState, setEditVendorModel, productData, rowData, refetch }) => {
+const VendorEditModel = ({
+  forState,
+  setEditVendorModel,
+  productData,
+  rowData,
+  refetch,
+}) => {
   const [isLoading, setIsLoading] = useState(false);
   const queryClient = useQueryClient();
   console.log(productData);
@@ -394,13 +444,18 @@ const VendorEditModel = ({ forState, setEditVendorModel, productData, rowData, r
       };
 
       console.log("Sending Vendor Payload:", vendorPayload); // Debug payload
-      const reqAddVendor = await axiosInstance.post("/api/v1/vendor/add", vendorPayload); // Updated endpoint
-      
+      const reqAddVendor = await axiosInstance.post(
+        "/api/v1/vendor/add",
+        vendorPayload
+      ); // Updated endpoint
+
       if (reqAddVendor.status === 200 || reqAddVendor.status === 201) {
         queryClient.invalidateQueries({
           queryKey: ["get_vendors_list"],
         });
-        toast.success(reqAddVendor?.data?.message || "Vendor added successfully!");
+        toast.success(
+          reqAddVendor?.data?.message || "Vendor added successfully!"
+        );
         setEditVendorModel({
           state: false,
           productData: null,
@@ -410,7 +465,11 @@ const VendorEditModel = ({ forState, setEditVendorModel, productData, rowData, r
       }
     } catch (error) {
       console.error("Add vendor error:", error.response?.data || error.message);
-      toast.error(error.response?.data?.message || error.response?.data?.error || "Failed to add vendor. Please check the endpoint or payload.");
+      toast.error(
+        error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Failed to add vendor. Please check the endpoint or payload."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -441,13 +500,18 @@ const VendorEditModel = ({ forState, setEditVendorModel, productData, rowData, r
       };
 
       console.log("Sending Vendor Payload:", vendorPayload); // Debug payload
-      const reqUpdateVendor = await axiosInstance.post(`/api/v1/vendor/update/${productData.id}`, vendorPayload); // Updated endpoint
-      
+      const reqUpdateVendor = await axiosInstance.post(
+        `/api/v1/vendor/update/${productData.id}`,
+        vendorPayload
+      ); // Updated endpoint
+
       if (reqUpdateVendor.status === 200) {
         queryClient.invalidateQueries({
           queryKey: ["get_vendors_list"],
         });
-        toast.success(reqUpdateVendor?.data?.message || "Vendor updated successfully!");
+        toast.success(
+          reqUpdateVendor?.data?.message || "Vendor updated successfully!"
+        );
         setEditVendorModel({
           state: false,
           productData: null,
@@ -456,8 +520,15 @@ const VendorEditModel = ({ forState, setEditVendorModel, productData, rowData, r
         refetch();
       }
     } catch (error) {
-      console.error("Update vendor error:", error.response?.data || error.message);
-      toast.error(error.response?.data?.message || error.response?.data?.error || "Failed to update vendor. Please check the endpoint or payload.");
+      console.error(
+        "Update vendor error:",
+        error.response?.data || error.message
+      );
+      toast.error(
+        error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Failed to update vendor. Please check the endpoint or payload."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -469,7 +540,11 @@ const VendorEditModel = ({ forState, setEditVendorModel, productData, rowData, r
         <div className="bg-white w-full sm:w-[90%] md:w-[70%] lg:w-[50%] p-3 sm:p-4 lg:p-5 rounded-lg shadow-md max-h-[90vh] overflow-y-auto">
           <div className="flex justify-between items-center w-full p-2 sm:p-2.5 rounded-md bg-[var(--sideMenu-color)] text-white">
             <h3 className="text-base sm:text-lg md:text-xl lg:text-[1.5dvw] font-semibold">
-              {forState === "Add" ? "Add Vendor" : forState === "View" ? "View Vendor" : "Edit Vendor"}
+              {forState === "Add"
+                ? "Add Vendor"
+                : forState === "View"
+                ? "View Vendor"
+                : "Edit Vendor"}
             </h3>
             <button
               onClick={() => {
@@ -530,13 +605,10 @@ const VendorEditModel = ({ forState, setEditVendorModel, productData, rowData, r
                   onChange={handleOnChange}
                   required
                   disabled={forState === "View"}
-              />
+                />
               </div>
               {(forState === "Add" || forState === "Edit") && (
-                <div className="w-full my-2 sm:my-3 flex flex-col gap-1 sm:gap-2">
-                 
-                  
-                </div>
+                <div className="w-full my-2 sm:my-3 flex flex-col gap-1 sm:gap-2"></div>
               )}
             </div>
 
@@ -630,7 +702,6 @@ const VendorEditModel = ({ forState, setEditVendorModel, productData, rowData, r
                 <option value="inactive">Inactive</option>
               </select>
             </div>
-            
           </div>
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-end items-center my-3 sm:my-4">
             <button

@@ -20,6 +20,7 @@ import axiosInstance from "../../../utils/axios-interceptor";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loading } from "../../../components/UI/Loading/Loading";
 import { parse, format } from "date-fns";
+import { useBulkDelete } from "../../../utils/apis/BulkDelete";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 const rowSelection = {
@@ -28,6 +29,8 @@ const rowSelection = {
 };
 
 export const Employee = () => {
+  const [bulkDeleteIds, setBulkDeleteIds] = useState([]);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [deleteModel, setDeleteModel] = useState({
     status: false,
     productData: null,
@@ -38,6 +41,7 @@ export const Employee = () => {
     productData: null,
     forStatus: null,
   });
+  const bulkDelete = useBulkDelete();
 
   // get employee list...
   const getEmployeeList = async () => {
@@ -236,7 +240,22 @@ export const Employee = () => {
                       Export CSV <Download size={16} />
                       </button>
                     
-                    <button>
+                    <button
+                     onClick={async () => {
+                        setIsDeleting(true);
+                        const result = bulkDelete.mutate({
+                          path: "api/v1/user/bulk-employee-delete",
+                          idList: {
+                            employeeIds: bulkDeleteIds,
+                          },
+                          queryKey: "employee_list",
+                          isDeleting:setIsDeleting
+                        });
+                       
+                      }}
+                      className="disabled:cursor-not-allowed  disabled:opacity-30 cursor-pointer disabled:pointer-events-none"
+                      disabled={bulkDeleteIds.length === 0 ? true : false}
+                    >
                       <DeleteIcon className="w-5 h-5" />
                     </button>
                   </div>
@@ -249,9 +268,14 @@ export const Employee = () => {
                       defaultColDef={defaultColDef}
                       pagination={true}
                       rowSelection={rowSelection}
-                      onSelectionChanged={(event) =>
-                        console.log("Row Selected!")
-                      }
+                      onSelectionChanged={(event) => {
+                        let bulkIds = [];
+                        event.selectedNodes.forEach((item) => {
+                          bulkIds.push(item.data.id);
+                        });
+                        const uniqueSet = new Set(bulkIds);
+                        setBulkDeleteIds([...uniqueSet]);
+                      }}
                       onCellValueChanged={(event) =>
                         console.log(`New Cell Value: ${event.value}`)
                       }
