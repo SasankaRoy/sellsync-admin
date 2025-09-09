@@ -1,13 +1,39 @@
 import { CircleX } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 // Core CSS
 import { AgGridReact } from "ag-grid-react";
+import axiosInstance from "../../../utils/axios-interceptor";
+import { useDeboune } from "../../../hooks/useDebounce";
 ModuleRegistry.registerModules([AllCommunityModule]);
 const rowSelection = {
   mode: "multiRow",
   headerCheckbox: false,
 };
+
+// Debounce hook (like Groups.jsx)
+function useDebounce(callback, delay) {
+  const timerRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
+  }, []);
+
+  const debouncedCallback = (...args) => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+    timerRef.current = setTimeout(() => {
+      callback(...args);
+    }, delay);
+  };
+
+  return debouncedCallback;
+}
 
 export const AddProductModel = ({ productData, setShowModel, actionType }) => {
   const [currentActiveTab, setCurrentActiveTab] = useState("Details");
@@ -19,9 +45,6 @@ export const AddProductModel = ({ productData, setShowModel, actionType }) => {
     });
   };
   const handleChangeTab = (currentTab) => {
-    // if (actionType === "Add" && currentTab !== "Details") {
-    //   return; // Prevent changing tabs when actionType is "Add"
-    // }
     setCurrentActiveTab(currentTab);
   };
 
@@ -77,16 +100,6 @@ export const AddProductModel = ({ productData, setShowModel, actionType }) => {
             </button>
             {actionType !== "Add" && (
               <>
-                {/* <button
-                  onClick={() => handleChangeTab("Options")}
-                  className={` ${
-                    currentActiveTab === "Options"
-                      ? "bg-[var(--sideMenu-color)] text-white"
-                      : "bg-transparent text-[#333333]/70"
-                  } border-none outline-none px-4 sm:px-8 py-1 text-sm sm:text-base lg:text-[.9dvw] cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
-                >
-                  Options
-                </button> */}
                 <button
                   onClick={() => handleChangeTab("Promotions")}
                   className={` ${
@@ -122,6 +135,14 @@ const DetailsTab = ({ actionType }) => {
   const [addQuantityData, setQuantityData] = useState([1]);
   const [images, setImages] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
+
+  // Supplier search state
+  const [isSearching, setIsSearching] = useState(false);
+  const [isError, setIsError] = useState("");
+  const [searchResult, setSearchResult] = useState([]);
+  const [showSupplierList, setShowSupplierList] = useState(false);
+  const [selectedSupplier, setSelectedSupplier] = useState(null);
+  const [supplierQuery, setSupplierQuery] = useState("");
 
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -174,9 +195,101 @@ const DetailsTab = ({ actionType }) => {
     };
   }, [images]);
 
+  // Debounced supplier search function (use local debounce, not imported hook)
+  const debounceCallback = useDebounce(async (searchValue) => {
+    if (searchValue.length > 0) {
+      try {
+        setIsSearching(true);
+        const response = await axiosInstance.post("api/v1/supplier/list", {
+          page: 1,
+          limit: 10,
+          search_text: searchValue,
+        });
+        
+        if (response.status === 200 && response.data?.results) {
+          setSearchResult(response.data.results);
+          setIsError("");
+          setIsSearching(false);
+        } else {
+          setSearchResult([]);
+          setIsError("No suppliers found");
+          setIsSearching(false);
+        }
+      } catch (error) {
+        console.error("Supplier search error:", error);
+        setSearchResult([]);
+        setIsError("Failed to search suppliers");
+        setIsSearching(false);
+      }
+    } else {
+      setSearchResult([]);
+      setShowSupplierList(false);
+      setIsSearching(false);
+      setIsError("");
+    }
+  }, 800);
+
+  // Fetch initial suppliers (when focusing with empty query)
+  const fetchInitialSuppliers = async () => {
+    try {
+      setIsSearching(true);
+      const response = await axiosInstance.post("api/v1/supplier/list", {
+        page: 1,
+        limit: 10,
+      });
+
+      if (response?.status >= 200 && response?.status < 300 && response.data) {
+        const results =
+          response.data?.results ||
+          response.data?.data ||
+          response.data ||
+          [];
+
+        if (Array.isArray(results)) {
+          setSearchResult(results);
+          setIsError(results.length ? "" : "No suppliers found");
+        } else {
+          // In case API returns an object with nested array
+          const maybeArray = results?.items || results?.list || results?.data || [];
+          setSearchResult(Array.isArray(maybeArray) ? maybeArray : []);
+          setIsError(
+            Array.isArray(maybeArray) && maybeArray.length
+              ? ""
+              : "No suppliers found"
+          );
+        }
+        console.debug("Supplier initial fetch parsed:", {
+          raw: response.data,
+          parsed: Array.isArray(results) ? results : (results?.items || results?.list || results?.data || []),
+        });
+        setIsSearching(false);
+      } else {
+        setSearchResult([]);
+        setIsError("No suppliers found");
+        setIsSearching(false);
+      }
+    } catch (error) {
+      console.error("Supplier initial fetch error:", error);
+      setSearchResult([]);
+      setIsError(error?.response?.data?.error || "Failed to fetch suppliers");
+      setIsSearching(false);
+    }
+  };
+
+  // Handle adding a selected supplier
+  const handleAddSupplier = (supplier) => {
+    setSelectedSupplier(supplier);
+    setShowSupplierList(false);
+  };
+
   return (
     <>
-      <div className="w-full p-2">
+      <div 
+        className="w-full p-2"
+        onClick={() => {
+          setShowSupplierList(false);
+        }}
+      >
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
           <div className="flex flex-col gap-2 w-full">
             <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
@@ -330,10 +443,6 @@ const DetailsTab = ({ actionType }) => {
             <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Size
             </label>
-            {/* <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-              type="text"
-            /> */}
             <select className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3">
               <option>-- Select Size--</option>
               <option value="50ML">50ML</option>
@@ -410,14 +519,97 @@ const DetailsTab = ({ actionType }) => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full my-4">
-          <div className="w-full flex flex-col gap-2">
+          <div className="w-full flex flex-col gap-2 relative">
             <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Supplier
             </label>
             <input
               className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-              placeholder="Enter supplier name..."
+              placeholder="Search supplier..."
+              value={selectedSupplier ? (selectedSupplier.name || selectedSupplier.full_name || "") : supplierQuery}
+              onChange={(e) => {
+                const value = e.target.value;
+                // If a supplier was previously selected, clear it so user can type a new query
+                if (selectedSupplier) {
+                  setSelectedSupplier(null);
+                }
+                setSupplierQuery(value);
+                if (value) {
+                  setIsSearching(true);
+                  setShowSupplierList(true);
+                  debounceCallback(value);
+                } else {
+                  setIsSearching(false);
+                  setShowSupplierList(false);
+                }
+              }}
+              onFocus={() => {
+                if (!selectedSupplier) {
+                  setShowSupplierList(true);
+                  if (!supplierQuery) {
+                    fetchInitialSuppliers();
+                  }
+                }
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (selectedSupplier) {
+                  setSelectedSupplier(null);
+                  setSupplierQuery("");
+                  setShowSupplierList(true);
+                }
+              }}
+              readOnly={selectedSupplier ? true : false}
             />
+
+            {/* Search list show up start */}
+            {showSupplierList && !selectedSupplier && (
+              <div className="absolute top-[105%] p-3 left-0 w-full min-h-[10vh] max-h-[30vh] overflow-auto flex flex-col gap-1 bg-white shadow-lg border border-[var(--border-color)] rounded-lg z-50 hideScrollbar">
+                {isError && (
+                  <p className="text-center mainFont text-gray-400 text-sm sm:text-base">
+                    {isError}
+                  </p>
+                )}
+
+                {isSearching ? (
+                  <div className="w-full">
+                    <p className="text-start mainFont text-gray-400 animate-pulse duration-200 ease-linear text-sm sm:text-base">
+                      Searching suppliers...
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    {searchResult.length === 0 ? (
+                      <>
+                        <p className="text-center mainFont text-gray-400 animate-pulse duration-200 ease-linear text-sm sm:text-base">
+                          No Supplier Found
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        {searchResult.map((supplier, id) => (
+                          <button
+                            key={id}
+                            className="w-full py-2 sm:py-3 px-3 sm:px-5 cursor-pointer hover:bg-[#000]/15 transition-all duration-200 ease-linear bg-[#000]/5 border-b border-[var(--border-color)] mainFont font-semibold rounded text-start text-sm sm:text-base capitalize flex justify-start items-center gap-3"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleAddSupplier(supplier);
+                            }}
+                          >
+                            <div className="w-full">
+                              <p className="line-clamp-1">
+                                {supplier.name || supplier.full_name || "Unnamed Supplier"}
+                              </p>
+                            </div>
+                          </button>
+                        ))}
+                      </>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
+            {/* Search list show up end */}
           </div>
           <div className="w-full flex flex-col gap-2">
             <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
@@ -728,15 +920,6 @@ const OptionsTab = () => {
               type="date"
             />
           </div>
-          {/* <div className="w-full my-4 flex flex-col gap-2">
-            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-              Vendor Item Name
-            </label>
-            <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-              type="text"
-            />
-          </div> */}
         </div>
 
         <div className="flex flex-col gap-2 w-full my-4">

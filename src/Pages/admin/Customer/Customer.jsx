@@ -23,6 +23,7 @@ import { toast } from "react-toastify";
 import axiosInstance from "../../../utils/axios-interceptor";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loading } from "../../../components/UI/Loading/Loading";
+import { useBulkDelete } from "../../../utils/apis/BulkDelete";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -68,6 +69,8 @@ const ActionBtns = (props) => {
 };
 
 export const Customer = () => {
+  const [bulkDeleteIds, setBulkDeleteIds] = useState([]);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [editUserModel, setEditUserModel] = useState({
     state: false,
     userData: null,
@@ -76,8 +79,9 @@ export const Customer = () => {
   const [deleteModel, setDeleteModel] = useState({
     state: false,
     userData: null,
-    path:null,
+    path: null,
   });
+  const bulkDelete = useBulkDelete();
 
   // get all customer list...
   const {
@@ -126,7 +130,7 @@ export const Customer = () => {
     setDeleteModel({
       state: true,
       userData: user.id,
-      path:`api/v1/customer/delete/${user.id}`
+      path: `api/v1/customer/delete/${user.id}`
     });
   };
 
@@ -274,8 +278,21 @@ export const Customer = () => {
                   Export CSV <Download size={16} />
                   </button>
 
-
-                  <button>
+                  <button
+                    onClick={async () => {
+                      setIsDeleting(true);
+                      const result = bulkDelete.mutate({
+                        path: "api/v1/customer/bulk-delete",
+                        idList: {
+                          customerIds: bulkDeleteIds,
+                        },
+                        queryKey: "customer_list",
+                        isDeleting: setIsDeleting
+                      });
+                    }}
+                    className="disabled:cursor-not-allowed disabled:opacity-30 cursor-pointer disabled:pointer-events-none"
+                    disabled={bulkDeleteIds.length === 0 ? true : false}
+                  >
                     <DeleteIcon className="w-5 h-5" />
                   </button>
                 </div>
@@ -288,7 +305,14 @@ export const Customer = () => {
                     defaultColDef={defaultColDef}
                     pagination={true}
                     rowSelection={rowSelection}
-                    onSelectionChanged={(event) => console.log("Row Selected!")}
+                    onSelectionChanged={(event) => {
+                      let bulkIds = [];
+                      event.selectedNodes.forEach((item) => {
+                        bulkIds.push(item.data.id);
+                      });
+                      const uniqueSet = new Set(bulkIds);
+                      setBulkDeleteIds([...uniqueSet]);
+                    }}
                     onCellValueChanged={(event) =>
                       console.log(`New Cell Value: ${event.value}`)
                     }

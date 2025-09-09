@@ -96,6 +96,11 @@ export const Employee = () => {
     { field: "id" },
     { field: "name" },
     { field: "email" },
+    { 
+      field: "log_userId", 
+      headerName: "User ID",
+      valueGetter: (params) => params.data.log_userId || 'N/A'
+    },
     { field: "dob" },
     { field: "mobile" },
     {
@@ -348,6 +353,7 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
     full_name: productData?.name || "",
     phone: productData?.mobile || "",
     email: productData?.email || "",
+    log_userId: productData?.log_userId || "",
     password: productData?.Password || "",
     street: productData?.address?.street || "",
     zip: productData?.address?.zip || "",
@@ -374,6 +380,7 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
       const response = await axiosInstance.post("/api/v1/user/employee-add", {
         full_name: userInfo.full_name,
         email: userInfo.email,
+        log_userId: userInfo.log_userId,
         password: userInfo.password,
         role: userInfo.role,
         staff_position: userInfo.staff_position,
@@ -418,6 +425,8 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
           full_name: userInfo.full_name,
           email: userInfo.email,
           role: "staff",
+          log_userId: userInfo.log_userId,
+          password: userInfo.password,
           staff_position: userInfo.staff_position,
           phone: userInfo.phone,
           date_of_birth: userInfo.date_of_birth,
@@ -524,12 +533,13 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
                 <label className="text-base sm:text-lg md:text-xl lg:text-[1dvw] font-normal paraFont">
                   User Id
                 </label>
+
                 <input
                   className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-base sm:text-lg md:text-xl lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                  type="email"
-                  placeholder="Enter userid..."
-                  name="email"
-                  value={userInfo.email}
+                  type="text"
+                  placeholder="Enter user ID..."
+                  name="log_userId"
+                  value={userInfo.log_userId || ''}
                   onChange={handleOnChange}
                   required
                 />
