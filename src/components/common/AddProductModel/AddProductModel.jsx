@@ -135,6 +135,16 @@ const DetailsTab = ({ actionType }) => {
   const [addQuantityData, setQuantityData] = useState([1]);
   const [images, setImages] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
+  // SKU state
+  const [sku, setSku] = useState("");
+
+  // Generate a simple SKU (adjust logic as needed)
+  const handleGenerateSKU = () => {
+    const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
+    const timestamp = Date.now().toString().slice(-5);
+    const newSku = `SKU-${timestamp}-${rand}`;
+    setSku(newSku);
+  };
 
   // Supplier search state
   const [isSearching, setIsSearching] = useState(false);
@@ -143,6 +153,30 @@ const DetailsTab = ({ actionType }) => {
   const [showSupplierList, setShowSupplierList] = useState(false);
   const [selectedSupplier, setSelectedSupplier] = useState(null);
   const [supplierQuery, setSupplierQuery] = useState("");
+
+  // Vendor search state
+  const [isSearchingVendor, setIsSearchingVendor] = useState(false);
+  const [vendorError, setVendorError] = useState("");
+  const [vendorResults, setVendorResults] = useState([]);
+  const [showVendorList, setShowVendorList] = useState(false);
+  const [selectedVendor, setSelectedVendor] = useState(null);
+  const [vendorQuery, setVendorQuery] = useState("");
+
+  // Group search state
+  const [isSearchingGroup, setIsSearchingGroup] = useState(false);
+  const [groupError, setGroupError] = useState("");
+  const [groupResults, setGroupResults] = useState([]);
+  const [showGroupList, setShowGroupList] = useState(false);
+  const [selectedGroup, setSelectedGroup] = useState(null);
+  const [groupQuery, setGroupQuery] = useState("");
+
+  // Category search state
+  const [isSearchingCategory, setIsSearchingCategory] = useState(false);
+  const [categoryError, setCategoryError] = useState("");
+  const [categoryResults, setCategoryResults] = useState([]);
+  const [showCategoryList, setShowCategoryList] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [categoryQuery, setCategoryQuery] = useState("");
 
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -229,6 +263,132 @@ const DetailsTab = ({ actionType }) => {
     }
   }, 800);
 
+  // Debounced category search function
+  const categoryDebounceCallback = useDebounce(async (searchValue) => {
+    if (searchValue.length > 0) {
+      try {
+        setIsSearchingCategory(true);
+        const response = await axiosInstance.post("api/v1/common/category-list", {
+          page: 1,
+          limit: 10,
+          search_text: searchValue,
+        });
+
+        if (response.status === 200 && (response.data?.results || response.data)) {
+          const results =
+            response.data?.results ||
+            response.data?.data ||
+            response.data ||
+            [];
+          const parsed = Array.isArray(results)
+            ? results
+            : (results?.items || results?.list || results?.data || []);
+          setCategoryResults(Array.isArray(parsed) ? parsed : []);
+          setCategoryError("");
+          setIsSearchingCategory(false);
+        } else {
+          setCategoryResults([]);
+          setCategoryError("No categories found");
+          setIsSearchingCategory(false);
+        }
+      } catch (error) {
+        console.error("Category search error:", error);
+        setCategoryResults([]);
+        setCategoryError("Failed to search categories");
+        setIsSearchingCategory(false);
+      }
+    } else {
+      setCategoryResults([]);
+      setShowCategoryList(false);
+      setIsSearchingCategory(false);
+      setCategoryError("");
+    }
+  }, 800);
+
+  // Debounced group search function
+  const groupDebounceCallback = useDebounce(async (searchValue) => {
+    if (searchValue.length > 0) {
+      try {
+        setIsSearchingGroup(true);
+        const response = await axiosInstance.post("api/v1/group/list", {
+          page: 1,
+          limit: 10,
+          search_text: searchValue,
+        });
+
+        if (response.status === 200 && (response.data?.results || response.data)) {
+          const results =
+            response.data?.results ||
+            response.data?.data ||
+            response.data ||
+            [];
+          const parsed = Array.isArray(results)
+            ? results
+            : (results?.items || results?.list || results?.data || []);
+          setGroupResults(Array.isArray(parsed) ? parsed : []);
+          setGroupError("");
+          setIsSearchingGroup(false);
+        } else {
+          setGroupResults([]);
+          setGroupError("No groups found");
+          setIsSearchingGroup(false);
+        }
+      } catch (error) {
+        console.error("Group search error:", error);
+        setGroupResults([]);
+        setGroupError("Failed to search groups");
+        setIsSearchingGroup(false);
+      }
+    } else {
+      setGroupResults([]);
+      setShowGroupList(false);
+      setIsSearchingGroup(false);
+      setGroupError("");
+    }
+  }, 800);
+
+  // Debounced vendor search function
+  const vendorDebounceCallback = useDebounce(async (searchValue) => {
+    if (searchValue.length > 0) {
+      try {
+        setIsSearchingVendor(true);
+        const response = await axiosInstance.post("api/v1/vendor/list", {
+          page: 1,
+          limit: 10,
+          search_text: searchValue,
+        });
+
+        if (response.status === 200 && (response.data?.results || response.data)) {
+          const results =
+            response.data?.results ||
+            response.data?.data ||
+            response.data ||
+            [];
+          const parsed = Array.isArray(results)
+            ? results
+            : (results?.items || results?.list || results?.data || []);
+          setVendorResults(Array.isArray(parsed) ? parsed : []);
+          setVendorError("");
+          setIsSearchingVendor(false);
+        } else {
+          setVendorResults([]);
+          setVendorError("No vendors found");
+          setIsSearchingVendor(false);
+        }
+      } catch (error) {
+        console.error("Vendor search error:", error);
+        setVendorResults([]);
+        setVendorError("Failed to search vendors");
+        setIsSearchingVendor(false);
+      }
+    } else {
+      setVendorResults([]);
+      setShowVendorList(false);
+      setIsSearchingVendor(false);
+      setVendorError("");
+    }
+  }, 800);
+
   // Fetch initial suppliers (when focusing with empty query)
   const fetchInitialSuppliers = async () => {
     try {
@@ -276,10 +436,72 @@ const DetailsTab = ({ actionType }) => {
     }
   };
 
+  // Fetch initial vendors (when focusing with empty query)
+  const fetchInitialVendors = async () => {
+    try {
+      setIsSearchingVendor(true);
+      const response = await axiosInstance.post("api/v1/vendor/list", {
+        page: 1,
+        limit: 10,
+      });
+
+      if (response?.status >= 200 && response?.status < 300 && response.data) {
+        const results =
+          response.data?.results ||
+          response.data?.data ||
+          response.data ||
+          [];
+
+        if (Array.isArray(results)) {
+          setVendorResults(results);
+          setVendorError(results.length ? "" : "No vendors found");
+        } else {
+          const maybeArray = results?.items || results?.list || results?.data || [];
+          setVendorResults(Array.isArray(maybeArray) ? maybeArray : []);
+          setVendorError(
+            Array.isArray(maybeArray) && maybeArray.length ? "" : "No vendors found"
+          );
+        }
+        console.debug("Vendor initial fetch parsed:", {
+          raw: response.data,
+          parsed: Array.isArray(results) ? results : (results?.items || results?.list || results?.data || []),
+        });
+        setIsSearchingVendor(false);
+      } else {
+        setVendorResults([]);
+        setVendorError("No vendors found");
+        setIsSearchingVendor(false);
+      }
+    } catch (error) {
+      console.error("Vendor initial fetch error:", error);
+      setVendorResults([]);
+      setVendorError(error?.response?.data?.error || "Failed to fetch vendors");
+      setIsSearchingVendor(false);
+    }
+  };
+
   // Handle adding a selected supplier
   const handleAddSupplier = (supplier) => {
     setSelectedSupplier(supplier);
     setShowSupplierList(false);
+  };
+
+  // Handle adding a selected vendor
+  const handleAddVendor = (vendor) => {
+    setSelectedVendor(vendor);
+    setShowVendorList(false);
+  };
+
+  // Handle adding a selected group
+  const handleAddGroup = (group) => {
+    setSelectedGroup(group);
+    setShowGroupList(false);
+  };
+
+  // Handle adding a selected category
+  const handleAddCategory = (category) => {
+    setSelectedCategory(category);
+    setShowCategoryList(false);
   };
 
   return (
@@ -288,6 +510,9 @@ const DetailsTab = ({ actionType }) => {
         className="w-full p-2"
         onClick={() => {
           setShowSupplierList(false);
+          setShowVendorList(false);
+          setShowGroupList(false);
+          setShowCategoryList(false);
         }}
       >
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
@@ -485,37 +710,276 @@ const DetailsTab = ({ actionType }) => {
               <option value="19.2OZ">19.2OZ</option>
             </select>
           </div>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 relative">
             <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-              Vendor Name
+              Vendor
             </label>
             <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-              type="text"
-              placeholder="Enter vendor name..."
+              className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              placeholder="Search vendor..."
+              value={selectedVendor ? (selectedVendor.vendor_name || selectedVendor.name || selectedVendor.full_name || "") : vendorQuery}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (selectedVendor) {
+                  setSelectedVendor(null);
+                }
+                setVendorQuery(value);
+                if (value) {
+                  setIsSearchingVendor(true);
+                  setShowVendorList(true);
+                  vendorDebounceCallback(value);
+                } else {
+                  setIsSearchingVendor(false);
+                  setShowVendorList(false);
+                }
+              }}
+              onFocus={() => {
+                if (!selectedVendor) {
+                  setShowVendorList(true);
+                  if (!vendorQuery) {
+                    fetchInitialVendors();
+                  }
+                }
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (selectedVendor) {
+                  setSelectedVendor(null);
+                  setVendorQuery("");
+                  setShowVendorList(true);
+                }
+              }}
+              readOnly={selectedVendor ? true : false}
             />
+
+            {showVendorList && !selectedVendor && (
+              <div className="absolute top-[105%] p-3 left-0 w-full min-h-[10vh] max-h-[30vh] overflow-auto flex flex-col gap-1 bg-white shadow-lg border border-[var(--border-color)] rounded-lg z-50 hideScrollbar">
+                {vendorError && (
+                  <p className="text-center mainFont text-gray-400 text-sm sm:text-base">
+                    {vendorError}
+                  </p>
+                )}
+
+                {isSearchingVendor ? (
+                  <div className="w-full">
+                    <p className="text-start mainFont text-gray-400 animate-pulse duration-200 ease-linear text-sm sm:text-base">
+                      Searching vendors...
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    {vendorResults.length === 0 ? (
+                      <>
+                        <p className="text-center mainFont text-gray-400 animate-pulse duration-200 ease-linear text-sm sm:text-base">
+                          No Vendor Found
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        {vendorResults.map((vendor, id) => (
+                          <button
+                            key={id}
+                            className="w-full py-2 sm:py-3 px-3 sm:px-5 cursor-pointer hover:bg-[#000]/15 transition-all duration-200 ease-linear bg-[#000]/5 border-b border-[var(--border-color)] mainFont font-semibold rounded text-start text-sm sm:text-base capitalize flex justify-start items-center gap-3"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleAddVendor(vendor);
+                            }}
+                          >
+                            <div className="w-full">
+                              <p className="line-clamp-1">
+                                {vendor.vendor_name || vendor.name || vendor.full_name || "Unnamed Vendor"}
+                              </p>
+                            </div>
+                          </button>
+                        ))}
+                      </>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="w-full flex flex-col gap-2 my-4">
+        <div className="w-full flex flex-col gap-2 my-4 relative">
           <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
             Category
           </label>
           <input
             className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-            placeholder="Enter catagory name..."
+            placeholder="Search category..."
+            value={selectedCategory ? (selectedCategory.category_name || selectedCategory.name || "") : categoryQuery}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (selectedCategory) {
+                setSelectedCategory(null);
+              }
+              setCategoryQuery(value);
+              if (value) {
+                setIsSearchingCategory(true);
+                setShowCategoryList(true);
+                categoryDebounceCallback(value);
+              } else {
+                setIsSearchingCategory(false);
+                setShowCategoryList(false);
+              }
+            }}
+            onFocus={() => {
+              if (!selectedCategory) {
+                setShowCategoryList(true);
+                if (!categoryQuery) {
+                  fetchInitialCategories();
+                }
+              }
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (selectedCategory) {
+                setSelectedCategory(null);
+                setCategoryQuery("");
+                setShowCategoryList(true);
+              }
+            }}
+            readOnly={selectedCategory ? true : false}
           />
+
+          {showCategoryList && !selectedCategory && (
+            <div className="absolute top-[105%] p-3 left-0 w-full min-h-[10vh] max-h-[30vh] overflow-auto flex flex-col gap-1 bg-white shadow-lg border border-[var(--border-color)] rounded-lg z-50 hideScrollbar">
+              {categoryError && (
+                <p className="text-center mainFont text-gray-400 text-sm sm:text-base">
+                  {categoryError}
+                </p>
+              )}
+
+              {isSearchingCategory ? (
+                <div className="w-full">
+                  <p className="text-start mainFont text-gray-400 animate-pulse duration-200 ease-linear text-sm sm:text-base">
+                    Searching categories...
+                  </p>
+                </div>
+              ) : (
+                <>
+                  {categoryResults.length === 0 ? (
+                    <>
+                      <p className="text-center mainFont text-gray-400 animate-pulse duration-200 ease-linear text-sm sm:text-base">
+                        No Category Found
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      {categoryResults.map((category, id) => (
+                        <button
+                          key={id}
+                          className="w-full py-2 sm:py-3 px-3 sm:px-5 cursor-pointer hover:bg-[#000]/15 transition-all duration-200 ease-linear bg-[#000]/5 border-b border-[var(--border-color)] mainFont font-semibold rounded text-start text-sm sm:text-base capitalize flex justify-start items-center gap-3"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleAddCategory(category);
+                          }}
+                        >
+                          <div className="w-full">
+                            <p className="line-clamp-1">
+                              {category.category_name || category.name || "Unnamed Category"}
+                            </p>
+                          </div>
+                        </button>
+                      ))}
+                    </>
+                  )}
+                </>
+              )}
+            </div>
+          )}
         </div>
 
-        <div className="w-full flex flex-col gap-2 my-4">
+        <div className="w-full flex flex-col gap-2 my-4 relative">
           <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
             Add to Group (optional)
           </label>
 
           <input
             className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-            placeholder="Enter group name..."
+            placeholder="Search group..."
+            value={selectedGroup ? (selectedGroup.group_name || selectedGroup.name || selectedGroup.title || "") : groupQuery}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (selectedGroup) {
+                setSelectedGroup(null);
+              }
+              setGroupQuery(value);
+              if (value) {
+                setIsSearchingGroup(true);
+                setShowGroupList(true);
+                groupDebounceCallback(value);
+              } else {
+                setIsSearchingGroup(false);
+                setShowGroupList(false);
+              }
+            }}
+            onFocus={() => {
+              if (!selectedGroup) {
+                setShowGroupList(true);
+                if (!groupQuery) {
+                  fetchInitialGroups();
+                }
+              }
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (selectedGroup) {
+                setSelectedGroup(null);
+                setGroupQuery("");
+                setShowGroupList(true);
+              }
+            }}
+            readOnly={selectedGroup ? true : false}
           />
+
+          {showGroupList && !selectedGroup && (
+            <div className="absolute top-[105%] p-3 left-0 w-full min-h-[10vh] max-h-[30vh] overflow-auto flex flex-col gap-1 bg-white shadow-lg border border-[var(--border-color)] rounded-lg z-50 hideScrollbar">
+              {groupError && (
+                <p className="text-center mainFont text-gray-400 text-sm sm:text-base">
+                  {groupError}
+                </p>
+              )}
+
+              {isSearchingGroup ? (
+                <div className="w-full">
+                  <p className="text-start mainFont text-gray-400 animate-pulse duration-200 ease-linear text-sm sm:text-base">
+                    Searching groups...
+                  </p>
+                </div>
+              ) : (
+                <>
+                  {groupResults.length === 0 ? (
+                    <>
+                      <p className="text-center mainFont text-gray-400 animate-pulse duration-200 ease-linear text-sm sm:text-base">
+                        No Group Found
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      {groupResults.map((group, id) => (
+                        <button
+                          key={id}
+                          className="w-full py-2 sm:py-3 px-3 sm:px-5 cursor-pointer hover:bg-[#000]/15 transition-all duration-200 ease-linear bg-[#000]/5 border-b border-[var(--border-color)] mainFont font-semibold rounded text-start text-sm sm:text-base capitalize flex justify-start items-center gap-3"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleAddGroup(group);
+                          }}
+                        >
+                          <div className="w-full">
+                            <p className="line-clamp-1">
+                              {group.group_name || group.name || group.title || "Unnamed Group"}
+                            </p>
+                          </div>
+                        </button>
+                      ))}
+                    </>
+                  )}
+                </>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full my-4">
@@ -611,14 +1075,28 @@ const DetailsTab = ({ actionType }) => {
             )}
             {/* Search list show up end */}
           </div>
-          <div className="w-full flex flex-col gap-2">
+          <div className="w-full flex flex-col gap-2 relative">
             <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               SKU
             </label>
             <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 pr-24 pl-3"
               type="text"
+              value={sku}
+              onChange={(e) => setSku(e.target.value)}
+              placeholder="Enter or generate SKU"
             />
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleGenerateSKU();
+              }}
+              className="absolute right-2 top-[32px] sm:top-[34px] lg:top-[2.5dvw] px-3 py-1 text-xs sm:text-sm bg-[var(--button-color1)] text-white rounded-md hover:opacity-90 transition-all duration-200 cursor-pointer"
+              title="Generate SKU"
+            >
+              Generate
+            </button>
           </div>
         </div>
 

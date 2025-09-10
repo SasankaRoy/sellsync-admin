@@ -146,7 +146,7 @@ export const Customer = () => {
 
   // Column Definitions: Defines & controls grid columns.
   const [colDefs, setColDefs] = useState([
-    { field: "id" },
+    //{ field: "id" },
     { field: "name" },
     { field: "email" },
     { field: "mobile" },

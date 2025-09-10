@@ -93,7 +93,7 @@ export const Employee = () => {
 
   // Column Definitions: Defines & controls grid columns.
   const [colDefs, setColDefs] = useState([
-    { field: "id" },
+    //{ field: "id" },
     { field: "name" },
     { field: "email" },
     { 
