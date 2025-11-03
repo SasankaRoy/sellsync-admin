@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import LoginBg from "../../assets/images/LoginBg.jpg";
-import FullLogo from "../../assets/images/FullLogo.png";
+import LoginBg from "../../assets/images/LoginBg2.jpg";
+import FullLogo from "../../assets/images/FullLogo2.png";
 import WhiteTexture from "../../assets/images/WhiteTexture.jpg";
 // import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "../../utils/axios-interceptor";
@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
 import { setLogginUser } from "../../Redux/UserSlice";
+import { CloudSun, LocateFixed, ShieldUser, SquareUser } from "lucide-react";
 
 export const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -66,21 +67,19 @@ export const Login = () => {
   //   queryFn: async () => {},
   // });
   return (
-    <div className="h-screen relative w-full">
+    <div className="h-screen flex justify-center items-center relative w-full customBg">
       {/* Background Image - Hidden on mobile/tablet, visible on desktop */}
-      <div className="absolute top-0 left-0 w-full h-full hidden lg:block">
+      {/* <div className="absolute top-0 left-0 w-full h-full hidden lg:block mix-blend-color-dodge">
         <img
           src={LoginBg}
           alt="LoginBg"
           className="w-full h-full object-cover"
         />
-      </div>
-      
+      </div> */}
+
       {/* Main Container */}
       <div className="w-full relative z-10 h-full flex justify-center lg:justify-end items-center bg-white lg:bg-transparent">
-        {/* Login Form Container */}
         <div className="bg-white relative h-full w-full lg:w-[90%] clipPathEffect flex justify-center lg:justify-end items-center px-4 sm:px-8 lg:px-16">
-          {/* White Texture Background - Only on desktop */}
           <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-70 hidden lg:block">
             <img
               src={WhiteTexture}
@@ -88,10 +87,8 @@ export const Login = () => {
               className="w-full h-full object-cover"
             />
           </div>
-          
-          {/* Login Form */}
+
           <div className="w-full sm:w-[80%] md:w-[60%] lg:w-[45%] lg:mr-[5%] relative shadow-lg shadow-black/20 p-6 sm:p-8 flex flex-col justify-center items-center gap-6 rounded-lg overflow-hidden">
-            {/* Form Background Texture */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-50">
               <img
                 src={WhiteTexture}
@@ -99,9 +96,8 @@ export const Login = () => {
                 className="w-full h-full object-cover"
               />
             </div>
-            
+
             <div className="relative w-full">
-              {/* Logo */}
               <div className="flex justify-center items-center h-[120px] w-[120px] sm:h-[150px] sm:w-[150px] lg:h-[15dvw] lg:w-[15dvw] mx-auto">
                 <img
                   className="w-full h-full object-contain mix-blend-multiply"
@@ -110,10 +106,12 @@ export const Login = () => {
                 />
               </div>
 
-              {/* Form Fields */}
               <div className="w-full flex flex-col gap-4 sm:gap-6">
                 <div className="flex flex-col gap-2 sm:gap-3">
-                  <label className="text-sm sm:text-base lg:text-[1dvw] font-[700]" htmlFor="email">
+                  <label
+                    className="text-sm sm:text-base lg:text-[1dvw] font-[700]"
+                    htmlFor="email"
+                  >
                     Email
                   </label>
                   <input
@@ -127,7 +125,10 @@ export const Login = () => {
                   />
                 </div>
                 <div className="flex flex-col gap-2 sm:gap-3">
-                  <label className="text-sm sm:text-base lg:text-[1dvw] font-[700]" htmlFor="password">
+                  <label
+                    className="text-sm sm:text-base lg:text-[1dvw] font-[700]"
+                    htmlFor="password"
+                  >
                     Password
                   </label>
                   <input
@@ -152,24 +153,65 @@ export const Login = () => {
                 >
                   {isLoading ? "Logging in..." : "Login"}
                 </button>
-
-                {/* <span className="text-center text-[1.2dvw] text-gray-400 font-semibold">
-                  -- Or --
-                </span>
-                <p className="flex justify-start items-center gap-2 text-[1.2dvw] text-gray-500 font-semibold">
-                  Create a new Account?
-                  <Link
-                    to="/auth/register"
-                    className="text-[var(--button-color2)] hover:text-[var(--button-color1)] transition-all duration-300 ease-linear"
-                  >
-                    Register
-                  </Link>
-                </p> */}
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* <div className="w-[90%] flex justify-center items-center gap-10">
+        <div className="w-[45%] p-5 flex flex-col gap-5 justify-center items-center">
+          <div className="flex justify-center items-center gap-8">
+            <div>
+              <h5 className="text-[.9dvw] font-medium text-white">
+                28 October 2025, Tuesday
+              </h5>
+              <h2 className="text-[3.2dvw] text-white font-semibold">
+                16:20 AM
+              </h2>
+            </div>
+            <div className="flex flex-col gap-3">
+              <div className="flex justify-start items-center gap-4">
+                <CloudSun size={60} color="white" />
+
+                <h3 className="text-[3dvw] font-semibold text-white">
+                  20&deg;C
+                </h3>
+              </div>
+              <div className="flex justify-start items-center gap-4">
+                <LocateFixed size={30} color="white" />
+                <p className="text-white font-medium text-[1.1dvw]">
+                  City Name, Test
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="bg-white/15 backdrop:blur-[100px] rounded-lg shadow-md shadow-white/5 h-[25dvw] w-[20dvw]">
+            <img
+              src={FullLogo}
+              alt="sell-sync"
+              className="object-contain h-full w-full"
+            />
+          </div>
+        </div>
+        <div className="w-[60%] p-5 flex flex-col justify-center items-center gap-16">
+          <h3 className="text-[2.5dvw] font-medium text-white">Login Types</h3>
+          <div className="flex  w-full justify-around items-center gap-10">
+            <button className="flex cursor-pointer flex-col justify-center items-center gap-2 bg-white/15 p-7 rounded-lg shadow-sm shadow-white/15 backdrop-blur-2xl text-white/85 hover:scale-105 transition-all duration-300 ease-linear">
+              <ShieldUser size={90} />
+              <h5 className="text-[1.2dvw] text-white font-semibold">
+                Admin Login
+              </h5>
+            </button>
+            <button className="flex cursor-pointer flex-col justify-center items-center gap-2 bg-white/15 p-7 rounded-lg shadow-sm shadow-white/15 backdrop-blur-2xl text-white/85 hover:scale-105 transition-all duration-300 ease-linear">
+              <SquareUser color="white" size={90} />
+              <h5 className="text-[1.2dvw] text-white font-semibold">
+                Employee Login
+              </h5>
+            </button>
+          </div>
+        </div>
+      </div> */}
     </div>
   );
 };

@@ -74,7 +74,7 @@ const Dashboard = () => {
   };
 
   return (
-    <Layout>
+    // <Layout>
       <div className="w-full">
         <div className="w-full">
           <div className="flex justify-between items-center mb-6">
@@ -346,7 +346,7 @@ const Dashboard = () => {
           )}
         </div>
       </div>
-    </Layout>
+    // </Layout>
   );
 };
 

@@ -1,4 +1,4 @@
-import { CircleX } from "lucide-react";
+import { Barcode, CircleX } from "lucide-react";
 import { useEffect, useMemo, useState, useRef } from "react";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 // Core CSS
@@ -36,6 +36,60 @@ function useDebounce(callback, delay) {
 }
 
 export const AddProductModel = ({ productData, setShowModel, actionType }) => {
+  const [productInfo, setProductInfo] = useState({
+    stockCode: "",
+    quantityInHandItem: "",
+    quantityInHandCase: "",
+    productName: "",
+    quantity: "1",
+    price: "",
+    avgCost: "",
+    margin: "",
+    markup: "",
+    latestCost: "",
+    size: "",
+    vendor: {
+      id: "",
+      name: "",
+    },
+    category: {
+      id: "",
+      name: "",
+    },
+    group: {
+      name: "",
+      id: "",
+    },
+    supplier: {
+      id: "",
+      name: "",
+    },
+    sku: "",
+    unitsPerCase: "",
+    caseCostTotal: "",
+    tax: "",
+    reorderPoints: "",
+    reorderValue: "",
+    rank: "",
+    autoUpdate: false,
+    shortcutKey: false,
+    applyManualDiscount: false,
+    showToWebstore: false,
+    EBTEligible: false,
+    trackInventory: false,
+    closeOutItem: false,
+    promotionsDiscount: false,
+    hideInventory: false,
+    defaultQut: "1",
+    minPrice: "",
+    remindDate: "",
+    notes: "",
+    tags: "",
+    pointsMultiplier: "",
+    pointsRequired: "",
+    itemType: "",
+    images: [],
+  });
   const [currentActiveTab, setCurrentActiveTab] = useState("Details");
   const handleCloseModle = () => {
     setShowModel({
@@ -51,13 +105,99 @@ export const AddProductModel = ({ productData, setShowModel, actionType }) => {
   const handleRenderTab = (currentTab) => {
     switch (currentTab) {
       case "Details":
-        return <DetailsTab actionType={actionType} />;
+        return (
+          <DetailsTab
+            actionType={actionType}
+            setProductInfo={setProductInfo}
+            productInfo={productInfo}
+          />
+        );
       case "Options":
-        return <OptionsTab />;
+        return (
+          <OptionsTab
+            setProductInfo={setProductInfo}
+            productInfo={productInfo}
+          />
+        );
       case "Promotions":
         return <PromotionsTab />;
       default:
-        return <DetailsTab actionType={actionType} />;
+        return (
+          <DetailsTab
+            actionType={actionType}
+            setProductInfo={setProductInfo}
+            productInfo={productInfo}
+          />
+        );
+    }
+  };
+
+  const handleAddProduct = async () => {
+    const productData = new FormData();
+    productInfo.images.forEach((file) => {
+      productData.append("product_image", file);
+    });
+    productData.append("stock_code", productInfo.stockCode);
+    productData.append("qty_on_hand", productInfo.quantityInHandItem);
+    productData.append("qty_cases", productInfo.quantityInHandCase);
+    productData.append("product_quantity", productInfo.quantity);
+    productData.append("product_name", productInfo.productName);
+    productData.append("product_size", productInfo.size);
+    productData.append("selected_vendor_id", productInfo.vendor.id);
+    productData.append("selected_category_id", productInfo.category.id);
+    productData.append("selected_supplier_id", productInfo.supplier.id);
+    productData.append("product_sku", productInfo.sku);
+    productData.append("product_price",productInfo.price);   
+    productData.append("product_avg_price", productInfo.avgCost);
+    productData.append("product_latest_cost", productInfo.latestCost);
+    productData.append("product_margin", productInfo.margin);
+    productData.append("product_markup", productInfo.markup);
+    productData.append("tax_percentage", productInfo.tax);
+    productData.append("unit_per_case", productInfo.unitsPerCase);
+    productData.append("case_cost_total", productInfo.caseCostTotal);
+    productData.append("reorder_value", productInfo.reorderValue);
+    productData.append("reorder_point", productInfo.reorderPoints);
+    productData.append("product_rank", productInfo.rank);
+    productData.append("status", "active");
+    productData.append("don_not_auto_update", productInfo.autoUpdate);
+    productData.append("add_to_shortcut_key", productInfo.shortcutKey);
+    productData.append("shortcut_key_color", "#d4d4d4");
+    productData.append(
+      "do_not_manual_discount",
+      productInfo.applyManualDiscount
+    );
+    productData.append("do_not_show_to_webstore", productInfo.showToWebstore);
+    productData.append("ebt_eligible", productInfo.EBTEligible);
+    productData.append("do_not_track_inventory", productInfo.trackInventory);
+    productData.append("close_out_item", productInfo.closeOutItem);
+    productData.append(
+      "exclude_from_promotions_discount",
+      productInfo.promotionsDiscount
+    );
+    productData.append("hide_inventory", productInfo.hideInventory);
+    productData.append("product_default_quantity", productInfo.defaultQut);
+    productData.append("product_min_price", productInfo.minPrice);
+    productData.append("remind_date", productInfo.remindDate);
+    productData.append("notes", productInfo.notes);
+    productData.append("tags", productInfo.tags);
+    productData.append("points_multiplier", productInfo.pointsMultiplier);
+    productData.append("points_required", productInfo.pointsRequired);
+    productData.append("item_type", productInfo.itemType);
+
+    try {
+      const reqAddProduct = await axiosInstance.post(
+        "api/v1/product/add",
+        productData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      console.log(reqAddProduct.data)
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -117,7 +257,10 @@ export const AddProductModel = ({ productData, setShowModel, actionType }) => {
           <div className="w-full p-2 border border-[var(--border-color)] rounded-md">
             {handleRenderTab(currentActiveTab)}
             <div className="flex flex-col sm:flex-row gap-4 justify-end items-center mt-6">
-              <button className="w-full sm:w-auto px-4 sm:px-6 py-1.5 sm:py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300">
+              <button
+                onClick={handleAddProduct}
+                className="w-full sm:w-auto px-4 sm:px-6 py-1.5 sm:py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300"
+              >
                 Update
               </button>
               <button className="w-full sm:w-auto px-4 sm:px-6 py-1.5 sm:py-2 bg-[var(--button-color4)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300">
@@ -131,19 +274,27 @@ export const AddProductModel = ({ productData, setShowModel, actionType }) => {
   );
 };
 
-const DetailsTab = ({ actionType }) => {
+const DetailsTab = ({ actionType, setProductInfo, productInfo }) => {
   const [addQuantityData, setQuantityData] = useState([1]);
   const [images, setImages] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
   // SKU state
-  const [sku, setSku] = useState("");
 
   // Generate a simple SKU (adjust logic as needed)
   const handleGenerateSKU = () => {
-    const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
-    const timestamp = Date.now().toString().slice(-5);
-    const newSku = `SKU-${timestamp}-${rand}`;
-    setSku(newSku);
+    const rand = Math.floor(10000 + Math.random() * 90000).toString();
+
+    setProductInfo({
+      ...productInfo,
+      sku: rand,
+    });
+  };
+
+  const handleGenerateStockCode = () => {
+    const stockCode = Math.floor(
+      1000000000 + Math.random() * 9000000000
+    ).toString();
+    setProductInfo({ ...productInfo, stockCode: stockCode });
   };
 
   // Supplier search state
@@ -200,6 +351,10 @@ const DetailsTab = ({ actionType }) => {
         preview: URL.createObjectURL(file),
       })),
     ]);
+    setProductInfo({
+      ...productInfo,
+      images: [...productInfo.images, ...files.map((file) => file)],
+    });
   };
 
   const handleFileInput = (e) => {
@@ -213,6 +368,10 @@ const DetailsTab = ({ actionType }) => {
         preview: URL.createObjectURL(file),
       })),
     ]);
+    setProductInfo({
+      ...productInfo,
+      images: [...productInfo.images, ...files.map((file) => file)],
+    });
   };
 
   const handleRemoveImage = (index) => {
@@ -239,7 +398,7 @@ const DetailsTab = ({ actionType }) => {
           limit: 10,
           search_text: searchValue,
         });
-        
+
         if (response.status === 200 && response.data?.results) {
           setSearchResult(response.data.results);
           setIsError("");
@@ -268,13 +427,19 @@ const DetailsTab = ({ actionType }) => {
     if (searchValue.length > 0) {
       try {
         setIsSearchingCategory(true);
-        const response = await axiosInstance.post("api/v1/common/category-list", {
-          page: 1,
-          limit: 10,
-          search_text: searchValue,
-        });
+        const response = await axiosInstance.post(
+          "api/v1/common/category-list",
+          {
+            page: 1,
+            limit: 10,
+            search_text: searchValue,
+          }
+        );
 
-        if (response.status === 200 && (response.data?.results || response.data)) {
+        if (
+          response.status === 200 &&
+          (response.data?.results || response.data)
+        ) {
           const results =
             response.data?.results ||
             response.data?.data ||
@@ -282,7 +447,7 @@ const DetailsTab = ({ actionType }) => {
             [];
           const parsed = Array.isArray(results)
             ? results
-            : (results?.items || results?.list || results?.data || []);
+            : results?.items || results?.list || results?.data || [];
           setCategoryResults(Array.isArray(parsed) ? parsed : []);
           setCategoryError("");
           setIsSearchingCategory(false);
@@ -316,7 +481,10 @@ const DetailsTab = ({ actionType }) => {
           search_text: searchValue,
         });
 
-        if (response.status === 200 && (response.data?.results || response.data)) {
+        if (
+          response.status === 200 &&
+          (response.data?.results || response.data)
+        ) {
           const results =
             response.data?.results ||
             response.data?.data ||
@@ -324,7 +492,7 @@ const DetailsTab = ({ actionType }) => {
             [];
           const parsed = Array.isArray(results)
             ? results
-            : (results?.items || results?.list || results?.data || []);
+            : results?.items || results?.list || results?.data || [];
           setGroupResults(Array.isArray(parsed) ? parsed : []);
           setGroupError("");
           setIsSearchingGroup(false);
@@ -358,7 +526,10 @@ const DetailsTab = ({ actionType }) => {
           search_text: searchValue,
         });
 
-        if (response.status === 200 && (response.data?.results || response.data)) {
+        if (
+          response.status === 200 &&
+          (response.data?.results || response.data)
+        ) {
           const results =
             response.data?.results ||
             response.data?.data ||
@@ -366,7 +537,7 @@ const DetailsTab = ({ actionType }) => {
             [];
           const parsed = Array.isArray(results)
             ? results
-            : (results?.items || results?.list || results?.data || []);
+            : results?.items || results?.list || results?.data || [];
           setVendorResults(Array.isArray(parsed) ? parsed : []);
           setVendorError("");
           setIsSearchingVendor(false);
@@ -400,17 +571,15 @@ const DetailsTab = ({ actionType }) => {
 
       if (response?.status >= 200 && response?.status < 300 && response.data) {
         const results =
-          response.data?.results ||
-          response.data?.data ||
-          response.data ||
-          [];
+          response.data?.results || response.data?.data || response.data || [];
 
         if (Array.isArray(results)) {
           setSearchResult(results);
           setIsError(results.length ? "" : "No suppliers found");
         } else {
           // In case API returns an object with nested array
-          const maybeArray = results?.items || results?.list || results?.data || [];
+          const maybeArray =
+            results?.items || results?.list || results?.data || [];
           setSearchResult(Array.isArray(maybeArray) ? maybeArray : []);
           setIsError(
             Array.isArray(maybeArray) && maybeArray.length
@@ -420,7 +589,9 @@ const DetailsTab = ({ actionType }) => {
         }
         console.debug("Supplier initial fetch parsed:", {
           raw: response.data,
-          parsed: Array.isArray(results) ? results : (results?.items || results?.list || results?.data || []),
+          parsed: Array.isArray(results)
+            ? results
+            : results?.items || results?.list || results?.data || [],
         });
         setIsSearching(false);
       } else {
@@ -447,24 +618,26 @@ const DetailsTab = ({ actionType }) => {
 
       if (response?.status >= 200 && response?.status < 300 && response.data) {
         const results =
-          response.data?.results ||
-          response.data?.data ||
-          response.data ||
-          [];
+          response.data?.results || response.data?.data || response.data || [];
 
         if (Array.isArray(results)) {
           setVendorResults(results);
           setVendorError(results.length ? "" : "No vendors found");
         } else {
-          const maybeArray = results?.items || results?.list || results?.data || [];
+          const maybeArray =
+            results?.items || results?.list || results?.data || [];
           setVendorResults(Array.isArray(maybeArray) ? maybeArray : []);
           setVendorError(
-            Array.isArray(maybeArray) && maybeArray.length ? "" : "No vendors found"
+            Array.isArray(maybeArray) && maybeArray.length
+              ? ""
+              : "No vendors found"
           );
         }
         console.debug("Vendor initial fetch parsed:", {
           raw: response.data,
-          parsed: Array.isArray(results) ? results : (results?.items || results?.list || results?.data || []),
+          parsed: Array.isArray(results)
+            ? results
+            : results?.items || results?.list || results?.data || [],
         });
         setIsSearchingVendor(false);
       } else {
@@ -504,9 +677,79 @@ const DetailsTab = ({ actionType }) => {
     setShowCategoryList(false);
   };
 
+  // Handle Product Info...
+  const handleonChange = (e) => {
+    const { name, value } = e.target;
+    setProductInfo({
+      ...productInfo,
+      [name]: value,
+    });
+  };
+
+  const priceCalculationMainHandler = (currentChangeField, value) => {
+    // if price is changing...
+    if (currentChangeField === "Price") {
+      const marginPercent = ((value - productInfo.avgCost || 0) / value) * 100;
+      const markupPercent =
+        ((value - productInfo.avgCost) / productInfo.avgCost) * 100;
+      setProductInfo({
+        ...productInfo,
+        price: value,
+        margin: marginPercent && parseFloat(marginPercent.toFixed(2)),
+        markup: markupPercent && parseFloat(markupPercent.toFixed(2)),
+      });
+
+      return;
+    }
+
+    // if cost is changes...
+    if (currentChangeField === "AvgCost") {
+      const marginPercent =
+        ((productInfo.price - value) / productInfo.price) * 100;
+
+      const markupPercent = ((productInfo.price - value) / value) * 100;
+
+      setProductInfo({
+        ...productInfo,
+        avgCost: value,
+        margin: marginPercent && parseFloat(marginPercent.toFixed(2)),
+        markup: markupPercent && parseFloat(markupPercent.toFixed(2)),
+      });
+      return;
+    }
+
+    // if Margin changes
+    if (currentChangeField === "Margin") {
+      const price = productInfo.avgCost / (1 - value / 100);
+      const markupPercent =
+        ((price - productInfo.avgCost) / productInfo.avgCost) * 100;
+
+      setProductInfo({
+        ...productInfo,
+        margin: value,
+        price: price && price.toFixed(2),
+        markup: markupPercent && parseFloat(markupPercent.toFixed(2)),
+      });
+      return;
+    }
+
+    // if markup changes...
+    if (currentChangeField === "Markup") {
+      const price = productInfo.avgCost * (1 + value / 100);
+      const marginPercent = ((price - productInfo.avgCost) / price) * 100;
+      setProductInfo({
+        ...productInfo,
+        price: price && price.toFixed(2),
+        markup: value,
+        margin: marginPercent && parseFloat(marginPercent.toFixed(2)),
+      });
+      return;
+    }
+  };
+
   return (
     <>
-      <div 
+      <div
         className="w-full p-2"
         onClick={() => {
           setShowSupplierList(false);
@@ -523,10 +766,27 @@ const DetailsTab = ({ actionType }) => {
                 *
               </span>
             </label>
-            <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-              type="text"
-            />
+            <div className="flex justify-between items-center w-full gap-1.5">
+              <input
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                type="text"
+                placeholder="95632148"
+                name="stockCode"
+                value={productInfo.stockCode}
+                onChange={(e) =>
+                  setProductInfo({
+                    ...productInfo,
+                    stockCode: e.target.value,
+                  })
+                }
+              />
+              <button
+                onClick={handleGenerateStockCode}
+                className="bg-[var(--sideMenu-color)] cursor-pointer text-white px-2 rounded-md py-1"
+              >
+                <Barcode />
+              </button>
+            </div>
           </div>
           <div className="flex flex-col gap-2 w-full">
             <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
@@ -538,6 +798,10 @@ const DetailsTab = ({ actionType }) => {
             <input
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="number"
+              placeholder="Number of items..."
+              name="quantityInHandItem"
+              value={productInfo.quantityInHandItem}
+              onChange={handleonChange}
             />
           </div>
           <div className="flex flex-col gap-2 w-full">
@@ -550,6 +814,10 @@ const DetailsTab = ({ actionType }) => {
             <input
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="number"
+              placeholder="Number of cases"
+              name="quantityInHandCase"
+              value={productInfo.quantityInHandCase}
+              onChange={handleonChange}
             />
           </div>
         </div>
@@ -564,10 +832,18 @@ const DetailsTab = ({ actionType }) => {
           <input
             className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
             type="text"
+            placeholder="Item name...."
+            name="productName"
+            value={productInfo.productName}
+            onChange={handleonChange}
           />
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 my-4">
+        <div
+          className={`grid grid-cols-2 ${
+            actionType === "Edit" ? "sm:grid-cols-4" : "sm:grid-cols-3"
+          }  gap-2 my-4`}
+        >
           <div className="w-full flex flex-col gap-1.5">
             <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Qty
@@ -578,17 +854,25 @@ const DetailsTab = ({ actionType }) => {
             <input
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="number"
+              name="quantity"
+              placeholder="Quantity.."
+              readOnly={true}
+              value={productInfo.quantity}
+              onChange={handleonChange}
             />
           </div>
-          <div className="w-full flex flex-col gap-1.5">
-            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-              Qty Extra
-            </label>
-            <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-              type="number"
-            />
-          </div>
+          {actionType === "Edit" && (
+            <div className="w-full flex flex-col gap-1.5">
+              <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+                Qty Extra
+              </label>
+              <input
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                type="number"
+              />
+            </div>
+          )}
+
           <div className="w-full flex flex-col gap-1.5">
             <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Price
@@ -599,20 +883,28 @@ const DetailsTab = ({ actionType }) => {
             <input
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="number"
+              placeholder="Price"
+              name="price"
+              value={productInfo.price}
+              onChange={(e) => {
+                handleonChange(e);
+                priceCalculationMainHandler("Price", e.target.value);
+              }}
             />
           </div>
-          <div className="w-full flex flex-col gap-1.5">
-            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-              Price Extra
-            </label>
-            <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-              type="number"
-            />
-          </div>
-        </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 my-4">
+          {actionType === "Edit" && (
+            <div className="w-full flex flex-col gap-1.5">
+              <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+                Price Extra
+              </label>
+              <input
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                type="number"
+              />
+            </div>
+          )}
+
           <div className="w-full flex flex-col gap-1.5">
             <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Avg Cost
@@ -623,6 +915,13 @@ const DetailsTab = ({ actionType }) => {
             <input
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="number"
+              placeholder="Average Cost.."
+              name="avgCost"
+              value={productInfo.avgCost}
+              onChange={(e) => {
+                handleonChange(e);
+                priceCalculationMainHandler("AvgCost", e.target.value);
+              }}
             />
           </div>
           <div className="w-full flex flex-col gap-1.5">
@@ -632,6 +931,13 @@ const DetailsTab = ({ actionType }) => {
             <input
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="number"
+              placeholder="Enter margin %..."
+              name="margin"
+              value={productInfo.margin}
+              onChange={(e) => {
+                handleonChange(e);
+                priceCalculationMainHandler("Margin", e.target.value);
+              }}
             />
           </div>
           <div className="w-full flex flex-col gap-1.5">
@@ -641,6 +947,13 @@ const DetailsTab = ({ actionType }) => {
             <input
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="number"
+              placeholder="Enter markup %..."
+              name="markup"
+              value={productInfo.markup > -1 ? productInfo.markup : 0}
+              onChange={(e) => {
+                handleonChange(e);
+                priceCalculationMainHandler("Markup", e.target.value);
+              }}
             />
           </div>
           <div className="w-full flex flex-col gap-1.5">
@@ -650,6 +963,77 @@ const DetailsTab = ({ actionType }) => {
             <input
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="number"
+              placeholder="Latest cost..."
+              name="latestCost"
+              value={productInfo.latestCost}
+              onChange={handleonChange}
+            />
+          </div>
+        </div>
+
+        {/* <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 my-4">
+          <div className="w-full flex flex-col gap-1.5">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+              Avg Cost
+              <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
+                *
+              </span>
+            </label>
+            <input
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              type="number"
+              placeholder="Average Cost.."
+              name="avgCost"
+              value={productInfo.avgCost}
+              onChange={(e) => {
+                handleonChange(e);
+                priceCalculationMainHandler("AvgCost", e.target.value);
+              }}
+            />
+          </div>
+          <div className="w-full flex flex-col gap-1.5">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+              Margin
+            </label>
+            <input
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              type="number"
+              placeholder="Enter margin %..."
+              name="margin"
+              value={productInfo.margin}
+              onChange={(e) => {
+                handleonChange(e);
+                priceCalculationMainHandler("Margin", e.target.value);
+              }}
+            />
+          </div>
+          <div className="w-full flex flex-col gap-1.5">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+              Markup
+            </label>
+            <input
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              type="number"
+              placeholder="Enter markup %..."
+              name="markup"
+              value={productInfo.markup > -1 ? productInfo.markup : 0}
+              onChange={(e) => {
+                handleonChange(e);
+                priceCalculationMainHandler("Markup", e.target.value);
+              }}
+            />
+          </div>
+          <div className="w-full flex flex-col gap-1.5">
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+              Latest Cost
+            </label>
+            <input
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              type="number"
+              placeholder="Latest cost..."
+              name="latestCost"
+              value={productInfo.latestCost}
+              onChange={handleonChange}
             />
           </div>
           <div className="w-full flex flex-col gap-1.5">
@@ -661,14 +1045,19 @@ const DetailsTab = ({ actionType }) => {
               type="number"
             />
           </div>
-        </div>
+        </div> */}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
           <div className="flex flex-col gap-2">
             <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Size
             </label>
-            <select className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3">
+            <select
+              name="size"
+              value={productInfo.size}
+              onChange={handleonChange}
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+            >
               <option>-- Select Size--</option>
               <option value="50ML">50ML</option>
               <option value="100ML">100ML</option>
@@ -717,7 +1106,14 @@ const DetailsTab = ({ actionType }) => {
             <input
               className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               placeholder="Search vendor..."
-              value={selectedVendor ? (selectedVendor.vendor_name || selectedVendor.name || selectedVendor.full_name || "") : vendorQuery}
+              value={
+                selectedVendor
+                  ? selectedVendor.vendor_name ||
+                    selectedVendor.name ||
+                    selectedVendor.full_name ||
+                    ""
+                  : vendorQuery
+              }
               onChange={(e) => {
                 const value = e.target.value;
                 if (selectedVendor) {
@@ -783,11 +1179,21 @@ const DetailsTab = ({ actionType }) => {
                             onClick={(e) => {
                               e.stopPropagation();
                               handleAddVendor(vendor);
+                              setProductInfo({
+                                ...productInfo,
+                                vendor: {
+                                  id: vendor.id,
+                                  name: vendor.name,
+                                },
+                              });
                             }}
                           >
                             <div className="w-full">
                               <p className="line-clamp-1">
-                                {vendor.vendor_name || vendor.name || vendor.full_name || "Unnamed Vendor"}
+                                {vendor.vendor_name ||
+                                  vendor.name ||
+                                  vendor.full_name ||
+                                  "Unnamed Vendor"}
                               </p>
                             </div>
                           </button>
@@ -808,7 +1214,11 @@ const DetailsTab = ({ actionType }) => {
           <input
             className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
             placeholder="Search category..."
-            value={selectedCategory ? (selectedCategory.category_name || selectedCategory.name || "") : categoryQuery}
+            value={
+              selectedCategory
+                ? selectedCategory.category_name || selectedCategory.name || ""
+                : categoryQuery
+            }
             onChange={(e) => {
               const value = e.target.value;
               if (selectedCategory) {
@@ -874,11 +1284,20 @@ const DetailsTab = ({ actionType }) => {
                           onClick={(e) => {
                             e.stopPropagation();
                             handleAddCategory(category);
+                            setProductInfo({
+                              ...productInfo,
+                              category: {
+                                id: category._id,
+                                name: category.category_name,
+                              },
+                            });
                           }}
                         >
                           <div className="w-full">
                             <p className="line-clamp-1">
-                              {category.category_name || category.name || "Unnamed Category"}
+                              {category.category_name ||
+                                category.name ||
+                                "Unnamed Category"}
                             </p>
                           </div>
                         </button>
@@ -899,7 +1318,14 @@ const DetailsTab = ({ actionType }) => {
           <input
             className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
             placeholder="Search group..."
-            value={selectedGroup ? (selectedGroup.group_name || selectedGroup.name || selectedGroup.title || "") : groupQuery}
+            value={
+              selectedGroup
+                ? selectedGroup.group_name ||
+                  selectedGroup.name ||
+                  selectedGroup.title ||
+                  ""
+                : groupQuery
+            }
             onChange={(e) => {
               const value = e.target.value;
               if (selectedGroup) {
@@ -965,11 +1391,21 @@ const DetailsTab = ({ actionType }) => {
                           onClick={(e) => {
                             e.stopPropagation();
                             handleAddGroup(group);
+                            setProductInfo({
+                              ...productInfo,
+                              group: {
+                                id: group.id,
+                                name: group.group_name,
+                              },
+                            });
                           }}
                         >
                           <div className="w-full">
                             <p className="line-clamp-1">
-                              {group.group_name || group.name || group.title || "Unnamed Group"}
+                              {group.group_name ||
+                                group.name ||
+                                group.title ||
+                                "Unnamed Group"}
                             </p>
                           </div>
                         </button>
@@ -990,7 +1426,11 @@ const DetailsTab = ({ actionType }) => {
             <input
               className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               placeholder="Search supplier..."
-              value={selectedSupplier ? (selectedSupplier.name || selectedSupplier.full_name || "") : supplierQuery}
+              value={
+                selectedSupplier
+                  ? selectedSupplier.name || selectedSupplier.full_name || ""
+                  : supplierQuery
+              }
               onChange={(e) => {
                 const value = e.target.value;
                 // If a supplier was previously selected, clear it so user can type a new query
@@ -1058,11 +1498,20 @@ const DetailsTab = ({ actionType }) => {
                             onClick={(e) => {
                               e.stopPropagation();
                               handleAddSupplier(supplier);
+                              setProductInfo({
+                                ...productInfo,
+                                supplier: {
+                                  id: supplier.id,
+                                  name: supplier.name,
+                                },
+                              });
                             }}
                           >
                             <div className="w-full">
                               <p className="line-clamp-1">
-                                {supplier.name || supplier.full_name || "Unnamed Supplier"}
+                                {supplier.name ||
+                                  supplier.full_name ||
+                                  "Unnamed Supplier"}
                               </p>
                             </div>
                           </button>
@@ -1082,9 +1531,10 @@ const DetailsTab = ({ actionType }) => {
             <input
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 pr-24 pl-3"
               type="text"
-              value={sku}
+              value={productInfo.sku}
               onChange={(e) => setSku(e.target.value)}
               placeholder="Enter or generate SKU"
+              name="sku"
             />
             <button
               type="button"
@@ -1108,6 +1558,9 @@ const DetailsTab = ({ actionType }) => {
             <input
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
+              onChange={handleonChange}
+              name="unitsPerCase"
+              value={productInfo.unitsPerCase}
             />
           </div>
           <div className="w-full flex flex-col gap-2">
@@ -1117,6 +1570,9 @@ const DetailsTab = ({ actionType }) => {
             <input
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
+              name="caseCostTotal"
+              value={productInfo.caseCostTotal}
+              onChange={handleonChange}
             />
           </div>
           <div className="w-full flex flex-col gap-2">
@@ -1124,7 +1580,12 @@ const DetailsTab = ({ actionType }) => {
               Tax
             </label>
 
-            <select className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3">
+            <select
+              onChange={handleonChange}
+              name="tax"
+              value={productInfo.tax}
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+            >
               <option value="no tax">No Tax</option>
               <option value="low-tax">Low Tax</option>
               <option value="high-tax">High Tax</option>
@@ -1137,7 +1598,10 @@ const DetailsTab = ({ actionType }) => {
             </label>
             <input
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-              type="text"
+              type="number"
+              name="reorderPoints"
+              value={productInfo.reorderPoints}
+              onChange={handleonChange}
             />
           </div>
           <div className="w-full flex flex-col gap-2">
@@ -1146,7 +1610,10 @@ const DetailsTab = ({ actionType }) => {
             </label>
             <input
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-              type="text"
+              type="number"
+              name="reorderValue"
+              value={productInfo.reorderValue}
+              onChange={handleonChange}
             />
           </div>
           <div className="w-full flex flex-col gap-2">
@@ -1154,8 +1621,17 @@ const DetailsTab = ({ actionType }) => {
               Rank
             </label>
 
-            <select className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3">
+            <select
+              name="rank"
+              value={productInfo.rank}
+              onChange={handleonChange}
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+            >
               <option> -- Select Item Rank --</option>
+              <option> 1</option>
+              <option> 2</option>
+              <option> 3</option>
+              <option> 4</option>
             </select>
           </div>
         </div>
@@ -1243,7 +1719,15 @@ const DetailsTab = ({ actionType }) => {
   );
 };
 
-const OptionsTab = () => {
+const OptionsTab = ({ setProductInfo, productInfo }) => {
+  const handleOnChange = (e) => {
+    const { name, value } = e.target;
+
+    setProductInfo({
+      ...productInfo,
+      [name]: value,
+    });
+  };
   return (
     <>
       <div className="w-full p-2">
@@ -1253,6 +1737,13 @@ const OptionsTab = () => {
               id="autoUpdate"
               type="checkbox"
               className="h-4 w-4 sm:h-5 sm:w-5 lg:h-[1.2dvw] lg:w-[1.2dvw]"
+              value={productInfo.autoUpdate}
+              onChange={(e) => {
+                setProductInfo({
+                  ...productInfo,
+                  autoUpdate: e.target.checked,
+                });
+              }}
             />
             <label
               htmlFor="autoUpdate"
@@ -1266,6 +1757,13 @@ const OptionsTab = () => {
               id="trackInventory"
               type="checkbox"
               className="h-4 w-4 sm:h-5 sm:w-5 lg:h-[1.2dvw] lg:w-[1.2dvw]"
+              value={productInfo.trackInventory}
+              onChange={(e) => {
+                setProductInfo({
+                  ...productInfo,
+                  trackInventory: e.target.checked,
+                });
+              }}
             />
             <label
               htmlFor="trackInventory"
@@ -1279,6 +1777,13 @@ const OptionsTab = () => {
               id="shortcutKeys"
               type="checkbox"
               className="h-4 w-4 sm:h-5 sm:w-5 lg:h-[1.2dvw] lg:w-[1.2dvw]"
+              value={productInfo.shortcutKey}
+              onChange={(e) => {
+                setProductInfo({
+                  ...productInfo,
+                  shortcutKey: e.target.checked,
+                });
+              }}
             />
             <label
               htmlFor="shortcutKeys"
@@ -1292,6 +1797,13 @@ const OptionsTab = () => {
               id="outItem"
               type="checkbox"
               className="h-4 w-4 sm:h-5 sm:w-5 lg:h-[1.2dvw] lg:w-[1.2dvw]"
+              value={productInfo.closeOutItem}
+              onChange={(e) => {
+                setProductInfo({
+                  ...productInfo,
+                  closeOutItem: e.target.checked,
+                });
+              }}
             />
             <label
               htmlFor="outItem"
@@ -1305,6 +1817,13 @@ const OptionsTab = () => {
               id="manualDiscount"
               type="checkbox"
               className="h-4 w-4 sm:h-5 sm:w-5 lg:h-[1.2dvw] lg:w-[1.2dvw]"
+              value={productInfo.applyManualDiscount}
+              onChange={(e) => {
+                setProductInfo({
+                  ...productInfo,
+                  applyManualDiscount: e.target.checked,
+                });
+              }}
             />
             <label
               htmlFor="manualDiscount"
@@ -1318,6 +1837,13 @@ const OptionsTab = () => {
               id="promotionsDiscount"
               type="checkbox"
               className="h-4 w-4 sm:h-5 sm:w-5 lg:h-[1.2dvw] lg:w-[1.2dvw]"
+              value={productInfo.promotionsDiscount}
+              onChange={(e) => {
+                setProductInfo({
+                  ...productInfo,
+                  promotionsDiscount: e.target.checked,
+                });
+              }}
             />
             <label
               htmlFor="promotionsDiscount"
@@ -1331,6 +1857,13 @@ const OptionsTab = () => {
               id="showWebstore"
               type="checkbox"
               className="h-4 w-4 sm:h-5 sm:w-5 lg:h-[1.2dvw] lg:w-[1.2dvw]"
+              value={productInfo.showToWebstore}
+              onChange={(e) => {
+                setProductInfo({
+                  ...productInfo,
+                  showToWebstore: e.target.checked,
+                });
+              }}
             />
             <label
               htmlFor="showWebstore"
@@ -1344,6 +1877,13 @@ const OptionsTab = () => {
               id="hideInventory"
               type="checkbox"
               className="h-4 w-4 sm:h-5 sm:w-5 lg:h-[1.2dvw] lg:w-[1.2dvw]"
+              value={productInfo.hideInventory}
+              onChange={(e) => {
+                setProductInfo({
+                  ...productInfo,
+                  hideInventory: e.target.checked,
+                });
+              }}
             />
             <label
               htmlFor="hideInventory"
@@ -1357,6 +1897,13 @@ const OptionsTab = () => {
               id="EBTEligible"
               type="checkbox"
               className="h-4 w-4 sm:h-5 sm:w-5 lg:h-[1.2dvw] lg:w-[1.2dvw]"
+              value={productInfo.EBTEligible}
+              onChange={(e) => {
+                setProductInfo({
+                  ...productInfo,
+                  EBTEligible: e.target.checked,
+                });
+              }}
             />
             <label
               htmlFor="EBTEligible"
@@ -1376,6 +1923,9 @@ const OptionsTab = () => {
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
               placeholder="Enter Quantity..."
+              name="defaultQut"
+              value={productInfo.defaultQut}
+              onChange={handleOnChange}
             />
           </div>
           <div className="w-full my-4 flex flex-col gap-2">
@@ -1386,6 +1936,9 @@ const OptionsTab = () => {
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="number"
               placeholder="Min Price..."
+              name="minPrice"
+              value={productInfo.minPrice}
+              onChange={handleOnChange}
             />
           </div>
 
@@ -1396,6 +1949,9 @@ const OptionsTab = () => {
             <input
               className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="date"
+              name="remindDate"
+              value={productInfo.remindDate}
+              onChange={handleOnChange}
             />
           </div>
         </div>
@@ -1408,6 +1964,9 @@ const OptionsTab = () => {
             className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
             rows={5}
             placeholder="Enter Notes..."
+            name="notes"
+            value={productInfo.notes}
+            onChange={handleOnChange}
           ></textarea>
         </div>
 
@@ -1419,6 +1978,9 @@ const OptionsTab = () => {
             className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
             type="text"
             placeholder="Tags"
+            name="tags"
+            value={productInfo.tags}
+            onChange={handleOnChange}
           />
         </div>
 
@@ -1430,13 +1992,16 @@ const OptionsTab = () => {
             <select
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               placeholder="Tags"
+              name="pointsMultiplier"
+              value={productInfo.pointsMultiplier}
+              onChange={handleOnChange}
             >
               <option>Select Multiplier</option>
-              <option>1x</option>
-              <option>2x</option>
-              <option>3x</option>
-              <option>4x</option>
-              <option>5x</option>
+              <option value="1x">1x</option>
+              <option value="2x">2x</option>
+              <option value="3x">3x</option>
+              <option value="4x">4x</option>
+              <option value="5x">5x</option>
             </select>
           </div>
           <div className="flex flex-col gap-2 w-full my-4">
@@ -1447,6 +2012,9 @@ const OptionsTab = () => {
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
               placeholder="Enter points"
+              name="pointsRequired"
+              value={productInfo.pointsRequired}
+              onChange={handleOnChange}
             />
           </div>
           <div className="flex flex-col gap-2 w-full my-4">
@@ -1455,22 +2023,24 @@ const OptionsTab = () => {
             </label>
             <select
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-              placeholder="Tags"
+              name="itemType"
+              value={productInfo.itemType}
+              onChange={handleOnChange}
             >
               <option>Select Item Type</option>
-              <option>Inventory Item</option>
-              <option>Free Item</option>
-              <option>Negative Item</option>
-              <option>Lotto Sale</option>
-              <option>Lotto Payout</option>
-              <option>Deposit Return</option>
-              <option>Gift Item</option>
-              <option>Online Lottery</option>
-              <option>Online Payout</option>
-              <option>Manual Item</option>
-              <option>House Pay</option>
-              <option>Coupon ($)</option>
-              <option>Coupon (%)</option>
+              <option value="Inventory Item">Inventory Item</option>
+              <option value="Free Item">Free Item</option>
+              <option value="Negative Item">Negative Item</option>
+              <option value="Lotto Sale">Lotto Sale</option>
+              <option value="Lotto Payout">Lotto Payout</option>
+              <option value="Deposit Return">Deposit Return</option>
+              <option value="Gift Item">Gift Item</option>
+              <option value="Online Lottery">Online Lottery</option>
+              <option value="Online Payout">Online Payout</option>
+              <option value="Manual Item">Manual Item</option>
+              <option value="House Pay">House Pay</option>
+              <option value="Coupon ($)">Coupon ($)</option>
+              <option value="Coupon (%)">Coupon (%)</option>
             </select>
           </div>
         </div>

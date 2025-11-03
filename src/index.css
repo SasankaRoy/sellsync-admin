@@ -68,3 +68,12 @@ h6,
 .hideScrollbar::-webkit-scrollbar {
   display: none;
 }
+
+.customBg {
+  background: #e7711d;
+  background: linear-gradient(
+    87deg,
+    rgba(231, 113, 29, 1) 0%,
+    rgba(38, 106, 174, 1) 100%
+  );
+}
