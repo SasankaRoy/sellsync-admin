@@ -9,12 +9,15 @@ import {
   Search,
   ShieldUser,
   Tags,
+  Logs,
 } from "lucide-react";
-import { Tooltip } from "@mui/material";
+import { Switch, Tooltip } from "@mui/material";
 import Keyboard from "react-simple-keyboard";
 import "react-simple-keyboard/build/css/index.css";
 import { AnimatePresence, motion } from "framer-motion";
 import ProductImg1 from "../../assets/images/ProductImg1.png";
+import { styled } from "@mui/material/styles";
+
 
 export const SalePoint = () => {
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
@@ -104,24 +107,40 @@ export const SalePoint = () => {
       >
         <div className="flex-1  h-full">
           <div className=" flex flex-col h-full gap-5 justify-center items-center w-full  p-4">
-            <div className="w-[70%] flex-shrink-0 flex justify-center items-center gap-4 bg-(--secondary-color) p-2 rounded-full">
-              <button className="p-2 flex justify-center items-center cursor-pointer">
-                <Search size={20} />
-              </button>
-              <input
-                type="text"
-                onFocus={(e) => {
-                  setIsKeyboardOpen(true);
-                }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-                // onBlur={() => setIsKeyboardOpen(false)}
-                value={input}
-                onChange={(e) => onChange(e.target.value)}
-                placeholder="Search items, categories,Stocks etc..."
-                className="w-full outline-none text-[1dvw] mainFont"
-              />
+            <div className="flex justify-between items-center w-full">
+              <div className="w-[60%] flex-shrink-0 flex justify-center items-center gap-4 bg-(--secondary-color) p-2 rounded-full">
+                <button className="p-2 flex justify-center items-center cursor-pointer">
+                  <Search size={20} />
+                </button>
+                <input
+                  type="text"
+                  onFocus={(e) => {
+                    setIsKeyboardOpen(true);
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                  // onBlur={() => setIsKeyboardOpen(false)}
+                  value={input}
+                  onChange={(e) => onChange(e.target.value)}
+                  placeholder="Search items, categories,Stocks etc..."
+                  className="w-full outline-none text-[1dvw] mainFont"
+                />
+              </div>
+              <div className="flex justify-center items-center gap-3">
+                <button className="flex cursor-pointer  justify-center items-center gap-1.5 mainFont font-semibold border border-(--border-color) rounded-full px-5 py-1.5">
+                  <span className="p-1 flex justify-center bg-(--button-color1) items-center text-(--primary-color) rounded-full">
+                    <Plus size={20} />
+                  </span>
+                  Add Item
+                </button>
+                <button className="flex cursor-pointer  justify-center items-center gap-1.5 mainFont font-semibold border border-(--border-color) rounded-full px-5 py-1.5">
+                  <span className="p-1 flex justify-center bg-(--button-color1) items-center text-(--primary-color) rounded-full">
+                    <Logs size={18} />
+                  </span>
+                  Shortcuts
+                </button>
+              </div>
             </div>
             <div className="w-full h-full overflow-y-hidden flex flex-col">
               {/* list header start */}
@@ -219,12 +238,18 @@ export const SalePoint = () => {
             </div>
           </div>
         </div>
-        <div className="w-[33dvw] flex flex-col justify-between bg-(--secondary-color)/40 h-full p-4">
+        <div className="w-[33dvw] border-l border-(--border-color)/50 flex flex-col justify-between bg-(--secondary-color)/40 h-full p-4">
           <div>
-            <div className="border-b border-(--border-color) pb-4">
+            <div className="border-b flex justify-between items-center border-(--border-color) pb-4">
               <h3 className="text-[2dvw] font-semibold mainFont">
                 Bill Details
               </h3>
+              <div>
+              <lable className='mainFont font-semibold text-[.9dvw]'>
+                Discount Type - 
+              </lable>
+                <MaterialUISwitch />
+              </div>
             </div>
             <div className="p-5 flex flex-col gap-4">
               <div className="flex justify-between items-center">
@@ -333,3 +358,61 @@ export const SalePoint = () => {
     </>
   );
 };
+
+const MaterialUISwitch = styled(Switch)(({ theme }) => ({
+  width: 62,
+  height: 34,
+  padding: 7,
+  "& .MuiSwitch-switchBase": {
+    margin: 1,
+    padding: 0,
+    transform: "translateX(6px)",
+    "&.Mui-checked": {
+      color: "#fff",
+      transform: "translateX(22px)",
+      "& .MuiSwitch-thumb:before": {
+        // backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 20 20"><path fill="${encodeURIComponent(
+        //   "#fff"
+        // )}" d="M4.2 2.5l-.7 1.8-1.8.7 1.8.7.7 1.8.6-1.8L6.7 5l-1.9-.7-.6-1.8zm15 8.3a6.7 6.7 0 11-6.6-6.6 5.8 5.8 0 006.6 6.6z"/></svg>')`,
+        // backgroundImage: `url('data:image/../../assets/images/PercentIcon.min.svg')`,
+        content:`"%"`
+      },
+      "& + .MuiSwitch-track": {
+        opacity: 1,
+        backgroundColor: "#aab4be",
+        ...theme.applyStyles("dark", {
+          backgroundColor: "#8796A5",
+        }),
+      },
+    },
+  },
+  "& .MuiSwitch-thumb": {
+    backgroundColor: "#001e3c",
+    width: 32,
+    height: 32,
+    "&::before": {
+      content: "'$'",
+      position: "absolute",
+      width: "100%",
+      height: "100%",
+      left: '30%',
+      top: '10%',
+      backgroundRepeat: "no-repeat",
+      backgroundPosition: "center",
+      // backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 20 20"><path fill="${encodeURIComponent(
+      //   "#fff"
+      // )}" d="M9.305 1.667V3.75h1.389V1.667h-1.39zm-4.707 1.95l-.982.982L5.09 6.072l.982-.982-1.473-1.473zm10.802 0L13.927 5.09l.982.982 1.473-1.473-.982-.982zM10 5.139a4.872 4.872 0 00-4.862 4.86A4.872 4.872 0 0010 14.862 4.872 4.872 0 0014.86 10 4.872 4.872 0 0010 5.139zm0 1.389A3.462 3.462 0 0113.471 10a3.462 3.462 0 01-3.473 3.472A3.462 3.462 0 016.527 10 3.462 3.462 0 0110 6.528zM1.665 9.305v1.39h2.083v-1.39H1.666zm14.583 0v1.39h2.084v-1.39h-2.084zM5.09 13.928L3.616 15.4l.982.982 1.473-1.473-.982-.982zm9.82 0l-.982.982 1.473 1.473.982-.982-1.473-1.473zM9.305 16.25v2.083h1.389V16.25h-1.39z"/></svg>')`,
+    },
+    ...theme.applyStyles("dark", {
+      backgroundColor: "#003892",
+    }),
+  },
+  "& .MuiSwitch-track": {
+    opacity: 1,
+    backgroundColor: "#aab4be",
+    borderRadius: 20 / 2,
+    ...theme.applyStyles("dark", {
+      backgroundColor: "#8796A5",
+    }),
+  },
+}));
