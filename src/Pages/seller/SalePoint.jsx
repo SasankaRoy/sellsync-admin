@@ -10,19 +10,92 @@ import {
   ShieldUser,
   Tags,
   Logs,
+  CircleX,
+  LogIn,
+  LogOut,
+  UtensilsCrossed,
 } from "lucide-react";
 import { Switch, Tooltip } from "@mui/material";
 import Keyboard from "react-simple-keyboard";
 import "react-simple-keyboard/build/css/index.css";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, scale } from "framer-motion";
 import ProductImg1 from "../../assets/images/ProductImg1.png";
 import { styled } from "@mui/material/styles";
+import { duration } from "moment/moment";
+const clockInVarient = {
+  initial: {
+    y: "-50%",
+    opacity: 0,
+    scale: 0.6,
+  },
+  inView: {
+    y: "0%",
+    opacity: 1,
+    scale: 1,
+    transition: {
+      delay: 0.2,
+      duration: 1,
+      ease: "circInOut",
+      type: "tween",
+    },
+  },
+  exit: {
+    y: "-100%",
+    opacity: 0,
+    scale: 0.6,
+    transition: {
+      delay: 0.1,
+      duration: 1,
+      ease: "circInOut",
+      type: "tween",
+    },
+  },
+  OutterWrapper: {
+    initial: {
+      y: "-100%",
+      opacity: 0,
+    },
+    inView: {
+      y: "0%",
+      opacity: 1,
 
+      transition: {
+        delay: 0.01,
+        duration: 1,
+        ease: "circInOut",
+        type: "tween",
+      },
+    },
+    exit: {
+      y: "-100%",
+      opacity: 0,
+
+      transition: {
+        delay: 1,
+        duration: 1,
+        ease: "circInOut",
+        type: "tween",
+      },
+    },
+  },
+};
 
 export const SalePoint = () => {
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
   const [layoutName, setLayoutName] = useState("default");
+  const [time, setTime] = useState({
+    hours: "",
+    minutes: "",
+    seconds: "",
+  });
   const [input, setInput] = useState("");
+  const [currentStateOutter, setCurrentStateOutter] = useState(
+    clockInVarient.OutterWrapper.initial
+  );
+  const [currentStateInner, setCurrentStateInner] = useState(
+    clockInVarient.initial
+  );
+
   const onChange = (input) => {
     console.log("Input changed", input);
     setInput(input);
@@ -47,6 +120,30 @@ export const SalePoint = () => {
       console.log("touchscreen");
       setIsKeyboardOpen(false);
     }
+    const getTimeInterval = setInterval(() => {
+      const date = new Date();
+      const hours = date.getHours();
+      const minutes = date.getMinutes();
+      const seconds = date.getSeconds();
+      setTime({
+        hours:
+          hours.toString().split("").length == 1
+            ? `0${hours}`
+            : hours.toString(),
+        minutes:
+          minutes.toString().split("").length == 1
+            ? `0${minutes}`
+            : minutes.toString(),
+        seconds:
+          seconds.toString().split("").length == 1
+            ? `0${seconds}`
+            : seconds.toString(),
+      });
+    }, 1000);
+
+    return () => {
+      clearInterval(getTimeInterval);
+    };
   }, [isKeyboardOpen]);
 
   return (
@@ -69,11 +166,20 @@ export const SalePoint = () => {
               </span>
               <p className="text-[.9dvw] font-semibold mainFont">My Tasks</p>
             </button>
-            <button className="flex justify-center items-center gap-3 border border-(--border-color) rounded-full px-4 py-2 cursor-pointer">
+            <button
+              onClick={() => {
+                setCurrentStateOutter(clockInVarient.OutterWrapper.inView);
+                setCurrentStateInner(clockInVarient.inView);
+                console.log("clicked");
+              }}
+              className="flex justify-center items-center gap-3 border border-(--border-color) rounded-full px-4 py-2 cursor-pointer"
+            >
               <span className="bg-(--button-color1) text-(--primary-color) rounded-full p-2 flex justify-center items-center">
                 <CalendarClock size={20} />
               </span>
-              <p className="text-[.9dvw] font-semibold mainFont">16:30</p>
+              <p className="text-[.9dvw] font-semibold mainFont">
+                {time.hours} : {time.minutes}
+              </p>
             </button>
             <button className="flex justify-center items-center gap-3 border border-(--border-color) rounded-full px-4 py-2 cursor-pointer">
               <span className="bg-(--button-color4) text-(--primary-color) rounded-full p-2 flex justify-center items-center">
@@ -170,7 +276,7 @@ export const SalePoint = () => {
 
               {/* item list start */}
               <div className="flex flex-col gap-2 scrollCustom h-[100%] overflow-y-auto justify-start items-center  mt-1.5">
-                {[1, 2, 3, 4, 5, 52, 5, 5].map((cur, id) => (
+                {[1, 2, 3, 4].map((cur, id) => (
                   <div
                     key={id}
                     className={`flex justify-center items-center w-full ${
@@ -245,9 +351,9 @@ export const SalePoint = () => {
                 Bill Details
               </h3>
               <div>
-              <lable className='mainFont font-semibold text-[.9dvw]'>
-                Discount Type - 
-              </lable>
+                <lable className="mainFont font-semibold text-[.9dvw]">
+                  Discount Type -
+                </lable>
                 <MaterialUISwitch />
               </div>
             </div>
@@ -355,6 +461,96 @@ export const SalePoint = () => {
           </motion.div>
         </AnimatePresence>
       )}
+      <AnimatePresence mode="popLayout">
+        <motion.div
+          variants={clockInVarient.OutterWrapper}
+          initial="initial"
+          animate={currentStateOutter}
+          onClick={(e) => {
+            e.stopPropagation();
+            setCurrentStateOutter(clockInVarient.OutterWrapper.exit);
+            setCurrentStateInner(clockInVarient.exit);
+          }}
+          key={currentStateOutter}
+          className="absolute h-screen bg-transparent flex justify-center items-center backdrop-blur-[1px] w-full top-0 z-50"
+        >
+          <motion.div
+            variants={clockInVarient}
+            initial="initial"
+            animate={currentStateInner}
+            className="w-[30%] bg-(--primary-color) py-4 px-6 rounded-md"
+          >
+            <div className="flex justify-between items-center border-b border-(--border-color) py-2.5 px-3">
+              <h3 className="text-[1.5dvw] text-(--button-color2) font-semibold">
+                Clock In
+              </h3>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCurrentStateOutter(clockInVarient.OutterWrapper.exit);
+                  setCurrentStateInner(clockInVarient.exit);
+                }}
+                className="cursor-pointer"
+              >
+                <CircleX size={30} />
+              </button>
+            </div>
+            <div className="my-5 flex flex-col gap-4">
+              <div className="flex justify-start items-center gap-4">
+                <p className="text-[1.2dvw] paraFont capitalize font-normal text-(--button-color4)">
+                  Start Working{" "}
+                </p>
+                <p className="text-[1.2dvw] paraFont capitalize font-normal text-(--button-color4)">
+                  |
+                </p>
+                <h3 className="text-[1.5dvw] font-semibold">
+                  {time.hours}:{time.minutes}:{time.seconds}
+                </h3>
+              </div>
+              <div className="flex justify-start items-center gap-4 border border-(--border-color) rounded-md px-2 py-2">
+                <p className="text-[1dvw] paraFont font-normal text-(--button-color4)">
+                  Break timer
+                </p>
+                <p className="text-[1dvw] paraFont font-normal text-(--button-color4)">
+                  |
+                </p>
+                <h5 className="font-semibold text-[1.2dvw]">
+                  {time.hours}:{time.minutes}:{time.seconds}
+                </h5>
+              </div>
+              <div className="flex justify-center items-center gap-5">
+                <button className="w-full py-2 rounded-md text-[1.2dvw] cursor-pointer bg-(--button-color1) text-(--primary-color) font-semibold mainFont flex justify-center items-center gap-5">
+                <span
+                  className="p-1.5 bg-(--primary-color) flex justify-center items-center rounded-full text-(--mainText-color)"
+                  size={15}
+                >
+                  <LogIn />
+                </span>
+                Clock In
+              </button>
+                {/* <button className="w-full py-2 rounded-md text-[1.2dvw] cursor-pointer bg-(--button-color3) text-(--primary-color) font-semibold mainFont flex justify-center items-center gap-5">
+                  <span
+                    className="p-1.5 bg-(--primary-color) flex justify-center items-center rounded-full text-(--mainText-color)"
+                    size={15}
+                  >
+                    <UtensilsCrossed />
+                  </span>
+                  Break
+                </button>
+                <button className="w-full py-2 rounded-md text-[1.2dvw] cursor-pointer bg-(--Negative-color) text-(--primary-color) font-semibold mainFont flex justify-center items-center gap-5">
+                  <span
+                    className="p-1.5 bg-(--primary-color) flex justify-center items-center rounded-full text-(--mainText-color)"
+                    size={15}
+                  >
+                    <LogOut />
+                  </span>
+                  Clock Out
+                </button> */}
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      </AnimatePresence>
     </>
   );
 };
@@ -375,7 +571,7 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
         //   "#fff"
         // )}" d="M4.2 2.5l-.7 1.8-1.8.7 1.8.7.7 1.8.6-1.8L6.7 5l-1.9-.7-.6-1.8zm15 8.3a6.7 6.7 0 11-6.6-6.6 5.8 5.8 0 006.6 6.6z"/></svg>')`,
         // backgroundImage: `url('data:image/../../assets/images/PercentIcon.min.svg')`,
-        content:`"%"`
+        content: `"%"`,
       },
       "& + .MuiSwitch-track": {
         opacity: 1,
@@ -395,8 +591,8 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
       position: "absolute",
       width: "100%",
       height: "100%",
-      left: '30%',
-      top: '10%',
+      left: "30%",
+      top: "10%",
       backgroundRepeat: "no-repeat",
       backgroundPosition: "center",
       // backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 20 20"><path fill="${encodeURIComponent(
