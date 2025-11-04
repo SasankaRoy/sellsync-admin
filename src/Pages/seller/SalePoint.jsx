@@ -119,7 +119,7 @@ export const SalePoint = () => {
                 // onBlur={() => setIsKeyboardOpen(false)}
                 value={input}
                 onChange={(e) => onChange(e.target.value)}
-                placeholder="Search items, categories, etc..."
+                placeholder="Search items, categories,Stocks etc..."
                 className="w-full outline-none text-[1dvw] mainFont"
               />
             </div>
@@ -150,7 +150,7 @@ export const SalePoint = () => {
               {/* list header end */}
 
               {/* item list start */}
-              <div className="flex flex-col gap-2  h-[100%] overflow-y-auto justify-start items-center  mt-1.5">
+              <div className="flex flex-col gap-2 scrollCustom h-[100%] overflow-y-auto justify-start items-center  mt-1.5">
                 {[1, 2, 3, 4, 5, 52, 5, 5].map((cur, id) => (
                   <div
                     key={id}
@@ -219,8 +219,98 @@ export const SalePoint = () => {
             </div>
           </div>
         </div>
-        <div className="w-[33dvw] bg-green-200 h-full">
-          the categorries selector and other filters screen
+        <div className="w-[33dvw] flex flex-col justify-between bg-(--secondary-color)/40 h-full p-4">
+          <div>
+            <div className="border-b border-(--border-color) pb-4">
+              <h3 className="text-[2dvw] font-semibold mainFont">
+                Bill Details
+              </h3>
+            </div>
+            <div className="p-5 flex flex-col gap-4">
+              <div className="flex justify-between items-center">
+                <p className="text-[1.2dvw] mainFont font-semibold text-(--paraText-color)">
+                  Total Items :
+                </p>
+                <strong className="text-[1.5dvw] paraFont font-semibold">
+                  5
+                </strong>
+              </div>
+              <div className="flex justify-between items-center">
+                <p className="text-[1.2dvw] mainFont font-semibold text-(--paraText-color)">
+                  SubTotal :
+                </p>
+                <strong className="text-[1.5dvw] paraFont font-semibold">
+                  $ 100
+                </strong>
+              </div>
+              <div className="flex justify-between items-center">
+                <p className="text-[1.2dvw] mainFont font-semibold text-(--paraText-color)">
+                  Tax :
+                </p>
+                <strong className="text-[1.5dvw] paraFont font-semibold text-(--Negative-color)">
+                  $ 2.50
+                </strong>
+              </div>
+
+              <div className="flex justify-between items-center  border-b border-(--border-color) pb-4">
+                <p className="text-[1.2dvw] mainFont font-semibold text-(--paraText-color)">
+                  Discount ($) :
+                </p>
+                {/* <strong className="text-[1.5dvw] paraFont font-semibold">
+                  $ 2.50
+                </strong> */}
+                <input
+                  type="text"
+                  placeholder="$"
+                  value={"$ 2.50"}
+                  className="w-[20%] text-center outline-none text-[1.5dvw] mainFont font-semibold border-(--border-color) py-2 bg-transparent paraFont appearance-none border-b "
+                />
+              </div>
+              <div className="flex justify-between items-center">
+                <p className="text-[1.6dvw] mainFont font-semibold text-(--paraText-color)">
+                  Total :
+                </p>
+                <strong className="text-[2dvw] paraFont font-semibold text-(--Positive-color)">
+                  $ 100.00
+                </strong>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col gap-3">
+            <div className="flex justify-between items-center gap-3">
+              <button className="w-1/2 py-4 text-[1.2dvw] mainFont font-semibold bg-(--button-color5) text-(--primary-color) rounded-md">
+                Pay $ 100.00
+              </button>
+              <button className="w-1/2 py-4 text-[1.2dvw] mainFont font-semibold bg-(--Negative-color) text-(--primary-color) rounded-md">
+                Cancel
+              </button>
+            </div>
+            <div>
+              <h3 className="font-medium mainFont text-(--button-color4) text-[1.2dvw]">
+                Options
+              </h3>
+              <div className="my-2 grid grid-cols-3 gap-2">
+                <button className="bg-(--button-color5) text-(--primary-color) py-3 mainFont font-semibold rounded-md">
+                  Payout
+                </button>
+                <button className="bg-(--button-color2) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md">
+                  Hold Order
+                </button>
+                <button className="bg-(--button-color1) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md">
+                  Last Order
+                </button>
+                <button className="bg-(--button-color2) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md">
+                  Reprint
+                </button>
+                <button className="bg-(--Negative-color) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md">
+                  No Sale
+                </button>
+                <button className="bg-(--button-color3) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md">
+                  Other
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       {isKeyboardOpen && (
@@ -234,7 +324,7 @@ export const SalePoint = () => {
           >
             <Keyboard
               onChange={onChange}
-              layoutName='default'
+              layoutName="default"
               theme={"hg-theme-default myTheme1"}
             />
           </motion.div>

@@ -77,3 +77,6 @@ h6,
     rgba(38, 106, 174, 1) 100%
   );
 }
+.scrollCustom::-webkit-scrollbar {
+  display: none;
+}
