@@ -21,7 +21,8 @@ import "react-simple-keyboard/build/css/index.css";
 import { AnimatePresence, motion, scale } from "framer-motion";
 import ProductImg1 from "../../assets/images/ProductImg1.png";
 import { styled } from "@mui/material/styles";
-import { duration } from "moment/moment";
+import { ClockInOut } from "../../components/common/Models/ClockInOut";
+import { Shortcuts } from "../../components/common/Models/Shortcuts";
 const clockInVarient = {
   initial: {
     y: "-50%",
@@ -80,8 +81,37 @@ const clockInVarient = {
   },
 };
 
+const itemListVarient = {
+  initial: {
+    x: "100%",
+    opacity: 0,
+    width: "50%",
+  },
+  inView: {
+    x: "0%",
+    opacity: 1,
+    width: "100%",
+    transition: {
+      duration: 1.1,
+      ease: "circInOut",
+      type: "tween",
+    },
+  },
+  exit: {
+    x: "100%",
+    opacity: 0,
+    width: "50%",
+    transition: {
+      duration: 1.1,
+      ease: "circInOut",
+      type: "tween",
+    },
+  },
+};
+
 export const SalePoint = () => {
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
+  const [showShortcuts, setShowShortcuts] = useState(itemListVarient.initial);
   const [layoutName, setLayoutName] = useState("default");
   const [time, setTime] = useState({
     hours: "",
@@ -211,7 +241,7 @@ export const SalePoint = () => {
         }}
         className="flex justify-center items-center gap-4 h-[88vh]"
       >
-        <div className="flex-1  h-full">
+        <div className="flex-1  h-full relative overflow-hidden">
           <div className=" flex flex-col h-full gap-5 justify-center items-center w-full  p-4">
             <div className="flex justify-between items-center w-full">
               <div className="w-[60%] flex-shrink-0 flex justify-center items-center gap-4 bg-(--secondary-color) p-2 rounded-full">
@@ -240,7 +270,12 @@ export const SalePoint = () => {
                   </span>
                   Add Item
                 </button>
-                <button className="flex cursor-pointer  justify-center items-center gap-1.5 mainFont font-semibold border border-(--border-color) rounded-full px-5 py-1.5">
+                <button
+                  onClick={() => {
+                    setShowShortcuts(itemListVarient.inView);
+                  }}
+                  className="flex cursor-pointer  justify-center items-center gap-1.5 mainFont font-semibold border border-(--border-color) rounded-full px-5 py-1.5"
+                >
                   <span className="p-1 flex justify-center bg-(--button-color1) items-center text-(--primary-color) rounded-full">
                     <Logs size={18} />
                   </span>
@@ -343,6 +378,13 @@ export const SalePoint = () => {
               {/* item list end */}
             </div>
           </div>
+          <AnimatePresence mode="popLayout">
+            <Shortcuts
+              itemListVarient={itemListVarient}
+              showShortcuts={showShortcuts}
+              setShowShortcuts={setShowShortcuts}
+            />
+          </AnimatePresence>
         </div>
         <div className="w-[33dvw] border-l border-(--border-color)/50 flex flex-col justify-between bg-(--secondary-color)/40 h-full p-4">
           <div>
@@ -462,94 +504,14 @@ export const SalePoint = () => {
         </AnimatePresence>
       )}
       <AnimatePresence mode="popLayout">
-        <motion.div
-          variants={clockInVarient.OutterWrapper}
-          initial="initial"
-          animate={currentStateOutter}
-          onClick={(e) => {
-            e.stopPropagation();
-            setCurrentStateOutter(clockInVarient.OutterWrapper.exit);
-            setCurrentStateInner(clockInVarient.exit);
-          }}
-          key={currentStateOutter}
-          className="absolute h-screen bg-transparent flex justify-center items-center backdrop-blur-[1px] w-full top-0 z-50"
-        >
-          <motion.div
-            variants={clockInVarient}
-            initial="initial"
-            animate={currentStateInner}
-            className="w-[30%] bg-(--primary-color) py-4 px-6 rounded-md"
-          >
-            <div className="flex justify-between items-center border-b border-(--border-color) py-2.5 px-3">
-              <h3 className="text-[1.5dvw] text-(--button-color2) font-semibold">
-                Clock In
-              </h3>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setCurrentStateOutter(clockInVarient.OutterWrapper.exit);
-                  setCurrentStateInner(clockInVarient.exit);
-                }}
-                className="cursor-pointer"
-              >
-                <CircleX size={30} />
-              </button>
-            </div>
-            <div className="my-5 flex flex-col gap-4">
-              <div className="flex justify-start items-center gap-4">
-                <p className="text-[1.2dvw] paraFont capitalize font-normal text-(--button-color4)">
-                  Start Working{" "}
-                </p>
-                <p className="text-[1.2dvw] paraFont capitalize font-normal text-(--button-color4)">
-                  |
-                </p>
-                <h3 className="text-[1.5dvw] font-semibold">
-                  {time.hours}:{time.minutes}:{time.seconds}
-                </h3>
-              </div>
-              <div className="flex justify-start items-center gap-4 border border-(--border-color) rounded-md px-2 py-2">
-                <p className="text-[1dvw] paraFont font-normal text-(--button-color4)">
-                  Break timer
-                </p>
-                <p className="text-[1dvw] paraFont font-normal text-(--button-color4)">
-                  |
-                </p>
-                <h5 className="font-semibold text-[1.2dvw]">
-                  {time.hours}:{time.minutes}:{time.seconds}
-                </h5>
-              </div>
-              <div className="flex justify-center items-center gap-5">
-                <button className="w-full py-2 rounded-md text-[1.2dvw] cursor-pointer bg-(--button-color1) text-(--primary-color) font-semibold mainFont flex justify-center items-center gap-5">
-                <span
-                  className="p-1.5 bg-(--primary-color) flex justify-center items-center rounded-full text-(--mainText-color)"
-                  size={15}
-                >
-                  <LogIn />
-                </span>
-                Clock In
-              </button>
-                {/* <button className="w-full py-2 rounded-md text-[1.2dvw] cursor-pointer bg-(--button-color3) text-(--primary-color) font-semibold mainFont flex justify-center items-center gap-5">
-                  <span
-                    className="p-1.5 bg-(--primary-color) flex justify-center items-center rounded-full text-(--mainText-color)"
-                    size={15}
-                  >
-                    <UtensilsCrossed />
-                  </span>
-                  Break
-                </button>
-                <button className="w-full py-2 rounded-md text-[1.2dvw] cursor-pointer bg-(--Negative-color) text-(--primary-color) font-semibold mainFont flex justify-center items-center gap-5">
-                  <span
-                    className="p-1.5 bg-(--primary-color) flex justify-center items-center rounded-full text-(--mainText-color)"
-                    size={15}
-                  >
-                    <LogOut />
-                  </span>
-                  Clock Out
-                </button> */}
-              </div>
-            </div>
-          </motion.div>
-        </motion.div>
+        <ClockInOut
+          clockInVarient={clockInVarient}
+          time={time}
+          setCurrentStateOutter={setCurrentStateOutter}
+          setCurrentStateInner={setCurrentStateInner}
+          currentStateOutter={currentStateOutter}
+          currentStateInner={currentStateInner}
+        />
       </AnimatePresence>
     </>
   );
