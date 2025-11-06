@@ -85,14 +85,14 @@ const itemListVarient = {
   initial: {
     x: "100%",
     opacity: 0,
-    width: "50%",
+    width: "70%",
   },
   inView: {
     x: "0%",
     opacity: 1,
     width: "100%",
     transition: {
-      duration: 1.1,
+      duration: .8,
       ease: "circInOut",
       type: "tween",
     },
@@ -100,9 +100,9 @@ const itemListVarient = {
   exit: {
     x: "100%",
     opacity: 0,
-    width: "50%",
+    width: "70%",
     transition: {
-      duration: 1.1,
+      duration: .8,
       ease: "circInOut",
       type: "tween",
     },
