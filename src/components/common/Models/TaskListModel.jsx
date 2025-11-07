@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { CircleX } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export const TaskListModel = ({
   varient,
@@ -9,6 +10,7 @@ export const TaskListModel = ({
   showTaskListInner,
   showTaskListOutter,
 }) => {
+  const router = useNavigate();
   return (
     <>
       <motion.div
@@ -56,20 +58,36 @@ export const TaskListModel = ({
                 <div className="max-w-[70%] flex flex-col gap-2">
                   <div className="flex justify-start items-center gap-5">
                     <h5 className="text-[1.4dvw] font-semibold">
-                      Task title {id+1}......
+                      Task title {id + 1}......
                     </h5>
                     <span className="text-[.9dvw] paraFont text-(--button-color2)">
                       20.11.2025
                     </span>
                   </div>
                   <div className="flex justify-start items-center gap-3">
-                    <div className="w-[1dvw] h-[1dvw] bg-(--activeTab-color) rounded-full" />
-                    <p className="text-[1dvw] paraFont font-medium text-(--activeTab-color)">
+                    <div
+                      className={`w-[1dvw] h-[1dvw] ${
+                        id % 2 == 0
+                          ? "bg-(--activeTab-color) "
+                          : "bg-(--Negative-color)"
+                      }  rounded-full`}
+                    />
+                    <p
+                      style={{
+                        color: id % 2 === 0 ? "red" : "green",
+                      }}
+                      className="text-[1dvw] paraFont font-medium text-(--activeTab-color)"
+                    >
                       Task Status
                     </p>
                   </div>
                 </div>
-                <button className="mainFont font-semibold shrink-0 text-[.9dvw] py-3 cursor-pointer px-5 text-(--primary-color) bg-(--button-color1) rounded-md">
+                <button
+                  onClick={() => {
+                    router(`/seller/task-details/${id}`);
+                  }}
+                  className="mainFont font-semibold shrink-0 text-[.9dvw] py-3 cursor-pointer px-5 text-(--primary-color) bg-(--button-color1) rounded-md"
+                >
                   View Task
                 </button>
               </div>
