@@ -1,85 +1,13 @@
 import React, { useEffect, useState } from "react";
-import SellsyncLogo from "../../assets/images/SellsyncLogo.png";
-import {
-  Airplay,
-  CalendarClock,
-  ClipboardList,
-  Minus,
-  Plus,
-  Search,
-  ShieldUser,
-  Tags,
-  Logs,
-  CircleX,
-  LogIn,
-  LogOut,
-  UtensilsCrossed,
-} from "lucide-react";
+import { Minus, Plus, Search, Logs } from "lucide-react";
 import { Switch, Tooltip } from "@mui/material";
 import Keyboard from "react-simple-keyboard";
 import "react-simple-keyboard/build/css/index.css";
-import { AnimatePresence, motion, scale } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import ProductImg1 from "../../assets/images/ProductImg1.png";
 import { styled } from "@mui/material/styles";
-import { ClockInOut } from "../../components/common/Models/ClockInOut";
 import { Shortcuts } from "../../components/common/Models/Shortcuts";
-const clockInVarient = {
-  initial: {
-    y: "-50%",
-    opacity: 0,
-    scale: 0.6,
-  },
-  inView: {
-    y: "0%",
-    opacity: 1,
-    scale: 1,
-    transition: {
-      delay: 0.2,
-      duration: 1,
-      ease: "circInOut",
-      type: "tween",
-    },
-  },
-  exit: {
-    y: "-100%",
-    opacity: 0,
-    scale: 0.6,
-    transition: {
-      delay: 0.1,
-      duration: 1,
-      ease: "circInOut",
-      type: "tween",
-    },
-  },
-  OutterWrapper: {
-    initial: {
-      y: "-100%",
-      opacity: 0,
-    },
-    inView: {
-      y: "0%",
-      opacity: 1,
-
-      transition: {
-        delay: 0.01,
-        duration: 1,
-        ease: "circInOut",
-        type: "tween",
-      },
-    },
-    exit: {
-      y: "-100%",
-      opacity: 0,
-
-      transition: {
-        delay: 1,
-        duration: 1,
-        ease: "circInOut",
-        type: "tween",
-      },
-    },
-  },
-};
+import { SellerNavbar } from "../../components/common/Navbars/SellerNavbar";
 
 const itemListVarient = {
   initial: {
@@ -92,7 +20,7 @@ const itemListVarient = {
     opacity: 1,
     width: "100%",
     transition: {
-      duration: .8,
+      duration: 0.8,
       ease: "circInOut",
       type: "tween",
     },
@@ -102,7 +30,7 @@ const itemListVarient = {
     opacity: 0,
     width: "70%",
     transition: {
-      duration: .8,
+      duration: 0.8,
       ease: "circInOut",
       type: "tween",
     },
@@ -112,19 +40,9 @@ const itemListVarient = {
 export const SalePoint = () => {
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
   const [showShortcuts, setShowShortcuts] = useState(itemListVarient.initial);
+
   const [layoutName, setLayoutName] = useState("default");
-  const [time, setTime] = useState({
-    hours: "",
-    minutes: "",
-    seconds: "",
-  });
   const [input, setInput] = useState("");
-  const [currentStateOutter, setCurrentStateOutter] = useState(
-    clockInVarient.OutterWrapper.initial
-  );
-  const [currentStateInner, setCurrentStateInner] = useState(
-    clockInVarient.initial
-  );
 
   const onChange = (input) => {
     console.log("Input changed", input);
@@ -150,90 +68,11 @@ export const SalePoint = () => {
       console.log("touchscreen");
       setIsKeyboardOpen(false);
     }
-    const getTimeInterval = setInterval(() => {
-      const date = new Date();
-      const hours = date.getHours();
-      const minutes = date.getMinutes();
-      const seconds = date.getSeconds();
-      setTime({
-        hours:
-          hours.toString().split("").length == 1
-            ? `0${hours}`
-            : hours.toString(),
-        minutes:
-          minutes.toString().split("").length == 1
-            ? `0${minutes}`
-            : minutes.toString(),
-        seconds:
-          seconds.toString().split("").length == 1
-            ? `0${seconds}`
-            : seconds.toString(),
-      });
-    }, 1000);
-
-    return () => {
-      clearInterval(getTimeInterval);
-    };
   }, [isKeyboardOpen]);
 
   return (
     <>
-      <header className="flex justify-center items-center py-3 bg-[#f8f8f8]/70 shadow-sm">
-        <div className="w-[95%] flex justify-between items-center">
-          <div>
-            <div className=" flex justify-center items-center w-[14dvw] h-auto">
-              <img
-                alt="sellsync.com"
-                src={SellsyncLogo}
-                className="w-full h-auto"
-              />
-            </div>
-          </div>
-          <div className="flex justify-center items-center gap-6">
-            <button className="flex justify-center items-center gap-3 border border-(--border-color) rounded-full px-4 py-2 cursor-pointer">
-              <span className="bg-(--button-color5) text-(--primary-color) rounded-full p-2 flex justify-center items-center">
-                <ClipboardList size={20} />
-              </span>
-              <p className="text-[.9dvw] font-semibold mainFont">My Tasks</p>
-            </button>
-            <button
-              onClick={() => {
-                setCurrentStateOutter(clockInVarient.OutterWrapper.inView);
-                setCurrentStateInner(clockInVarient.inView);
-                console.log("clicked");
-              }}
-              className="flex justify-center items-center gap-3 border border-(--border-color) rounded-full px-4 py-2 cursor-pointer"
-            >
-              <span className="bg-(--button-color1) text-(--primary-color) rounded-full p-2 flex justify-center items-center">
-                <CalendarClock size={20} />
-              </span>
-              <p className="text-[.9dvw] font-semibold mainFont">
-                {time.hours} : {time.minutes}
-              </p>
-            </button>
-            <button className="flex justify-center items-center gap-3 border border-(--border-color) rounded-full px-4 py-2 cursor-pointer">
-              <span className="bg-(--button-color4) text-(--primary-color) rounded-full p-2 flex justify-center items-center">
-                <Airplay size={20} />
-              </span>
-              <p className="text-[.9dvw] font-semibold mainFont">
-                Customer Screen
-              </p>
-            </button>
-            <button className="flex justify-center items-center gap-3 border border-(--border-color) rounded-full px-4 py-2 cursor-pointer">
-              <span className="bg-(--button-color1) text-(--primary-color) rounded-full p-2 flex justify-center items-center">
-                <Tags size={20} />
-              </span>
-              <p className="text-[.9dvw] font-semibold mainFont">Get labels</p>
-            </button>
-            <button className="flex justify-center items-center gap-3 border border-(--border-color) rounded-full px-4 py-2 cursor-pointer">
-              <span className="bg-(--Negative-color) text-(--primary-color) rounded-full p-2 flex justify-center items-center">
-                <ShieldUser size={20} />
-              </span>
-              <p className="text-[.9dvw] font-semibold mainFont">Logout</p>
-            </button>
-          </div>
-        </div>
-      </header>
+      <SellerNavbar />
       <div
         onClick={(e) => {
           e.stopPropagation();
@@ -503,16 +342,6 @@ export const SalePoint = () => {
           </motion.div>
         </AnimatePresence>
       )}
-      <AnimatePresence mode="popLayout">
-        <ClockInOut
-          clockInVarient={clockInVarient}
-          time={time}
-          setCurrentStateOutter={setCurrentStateOutter}
-          setCurrentStateInner={setCurrentStateInner}
-          currentStateOutter={currentStateOutter}
-          currentStateInner={currentStateInner}
-        />
-      </AnimatePresence>
     </>
   );
 };
