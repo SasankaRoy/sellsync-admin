@@ -50,7 +50,7 @@ export const TaskListModel = ({
             </button>
           </div>
           <div className="h-full flex flex-col gap-2 overflow-y-auto my-4 py-4 px-2">
-            {[1, 2, 3, 4, 5].map((cur, id) => (
+            {[1, 2,].map((cur, id) => (
               <div
                 key={id}
                 className="w-full border border-(--border-color) rounded-md p-3 flex justify-between items-center"

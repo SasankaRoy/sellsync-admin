@@ -6,11 +6,12 @@ import {
   ShieldUser,
   Tags,
 } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useMemo, useState } from "react";
 import SellsyncLogo from "../../../assets/images/SellsyncLogo.png";
 import { motion, AnimatePresence } from "framer-motion";
 import { TaskListModel } from "../Models/TaskListModel";
 import { ClockInOut } from "../Models/ClockInOut";
+import { useNavigate } from "react-router-dom";
 
 const clockInVarient = {
   initial: {
@@ -134,6 +135,7 @@ export const SellerNavbar = () => {
     minutes: "",
     seconds: "",
   });
+  const navigate = useNavigate();
   const [currentStateOutter, setCurrentStateOutter] = useState(
     clockInVarient.OutterWrapper.initial
   );
@@ -147,7 +149,7 @@ export const SellerNavbar = () => {
     TaskListVarient.OutterWrapper.initial
   );
 
-  useEffect(() => {
+  useMemo(() => {
     const getTimeInterval = setInterval(() => {
       const date = new Date();
       const hours = date.getHours();
@@ -179,7 +181,12 @@ export const SellerNavbar = () => {
       <header className="flex justify-center items-center py-3 bg-[#f8f8f8]/70 shadow-sm">
         <div className="w-[95%] flex justify-between items-center">
           <div>
-            <div className=" flex justify-center items-center w-[14dvw] h-auto">
+            <div
+              onClick={() => {
+                navigate("/seller/dashboard");
+              }}
+              className=" flex cursor-pointer justify-center items-center w-[14dvw] h-auto"
+            >
               <img
                 alt="sellsync.com"
                 src={SellsyncLogo}
