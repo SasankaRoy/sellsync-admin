@@ -8,10 +8,11 @@ import {
 } from "lucide-react";
 import React, { useMemo, useState } from "react";
 import SellsyncLogo from "../../../assets/images/SellsyncLogo.png";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { TaskListModel } from "../Models/TaskListModel";
 import { ClockInOut } from "../Models/ClockInOut";
 import { useNavigate } from "react-router-dom";
+import { OffcanvasMenu } from "../Models/OffcanvasMenu";
 
 const clockInVarient = {
   initial: {
@@ -128,6 +129,30 @@ const TaskListVarient = {
     },
   },
 };
+const OffcanvasMenuVarients = {
+  initial: {
+    opacity: 0,
+    x: "100%",
+  },
+  inView: {
+    opacity: 1,
+    x: "0%",
+    transition: {
+      duration: 0.4,
+      ease: "easeInOut",
+      type: "tween",
+    },
+  },
+  exit: {
+    opacity: 0,
+    x: "100%",
+    transition: {
+      duration: 0.4,
+      ease: "easeInOut",
+      type: "tween",
+    },
+  },
+};
 
 export const SellerNavbar = () => {
   const [time, setTime] = useState({
@@ -138,6 +163,9 @@ export const SellerNavbar = () => {
   const navigate = useNavigate();
   const [currentStateOutter, setCurrentStateOutter] = useState(
     clockInVarient.OutterWrapper.initial
+  );
+  const [showOffcanvasMenu, setShowOffcanvasMenu] = useState(
+    OffcanvasMenuVarients.initial
   );
   const [currentStateInner, setCurrentStateInner] = useState(
     clockInVarient.initial
@@ -242,7 +270,12 @@ export const SellerNavbar = () => {
               </span>
               <p className="text-[.9dvw] font-semibold mainFont">Logout</p>
             </button>
-            <button className="p-2 border border-(--border-color)/40 rounded-full cursor-pointer hover:bg-(--button-color1) hover:text-(--primary-color) transition-all duration-300 ease-in-out hover:border(--button-color1)">
+            <button
+              onClick={() => {
+                setShowOffcanvasMenu(OffcanvasMenuVarients.inView);
+              }}
+              className="p-2 border border-(--border-color)/40 rounded-full cursor-pointer hover:bg-(--button-color1) hover:text-(--primary-color) transition-all duration-300 ease-in-out hover:border(--button-color1)"
+            >
               <Logs />
             </button>
           </div>
@@ -266,6 +299,13 @@ export const SellerNavbar = () => {
           setShowTaskListOutter={setShowTaskListOutter}
           showTaskListInner={showTaskListInner}
           showTaskListOutter={showTaskListOutter}
+        />
+      </AnimatePresence>
+      <AnimatePresence mode="popLayout">
+        <OffcanvasMenu
+          varient={OffcanvasMenuVarients}
+          setShowOffcanvasMenu={setShowOffcanvasMenu}
+          showOffcanvasMenu={showOffcanvasMenu}
         />
       </AnimatePresence>
     </>
