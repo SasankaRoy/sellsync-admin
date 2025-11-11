@@ -6,6 +6,7 @@ import {
   ClipboardMinus,
   Settings,
 } from "lucide-react";
+import { NavLink } from "react-router-dom";
 
 export const OffcanvasMenu = ({
   varient,
@@ -61,12 +62,16 @@ export const OffcanvasMenu = ({
           }}
           className="flex flex-col gap-5 my-5"
         >
-          <button className="flex justify-start px-5 py-2.5 mainFont font-semibold tracking-wider text-[1.8dvw] items-center gap-6 border-b hover:bg-(--button-color2) hover:text-(--primary-color) hover:rounded-md transition-all duration-300 ease-linear cursor-pointer border-(--border-color) text-(--button-color2)">
+          <NavLink
+            onClick={() => setShowOffcanvasMenu(varient.exit)}
+            to="/seller/sales-report"
+            className="flex justify-start px-5 py-2.5 mainFont font-semibold tracking-wider text-[1.8dvw] items-center gap-6 border-b hover:bg-(--button-color2) hover:text-(--primary-color) hover:rounded-md transition-all duration-300 ease-linear cursor-pointer border-(--border-color) text-(--button-color2)"
+          >
             <span>
               <BadgeDollarSign size={40} />
             </span>
             Sales
-          </button>
+          </NavLink>
           <button className="flex justify-start px-5 py-2.5 mainFont font-semibold tracking-wider text-[1.8dvw] items-center gap-6 border-b hover:bg-(--button-color2) hover:text-(--primary-color) hover:rounded-md transition-all duration-300 ease-linear cursor-pointer border-(--border-color) text-(--button-color2)">
             <span>
               <ClipboardMinus size={40} />

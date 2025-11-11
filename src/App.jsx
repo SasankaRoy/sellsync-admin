@@ -136,7 +136,7 @@ function App() {
             <Route path="/seller/dashboard" element={<SalePoint />} />
             <Route path="/seller/task-details/:id" element={<TaskDetails />} />
             {/* <Route path="/seller/dashboard" element={<SellerDashboard />} /> */}
-            <Route path="/seller/sales"   element={<Sales />}/>
+            <Route path="/seller/sales-report"   element={<Sales />}/>
             <Route path="/seller/inventory" element={<InventorySeller />} />
             <Route path="/seller/settings" element={<SettingSeller />} />
           </Route>

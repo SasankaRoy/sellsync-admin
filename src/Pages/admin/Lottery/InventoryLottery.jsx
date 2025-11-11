@@ -203,6 +203,8 @@ export const InventoryLottery = () => {
                 </button>
               </div>
             </div>
+
+            
             <div className="h-full w-full overflow-x-scroll overflow-y-auto">
               <div className="min-w-[800px] h-full">
                 <AgGridReact
