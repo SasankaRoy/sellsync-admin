@@ -72,12 +72,16 @@ export const OffcanvasMenu = ({
             </span>
             Sales
           </NavLink>
-          <button className="flex justify-start px-5 py-2.5 mainFont font-semibold tracking-wider text-[1.8dvw] items-center gap-6 border-b hover:bg-(--button-color2) hover:text-(--primary-color) hover:rounded-md transition-all duration-300 ease-linear cursor-pointer border-(--border-color) text-(--button-color2)">
+          <NavLink
+            onClick={() => setShowOffcanvasMenu(varient.exit)}
+            to="/seller/reports"
+            className="flex justify-start px-5 py-2.5 mainFont font-semibold tracking-wider text-[1.8dvw] items-center gap-6 border-b hover:bg-(--button-color2) hover:text-(--primary-color) hover:rounded-md transition-all duration-300 ease-linear cursor-pointer border-(--border-color) text-(--button-color2)"
+          >
             <span>
               <ClipboardMinus size={40} />
             </span>
             Reports
-          </button>
+          </NavLink>
           <button className="flex justify-start px-5 py-2.5 mainFont font-semibold tracking-wider text-[1.8dvw] items-center gap-6 border-b hover:bg-(--button-color2) hover:text-(--primary-color) hover:rounded-md transition-all duration-300 ease-linear cursor-pointer border-(--border-color) text-(--button-color2)">
             <span>
               <Settings size={40} />

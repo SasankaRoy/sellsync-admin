@@ -46,6 +46,7 @@ import InventorySeller from "./Pages/seller/Inventory";
 import SettingSeller from "./Pages/seller/setting";
 import { SalePoint } from "./Pages/seller/SalePoint";
 import { TaskDetails } from "./Pages/seller/TaskDetails";
+import { AllSalesReports } from "./Pages/seller/AllSalesReports";
 
 
 
@@ -137,6 +138,7 @@ function App() {
             <Route path="/seller/task-details/:id" element={<TaskDetails />} />
             {/* <Route path="/seller/dashboard" element={<SellerDashboard />} /> */}
             <Route path="/seller/sales-report"   element={<Sales />}/>
+            <Route path="/seller/reports"   element={<AllSalesReports />}/>
             <Route path="/seller/inventory" element={<InventorySeller />} />
             <Route path="/seller/settings" element={<SettingSeller />} />
           </Route>
