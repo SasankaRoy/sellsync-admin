@@ -1,10 +1,124 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 import { SellerNavbar } from "../../components/common/Navbars/SellerNavbar";
-import { ArrowLeft, BadgeDollarSign, PiggyBank } from "lucide-react";
+import { ArrowLeft, BadgeDollarSign, ChartBarStacked, CircleOff, PiggyBank, TicketX } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Overviewcards } from "../../components/common/Overviewcards/Overviewcards";
 
+import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
+// Core CSS
+import { AgGridReact } from "ag-grid-react";
+
+ModuleRegistry.registerModules([AllCommunityModule]);
+const rowSelection = {
+  mode: "multiRow",
+  headerCheckbox: false,
+};
+
 export const AllSalesReports = () => {
+  const [rowData, setRowData] = useState([
+    {
+      Method: "Cash",
+      Payments: "1",
+      Takings: "5",
+      Refunds: "0",
+      Refunds: "0",
+      Payout: "0",
+      Payout: "0",
+      Balance: "50",
+    },
+    {
+      Method: "Cash",
+      Payments: "1",
+      Takings: "5",
+      Refunds: "0",
+      Refunds: "0",
+      Payout: "0",
+      Payout: "0",
+      Balance: "50",
+    },
+    {
+      Method: "Cash",
+      Payments: "1",
+      Takings: "5",
+      Refunds: "0",
+      Refunds: "0",
+      Payout: "0",
+      Payout: "0",
+      Balance: "50",
+    },
+    {
+      Method: "Cash",
+      Payments: "1",
+      Takings: "5",
+      Refunds: "0",
+      Refunds: "0",
+      Payout: "0",
+      Payout: "0",
+      Balance: "50",
+    },
+    {
+      Method: "Cash",
+      Payments: "1",
+      Takings: "5",
+      Refunds: "0",
+      Refunds: "0",
+      Payout: "0",
+      Payout: "0",
+      Balance: "50",
+    },
+    {
+      Method: "Cash",
+      Payments: "1",
+      Takings: "5",
+      Refunds: "0",
+      Refunds: "0",
+      Payout: "0",
+      Payout: "0",
+      Balance: "50",
+    },
+    {
+      Method: "Cash",
+      Payments: "1",
+      Takings: "5",
+      Refunds: "0",
+      Refunds: "0",
+      Payout: "0",
+      Payout: "0",
+      Balance: "50",
+    },
+  ]);
+
+  // Column Definitions: Defines & controls grid columns.
+  const [colDefs, setColDefs] = useState([
+    { field: "Method" },
+    { field: "Payments" },
+    { field: "Takings", headerName: "Takings" },
+    { headerName: "Refunds", field: "Refunds" },
+    { field: "Refunds", headerName: "Refunds" },
+    { field: "Payout", headerName: "Payout" },
+    { headerName: "Payout", field: "Payout" },
+    { headerName: "Balance", field: "Balance" },
+    // { headerName: "Status", field: "status" },
+    // {
+    //   headerName: "Actions",
+    //   field: "actions",
+    //   cellRenderer: ActionBtns,
+    //   cellRendererParams: {
+    //     // onEdit,
+    //     // onDelete,
+    //     skinSafe: true,
+    //   },
+    // },
+  ]);
+
+  // Apply settings across all columns
+  const defaultColDef = useMemo(() => {
+    return {
+      filter: true,
+      editable: false,
+    };
+  }, []);
+
   const navigate = useNavigate();
   const handleGoBack = () => {
     navigate(-1);
@@ -25,6 +139,7 @@ export const AllSalesReports = () => {
           </button>
           <h3 className="text-[1.3dvw] font-[500]">Reports</h3>
         </div>
+
         <div className=" my-4 grid grid-cols-4 gap-4">
           <Overviewcards
             cardTitle="Total Sale"
@@ -38,25 +153,41 @@ export const AllSalesReports = () => {
             cardValue="4"
             percent="Down"
             className="lg:scale-95 lg:hover:scale-100 transition-transform duration-200"
-            icon={<BadgeDollarSign size={80} color="green" />}
+            icon={<TicketX  size={80} color="red" />}
           />
           <Overviewcards
             cardTitle="Canceled"
             cardValue="2"
             percent="Up"
             className="lg:scale-95 lg:hover:scale-100 transition-transform duration-200"
-            icon={<BadgeDollarSign size={80} color="green" />}
+            icon={<CircleOff  size={80} color="red" />}
           />
           <Overviewcards
-            cardTitle="Tacking"
+            cardTitle="Taking"
             cardValue="20"
             percent="Up"
             className="lg:scale-95 lg:hover:scale-100 transition-transform duration-200"
-            icon={<BadgeDollarSign size={80} color="green" />}
+            icon={<ChartBarStacked size={80} color="blue" />}
           />
         </div>
+
+
         <div className="flex justify-center gap-4">
-          <div className="bg-red-400 flex-1 p-2">Table wrapper</div>
+          <div className=" flex-1">
+            <AgGridReact
+              rowData={rowData}
+              columnDefs={colDefs}
+              // loading={loading}
+              defaultColDef={defaultColDef}
+              pagination={true}
+              // rowSelection={rowSelection}
+              onSelectionChanged={(event) => console.log("Row Selected!")}
+              onCellValueChanged={(event) =>
+                console.log(`New Cell Value: ${event.value}`)
+              }
+              className="w-full h-full text-sm"
+            />
+          </div>
           <div className=" flex-1 p-2">
             <div className="border-b flex justify-start items-center gap-4 border-(--border-color) p-3">
               <PiggyBank size={40} />
@@ -124,13 +255,26 @@ export const AllSalesReports = () => {
                 <input className="bg-(--secondary-color) px-3 py-1.5 rounded-sm" />
               </div>
             </div>
-
-            <div className="flex justify-start items-center my-4 gap-5 px-6">
-              <p className="text-[1.1dvw] font-semibold paraFont">Total:</p>
-              <input
-                className="bg-(--secondary-color) text-[1.3dvw] px-3 py-1.5 outline-none border-none"
-                placeholder="1000"
-              />
+            <div className="flex justify-between items-center w-full my-4">
+              <div className="flex justify-start items-center gap-5 px-6">
+                <p className="text-[1.1dvw] font-semibold paraFont">Total:</p>
+                <input
+                  className="bg-(--secondary-color) text-[1.3dvw] px-3 py-1.5 outline-none border-none"
+                  placeholder="1000"
+                />
+              </div>
+              <div className="flex justify-start items-center gap-5 px-6">
+                <p className="text-[1.1dvw] font-semibold paraFont"> Sale:</p>
+                <input
+                  className="bg-(--secondary-color) text-[1.3dvw] px-3 py-1.5 outline-none border-none"
+                  placeholder="1000"
+                />
+              </div>
+            </div>
+            <div className="flex justify-center items-center">
+              <button className="bg-(--button-color1) text-(--primary-color) mainFont font-semibold w-[80%] text-[1.3dvw] py-3 rounded-md cursor-pointer">
+                Log Off
+              </button>
             </div>
           </div>
         </div>
