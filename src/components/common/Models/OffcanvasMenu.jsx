@@ -8,6 +8,10 @@ import {
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
+
+// Updates for print lables...
+// Scan, sreach by category, manual
+
 export const OffcanvasMenu = ({
   varient,
   setShowOffcanvasMenu,

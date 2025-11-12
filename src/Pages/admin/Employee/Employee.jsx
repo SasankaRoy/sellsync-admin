@@ -22,6 +22,12 @@ import { Loading } from "../../../components/UI/Loading/Loading";
 import { parse, format } from "date-fns";
 import { useBulkDelete } from "../../../utils/apis/BulkDelete";
 
+// updates
+// create one field for pay rate
+// create one field for pay type
+// create one field for driv li/ PDF
+// create one field for Social Security Number
+
 ModuleRegistry.registerModules([AllCommunityModule]);
 const rowSelection = {
   mode: "multiRow",

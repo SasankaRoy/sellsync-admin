@@ -2,7 +2,14 @@ import React from "react";
 import { motion } from "framer-motion";
 import { CircleX, LogIn, LogOut, UtensilsCrossed } from "lucide-react";
 
-export const ClockInOut = ({clockInVarient,time,setCurrentStateOutter,setCurrentStateInner,currentStateOutter,currentStateInner}) => {
+export const ClockInOut = ({
+  clockInVarient,
+  time,
+  setCurrentStateOutter,
+  setCurrentStateInner,
+  currentStateOutter,
+  currentStateInner,
+}) => {
   return (
     <>
       <motion.div
@@ -72,23 +79,23 @@ export const ClockInOut = ({clockInVarient,time,setCurrentStateOutter,setCurrent
                 Clock In
               </button> */}
               <button className="w-full py-2 rounded-md text-[1.2dvw] cursor-pointer bg-(--button-color3) text-(--primary-color) font-semibold mainFont flex justify-center items-center gap-5">
-                  <span
-                    className="p-1.5 bg-(--primary-color) flex justify-center items-center rounded-full text-(--mainText-color)"
-                    size={15}
-                  >
-                    <UtensilsCrossed />
-                  </span>
-                  Break
-                </button>
-                <button className="w-full py-2 rounded-md text-[1.2dvw] cursor-pointer bg-(--Negative-color) text-(--primary-color) font-semibold mainFont flex justify-center items-center gap-5">
-                  <span
-                    className="p-1.5 bg-(--primary-color) flex justify-center items-center rounded-full text-(--mainText-color)"
-                    size={15}
-                  >
-                    <LogOut />
-                  </span>
-                  Clock Out
-                </button>
+                <span
+                  className="p-1.5 bg-(--primary-color) flex justify-center items-center rounded-full text-(--mainText-color)"
+                  size={15}
+                >
+                  <UtensilsCrossed />
+                </span>
+                Break
+              </button>
+              <button className="w-full py-2 rounded-md text-[1.2dvw] cursor-pointer bg-(--Negative-color) text-(--primary-color) font-semibold mainFont flex justify-center items-center gap-5">
+                <span
+                  className="p-1.5 bg-(--primary-color) flex justify-center items-center rounded-full text-(--mainText-color)"
+                  size={15}
+                >
+                  <LogOut />
+                </span>
+                Clock Out
+              </button>
             </div>
           </div>
         </motion.div>

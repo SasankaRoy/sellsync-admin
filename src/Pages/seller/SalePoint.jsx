@@ -187,7 +187,7 @@ export const SalePoint = () => {
                       <input
                         type="text"
                         placeholder="0.00"
-                        value={cur * 3}
+                        value={`$ ${cur}.00`}
                         className="w-full text-center outline-none text-[1dvw] mainFont font-semibold border-(--border-color) py-2 bg-(--secondary-color)/50 appearance-none"
                       />
                     </div>
@@ -200,7 +200,7 @@ export const SalePoint = () => {
                     </div>
                     <div className="border-r border-(--border-color) py-3  min-w-[8dvw] shrink-0 flex justify-center items-center">
                       <p className="text-[1dvw] font-semibold mainFont">
-                        {cur * 5}
+                       $ {cur * 5}.00
                       </p>
                     </div>
                     <div className="py-3  min-w-[8dvw] flex justify-center gap-3 items-center shrink-0">
@@ -294,7 +294,7 @@ export const SalePoint = () => {
                 Pay $ 100.00
               </button>
               <button className="w-1/2 py-4 text-[1.2dvw] mainFont font-semibold bg-(--Negative-color) text-(--primary-color) rounded-md">
-                Cancel
+                Void
               </button>
             </div>
             <div>
@@ -306,10 +306,10 @@ export const SalePoint = () => {
                   Payout
                 </button>
                 <button className="bg-(--button-color2) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md">
-                  Hold Order
+                  Suspend
                 </button>
                 <button className="bg-(--button-color1) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md">
-                  Last Order
+                  Recall
                 </button>
                 <button className="bg-(--button-color2) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md">
                   Reprint
@@ -318,7 +318,7 @@ export const SalePoint = () => {
                   No Sale
                 </button>
                 <button className="bg-(--button-color3) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md">
-                  Other
+                 Cancel
                 </button>
               </div>
             </div>

@@ -235,23 +235,23 @@ export const AllSalesReports = () => {
                 <input className="bg-(--secondary-color) px-3 py-1.5 rounded-sm" />
               </div>
               <div className="p-2 flex justify-start items-center gap-4 border border-(--border-color)/40 rounded">
-                <h3 className="mainFont font-semibold text-[1.2dvw]">50c :</h3>
+                <h3 className="mainFont font-semibold text-[1.2dvw]">50¢ :</h3>
                 <input className="bg-(--secondary-color) px-3 py-1.5 rounded-sm" />
               </div>
               <div className="p-2 flex justify-start items-center gap-4 border border-(--border-color)/40 rounded">
-                <h3 className="mainFont font-semibold text-[1.2dvw]">25c :</h3>
+                <h3 className="mainFont font-semibold text-[1.2dvw]">25¢ :</h3>
                 <input className="bg-(--secondary-color) px-3 py-1.5 rounded-sm" />
               </div>
               <div className="p-2 flex justify-start items-center gap-4 border border-(--border-color)/40 rounded">
-                <h3 className="mainFont font-semibold text-[1.2dvw]">10c :</h3>
+                <h3 className="mainFont font-semibold text-[1.2dvw]">10¢ :</h3>
                 <input className="bg-(--secondary-color) px-3 py-1.5 rounded-sm" />
               </div>
               <div className="p-2 flex justify-start items-center gap-4 border border-(--border-color)/40 rounded">
-                <h3 className="mainFont font-semibold text-[1.2dvw]">5c :</h3>
+                <h3 className="mainFont font-semibold text-[1.2dvw]">5¢ :</h3>
                 <input className="bg-(--secondary-color) px-3 py-1.5 rounded-sm" />
               </div>
               <div className="p-2 flex justify-start items-center gap-4 border border-(--border-color)/40 rounded">
-                <h3 className="mainFont font-semibold text-[1.2dvw]">1c :</h3>
+                <h3 className="mainFont font-semibold text-[1.2dvw]">1¢ :</h3>
                 <input className="bg-(--secondary-color) px-3 py-1.5 rounded-sm" />
               </div>
             </div>

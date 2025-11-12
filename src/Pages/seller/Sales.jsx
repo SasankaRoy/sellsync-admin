@@ -298,8 +298,20 @@ const Sales = () => {
           </div>
         </div>
       </div>
+
+      {/* <ViewSalesDetails /> */}
     </>
   );
 };
 
 export default Sales;
+
+const ViewSalesDetails = () => {
+  return (
+    <>
+      <div className="fixed top-0 left-0 w-full h-screen flex justify-center z-50 bg-red-400 items-center backdrop-blur-sm">
+        <div className="bg-(--primary-color) w-[50%] rounded-md p-5"></div>
+      </div>
+    </>
+  );
+};
