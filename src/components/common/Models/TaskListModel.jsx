@@ -14,7 +14,10 @@ export const TaskListModel = ({
 }) => {
   const router = useNavigate();
   const [tasks, setTasks] = useState([]);
+  const [displayedTasks, setDisplayedTasks] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(5);
+  const TASKS_PER_LOAD = 5;
 
   // Fetch tasks when the modal is opened
   useEffect(() => {
@@ -34,6 +37,8 @@ export const TaskListModel = ({
         // Filter tasks assigned to current employee or get all from response
         const taskList = response.data.results || response.data.tasks || [];
         setTasks(taskList);
+        setDisplayedTasks(taskList.slice(0, TASKS_PER_LOAD));
+        setVisibleCount(TASKS_PER_LOAD);
       }
     } catch (error) {
       console.log("Error fetching tasks:", error);
@@ -71,6 +76,12 @@ export const TaskListModel = ({
     } catch {
       return dateString;
     }
+  };
+
+  const handleLoadMore = () => {
+    const newCount = visibleCount + TASKS_PER_LOAD;
+    setVisibleCount(newCount);
+    setDisplayedTasks(tasks.slice(0, newCount));
   };
 
   return (
@@ -116,48 +127,66 @@ export const TaskListModel = ({
               <div className="flex justify-center items-center py-10">
                 <Loader className="animate-spin" size={40} />
               </div>
-            ) : tasks && tasks.length > 0 ? (
-              tasks.map((task) => (
-                <div
-                  key={task.id || task._id}
-                  className="w-full border border-(--border-color) rounded-md p-3 flex justify-between items-center"
-                >
-                  <div className="max-w-[70%] flex flex-col gap-2">
-                    <div className="flex justify-start items-center gap-5">
-                      <h5 className="text-[1.4dvw] font-semibold">
-                        {task.title || task.name || "Untitled Task"}
-                      </h5>
-                      <span className="text-[.9dvw] paraFont text-(--button-color2)">
-                        {formatDate(
-                          task.task_deadline || task.dueDate || task.due_date
-                        )}
-                      </span>
+            ) : displayedTasks && displayedTasks.length > 0 ? (
+              <>
+                {displayedTasks.map((task) => (
+                  <div
+                    key={task.id || task._id}
+                    className="w-full border border-(--border-color) rounded-md p-3 flex justify-between items-center"
+                  >
+                    <div className="max-w-[70%] flex flex-col gap-2">
+                      <div className="flex justify-start items-center gap-5">
+                        <h5 className="text-[1.4dvw] font-semibold">
+                          {task.title || task.name || "Untitled Task"}
+                        </h5>
+                        <span className="text-[.9dvw] paraFont text-(--button-color2)">
+                          {formatDate(
+                            task.task_deadline || task.dueDate || task.due_date
+                          )}
+                        </span>
+                      </div>
+                      <div className="flex justify-start items-center gap-3">
+                        <div
+                          className={`w-[1dvw] h-[1dvw] ${getStatusColor(
+                            task.task_status || task.status
+                          )} rounded-full`}
+                        />
+                        <p
+                          className={`text-[1dvw] paraFont font-medium ${getStatusTextColor(
+                            task.task_status || task.status
+                          )}`}
+                        >
+                          {task.task_status || task.status || "Pending"}
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex justify-start items-center gap-3">
-                      <div
-                        className={`w-[1dvw] h-[1dvw] ${getStatusColor(
-                          task.task_status || task.status
-                        )} rounded-full`}
-                      />
-                      <p
-                        className={`text-[1dvw] paraFont font-medium ${getStatusTextColor(
-                          task.task_status || task.status
-                        )}`}
-                      >
-                        {task.task_status || task.status || "Pending"}
+                    <button
+                      onClick={() => {
+                        router(`/seller/task-details/${task.id || task._id}`);
+                      }}
+                      className="mainFont font-semibold shrink-0 text-[.9dvw] py-3 cursor-pointer px-5 text-(--primary-color) bg-(--button-color1) rounded-md"
+                    >
+                      View Task
+                    </button>
+                  </div>
+                ))}
+                {visibleCount < tasks.length && (
+                  <button
+                    onClick={handleLoadMore}
+                    className="w-full mainFont font-semibold text-[.95dvw] py-3 cursor-pointer mt-4 text-(--primary-color) bg-(--button-color5) hover:opacity-90 rounded-md transition-all duration-300"
+                  >
+                    Load More ({tasks.length - visibleCount} remaining)
+                  </button>
+                )}
+                {visibleCount >= tasks.length &&
+                  tasks.length > TASKS_PER_LOAD && (
+                    <div className="text-center py-3">
+                      <p className="text-[.9dvw] text-gray-600 paraFont">
+                        All {tasks.length} tasks loaded
                       </p>
                     </div>
-                  </div>
-                  <button
-                    onClick={() => {
-                      router(`/seller/task-details/${task.id || task._id}`);
-                    }}
-                    className="mainFont font-semibold shrink-0 text-[.9dvw] py-3 cursor-pointer px-5 text-(--primary-color) bg-(--button-color1) rounded-md"
-                  >
-                    View Task
-                  </button>
-                </div>
-              ))
+                  )}
+              </>
             ) : (
               <div className="flex justify-center items-center py-10">
                 <p className="text-[1dvw] text-gray-500">No tasks available</p>

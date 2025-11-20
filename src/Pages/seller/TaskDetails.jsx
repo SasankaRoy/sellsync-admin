@@ -287,6 +287,7 @@ export const TaskDetails = () => {
               className="bg-[#F3F3F3] w-full font-semibold placeholder:text-[#333333]/40 text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] appearance-none rounded-xl py-1.5 px-3 disabled:pointer-events-none disabled:opacity-70 disabled:cursor-not-allowed"
               type="text"
               placeholder="enter comments.."
+              disabled={statusUpdate.toLowerCase() === "completed"}
               // value={newComment}
               // onChange={handleCommentChange}
               // onKeyUp={handleKeyPress}
@@ -297,6 +298,7 @@ export const TaskDetails = () => {
               type="button"
               // onClick={handleCommentSubmit}
               className="mainFont disabled:pointer-events-none disabled:opacity-70 disabled:cursor-not-allowed bg-[var(--button-color1)] text-white px-5 py-1.5 rounded-md cursor-pointer font-[500]"
+              disabled={statusUpdate.toLowerCase() === "completed"}
             >
               Send
             </button>

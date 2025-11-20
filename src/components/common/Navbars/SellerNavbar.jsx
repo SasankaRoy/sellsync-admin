@@ -6,13 +6,14 @@ import {
   ShieldUser,
   Tags,
 } from "lucide-react";
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import SellsyncLogo from "../../../assets/images/SellsyncLogo.png";
 import { AnimatePresence } from "framer-motion";
 import { TaskListModel } from "../Models/TaskListModel";
 import { ClockInOut } from "../Models/ClockInOut";
 import { useNavigate } from "react-router-dom";
 import { OffcanvasMenu } from "../Models/OffcanvasMenu";
+import { CustomerScreen } from "../Models/CustomerScreen";
 import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
@@ -163,6 +164,13 @@ export const SellerNavbar = ({ showPunchInModal, setShowPunchInModal }) => {
     minutes: "",
     seconds: "",
   });
+  const [workDuration, setWorkDuration] = useState({
+    hours: "0",
+    minutes: "0",
+    seconds: "0",
+  });
+  const [punchInTime, setPunchInTime] = useState(null);
+  const [currentTime, setCurrentTime] = useState(new Date());
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [currentStateOutter, setCurrentStateOutter] = useState(
@@ -182,6 +190,7 @@ export const SellerNavbar = ({ showPunchInModal, setShowPunchInModal }) => {
   const [showTaskListOutter, setShowTaskListOutter] = useState(
     TaskListVarient.OutterWrapper.initial
   );
+  const [showCustomerScreen, setShowCustomerScreen] = useState(false);
 
   const handleLogout = () => {
     // Remove all auth cookies
@@ -218,12 +227,32 @@ export const SellerNavbar = ({ showPunchInModal, setShowPunchInModal }) => {
             ? `0${seconds}`
             : seconds.toString(),
       });
+      setCurrentTime(date);
     }, 1000);
 
     return () => {
       clearInterval(getTimeInterval);
     };
   }, []);
+
+  // Calculate work duration when punch in time is set
+  useEffect(() => {
+    if (punchInTime) {
+      const timer = setInterval(() => {
+        const now = new Date();
+        const diff = now.getTime() - punchInTime.getTime();
+        const hours = Math.floor(diff / 3600000);
+        const minutes = Math.floor((diff % 3600000) / 60000);
+        const seconds = Math.floor((diff % 60000) / 1000);
+        setWorkDuration({
+          hours: hours.toString().padStart(2, "0"),
+          minutes: minutes.toString().padStart(2, "0"),
+          seconds: seconds.toString().padStart(2, "0"),
+        });
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [punchInTime]);
 
   return (
     <>
@@ -268,10 +297,17 @@ export const SellerNavbar = ({ showPunchInModal, setShowPunchInModal }) => {
                 <CalendarClock size={20} />
               </span>
               <p className="text-[.9dvw] font-semibold mainFont">
-                {time.hours} : {time.minutes}
+                {punchInTime
+                  ? `${workDuration.hours}:${workDuration.minutes}:${workDuration.seconds}`
+                  : `${time.hours}:${time.minutes}`}
               </p>
             </button>
-            <button className="flex justify-center items-center gap-3 border border-(--border-color) rounded-full px-4 py-2 cursor-pointer">
+            <button
+              onClick={() => {
+                setShowCustomerScreen(true);
+              }}
+              className="flex justify-center items-center gap-3 border border-(--border-color) rounded-full px-4 py-2 cursor-pointer hover:bg-(--button-color4)/10 transition-all duration-300"
+            >
               <span className="bg-(--button-color4) text-(--primary-color) rounded-full p-2 flex justify-center items-center">
                 <Airplay size={20} />
               </span>
@@ -314,6 +350,7 @@ export const SellerNavbar = ({ showPunchInModal, setShowPunchInModal }) => {
           setCurrentStateInner={setCurrentStateInner}
           currentStateOutter={currentStateOutter}
           currentStateInner={currentStateInner}
+          setPunchInTime={setPunchInTime}
         />
       </AnimatePresence>
       <AnimatePresence mode="popLayout">
@@ -332,6 +369,10 @@ export const SellerNavbar = ({ showPunchInModal, setShowPunchInModal }) => {
           showOffcanvasMenu={showOffcanvasMenu}
         />
       </AnimatePresence>
+      <CustomerScreen
+        setShowCustomerScreen={setShowCustomerScreen}
+        showCustomerScreen={showCustomerScreen}
+      />
     </>
   );
 };
