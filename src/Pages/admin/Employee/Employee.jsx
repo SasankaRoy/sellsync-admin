@@ -68,10 +68,13 @@ export const Employee = () => {
     data: rowData = [],
     isLoading,
     error,
+    isFetching
   } = useQuery({
     queryKey: ["employee_list"],
     queryFn: getEmployeeList,
   });
+
+  // console.log(isFetching,'isFetching',isLoading,'isLoading')
 
   const onEdit = (product) => {
     console.log("Edit button clicked");
