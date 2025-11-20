@@ -13,6 +13,9 @@ import { TaskListModel } from "../Models/TaskListModel";
 import { ClockInOut } from "../Models/ClockInOut";
 import { useNavigate } from "react-router-dom";
 import { OffcanvasMenu } from "../Models/OffcanvasMenu";
+import Cookies from "js-cookie";
+import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 
 const clockInVarient = {
   initial: {
@@ -154,21 +157,24 @@ const OffcanvasMenuVarients = {
   },
 };
 
-export const SellerNavbar = () => {
+export const SellerNavbar = ({ showPunchInModal, setShowPunchInModal }) => {
   const [time, setTime] = useState({
     hours: "",
     minutes: "",
     seconds: "",
   });
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [currentStateOutter, setCurrentStateOutter] = useState(
-    clockInVarient.OutterWrapper.initial
+    showPunchInModal
+      ? clockInVarient.OutterWrapper.inView
+      : clockInVarient.OutterWrapper.initial
   );
   const [showOffcanvasMenu, setShowOffcanvasMenu] = useState(
     OffcanvasMenuVarients.initial
   );
   const [currentStateInner, setCurrentStateInner] = useState(
-    clockInVarient.initial
+    showPunchInModal ? clockInVarient.inView : clockInVarient.initial
   );
   const [showTaskListInner, setShowTaskListInner] = useState(
     TaskListVarient.initial
@@ -176,6 +182,21 @@ export const SellerNavbar = () => {
   const [showTaskListOutter, setShowTaskListOutter] = useState(
     TaskListVarient.OutterWrapper.initial
   );
+
+  const handleLogout = () => {
+    // Remove all auth cookies
+    Cookies.remove("authToken", { path: "/" });
+    Cookies.remove("u_id", { path: "/" });
+    Cookies.remove("u_type", { path: "/" });
+
+    // Optionally dispatch logout action to Redux
+    // dispatch(clearUser()); // if you have a clearUser action
+
+    toast.success("Logged out successfully");
+
+    // Redirect to login page
+    navigate("/auth/login", { replace: true });
+  };
 
   useMemo(() => {
     const getTimeInterval = setInterval(() => {
@@ -264,7 +285,10 @@ export const SellerNavbar = () => {
               </span>
               <p className="text-[.9dvw] font-semibold mainFont">Get labels</p>
             </button>
-            <button className="flex justify-center items-center gap-3 border border-(--border-color) rounded-full px-4 py-2 cursor-pointer">
+            <button
+              onClick={handleLogout}
+              className="flex justify-center items-center gap-3 border border-(--border-color) rounded-full px-4 py-2 cursor-pointer hover:bg-(--Negative-color) hover:text-white transition-all duration-300"
+            >
               <span className="bg-(--Negative-color) text-(--primary-color) rounded-full p-2 flex justify-center items-center">
                 <ShieldUser size={20} />
               </span>

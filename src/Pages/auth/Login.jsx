@@ -13,10 +13,11 @@ import { CloudSun, LocateFixed, ShieldUser, SquareUser } from "lucide-react";
 
 export const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [loginType, setLoginType] = useState("admin"); // "admin" or "employee"
   const router = useNavigate();
   const dispatch = useDispatch();
   const [loginDetails, setLogoinDetails] = useState({
-    email: "",
+    identifier: "", // email or userId
     password: "",
   });
 
@@ -28,14 +29,37 @@ export const Login = () => {
   const loginHandler = async () => {
     setIsLoading(true);
     try {
-      const reqLogin = await axiosInstance.post("/api/v1/auth/login", {
-        email: loginDetails.email,
+      let loginPayload = {
         password: loginDetails.password,
-      });
+      };
 
-      // console.log(reqLogin.data);
+      // If employee login, use either email or userId
+      if (loginType === "employee") {
+        // Determine if identifier is email or userId
+        if (loginDetails.identifier.includes("@")) {
+          loginPayload.email = loginDetails.identifier;
+        } else {
+          loginPayload.log_userId = loginDetails.identifier;
+        }
+      } else {
+        // Admin login - use email
+        loginPayload.email = loginDetails.identifier;
+      }
+
+      // Use same endpoint for both admin and staff
+      const reqLogin = await axiosInstance.post(
+        "/api/v1/auth/login",
+        loginPayload
+      );
+
       if (reqLogin.status === 200 && reqLogin.data) {
         toast.success("Login Success");
+
+        // Store all cookies
+        const userType = reqLogin.data.user_type;
+        console.log("Login Response:", reqLogin.data);
+        console.log("User Type:", userType);
+
         Cookies.set("authToken", reqLogin.data.token, {
           expires: 1,
           path: "/",
@@ -44,18 +68,36 @@ export const Login = () => {
           expires: 1,
           path: "/",
         });
-        Cookies.set("u_type", reqLogin.data.user_type, {
+        Cookies.set("u_type", userType, {
           expires: 1,
           path: "/",
         });
-        router("/");
+
+        // Verify cookie was set
+        const savedUserType = Cookies.get("u_type");
+        console.log("Saved u_type cookie:", savedUserType);
+
+        // Route to appropriate dashboard based on user_type from API response
         setIsLoading(false);
+
+        // Add a small delay to ensure cookies are set before navigation
+        setTimeout(() => {
+          if (userType === "staff" || userType === "employee") {
+            console.log("Routing to /seller/dashboard");
+            router("/seller/dashboard");
+          } else {
+            console.log("Routing to /");
+            router("/");
+          }
+        }, 100);
       }
     } catch (error) {
       console.log(error.response);
       toast.error(
-        error?.response?.data?.error.password ||
-          error?.response?.data?.error.email ||
+        error?.response?.data?.error?.password ||
+          error?.response?.data?.error?.email ||
+          error?.response?.data?.error?.log_userId ||
+          error?.response?.data?.message ||
           "Login failed!"
       );
       setIsLoading(false);
@@ -107,20 +149,56 @@ export const Login = () => {
               </div>
 
               <div className="w-full flex flex-col gap-4 sm:gap-6">
+                {/* Login Type Toggle */}
+                <div className="flex gap-3 w-full">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setLoginType("admin");
+                      setLogoinDetails({ identifier: "", password: "" });
+                    }}
+                    className={`flex-1 py-2 px-3 rounded-full font-semibold text-sm transition-all duration-300 ${
+                      loginType === "admin"
+                        ? "bg-[var(--button-color2)] text-white"
+                        : "bg-[#F3F3F3] text-[#333333] border border-[#d4d4d4]"
+                    }`}
+                  >
+                    Admin Login
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setLoginType("employee");
+                      setLogoinDetails({ identifier: "", password: "" });
+                    }}
+                    className={`flex-1 py-2 px-3 rounded-full font-semibold text-sm transition-all duration-300 ${
+                      loginType === "employee"
+                        ? "bg-[var(--button-color2)] text-white"
+                        : "bg-[#F3F3F3] text-[#333333] border border-[#d4d4d4]"
+                    }`}
+                  >
+                    Employee Login
+                  </button>
+                </div>
+
                 <div className="flex flex-col gap-2 sm:gap-3">
                   <label
                     className="text-sm sm:text-base lg:text-[1dvw] font-[700]"
-                    htmlFor="email"
+                    htmlFor="identifier"
                   >
-                    Email
+                    {loginType === "employee" ? "Email or User ID" : "Email"}
                   </label>
                   <input
-                    type="email"
-                    id="email"
-                    name="email"
+                    type="text"
+                    id="identifier"
+                    name="identifier"
                     onChange={handleOnChange}
-                    value={loginDetails.email}
-                    placeholder="Enter your email"
+                    value={loginDetails.identifier}
+                    placeholder={
+                      loginType === "employee"
+                        ? "Enter email or user ID..."
+                        : "Enter your email"
+                    }
                     className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-2 px-3"
                   />
                 </div>
@@ -144,9 +222,8 @@ export const Login = () => {
                 <button
                   disabled={
                     isLoading ||
-                    !Object.keys(loginDetails).every(
-                      (item) => loginDetails[item]
-                    )
+                    !loginDetails.identifier ||
+                    !loginDetails.password
                   }
                   onClick={loginHandler}
                   className="text-white mt-3 flex justify-center items-center py-3 bg-[var(--button-color2)] font-semibold paraFont w-full rounded-full cursor-pointer border border-[var(--button-color2)] hover:text-[var(--button-color2)] hover:bg-white transition-all duration-300 ease-linear disabled:pointer-events-none disabled:cursor-not-allowed disabled:animate-pulse text-sm sm:text-base"

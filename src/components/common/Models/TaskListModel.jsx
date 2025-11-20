@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { CircleX } from "lucide-react";
+import { CircleX, Loader } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../../../utils/axios-interceptor";
+import { toast } from "react-toastify";
 
 export const TaskListModel = ({
   varient,
@@ -11,6 +13,66 @@ export const TaskListModel = ({
   showTaskListOutter,
 }) => {
   const router = useNavigate();
+  const [tasks, setTasks] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Fetch tasks when the modal is opened
+  useEffect(() => {
+    if (showTaskListOutter?.opacity === 1) {
+      fetchTasks();
+    }
+  }, [showTaskListOutter]);
+
+  const fetchTasks = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axiosInstance.post("/api/v1/user/task-list", {
+        page: 1,
+        limit: 100,
+      });
+      if (response.status === 200 && response.data) {
+        // Filter tasks assigned to current employee or get all from response
+        const taskList = response.data.results || response.data.tasks || [];
+        setTasks(taskList);
+      }
+    } catch (error) {
+      console.log("Error fetching tasks:", error);
+      toast.error(error?.response?.data?.message || "Failed to fetch tasks");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const getStatusColor = (status) => {
+    if (!status) return "bg-gray-300";
+    const statusLower = status.toLowerCase();
+    if (statusLower === "completed" || statusLower === "done")
+      return "bg-green-500";
+    if (statusLower === "pending") return "bg-yellow-500";
+    if (statusLower === "overdue") return "bg-red-500";
+    return "bg-blue-500";
+  };
+
+  const getStatusTextColor = (status) => {
+    if (!status) return "text-gray-600";
+    const statusLower = status.toLowerCase();
+    if (statusLower === "completed" || statusLower === "done")
+      return "text-green-600";
+    if (statusLower === "pending") return "text-yellow-600";
+    if (statusLower === "overdue") return "text-red-600";
+    return "text-blue-600";
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString("en-GB");
+    } catch {
+      return dateString;
+    }
+  };
+
   return (
     <>
       <motion.div
@@ -43,55 +105,64 @@ export const TaskListModel = ({
               onClick={(e) => {
                 e.stopPropagation();
                 setShowTaskListInner(varient.exit);
-                setShowTaskListInner(varient.OutterWrapper.exit);
+                setShowTaskListOutter(varient.OutterWrapper.exit);
               }}
             >
               <CircleX size={30} />
             </button>
           </div>
           <div className="h-full flex flex-col gap-2 overflow-y-auto my-4 py-4 px-2">
-            {[1, 2,].map((cur, id) => (
-              <div
-                key={id}
-                className="w-full border border-(--border-color) rounded-md p-3 flex justify-between items-center"
-              >
-                <div className="max-w-[70%] flex flex-col gap-2">
-                  <div className="flex justify-start items-center gap-5">
-                    <h5 className="text-[1.4dvw] font-semibold">
-                      Task title {id + 1}......
-                    </h5>
-                    <span className="text-[.9dvw] paraFont text-(--button-color2)">
-                      20.11.2025
-                    </span>
-                  </div>
-                  <div className="flex justify-start items-center gap-3">
-                    <div
-                      className={`w-[1dvw] h-[1dvw] ${
-                        id % 2 == 0
-                          ? "bg-(--activeTab-color) "
-                          : "bg-(--Negative-color)"
-                      }  rounded-full`}
-                    />
-                    <p
-                      style={{
-                        color: id % 2 === 0 ? "red" : "green",
-                      }}
-                      className="text-[1dvw] paraFont font-medium text-(--activeTab-color)"
-                    >
-                      Task Status
-                    </p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => {
-                    router(`/seller/task-details/${id}`);
-                  }}
-                  className="mainFont font-semibold shrink-0 text-[.9dvw] py-3 cursor-pointer px-5 text-(--primary-color) bg-(--button-color1) rounded-md"
-                >
-                  View Task
-                </button>
+            {isLoading ? (
+              <div className="flex justify-center items-center py-10">
+                <Loader className="animate-spin" size={40} />
               </div>
-            ))}
+            ) : tasks && tasks.length > 0 ? (
+              tasks.map((task) => (
+                <div
+                  key={task.id || task._id}
+                  className="w-full border border-(--border-color) rounded-md p-3 flex justify-between items-center"
+                >
+                  <div className="max-w-[70%] flex flex-col gap-2">
+                    <div className="flex justify-start items-center gap-5">
+                      <h5 className="text-[1.4dvw] font-semibold">
+                        {task.title || task.name || "Untitled Task"}
+                      </h5>
+                      <span className="text-[.9dvw] paraFont text-(--button-color2)">
+                        {formatDate(
+                          task.task_deadline || task.dueDate || task.due_date
+                        )}
+                      </span>
+                    </div>
+                    <div className="flex justify-start items-center gap-3">
+                      <div
+                        className={`w-[1dvw] h-[1dvw] ${getStatusColor(
+                          task.task_status || task.status
+                        )} rounded-full`}
+                      />
+                      <p
+                        className={`text-[1dvw] paraFont font-medium ${getStatusTextColor(
+                          task.task_status || task.status
+                        )}`}
+                      >
+                        {task.task_status || task.status || "Pending"}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => {
+                      router(`/seller/task-details/${task.id || task._id}`);
+                    }}
+                    className="mainFont font-semibold shrink-0 text-[.9dvw] py-3 cursor-pointer px-5 text-(--primary-color) bg-(--button-color1) rounded-md"
+                  >
+                    View Task
+                  </button>
+                </div>
+              ))
+            ) : (
+              <div className="flex justify-center items-center py-10">
+                <p className="text-[1dvw] text-gray-500">No tasks available</p>
+              </div>
+            )}
           </div>
         </motion.div>
       </motion.div>

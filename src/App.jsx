@@ -1,4 +1,3 @@
-
 import { BrowserRouter, Route, Router, Routes } from "react-router-dom";
 import { AdminDashboard } from "./Pages/admin/AdminDashboard/AdminDashboard";
 import { Sale } from "./Pages/admin/sales/Sale";
@@ -39,7 +38,7 @@ import { ExpenseList } from "./Pages/admin/Daily/Expense";
 import RouteGuard from "./Pages/auth/RouteGuard";
 import { Loyaltyreports } from "./Pages/admin/Loyalty/Loyaltyreports";
 import { Groups } from "./Pages/admin/Groups/Groups";
-import  SellerDashboard  from "./Pages/seller/SellerDashboard";
+import SellerDashboard from "./Pages/seller/SellerDashboard";
 import Sales from "./Pages/seller/Sales";
 
 import InventorySeller from "./Pages/seller/Inventory";
@@ -48,29 +47,19 @@ import { SalePoint } from "./Pages/seller/SalePoint";
 import { TaskDetails } from "./Pages/seller/TaskDetails";
 import { AllSalesReports } from "./Pages/seller/AllSalesReports";
 
-
-
-
-
-
 function App() {
   return (
     <>
       <BrowserRouter>
-
         <Routes>
-
-
           <Route element={<RouteGuard />}>
             <Route path="/" element={<AdminDashboard />} />
             <Route path="/admin/sale" element={<Sale />} />
             <Route path="/admin/inventory/overview" element={<Inventory />} />
             <Route path="/admin/inventory/item-lists" element={<ItemsList />} />
-            <Route path="/admin/inventory/category" element={<Category />}
-            
-      />
-             <Route path="/admin/inventory/groups" element={<Groups />} />
-             
+            <Route path="/admin/inventory/category" element={<Category />} />
+            <Route path="/admin/inventory/groups" element={<Groups />} />
+
             <Route path="/admin/inventory/suppliers" element={<Supplier />} />
             <Route path="/admin/inventory/receive" element={<Receive />} />
             <Route path="/admin/inventory/order" element={<Orders />} />
@@ -131,14 +120,12 @@ function App() {
             <Route path="/admin/rewards" element={<Rewards />} />
             <Route path="/admin/payroll" element={<Payroll />} />
             <Route path="/admin/item-report/:id" element={<ItemReport />} />
-          </Route>
-          
-          <Route>
+
+            {/* Seller Routes - Protected by RouteGuard */}
             <Route path="/seller/dashboard" element={<SalePoint />} />
             <Route path="/seller/task-details/:id" element={<TaskDetails />} />
-            {/* <Route path="/seller/dashboard" element={<SellerDashboard />} /> */}
-            <Route path="/seller/sales-report"   element={<Sales />}/>
-            <Route path="/seller/reports"   element={<AllSalesReports />}/>
+            <Route path="/seller/sales-report" element={<Sales />} />
+            <Route path="/seller/reports" element={<AllSalesReports />} />
             <Route path="/seller/inventory" element={<InventorySeller />} />
             <Route path="/seller/settings" element={<SettingSeller />} />
           </Route>
@@ -147,7 +134,6 @@ function App() {
           <Route path="/auth/register" element={<Register />} />
         </Routes>
       </BrowserRouter>
-
     </>
   );
 }

@@ -14,7 +14,7 @@ import { Overviewcards } from "../../../components/common/Overviewcards/Overview
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import { DeleteModel } from "../../../components/common/Models/DeleteMode";
-import { CircleX, Edit, Trash, Download,PlusIcon } from "lucide-react";
+import { CircleX, Edit, Trash, Download, PlusIcon } from "lucide-react";
 import { toast } from "react-toastify";
 import axiosInstance from "../../../utils/axios-interceptor";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -102,10 +102,10 @@ export const Employee = () => {
     //{ field: "id" },
     { field: "name" },
     { field: "email" },
-    { 
-      field: "log_userId", 
+    {
+      field: "log_userId",
       headerName: "User ID",
-      valueGetter: (params) => params.data.log_userId || 'N/A'
+      valueGetter: (params) => params.data.log_userId || "N/A",
     },
     { field: "dob" },
     { field: "mobile" },
@@ -176,13 +176,12 @@ export const Employee = () => {
                     >
                       Add Employee <PluseIcon className="w-4 h-4" />
                     </button>
-                    <button 
+                    <button
                       onClick={handleImportCSV}
                       className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
                     >
                       Import CSV <PluseIcon className="w-4 h-4" />
                     </button>
-                    
                   </div>
                 </div>
               </div>
@@ -247,12 +246,12 @@ export const Employee = () => {
                     <button className="flex justify-between items-center gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC]">
                       Filter <FilterIcon />
                     </button>*/}
-                     <button className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-1.5 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
+                    <button className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-1.5 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
                       Export CSV <Download size={16} />
-                      </button>
-                    
+                    </button>
+
                     <button
-                     onClick={async () => {
+                      onClick={async () => {
                         setIsDeleting(true);
                         const result = bulkDelete.mutate({
                           path: "api/v1/user/bulk-employee-delete",
@@ -260,9 +259,8 @@ export const Employee = () => {
                             employeeIds: bulkDeleteIds,
                           },
                           queryKey: "employee_list",
-                          isDeleting:setIsDeleting
+                          isDeleting: setIsDeleting,
                         });
-                       
                       }}
                       className="disabled:cursor-not-allowed  disabled:opacity-30 cursor-pointer disabled:pointer-events-none"
                       disabled={bulkDeleteIds.length === 0 ? true : false}
@@ -296,7 +294,7 @@ export const Employee = () => {
                 </div>
               </div>
             </div>
-          </Layout> 
+          </Layout>
         </>
       )}
 
@@ -545,7 +543,7 @@ const EditModel = ({ forState, setEditUserModel, productData }) => {
                   type="text"
                   placeholder="Enter user ID..."
                   name="log_userId"
-                  value={userInfo.log_userId || ''}
+                  value={userInfo.log_userId || ""}
                   onChange={handleOnChange}
                   required
                 />

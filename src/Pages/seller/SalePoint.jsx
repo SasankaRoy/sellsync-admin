@@ -40,9 +40,20 @@ const itemListVarient = {
 export const SalePoint = () => {
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
   const [showShortcuts, setShowShortcuts] = useState(itemListVarient.initial);
+  const [showPunchInModal, setShowPunchInModal] = useState(false);
 
   const [layoutName, setLayoutName] = useState("default");
   const [input, setInput] = useState("");
+
+  // Show punch in modal on first page load
+  useEffect(() => {
+    // Check if user has already punched in today
+    const hasPunchedIn = sessionStorage.getItem("hasPunchedIn");
+    if (!hasPunchedIn) {
+      setShowPunchInModal(true);
+      sessionStorage.setItem("hasPunchedIn", "true");
+    }
+  }, []);
 
   const onChange = (input) => {
     console.log("Input changed", input);
@@ -72,7 +83,10 @@ export const SalePoint = () => {
 
   return (
     <>
-      <SellerNavbar />
+      <SellerNavbar
+        showPunchInModal={showPunchInModal}
+        setShowPunchInModal={setShowPunchInModal}
+      />
       <div
         onClick={(e) => {
           e.stopPropagation();
@@ -200,7 +214,7 @@ export const SalePoint = () => {
                     </div>
                     <div className="border-r border-(--border-color) py-3  min-w-[8dvw] shrink-0 flex justify-center items-center">
                       <p className="text-[1dvw] font-semibold mainFont">
-                       $ {cur * 5}.00
+                        $ {cur * 5}.00
                       </p>
                     </div>
                     <div className="py-3  min-w-[8dvw] flex justify-center gap-3 items-center shrink-0">
@@ -318,7 +332,7 @@ export const SalePoint = () => {
                   No Sale
                 </button>
                 <button className="bg-(--button-color3) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md">
-                 Cancel
+                  Cancel
                 </button>
               </div>
             </div>
