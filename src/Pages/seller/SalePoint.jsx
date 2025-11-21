@@ -92,14 +92,14 @@ export const SalePoint = () => {
           e.stopPropagation();
           setIsKeyboardOpen(false);
         }}
-        className="flex justify-center items-center gap-4 h-[88vh]"
+        className="flex flex-col lg:flex-row justify-start items-stretch lg:items-start gap-0 lg:gap-4 h-[calc(100vh-70px)] sm:h-[calc(100vh-80px)] overflow-hidden"
       >
-        <div className="flex-1  h-full relative overflow-hidden">
-          <div className=" flex flex-col h-full gap-5 justify-center items-center w-full  p-4">
-            <div className="flex justify-between items-center w-full">
-              <div className="w-[60%] flex-shrink-0 flex justify-center items-center gap-4 bg-(--secondary-color) p-2 rounded-full">
-                <button className="p-2 flex justify-center items-center cursor-pointer">
-                  <Search size={20} />
+        <div className="flex-1 flex flex-col relative overflow-hidden">
+          <div className="flex flex-col gap-1 lg:gap-2 justify-start items-center w-full p-2 sm:p-4">
+            <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center w-full gap-3 sm:gap-4">
+              <div className="flex-1 sm:flex-shrink-0 w-full sm:w-[50%] flex justify-center items-center gap-2 sm:gap-4 bg-(--secondary-color) p-2 rounded-full">
+                <button className="p-1.5 sm:p-2 flex justify-center items-center cursor-pointer shrink-0">
+                  <Search size={18} className="sm:w-5 sm:h-5" />
                 </button>
                 <input
                   type="text"
@@ -109,37 +109,36 @@ export const SalePoint = () => {
                   onClick={(e) => {
                     e.stopPropagation();
                   }}
-                  // onBlur={() => setIsKeyboardOpen(false)}
                   value={input}
                   onChange={(e) => onChange(e.target.value)}
-                  placeholder="Search items, categories,Stocks etc..."
-                  className="w-full outline-none text-[1dvw] mainFont"
+                  placeholder="Search items..."
+                  className="w-full outline-none text-xs sm:text-sm lg:text-[1dvw] mainFont"
                 />
               </div>
-              <div className="flex justify-center items-center gap-3">
-                <button className="flex cursor-pointer  justify-center items-center gap-1.5 mainFont font-semibold border border-(--border-color) rounded-full px-5 py-1.5">
-                  <span className="p-1 flex justify-center bg-(--button-color1) items-center text-(--primary-color) rounded-full">
-                    <Plus size={20} />
+              <div className="flex justify-center items-center gap-2 sm:gap-3 w-full sm:w-auto flex-wrap">
+                <button className="flex flex-1 sm:flex-none cursor-pointer justify-center items-center gap-1 mainFont font-semibold text-xs sm:text-sm border border-(--border-color) rounded-full px-3 sm:px-5 py-1.5">
+                  <span className="p-1 flex justify-center bg-(--button-color1) items-center text-(--primary-color) rounded-full shrink-0">
+                    <Plus size={16} className="sm:w-5 sm:h-5" />
                   </span>
-                  Add Item
+                  <span className="hidden sm:inline">Add Item</span>
                 </button>
                 <button
                   onClick={() => {
                     setShowShortcuts(itemListVarient.inView);
                   }}
-                  className="flex cursor-pointer  justify-center items-center gap-1.5 mainFont font-semibold border border-(--border-color) rounded-full px-5 py-1.5"
+                  className="flex flex-1 sm:flex-none cursor-pointer justify-center items-center gap-1 mainFont font-semibold text-xs sm:text-sm border border-(--border-color) rounded-full px-3 sm:px-5 py-1.5"
                 >
-                  <span className="p-1 flex justify-center bg-(--button-color1) items-center text-(--primary-color) rounded-full">
-                    <Logs size={18} />
+                  <span className="p-1 flex justify-center bg-(--button-color1) items-center text-(--primary-color) rounded-full shrink-0">
+                    <Logs size={16} className="sm:w-4.5 sm:h-4.5" />
                   </span>
-                  Shortcuts
+                  <span className="hidden sm:inline">Shortcuts</span>
                 </button>
               </div>
             </div>
-            <div className="w-full h-full overflow-y-hidden flex flex-col">
-              {/* list header start */}
-              <div className="flex justify-center items-center  bg-(--secondary-color) ">
-                <div className="border-r border-(--border-color) py-3  min-w-[5dvw] flex justify-center items-center">
+            <div className="w-full flex-1 overflow-y-hidden flex flex-col gap-0">
+              {/* list header start - hidden on mobile */}
+              <div className="hidden lg:flex justify-center items-center bg-(--secondary-color) ">
+                <div className="border-r border-(--border-color) py-3 min-w-[5dvw] flex justify-center items-center">
                   <p className="text-[1dvw] font-semibold mainFont">Qty.</p>
                 </div>
                 <div className="border-r border-(--border-color) py-3 w-full flex justify-center items-center">
@@ -147,83 +146,145 @@ export const SalePoint = () => {
                     Item Name
                   </p>
                 </div>
-                <div className="border-r border-(--border-color) py-3  min-w-[8dvw] shrink-0 flex justify-center items-center">
+                <div className="border-r border-(--border-color) py-3 min-w-[8dvw] shrink-0 flex justify-center items-center">
                   <p className="text-[1dvw] font-semibold mainFont">Price</p>
                 </div>
-                <div className="border-r border-(--border-color) py-3  min-w-[8dvw] shrink-0 flex justify-center items-center">
+                <div className="border-r border-(--border-color) py-3 min-w-[8dvw] shrink-0 flex justify-center items-center">
                   <p className="text-[1dvw] font-semibold mainFont">Tax Type</p>
                 </div>
-                <div className="border-r border-(--border-color) py-3  min-w-[8dvw] shrink-0 flex justify-center items-center">
+                <div className="border-r border-(--border-color) py-3 min-w-[8dvw] shrink-0 flex justify-center items-center">
                   <p className="text-[1dvw] font-semibold mainFont">Total</p>
                 </div>
-                <div className="py-3  min-w-[8dvw] flex justify-center items-center shrink-0">
+                <div className="py-3 min-w-[8dvw] flex justify-center items-center shrink-0">
                   <p className="text-[1dvw] font-semibold mainFont">Actions</p>
                 </div>
               </div>
               {/* list header end */}
 
               {/* item list start */}
-              <div className="flex flex-col gap-2 scrollCustom h-[100%] overflow-y-auto justify-start items-center  mt-1.5">
+              <div className="flex flex-col gap-2 scrollCustom h-[100%] overflow-y-auto justify-start items-center px-2 sm:px-0">
                 {[1, 2, 3, 4].map((cur, id) => (
                   <div
                     key={id}
-                    className={`flex justify-center items-center w-full ${
+                    className={`flex flex-col lg:flex-row justify-center items-start lg:items-center w-full rounded-lg lg:rounded-none ${
                       id % 2 === 0
                         ? "bg-(--secondary-color)/70"
                         : "bg-transparent"
-                    }`}
+                    } p-3 lg:p-0`}
                   >
-                    <div className="border-r border-(--border-color) py-3 px-1  min-w-[5dvw] flex justify-center items-center">
-                      <p className="text-[1dvw] font-semibold mainFont">
-                        {cur}
-                      </p>
-                    </div>
-                    <div className="border-r  border-(--border-color) py-3 w-full flex justify-between gap-3 px-1 items-center">
-                      <div className="flex justify-start items-center gap-3">
-                        <div className="w-8 h-8 shrink-0 rounded-full overflow-hidden">
-                          <img
-                            src={ProductImg1}
-                            alt="product"
-                            className="w-full h-full object-cover"
+                    {/* Mobile Card Layout */}
+                    <div className="lg:hidden w-full space-y-3">
+                      <div className="flex justify-between items-start gap-3">
+                        <div className="flex justify-start items-center gap-2 flex-1">
+                          <div className="w-10 h-10 shrink-0 rounded-full overflow-hidden">
+                            <img
+                              src={ProductImg1}
+                              alt="product"
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs sm:text-sm font-semibold mainFont line-clamp-2">
+                              Budwiser Magnum 750ML
+                            </p>
+                            <p className="text-xs text-(--button-color2) paraFont font-medium">
+                              Add ons
+                            </p>
+                          </div>
+                        </div>
+                        <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded whitespace-nowrap">
+                          Qty: {cur}
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <p className="text-xs text-gray-500 mb-1">Price</p>
+                          <input
+                            type="text"
+                            placeholder="0.00"
+                            value={`$ ${cur}.00`}
+                            className="w-full text-xs outline-none text-center font-semibold border border-(--border-color) py-1.5 px-2 bg-(--secondary-color)/50 rounded appearance-none"
                           />
                         </div>
-                        <p className="text-[1dvw] font-semibold mainFont line-clamp-1">
-                          Budwiser Magnum 750ML
+                        <div>
+                          <p className="text-xs text-gray-500 mb-1">Tax</p>
+                          <select className="w-full text-xs outline-none text-center font-semibold border border-(--border-color) py-1.5 px-2 bg-(--secondary-color)/50 rounded appearance-none">
+                            <option>No Tax</option>
+                            <option>Low</option>
+                            <option>High</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div className="flex justify-between items-center pt-2 border-t border-(--border-color)/30">
+                        <div>
+                          <p className="text-xs text-gray-500">Total</p>
+                          <p className="text-sm font-semibold">${cur * 5}.00</p>
+                        </div>
+                        <div className="flex justify-center gap-2 items-center">
+                          <button className="bg-(--button-color1) text-(--primary-color) rounded-full p-1.5 flex justify-center items-center cursor-pointer">
+                            <Plus size={16} />
+                          </button>
+                          <button className="bg-(--Negative-color) text-(--primary-color) rounded-full p-1.5 flex justify-center items-center cursor-pointer">
+                            <Minus size={16} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Desktop Table Layout */}
+                    <div className="hidden lg:flex justify-center items-center w-full">
+                      <div className="border-r border-(--border-color) py-3 px-1 min-w-[5dvw] flex justify-center items-center">
+                        <p className="text-[1dvw] font-semibold mainFont">
+                          {cur}
                         </p>
                       </div>
-                      <div className="shrink-0">
-                        <p className="text-[.9dvw] text-(--button-color2) paraFont font-medium">
-                          Add ons
+                      <div className="border-r border-(--border-color) py-3 w-full flex justify-between gap-3 px-1 items-center">
+                        <div className="flex justify-start items-center gap-3">
+                          <div className="w-8 h-8 shrink-0 rounded-full overflow-hidden">
+                            <img
+                              src={ProductImg1}
+                              alt="product"
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <p className="text-[1dvw] font-semibold mainFont line-clamp-1">
+                            Budwiser Magnum 750ML
+                          </p>
+                        </div>
+                        <div className="shrink-0">
+                          <p className="text-[.9dvw] text-(--button-color2) paraFont font-medium">
+                            Add ons
+                          </p>
+                        </div>
+                      </div>
+                      <div className="border-r border-(--border-color) py-3 min-w-[8dvw] w-[8dvw] shrink-0 flex justify-center items-center px-2">
+                        <input
+                          type="text"
+                          placeholder="0.00"
+                          value={`$ ${cur}.00`}
+                          className="w-full text-center outline-none text-[1dvw] mainFont font-semibold border-(--border-color) py-2 bg-(--secondary-color)/50 appearance-none"
+                        />
+                      </div>
+                      <div className="border-r border-(--border-color) py-3 min-w-[8dvw] w-[8dvw] shrink-0 flex justify-center items-center px-2">
+                        <select className="w-full text-center outline-none text-[1dvw] font-semibold mainFont border-(--border-color) py-2 bg-(--secondary-color)/50 rounded-md appearance-none">
+                          <option>No Tax</option>
+                          <option>Low Tax</option>
+                          <option>High Tax</option>
+                        </select>
+                      </div>
+                      <div className="border-r border-(--border-color) py-3 min-w-[8dvw] shrink-0 flex justify-center items-center">
+                        <p className="text-[1dvw] font-semibold mainFont">
+                          $ {cur * 5}.00
                         </p>
                       </div>
-                    </div>
-                    <div className="border-r border-(--border-color) py-3  min-w-[8dvw] w-[8dvw] shrink-0 flex justify-center items-center px-2">
-                      <input
-                        type="text"
-                        placeholder="0.00"
-                        value={`$ ${cur}.00`}
-                        className="w-full text-center outline-none text-[1dvw] mainFont font-semibold border-(--border-color) py-2 bg-(--secondary-color)/50 appearance-none"
-                      />
-                    </div>
-                    <div className="border-r border-(--border-color) py-3  min-w-[8dvw] w-[8dvw] shrink-0 flex justify-center items-center px-2">
-                      <select className="w-full text-center outline-none text-[1dvw] font-semibold mainFont  border-(--border-color) py-2 bg-(--secondary-color)/50 rounded-md appearance-none">
-                        <option>No Tax</option>
-                        <option>Low Tax</option>
-                        <option>High Tax</option>
-                      </select>
-                    </div>
-                    <div className="border-r border-(--border-color) py-3  min-w-[8dvw] shrink-0 flex justify-center items-center">
-                      <p className="text-[1dvw] font-semibold mainFont">
-                        $ {cur * 5}.00
-                      </p>
-                    </div>
-                    <div className="py-3  min-w-[8dvw] flex justify-center gap-3 items-center shrink-0">
-                      <button className="bg-(--button-color1) text-(--primary-color) rounded-full p-2 flex justify-center items-center cursor-pointer">
-                        <Plus />
-                      </button>
-                      <button className="bg-(--Negative-color) text-(--primary-color) rounded-full p-2 flex justify-center items-center cursor-pointer">
-                        <Minus />
-                      </button>
+                      <div className="py-3 min-w-[8dvw] flex justify-center gap-3 items-center shrink-0">
+                        <button className="bg-(--button-color1) text-(--primary-color) rounded-full p-2 flex justify-center items-center cursor-pointer">
+                          <Plus />
+                        </button>
+                        <button className="bg-(--Negative-color) text-(--primary-color) rounded-full p-2 flex justify-center items-center cursor-pointer">
+                          <Minus />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -239,99 +300,96 @@ export const SalePoint = () => {
             />
           </AnimatePresence>
         </div>
-        <div className="w-[33dvw] border-l border-(--border-color)/50 flex flex-col justify-between bg-(--secondary-color)/40 h-full p-4">
+        <div className="w-full lg:w-[33dvw] border-t lg:border-t-0 lg:border-l border-(--border-color)/50 flex flex-col justify-between bg-(--secondary-color)/40 p-3 sm:p-4 max-h-[50vh] lg:max-h-full lg:h-full">
           <div>
             <div className="border-b flex justify-between items-center border-(--border-color) pb-4">
-              <h3 className="text-[2dvw] font-semibold mainFont">
+              <h3 className="text-lg sm:text-xl lg:text-[2dvw] font-semibold mainFont">
                 Bill Details
               </h3>
-              <div>
-                <lable className="mainFont font-semibold text-[.9dvw]">
-                  Discount Type -
+              <div className="flex items-center gap-2">
+                <lable className="mainFont font-semibold text-xs sm:text-sm lg:text-[.9dvw] whitespace-nowrap">
+                  Discount -
                 </lable>
                 <MaterialUISwitch />
               </div>
             </div>
-            <div className="p-5 flex flex-col gap-4">
+            <div className="p-3 sm:p-5 flex flex-col gap-3 sm:gap-4">
               <div className="flex justify-between items-center">
-                <p className="text-[1.2dvw] mainFont font-semibold text-(--paraText-color)">
+                <p className="text-xs sm:text-sm lg:text-[1.2dvw] mainFont font-semibold text-(--paraText-color)">
                   Total Items :
                 </p>
-                <strong className="text-[1.5dvw] paraFont font-semibold">
+                <strong className="text-sm sm:text-base lg:text-[1.5dvw] paraFont font-semibold">
                   5
                 </strong>
               </div>
               <div className="flex justify-between items-center">
-                <p className="text-[1.2dvw] mainFont font-semibold text-(--paraText-color)">
+                <p className="text-xs sm:text-sm lg:text-[1.2dvw] mainFont font-semibold text-(--paraText-color)">
                   SubTotal :
                 </p>
-                <strong className="text-[1.5dvw] paraFont font-semibold">
+                <strong className="text-sm sm:text-base lg:text-[1.5dvw] paraFont font-semibold">
                   $ 100
                 </strong>
               </div>
               <div className="flex justify-between items-center">
-                <p className="text-[1.2dvw] mainFont font-semibold text-(--paraText-color)">
+                <p className="text-xs sm:text-sm lg:text-[1.2dvw] mainFont font-semibold text-(--paraText-color)">
                   Tax :
                 </p>
-                <strong className="text-[1.5dvw] paraFont font-semibold text-(--Negative-color)">
+                <strong className="text-sm sm:text-base lg:text-[1.5dvw] paraFont font-semibold text-(--Negative-color)">
                   $ 2.50
                 </strong>
               </div>
 
-              <div className="flex justify-between items-center  border-b border-(--border-color) pb-4">
-                <p className="text-[1.2dvw] mainFont font-semibold text-(--paraText-color)">
+              <div className="flex justify-between items-center border-b border-(--border-color) pb-4">
+                <p className="text-xs sm:text-sm lg:text-[1.2dvw] mainFont font-semibold text-(--paraText-color)">
                   Discount ($) :
                 </p>
-                {/* <strong className="text-[1.5dvw] paraFont font-semibold">
-                  $ 2.50
-                </strong> */}
                 <input
                   type="text"
                   placeholder="$"
                   value={"$ 2.50"}
-                  className="w-[20%] text-center outline-none text-[1.5dvw] mainFont font-semibold border-(--border-color) py-2 bg-transparent paraFont appearance-none border-b "
+                  className="w-[40%] sm:w-[30%] text-center outline-none text-xs sm:text-sm lg:text-[1.5dvw] mainFont font-semibold border-(--border-color) py-1 sm:py-2 bg-transparent paraFont appearance-none border-b "
                 />
               </div>
               <div className="flex justify-between items-center">
-                <p className="text-[1.6dvw] mainFont font-semibold text-(--paraText-color)">
+                <p className="text-sm sm:text-base lg:text-[1.6dvw] mainFont font-semibold text-(--paraText-color)">
                   Total :
                 </p>
-                <strong className="text-[2dvw] paraFont font-semibold text-(--Positive-color)">
+                <strong className="text-base sm:text-lg lg:text-[2dvw] paraFont font-semibold text-(--Positive-color)">
                   $ 100.00
                 </strong>
               </div>
             </div>
           </div>
-          <div className="flex flex-col gap-3">
-            <div className="flex justify-between items-center gap-3">
-              <button className="w-1/2 py-4 text-[1.2dvw] mainFont font-semibold bg-(--button-color5) text-(--primary-color) rounded-md">
-                Pay $ 100.00
+          <div className="flex flex-col gap-2 sm:gap-3">
+            <div className="flex justify-between items-center gap-2 sm:gap-3">
+              <button className="flex-1 py-2 sm:py-3 lg:py-4 text-xs sm:text-sm lg:text-[1.2dvw] mainFont font-semibold bg-(--button-color5) text-(--primary-color) rounded-md">
+                Pay
               </button>
-              <button className="w-1/2 py-4 text-[1.2dvw] mainFont font-semibold bg-(--Negative-color) text-(--primary-color) rounded-md">
+              <button className="flex-1 py-2 sm:py-3 lg:py-4 text-xs sm:text-sm lg:text-[1.2dvw] mainFont font-semibold bg-(--Negative-color) text-(--primary-color) rounded-md">
                 Void
               </button>
             </div>
-            <div>
-              <h3 className="font-medium mainFont text-(--button-color4) text-[1.2dvw]">
+            <div className="hidden lg:block">
+              <h3 className="font-medium mainFont text-(--button-color4) text-[1.2dvw] mb-2">
                 Options
               </h3>
-              <div className="my-2 grid grid-cols-3 gap-2">
-                <button className="bg-(--button-color5) text-(--primary-color) py-3 mainFont font-semibold rounded-md">
+              <div className="grid grid-cols-3 gap-2">
+                <button className="bg-(--button-color5) text-(--primary-color) py-3 mainFont font-semibold rounded-md text-xs">
                   Payout
                 </button>
-                <button className="bg-(--button-color2) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md">
+                <button className="bg-(--button-color2) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md text-xs">
                   Suspend
                 </button>
-                <button className="bg-(--button-color1) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md">
+                <button className="bg-(--button-color1) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md text-xs">
                   Recall
                 </button>
-                <button className="bg-(--button-color2) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md">
+                <button className="bg-(--button-color2) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md text-xs">
                   Reprint
                 </button>
-                <button className="bg-(--Negative-color) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md">
+                <button className="bg-(--Negative-color) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md text-xs">
                   No Sale
                 </button>
-                <button className="bg-(--button-color3) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md">
+                <button className="bg-(--button-color3) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md text-xs">
                   Cancel
                 </button>
               </div>

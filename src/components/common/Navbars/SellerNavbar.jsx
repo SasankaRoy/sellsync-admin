@@ -13,7 +13,6 @@ import { TaskListModel } from "../Models/TaskListModel";
 import { ClockInOut } from "../Models/ClockInOut";
 import { useNavigate } from "react-router-dom";
 import { OffcanvasMenu } from "../Models/OffcanvasMenu";
-import { CustomerScreen } from "../Models/CustomerScreen";
 import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
@@ -190,7 +189,6 @@ export const SellerNavbar = ({ showPunchInModal, setShowPunchInModal }) => {
   const [showTaskListOutter, setShowTaskListOutter] = useState(
     TaskListVarient.OutterWrapper.initial
   );
-  const [showCustomerScreen, setShowCustomerScreen] = useState(false);
 
   const handleLogout = () => {
     // Remove all auth cookies
@@ -236,6 +234,7 @@ export const SellerNavbar = ({ showPunchInModal, setShowPunchInModal }) => {
   }, []);
 
   // Calculate work duration when punch in time is set
+
   useEffect(() => {
     if (punchInTime) {
       const timer = setInterval(() => {
@@ -272,18 +271,20 @@ export const SellerNavbar = ({ showPunchInModal, setShowPunchInModal }) => {
               />
             </div>
           </div>
-          <div className="flex justify-center items-center gap-6">
+          <div className="hidden md:flex flex-wrap justify-center items-center gap-2 sm:gap-6">
             <button
               onClick={() => {
                 setShowTaskListInner(TaskListVarient.inView);
                 setShowTaskListOutter(TaskListVarient.OutterWrapper.inView);
               }}
-              className="flex justify-center items-center gap-3 border border-(--border-color) rounded-full px-4 py-2 cursor-pointer"
+              className="flex justify-center items-center gap-3 border border-(--border-color) rounded-full px-2 py-1 sm:px-4 sm:py-2 cursor-pointer"
             >
               <span className="bg-(--button-color5) text-(--primary-color) rounded-full p-2 flex justify-center items-center">
                 <ClipboardList size={20} />
               </span>
-              <p className="text-[.9dvw] font-semibold mainFont">My Tasks</p>
+              <p className="text-[.9dvw] font-semibold mainFont hidden sm:block">
+                My Tasks
+              </p>
             </button>
             <button
               onClick={() => {
@@ -291,7 +292,7 @@ export const SellerNavbar = ({ showPunchInModal, setShowPunchInModal }) => {
                 setCurrentStateInner(clockInVarient.inView);
                 console.log("clicked");
               }}
-              className="flex justify-center items-center gap-3 border border-(--border-color) rounded-full px-4 py-2 cursor-pointer"
+              className="flex justify-center items-center gap-3 border border-(--border-color) rounded-full px-2 py-1 sm:px-4 sm:py-2 cursor-pointer"
             >
               <span className="bg-(--button-color1) text-(--primary-color) rounded-full p-2 flex justify-center items-center">
                 <CalendarClock size={20} />
@@ -304,31 +305,39 @@ export const SellerNavbar = ({ showPunchInModal, setShowPunchInModal }) => {
             </button>
             <button
               onClick={() => {
-                setShowCustomerScreen(true);
+                window.open(
+                  "/seller/customer-screen",
+                  "_blank",
+                  "width=600,height=700,scrollbars=yes,resizable=yes"
+                );
               }}
-              className="flex justify-center items-center gap-3 border border-(--border-color) rounded-full px-4 py-2 cursor-pointer hover:bg-(--button-color4)/10 transition-all duration-300"
+              className="flex justify-center items-center gap-3 border border-(--border-color) rounded-full px-2 py-1 sm:px-4 sm:py-2 cursor-pointer hover:bg-(--button-color4)/10 transition-all duration-300"
             >
               <span className="bg-(--button-color4) text-(--primary-color) rounded-full p-2 flex justify-center items-center">
                 <Airplay size={20} />
               </span>
-              <p className="text-[.9dvw] font-semibold mainFont">
+              <p className="text-[.9dvw] font-semibold mainFont hidden sm:block">
                 Customer Screen
               </p>
             </button>
-            <button className="flex justify-center items-center gap-3 border border-(--border-color) rounded-full px-4 py-2 cursor-pointer">
+            <button className="flex justify-center items-center gap-3 border border-(--border-color) rounded-full px-2 py-1 sm:px-4 sm:py-2 cursor-pointer">
               <span className="bg-(--button-color1) text-(--primary-color) rounded-full p-2 flex justify-center items-center">
                 <Tags size={20} />
               </span>
-              <p className="text-[.9dvw] font-semibold mainFont">Get labels</p>
+              <p className="text-[.9dvw] font-semibold mainFont hidden sm:block">
+                Get labels
+              </p>
             </button>
             <button
               onClick={handleLogout}
-              className="flex justify-center items-center gap-3 border border-(--border-color) rounded-full px-4 py-2 cursor-pointer hover:bg-(--Negative-color) hover:text-white transition-all duration-300"
+              className="flex justify-center items-center gap-3 border border-(--border-color) rounded-full px-2 py-1 sm:px-4 sm:py-2 cursor-pointer hover:bg-(--Negative-color) hover:text-white transition-all duration-300"
             >
               <span className="bg-(--Negative-color) text-(--primary-color) rounded-full p-2 flex justify-center items-center">
                 <ShieldUser size={20} />
               </span>
-              <p className="text-[.9dvw] font-semibold mainFont">Logout</p>
+              <p className="text-[.9dvw] font-semibold mainFont hidden sm:block">
+                Logout
+              </p>
             </button>
             <button
               onClick={() => {
@@ -337,6 +346,34 @@ export const SellerNavbar = ({ showPunchInModal, setShowPunchInModal }) => {
               className="p-2 border border-(--border-color)/40 rounded-full cursor-pointer hover:bg-(--button-color1) hover:text-(--primary-color) transition-all duration-300 ease-in-out hover:border(--button-color1)"
             >
               <Logs />
+            </button>
+          </div>
+
+          {/* Mobile Menu Button */}
+          <div className="md:hidden flex items-center gap-2">
+            {/* Clock In/Out Button for mobile */}
+            <button
+              onClick={() => {
+                setCurrentStateOutter(clockInVarient.OutterWrapper.inView);
+                setCurrentStateInner(clockInVarient.inView);
+              }}
+              className="flex justify-center items-center border border-(--border-color) rounded-full p-2 cursor-pointer"
+              title="Clock In/Out"
+            >
+              <span className="bg-(--button-color1) text-(--primary-color) rounded-full p-2 flex justify-center items-center">
+                <CalendarClock size={18} />
+              </span>
+            </button>
+
+            {/* Mobile Menu Toggle */}
+            <button
+              onClick={() => {
+                setShowOffcanvasMenu(OffcanvasMenuVarients.inView);
+              }}
+              className="p-2 border border-(--border-color)/40 rounded-full cursor-pointer hover:bg-(--button-color1) hover:text-(--primary-color) transition-all duration-300"
+              title="Menu"
+            >
+              <Logs size={20} />
             </button>
           </div>
         </div>
@@ -367,12 +404,11 @@ export const SellerNavbar = ({ showPunchInModal, setShowPunchInModal }) => {
           varient={OffcanvasMenuVarients}
           setShowOffcanvasMenu={setShowOffcanvasMenu}
           showOffcanvasMenu={showOffcanvasMenu}
+          setShowTaskListInner={setShowTaskListInner}
+          setShowTaskListOutter={setShowTaskListOutter}
+          TaskListVarient={TaskListVarient}
         />
       </AnimatePresence>
-      <CustomerScreen
-        setShowCustomerScreen={setShowCustomerScreen}
-        showCustomerScreen={showCustomerScreen}
-      />
     </>
   );
 };

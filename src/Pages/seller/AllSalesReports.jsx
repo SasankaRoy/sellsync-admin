@@ -1,6 +1,13 @@
 import React, { useMemo, useState } from "react";
 import { SellerNavbar } from "../../components/common/Navbars/SellerNavbar";
-import { ArrowLeft, BadgeDollarSign, ChartBarStacked, CircleOff, PiggyBank, TicketX } from "lucide-react";
+import {
+  ArrowLeft,
+  BadgeDollarSign,
+  ChartBarStacked,
+  CircleOff,
+  PiggyBank,
+  TicketX,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Overviewcards } from "../../components/common/Overviewcards/Overviewcards";
 
@@ -126,153 +133,134 @@ export const AllSalesReports = () => {
   return (
     <>
       <SellerNavbar />
-      <div className="w-full p-6 overflow-y-auto h-[88vh]">
-        <div className="w-full flex items-center gap-4">
+      <div className="w-full p-3 sm:p-4 lg:p-6 overflow-y-auto h-[calc(100vh-70px)] sm:h-[calc(100vh-80px)]">
+        <div className="w-full flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 mb-4">
           <button
             onClick={handleGoBack}
-            className="flex items-center mainFont font-semibold border border-(--border-color) px-4 py-1.5 rounded-full gap-2 text-[1dvw] text-blue-600 hover:text-blue-800 cursor-pointer"
+            className="flex items-center mainFont font-semibold border border-(--border-color) px-3 sm:px-4 py-1.5 rounded-full gap-2 text-xs sm:text-sm lg:text-[1dvw] text-blue-600 hover:text-blue-800 cursor-pointer"
           >
-            <span className="p-1.5 flex justify-center items-center bg-(--button-color1) text-white rounded-full">
-              <ArrowLeft size={20} />
+            <span className="p-1.5 flex justify-center items-center bg-(--button-color1) text-white rounded-full shrink-0">
+              <ArrowLeft size={16} className="sm:w-5 sm:h-5" />
             </span>
-            Back to Tasks
+            <span className="hidden sm:inline">Back to Tasks</span>
           </button>
-          <h3 className="text-[1.3dvw] font-[500]">Reports</h3>
+          <h3 className="text-sm sm:text-base lg:text-[1.3dvw] font-[500]">
+            Reports
+          </h3>
         </div>
 
-        <div className=" my-4 grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 lg:gap-4 mb-4 sm:mb-6">
           <Overviewcards
             cardTitle="Total Sale"
             cardValue="20"
             percent="Up"
-            className="lg:scale-95 lg:hover:scale-100 transition-transform duration-200"
-            icon={<BadgeDollarSign size={80} color="green" />}
+            className="text-xs sm:text-sm lg:text-base"
+            icon={<BadgeDollarSign size={40} color="green" />}
           />
           <Overviewcards
             cardTitle="Refunded"
             cardValue="4"
             percent="Down"
-            className="lg:scale-95 lg:hover:scale-100 transition-transform duration-200"
-            icon={<TicketX  size={80} color="red" />}
+            className="text-xs sm:text-sm lg:text-base"
+            icon={<TicketX size={40} color="red" />}
           />
           <Overviewcards
             cardTitle="Canceled"
             cardValue="2"
             percent="Up"
-            className="lg:scale-95 lg:hover:scale-100 transition-transform duration-200"
-            icon={<CircleOff  size={80} color="red" />}
+            className="text-xs sm:text-sm lg:text-base"
+            icon={<CircleOff size={40} color="red" />}
           />
           <Overviewcards
             cardTitle="Taking"
             cardValue="20"
             percent="Up"
-            className="lg:scale-95 lg:hover:scale-100 transition-transform duration-200"
-            icon={<ChartBarStacked size={80} color="blue" />}
+            className="text-xs sm:text-sm lg:text-base"
+            icon={<ChartBarStacked size={40} color="blue" />}
           />
         </div>
 
-
-        <div className="flex justify-center gap-4">
-          <div className=" flex-1">
+        <div className="flex flex-col lg:flex-row justify-center gap-3 sm:gap-4">
+          <div className="flex-1 min-h-[300px] lg:min-h-[500px]">
             <AgGridReact
               rowData={rowData}
               columnDefs={colDefs}
-              // loading={loading}
               defaultColDef={defaultColDef}
               pagination={true}
-              // rowSelection={rowSelection}
+              paginationPageSize={5}
               onSelectionChanged={(event) => console.log("Row Selected!")}
               onCellValueChanged={(event) =>
                 console.log(`New Cell Value: ${event.value}`)
               }
-              className="w-full h-full text-sm"
+              className="w-full h-full text-xs sm:text-sm ag-theme-quartz"
+              domLayout="autoHeight"
             />
           </div>
-          <div className=" flex-1 p-2">
-            <div className="border-b flex justify-start items-center gap-4 border-(--border-color) p-3">
-              <PiggyBank size={40} />
-              <h3 className="text-[1.7dvw] font-semibold">
+          <div className="w-full lg:w-1/3 lg:flex-shrink-0 p-2 sm:p-3 lg:p-0">
+            <div className="border-b flex justify-start items-center gap-2 sm:gap-4 border-(--border-color) p-2 sm:p-3">
+              <PiggyBank size={28} className="sm:w-10 sm:h-10" />
+              <h3 className="text-sm sm:text-base lg:text-[1.7dvw] font-semibold">
                 Cash Reconciliation
               </h3>
             </div>
 
-            <div className="flex justify-start items-center my-4 gap-5 px-6">
-              <p className="text-[1.1dvw] font-semibold paraFont">
+            <div className="flex justify-start items-center my-2 sm:my-4 gap-3 sm:gap-5 px-3 sm:px-6">
+              <p className="text-xs sm:text-sm lg:text-[1.1dvw] font-semibold paraFont whitespace-nowrap">
                 Starting Cash:
               </p>
               <input
-                className="bg-(--secondary-color) text-[1.3dvw] px-3 py-1.5 outline-none border-none"
+                className="bg-(--secondary-color) text-xs sm:text-sm lg:text-[1.3dvw] px-2 sm:px-3 py-1 sm:py-1.5 outline-none border-none w-24 sm:w-32"
                 placeholder="1000"
               />
             </div>
-            <div className="grid grid-cols-2 gap-4 border-b border-(--border-color) px-3 py-5">
-              <div className="p-2 flex justify-start items-center gap-4 border border-(--border-color)/40 rounded">
-                <h3 className="mainFont font-semibold text-[1.2dvw]">$100 :</h3>
-                <input className="bg-(--secondary-color) px-3 py-1.5 rounded-sm" />
-              </div>
-              <div className="p-2 flex justify-start items-center gap-4 border border-(--border-color)/40 rounded">
-                <h3 className="mainFont font-semibold text-[1.2dvw]">$50 :</h3>
-                <input className="bg-(--secondary-color) px-3 py-1.5 rounded-sm" />
-              </div>
-              <div className="p-2 flex justify-start items-center gap-4 border border-(--border-color)/40 rounded">
-                <h3 className="mainFont font-semibold text-[1.2dvw]">$20 :</h3>
-                <input className="bg-(--secondary-color) px-3 py-1.5 rounded-sm" />
-              </div>
-              <div className="p-2 flex justify-start items-center gap-4 border border-(--border-color)/40 rounded">
-                <h3 className="mainFont font-semibold text-[1.2dvw]">$10 :</h3>
-                <input className="bg-(--secondary-color) px-3 py-1.5 rounded-sm" />
-              </div>
-              <div className="p-2 flex justify-start items-center gap-4 border border-(--border-color)/40 rounded">
-                <h3 className="mainFont font-semibold text-[1.2dvw]">$5 :</h3>
-                <input className="bg-(--secondary-color) px-3 py-1.5 rounded-sm" />
-              </div>
-              <div className="p-2 flex justify-start items-center gap-4 border border-(--border-color)/40 rounded">
-                <h3 className="mainFont font-semibold text-[1.2dvw]">$2 :</h3>
-                <input className="bg-(--secondary-color) px-3 py-1.5 rounded-sm" />
-              </div>
-              <div className="p-2 flex justify-start items-center gap-4 border border-(--border-color)/40 rounded">
-                <h3 className="mainFont font-semibold text-[1.2dvw]">$1 :</h3>
-                <input className="bg-(--secondary-color) px-3 py-1.5 rounded-sm" />
-              </div>
-              <div className="p-2 flex justify-start items-center gap-4 border border-(--border-color)/40 rounded">
-                <h3 className="mainFont font-semibold text-[1.2dvw]">50¢ :</h3>
-                <input className="bg-(--secondary-color) px-3 py-1.5 rounded-sm" />
-              </div>
-              <div className="p-2 flex justify-start items-center gap-4 border border-(--border-color)/40 rounded">
-                <h3 className="mainFont font-semibold text-[1.2dvw]">25¢ :</h3>
-                <input className="bg-(--secondary-color) px-3 py-1.5 rounded-sm" />
-              </div>
-              <div className="p-2 flex justify-start items-center gap-4 border border-(--border-color)/40 rounded">
-                <h3 className="mainFont font-semibold text-[1.2dvw]">10¢ :</h3>
-                <input className="bg-(--secondary-color) px-3 py-1.5 rounded-sm" />
-              </div>
-              <div className="p-2 flex justify-start items-center gap-4 border border-(--border-color)/40 rounded">
-                <h3 className="mainFont font-semibold text-[1.2dvw]">5¢ :</h3>
-                <input className="bg-(--secondary-color) px-3 py-1.5 rounded-sm" />
-              </div>
-              <div className="p-2 flex justify-start items-center gap-4 border border-(--border-color)/40 rounded">
-                <h3 className="mainFont font-semibold text-[1.2dvw]">1¢ :</h3>
-                <input className="bg-(--secondary-color) px-3 py-1.5 rounded-sm" />
-              </div>
+            <div className="grid grid-cols-2 gap-2 sm:gap-3 border-b border-(--border-color) px-2 sm:px-3 py-3 sm:py-5 max-h-[250px] overflow-y-auto">
+              {[
+                { label: "$100" },
+                { label: "$50" },
+                { label: "$20" },
+                { label: "$10" },
+                { label: "$5" },
+                { label: "$2" },
+                { label: "$1" },
+                { label: "50¢" },
+                { label: "25¢" },
+                { label: "10¢" },
+                { label: "5¢" },
+                { label: "1¢" },
+              ].map((item, index) => (
+                <div
+                  key={index}
+                  className="p-1.5 sm:p-2 flex justify-start items-center gap-2 border border-(--border-color)/40 rounded"
+                >
+                  <h3 className="mainFont font-semibold text-xs sm:text-sm lg:text-[1.2dvw]">
+                    {item.label}:
+                  </h3>
+                  <input className="bg-(--secondary-color) px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-xs sm:text-sm" />
+                </div>
+              ))}
             </div>
-            <div className="flex justify-between items-center w-full my-4">
-              <div className="flex justify-start items-center gap-5 px-6">
-                <p className="text-[1.1dvw] font-semibold paraFont">Total:</p>
+            <div className="flex flex-col sm:flex-row justify-between items-center w-full my-2 sm:my-4 gap-2">
+              <div className="flex justify-start items-center gap-2 sm:gap-5 px-2 sm:px-6 w-full sm:w-auto">
+                <p className="text-xs sm:text-sm lg:text-[1.1dvw] font-semibold paraFont whitespace-nowrap">
+                  Total:
+                </p>
                 <input
-                  className="bg-(--secondary-color) text-[1.3dvw] px-3 py-1.5 outline-none border-none"
+                  className="bg-(--secondary-color) text-xs sm:text-sm lg:text-[1.3dvw] px-2 sm:px-3 py-1 sm:py-1.5 outline-none border-none w-24 sm:w-32"
                   placeholder="1000"
                 />
               </div>
-              <div className="flex justify-start items-center gap-5 px-6">
-                <p className="text-[1.1dvw] font-semibold paraFont"> Sale:</p>
+              <div className="flex justify-start items-center gap-2 sm:gap-5 px-2 sm:px-6 w-full sm:w-auto">
+                <p className="text-xs sm:text-sm lg:text-[1.1dvw] font-semibold paraFont whitespace-nowrap">
+                  Sale:
+                </p>
                 <input
-                  className="bg-(--secondary-color) text-[1.3dvw] px-3 py-1.5 outline-none border-none"
+                  className="bg-(--secondary-color) text-xs sm:text-sm lg:text-[1.3dvw] px-2 sm:px-3 py-1 sm:py-1.5 outline-none border-none w-24 sm:w-32"
                   placeholder="1000"
                 />
               </div>
             </div>
-            <div className="flex justify-center items-center">
-              <button className="bg-(--button-color1) text-(--primary-color) mainFont font-semibold w-[80%] text-[1.3dvw] py-3 rounded-md cursor-pointer">
+            <div className="flex justify-center items-center mt-2 sm:mt-3">
+              <button className="bg-(--button-color1) text-(--primary-color) mainFont font-semibold w-[85%] text-xs sm:text-sm lg:text-[1.3dvw] py-2 sm:py-3 rounded-md cursor-pointer">
                 Log Off
               </button>
             </div>

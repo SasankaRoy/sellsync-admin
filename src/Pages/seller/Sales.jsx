@@ -233,19 +233,19 @@ const Sales = () => {
   return (
     <>
       <SellerNavbar />
-      <div className="w-full p-8">
-        <div className="w-full">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-lg sm:text-xl md:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
+      <div className="w-full p-3 sm:p-4 lg:p-8 overflow-y-auto h-[calc(100vh-70px)] sm:h-[calc(100vh-80px)]">
+        <div className="w-full mb-4 sm:mb-6">
+          <div className="flex justify-between items-center mb-4 sm:mb-6">
+            <h3 className="text-lg sm:text-xl lg:text-2xl xl:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
               Sales Reports
             </h3>
           </div>
         </div>
 
-        <div className="border shadow-md border-(--border-color) rounded-md p-4">
-          <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center py-1.5 shrink-0 gap-3 sm:gap-0">
-            <div className="flex justify-between sm:justify-center items-center gap-3 w-full sm:w-auto">
-              <select className="font-[500] border-b border-(--border-color) mainFont px-4 p-2 outline-none text-sm lg:text-base">
+        <div className="border shadow-md border-(--border-color) rounded-md p-3 sm:p-4">
+          <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center py-2 sm:py-1.5 shrink-0 gap-3 sm:gap-0 flex-wrap">
+            <div className="flex justify-between sm:justify-center items-center gap-2 sm:gap-3 w-full sm:w-auto">
+              <select className="font-[500] border-b border-(--border-color) mainFont px-2 sm:px-4 py-1 sm:p-2 outline-none text-xs sm:text-sm lg:text-base">
                 <option>All</option>
                 <option>Order</option>
                 <option>Completed</option>
@@ -253,53 +253,47 @@ const Sales = () => {
                 <option>Refunded</option>
                 <option>No Sale</option>
               </select>
-              <div className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-[1.8dvw] lg:w-[1.8dvw] bg-[#F8A61B] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem] sm:min-w-[1.75rem] sm:min-h-[1.75rem] md:min-w-[2rem] md:min-h-[2rem]">
-                <p className="text-xs sm:text-xs md:text-sm lg:text-[1dvw] font-[500] text-white">
+              <div className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7 lg:h-[1.8dvw] lg:w-[1.8dvw] bg-[#F8A61B] rounded-full flex justify-center items-center min-w-[1.25rem] min-h-[1.25rem] sm:min-w-[1.5rem] sm:min-h-[1.5rem]">
+                <p className="text-xs sm:text-xs md:text-sm lg:text-[0.8dvw] font-[500] text-white">
                   2
                 </p>
               </div>
             </div>
-            <div className="flex gap-2 sm:gap-4 justify-between items-center">
-              {/*<button className="flex justify-between items-center gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-[600]">
-                  Sort <SortIcon />
-                </button>
-                <button className="flex justify-between items-center gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC]">
-                  Filter <FilterIcon />
-                </button>*/}
-              <select className="font-[500] border-b border-(--border-color) mainFont px-4 p-2 outline-none text-sm lg:text-base">
+            <div className="flex gap-2 sm:gap-3 lg:gap-4 justify-between items-center flex-wrap w-full sm:w-auto">
+              <select className="font-[500] border-b border-(--border-color) mainFont px-2 sm:px-4 py-1 sm:p-2 outline-none text-xs sm:text-sm lg:text-base flex-1 sm:flex-none">
                 <option>Today</option>
                 <option>Last Day</option>
                 <option>Last 3 Day</option>
                 <option>Last 7 Day</option>
                 <option>Last 30 Day</option>
               </select>
-              <button className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-1.5 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
-                Export CSV <Download size={16} />
+              <button className="px-3 sm:px-4 lg:px-5 py-1.5 sm:py-1 lg:py-1.5 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-1 sm:gap-2 lg:gap-4 text-white mainFont font-[500] cursor-pointer text-xs sm:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear whitespace-nowrap">
+                Export CSV <Download size={14} className="sm:w-4 sm:h-4" />
               </button>
-              <button className="cursor-pointer">
-                <DeleteIcon className="w-5 h-5" />
+              <button className="cursor-pointer p-1.5 sm:p-2">
+                <DeleteIcon className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             </div>
           </div>
-          <div className="w-full h-[60vh] mt-5 ">
+
+          {/* Table Container with responsive height */}
+          <div className="w-full mt-4 sm:mt-5 max-h-[50vh] sm:max-h-[60vh]">
             <AgGridReact
               rowData={rowData}
               columnDefs={colDefs}
-              // loading={loading}
               defaultColDef={defaultColDef}
               pagination={true}
-              // rowSelection={rowSelection}
+              paginationPageSize={5}
               onSelectionChanged={(event) => console.log("Row Selected!")}
               onCellValueChanged={(event) =>
                 console.log(`New Cell Value: ${event.value}`)
               }
-              className="w-full h-full text-sm"
+              className="w-full h-full text-xs sm:text-sm ag-theme-quartz"
+              domLayout="autoHeight"
             />
           </div>
         </div>
       </div>
-
-      {/* <ViewSalesDetails /> */}
     </>
   );
 };

@@ -46,6 +46,7 @@ import SettingSeller from "./Pages/seller/setting";
 import { SalePoint } from "./Pages/seller/SalePoint";
 import { TaskDetails } from "./Pages/seller/TaskDetails";
 import { AllSalesReports } from "./Pages/seller/AllSalesReports";
+import CustomerScreenPage from "./Pages/seller/CustomerScreenPage";
 
 function App() {
   return (
@@ -128,6 +129,10 @@ function App() {
             <Route path="/seller/reports" element={<AllSalesReports />} />
             <Route path="/seller/inventory" element={<InventorySeller />} />
             <Route path="/seller/settings" element={<SettingSeller />} />
+            <Route
+              path="/seller/customer-screen"
+              element={<CustomerScreenPage />}
+            />
           </Route>
 
           <Route path="/auth/login" element={<Login />} />
