@@ -9,6 +9,7 @@ export const ClockInOut = ({
   time,
   setCurrentStateOutter,
   setCurrentStateInner,
+  
   currentStateOutter,
   currentStateInner,
   setPunchInTime,
@@ -19,6 +20,7 @@ export const ClockInOut = ({
   const [localPunchInTime, setLocalPunchInTime] = useState(null); // Store punch in time
   const [punchOutTime, setPunchOutTime] = useState(null); // Store punch out time
   const [breakStartTime, setBreakStartTime] = useState(null); // Store break start time
+  const [totalBreakTime, setTotalBreakTime] = useState(0); // Total break time in milliseconds
   const [currentTime, setCurrentTime] = useState(new Date()); // For updating display time
 
   // Update current time every second to show real-time duration
@@ -28,33 +30,6 @@ export const ClockInOut = ({
     }, 1000);
     return () => clearInterval(interval);
   }, []);
-
-  // Auto-close modal after punch out (3 seconds)
-  useEffect(() => {
-    if (punchStatus === "completed") {
-      const timer = setTimeout(() => {
-        setCurrentStateOutter(clockInVarient.OutterWrapper.exit);
-        setCurrentStateInner(clockInVarient.exit);
-        setPunchStatus(null);
-        setLocalPunchInTime(null);
-        setPunchOutTime(null);
-        setNotes("");
-        setBreakStartTime(null);
-        // Reset work duration in navbar
-        if (setPunchInTime) {
-          setPunchInTime(null);
-        }
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [punchStatus]);
-
-  // Fetch work status when modal opens
-  useEffect(() => {
-    if (currentStateOutter?.opacity === 1 && !punchStatus) {
-      fetchWorkStatus();
-    }
-  }, [currentStateOutter]);
 
   const fetchWorkStatus = async () => {
     try {
@@ -190,6 +165,11 @@ export const ClockInOut = ({
       });
       if (response.status === 200) {
         toast.success("Break Ended - Back to Work");
+        // Calculate break duration and add to total
+        if (breakStartTime) {
+          const breakDuration = new Date().getTime() - breakStartTime.getTime();
+          setTotalBreakTime((prev) => prev + breakDuration);
+        }
         setPunchStatus("punched-in");
         setBreakStartTime(null);
       }
@@ -278,14 +258,14 @@ export const ClockInOut = ({
                   |
                 </p>
                 <h3 className="text-[1.5dvw] font-semibold">
-                  {punchStatus === "punched-in" && punchInTime
-                    ? `${punchInTime
+                  {punchStatus === "punched-in" && localPunchInTime
+                    ? `${localPunchInTime
                         .getHours()
                         .toString()
-                        .padStart(2, "0")}:${punchInTime
+                        .padStart(2, "0")}:${localPunchInTime
                         .getMinutes()
                         .toString()
-                        .padStart(2, "0")}:${punchInTime
+                        .padStart(2, "0")}:${localPunchInTime
                         .getSeconds()
                         .toString()
                         .padStart(2, "0")}`
@@ -349,10 +329,10 @@ export const ClockInOut = ({
                       {`${localPunchInTime
                         .getHours()
                         .toString()
-                        .padStart(2, "0")}:${punchInTime
+                        .padStart(2, "0")}:${localPunchInTime
                         .getMinutes()
                         .toString()
-                        .padStart(2, "0")}:${punchInTime
+                        .padStart(2, "0")}:${localPunchInTime
                         .getSeconds()
                         .toString()
                         .padStart(2, "0")}`}
@@ -382,7 +362,9 @@ export const ClockInOut = ({
                     <h4 className="font-bold text-[1.3dvw] text-green-700">
                       {(() => {
                         const diff =
-                          punchOutTime.getTime() - localPunchInTime.getTime();
+                          punchOutTime.getTime() -
+                          localPunchInTime.getTime() -
+                          totalBreakTime;
                         const hours = Math.floor(diff / 3600000);
                         const minutes = Math.floor((diff % 3600000) / 60000);
                         const seconds = Math.floor((diff % 60000) / 1000);
@@ -390,6 +372,25 @@ export const ClockInOut = ({
                       })()}
                     </h4>
                   </div>
+                  {totalBreakTime > 0 && (
+                    <div className="border-t border-green-400 pt-2 flex justify-between items-center">
+                      <p className="text-[1.1dvw] paraFont font-normal text-green-600">
+                        Total Break Time
+                      </p>
+                      <h5 className="font-semibold text-[1.2dvw] text-green-600">
+                        {(() => {
+                          const hours = Math.floor(totalBreakTime / 3600000);
+                          const minutes = Math.floor(
+                            (totalBreakTime % 3600000) / 60000
+                          );
+                          const seconds = Math.floor(
+                            (totalBreakTime % 60000) / 1000
+                          );
+                          return `${hours}h ${minutes}m ${seconds}s`;
+                        })()}
+                      </h5>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -505,6 +506,7 @@ export const ClockInOut = ({
                     setPunchOutTime(null);
                     setNotes("");
                     setBreakStartTime(null);
+                    setTotalBreakTime(0);
                   }}
                   className="w-full py-3 rounded-md text-[1.3dvw] cursor-pointer bg-(--button-color1) text-(--primary-color) font-semibold mainFont flex justify-center items-center gap-5 hover:scale-105 transition-transform"
                 >
