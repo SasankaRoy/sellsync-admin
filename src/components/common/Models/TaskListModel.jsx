@@ -80,7 +80,7 @@ export const TaskListModel = ({
           onClick={(e) => {
             e.stopPropagation();
           }}
-          className="w-full sm:min-w-[40%] sm:max-w-[60%] max-h-[90vh] sm:max-h-[95%] overflow-y-auto scrollCustom bg-white rounded-md p-3 sm:p-4 lg:p-5 shadow-md"
+          className="w-full sm:min-w-[25%] sm:max-w-[45%] max-h-[90vh] sm:max-h-[95%] overflow-y-auto scrollCustom bg-white rounded-md p-3 sm:p-4 lg:p-5 shadow-md"
         >
           <div className="flex justify-between items-center border-b px-2 sm:px-3 py-2 sm:py-3 border-(--border-color)/70 gap-2">
             <h3 className="text-base sm:text-lg lg:text-[1.5dvw] font-semibold text-(--mainText-color) truncate">

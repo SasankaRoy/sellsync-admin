@@ -42,6 +42,28 @@ export const SalePoint = () => {
   const [showShortcuts, setShowShortcuts] = useState(itemListVarient.initial);
   const [showPunchInModal, setShowPunchInModal] = useState(false);
 
+  const [cart, setCart] = useState([
+    {
+      name: "Budwiser Magnum 750ML",
+      qty: 1,
+      price: 5,
+      tax: "No Tax",
+      addons: "Add ons",
+    },
+    { name: "Item 2", qty: 2, price: 5, tax: "Low Tax", addons: "" },
+    { name: "Item 3", qty: 3, price: 5, tax: "High Tax", addons: "" },
+    { name: "Item 4", qty: 4, price: 5, tax: "No Tax", addons: "" },
+  ]);
+
+  const [discount, setDiscount] = useState(2.5);
+  const [isPercentage, setIsPercentage] = useState(false);
+
+  const subtotal = cart.reduce((sum, item) => sum + item.qty * item.price, 0);
+  const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+  const tax = 2.5;
+  const discountAmount = isPercentage ? subtotal * (discount / 100) : discount;
+  const total = subtotal + tax - discountAmount;
+
   const [layoutName, setLayoutName] = useState("default");
   const [input, setInput] = useState("");
 
@@ -163,11 +185,11 @@ export const SalePoint = () => {
 
               {/* item list start */}
               <div className="flex flex-col gap-2 scrollCustom h-[100%] overflow-y-auto justify-start items-center px-2 sm:px-0">
-                {[1, 2, 3, 4].map((cur, id) => (
+                {cart.map((item, index) => (
                   <div
-                    key={id}
+                    key={index}
                     className={`flex flex-col lg:flex-row justify-center items-start lg:items-center w-full rounded-lg lg:rounded-none ${
-                      id % 2 === 0
+                      index % 2 === 0
                         ? "bg-(--secondary-color)/70"
                         : "bg-transparent"
                     } p-3 lg:p-0`}
@@ -185,48 +207,83 @@ export const SalePoint = () => {
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-xs sm:text-sm font-semibold mainFont line-clamp-2">
-                              Budwiser Magnum 750ML
+                              {item.name}
                             </p>
                             <p className="text-xs text-(--button-color2) paraFont font-medium">
-                              Add ons
+                              {item.addons}
                             </p>
                           </div>
                         </div>
-                        <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded whitespace-nowrap">
-                          Qty: {cur}
-                        </span>
+                        <input
+                          type="text"
+                          value={item.qty}
+                          onChange={(e) => {
+                            const newQty = parseInt(e.target.value) || 0;
+                            setCart((prev) =>
+                              prev.map((i, idx) =>
+                                idx === index ? { ...i, qty: newQty } : i
+                              )
+                            );
+                          }}
+                          className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded whitespace-nowrap outline-none text-center"
+                          placeholder="Qty"
+                        />
                       </div>
                       <div className="grid grid-cols-2 gap-2">
                         <div>
                           <p className="text-xs text-gray-500 mb-1">Price</p>
-                          <input
-                            type="text"
-                            placeholder="0.00"
-                            value={`$ ${cur}.00`}
-                            className="w-full text-xs outline-none text-center font-semibold border border-(--border-color) py-1.5 px-2 bg-(--secondary-color)/50 rounded appearance-none"
-                          />
+                          <p className="text-sm font-semibold flex items-center gap-1">
+                            <span>$</span>
+                            <input
+                              type="number"
+                              placeholder="0.00"
+                              value={item.price === 0 ? "" : item.price}
+                              onChange={(e) =>
+                                setCart((prev) =>
+                                  prev.map((i, idx) =>
+                                    idx === index
+                                      ? {
+                                          ...i,
+                                          price:
+                                            parseFloat(e.target.value) || 0,
+                                        }
+                                      : i
+                                  )
+                                )
+                              }
+                              step="0.01"
+                              min="0"
+                              className="w-24 outline-none text-center font-semibold border border-(--border-color) py-1 px-1 bg-(--secondary-color)/50 rounded appearance-none"
+                            />
+                          </p>
                         </div>
                         <div>
                           <p className="text-xs text-gray-500 mb-1">Tax</p>
-                          <select className="w-full text-xs outline-none text-center font-semibold border border-(--border-color) py-1.5 px-2 bg-(--secondary-color)/50 rounded appearance-none">
+                          <select
+                            value={item.tax}
+                            onChange={(e) =>
+                              setCart((prev) =>
+                                prev.map((i, idx) =>
+                                  idx === index
+                                    ? { ...i, tax: e.target.value }
+                                    : i
+                                )
+                              )
+                            }
+                            className="w-full text-xs outline-none text-center font-semibold border border-(--border-color) py-1.5 px-2 bg-(--secondary-color)/50 rounded appearance-none"
+                          >
                             <option>No Tax</option>
-                            <option>Low</option>
-                            <option>High</option>
+                            <option>Low Tax</option>
+                            <option>High Tax</option>
                           </select>
                         </div>
                       </div>
                       <div className="flex justify-between items-center pt-2 border-t border-(--border-color)/30">
                         <div>
                           <p className="text-xs text-gray-500">Total</p>
-                          <p className="text-sm font-semibold">${cur * 5}.00</p>
-                        </div>
-                        <div className="flex justify-center gap-2 items-center">
-                          <button className="bg-(--button-color1) text-(--primary-color) rounded-full p-1.5 flex justify-center items-center cursor-pointer">
-                            <Plus size={16} />
-                          </button>
-                          <button className="bg-(--Negative-color) text-(--primary-color) rounded-full p-1.5 flex justify-center items-center cursor-pointer">
-                            <Minus size={16} />
-                          </button>
+                          <p className="text-sm font-semibold">
+                            $ {(item.qty * item.price).toFixed(2)}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -234,9 +291,19 @@ export const SalePoint = () => {
                     {/* Desktop Table Layout */}
                     <div className="hidden lg:flex justify-center items-center w-full">
                       <div className="border-r border-(--border-color) py-3 px-1 min-w-[5dvw] flex justify-center items-center">
-                        <p className="text-[1dvw] font-semibold mainFont">
-                          {cur}
-                        </p>
+                        <input
+                          type="text"
+                          value={item.qty}
+                          onChange={(e) => {
+                            const newQty = parseInt(e.target.value) || 0;
+                            setCart((prev) =>
+                              prev.map((i, idx) =>
+                                idx === index ? { ...i, qty: newQty } : i
+                              )
+                            );
+                          }}
+                          className="text-[1dvw] font-semibold mainFont outline-none text-center bg-transparent"
+                        />
                       </div>
                       <div className="border-r border-(--border-color) py-3 w-full flex justify-between gap-3 px-1 items-center">
                         <div className="flex justify-start items-center gap-3">
@@ -248,25 +315,54 @@ export const SalePoint = () => {
                             />
                           </div>
                           <p className="text-[1dvw] font-semibold mainFont line-clamp-1">
-                            Budwiser Magnum 750ML
+                            {item.name}
                           </p>
                         </div>
                         <div className="shrink-0">
                           <p className="text-[.9dvw] text-(--button-color2) paraFont font-medium">
-                            Add ons
+                            {item.addons}
                           </p>
                         </div>
                       </div>
                       <div className="border-r border-(--border-color) py-3 min-w-[8dvw] w-[8dvw] shrink-0 flex justify-center items-center px-2">
-                        <input
-                          type="text"
-                          placeholder="0.00"
-                          value={`$ ${cur}.00`}
-                          className="w-full text-center outline-none text-[1dvw] mainFont font-semibold border-(--border-color) py-2 bg-(--secondary-color)/50 appearance-none"
-                        />
+                        <p className="text-[1dvw] font-semibold mainFont flex items-center gap-1">
+                          <span>$</span>
+                          <input
+                            type="number"
+                            placeholder="0.00"
+                            value={item.price === 0 ? "" : item.price}
+                            onChange={(e) =>
+                              setCart((prev) =>
+                                prev.map((i, idx) =>
+                                  idx === index
+                                    ? {
+                                        ...i,
+                                        price: parseFloat(e.target.value) || 0,
+                                      }
+                                    : i
+                                )
+                              )
+                            }
+                            step="0.01"
+                            min="0"
+                            className="w-16 outline-none text-center font-semibold border-(--border-color) py-1 px-1 bg-(--secondary-color)/50 appearance-none"
+                          />
+                        </p>
                       </div>
                       <div className="border-r border-(--border-color) py-3 min-w-[8dvw] w-[8dvw] shrink-0 flex justify-center items-center px-2">
-                        <select className="w-full text-center outline-none text-[1dvw] font-semibold mainFont border-(--border-color) py-2 bg-(--secondary-color)/50 rounded-md appearance-none">
+                        <select
+                          value={item.tax}
+                          onChange={(e) =>
+                            setCart((prev) =>
+                              prev.map((i, idx) =>
+                                idx === index
+                                  ? { ...i, tax: e.target.value }
+                                  : i
+                              )
+                            )
+                          }
+                          className="w-full text-center outline-none text-[1dvw] font-semibold mainFont border-(--border-color) py-2 bg-(--secondary-color)/50 rounded-md appearance-none"
+                        >
                           <option>No Tax</option>
                           <option>Low Tax</option>
                           <option>High Tax</option>
@@ -274,14 +370,34 @@ export const SalePoint = () => {
                       </div>
                       <div className="border-r border-(--border-color) py-3 min-w-[8dvw] shrink-0 flex justify-center items-center">
                         <p className="text-[1dvw] font-semibold mainFont">
-                          $ {cur * 5}.00
+                          $ {(item.qty * item.price).toFixed(2)}
                         </p>
                       </div>
                       <div className="py-3 min-w-[8dvw] flex justify-center gap-3 items-center shrink-0">
-                        <button className="bg-(--button-color1) text-(--primary-color) rounded-full p-2 flex justify-center items-center cursor-pointer">
+                        <button
+                          onClick={() =>
+                            setCart((prev) =>
+                              prev.map((i, idx) =>
+                                idx === index ? { ...i, qty: i.qty + 1 } : i
+                              )
+                            )
+                          }
+                          className="bg-(--button-color1) text-(--primary-color) rounded-full p-2 flex justify-center items-center cursor-pointer"
+                        >
                           <Plus />
                         </button>
-                        <button className="bg-(--Negative-color) text-(--primary-color) rounded-full p-2 flex justify-center items-center cursor-pointer">
+                        <button
+                          onClick={() =>
+                            setCart((prev) =>
+                              prev
+                                .map((i, idx) =>
+                                  idx === index ? { ...i, qty: i.qty - 1 } : i
+                                )
+                                .filter((i) => i.qty > 0)
+                            )
+                          }
+                          className="bg-(--Negative-color) text-(--primary-color) rounded-full p-2 flex justify-center items-center cursor-pointer"
+                        >
                           <Minus />
                         </button>
                       </div>
@@ -308,9 +424,12 @@ export const SalePoint = () => {
               </h3>
               <div className="flex items-center gap-2">
                 <lable className="mainFont font-semibold text-xs sm:text-sm lg:text-[.9dvw] whitespace-nowrap">
-                  Discount -
+                  Discount ({isPercentage ? "%" : "$"}) -
                 </lable>
-                <MaterialUISwitch />
+                <MaterialUISwitch
+                  checked={isPercentage}
+                  onChange={(e) => setIsPercentage(e.target.checked)}
+                />
               </div>
             </div>
             <div className="p-3 sm:p-5 flex flex-col gap-3 sm:gap-4">
@@ -319,7 +438,7 @@ export const SalePoint = () => {
                   Total Items :
                 </p>
                 <strong className="text-sm sm:text-base lg:text-[1.5dvw] paraFont font-semibold">
-                  5
+                  {totalItems}
                 </strong>
               </div>
               <div className="flex justify-between items-center">
@@ -327,7 +446,7 @@ export const SalePoint = () => {
                   SubTotal :
                 </p>
                 <strong className="text-sm sm:text-base lg:text-[1.5dvw] paraFont font-semibold">
-                  $ 100
+                  $ {subtotal.toFixed(2)}
                 </strong>
               </div>
               <div className="flex justify-between items-center">
@@ -335,7 +454,7 @@ export const SalePoint = () => {
                   Tax :
                 </p>
                 <strong className="text-sm sm:text-base lg:text-[1.5dvw] paraFont font-semibold text-(--Negative-color)">
-                  $ 2.50
+                  $ {tax.toFixed(2)}
                 </strong>
               </div>
 
@@ -345,8 +464,17 @@ export const SalePoint = () => {
                 </p>
                 <input
                   type="text"
-                  placeholder="$"
-                  value={"$ 2.50"}
+                  placeholder={isPercentage ? "%" : "$"}
+                  value={
+                    isPercentage ? `${discount}%` : `$ ${discount.toFixed(2)}`
+                  }
+                  onChange={(e) =>
+                    setDiscount(
+                      parseFloat(
+                        e.target.value.replace(isPercentage ? "%" : "$ ", "")
+                      ) || 0
+                    )
+                  }
                   className="w-[40%] sm:w-[30%] text-center outline-none text-xs sm:text-sm lg:text-[1.5dvw] mainFont font-semibold border-(--border-color) py-1 sm:py-2 bg-transparent paraFont appearance-none border-b "
                 />
               </div>
@@ -355,7 +483,7 @@ export const SalePoint = () => {
                   Total :
                 </p>
                 <strong className="text-base sm:text-lg lg:text-[2dvw] paraFont font-semibold text-(--Positive-color)">
-                  $ 100.00
+                  $ {total.toFixed(2)}
                 </strong>
               </div>
             </div>
@@ -374,22 +502,22 @@ export const SalePoint = () => {
                 Options
               </h3>
               <div className="grid grid-cols-3 gap-2">
-                <button className="bg-(--button-color5) text-(--primary-color) py-3 mainFont font-semibold rounded-md text-xs">
+                <button className="py-2 sm:py-3 lg:py-4 text-xs sm:text-sm lg:text-[1.2dvw] mainFont font-semibold bg-(--button-color5) text-(--primary-color) rounded-md">
                   Payout
                 </button>
-                <button className="bg-(--button-color2) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md text-xs">
+                <button className="py-2 sm:py-3 lg:py-4 text-xs sm:text-sm lg:text-[1.2dvw] mainFont font-semibold bg-(--button-color2) text-(--primary-color) rounded-md">
                   Suspend
                 </button>
-                <button className="bg-(--button-color1) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md text-xs">
+                <button className="py-2 sm:py-3 lg:py-4 text-xs sm:text-sm lg:text-[1.2dvw] mainFont font-semibold bg-(--button-color1) text-(--primary-color) rounded-md">
                   Recall
                 </button>
-                <button className="bg-(--button-color2) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md text-xs">
+                <button className="py-2 sm:py-3 lg:py-4 text-xs sm:text-sm lg:text-[1.2dvw] mainFont font-semibold bg-(--button-color2) text-(--primary-color) rounded-md">
                   Reprint
                 </button>
-                <button className="bg-(--Negative-color) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md text-xs">
+                <button className="py-2 sm:py-3 lg:py-4 text-xs sm:text-sm lg:text-[1.2dvw] mainFont font-semibold bg-(--Negative-color) text-(--primary-color) rounded-md">
                   No Sale
                 </button>
-                <button className="bg-(--button-color3) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md text-xs">
+                <button className="py-2 sm:py-3 lg:py-4 text-xs sm:text-sm lg:text-[1.2dvw] mainFont font-semibold bg-(--button-color3) text-(--primary-color) rounded-md">
                   Cancel
                 </button>
               </div>

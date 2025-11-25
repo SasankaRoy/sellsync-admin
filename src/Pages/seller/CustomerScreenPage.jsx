@@ -59,36 +59,11 @@ const CustomerScreenPage = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-[var(--button-color1)] to-[var(--button-color5)] rounded-t-xl p-4 sm:p-5 flex justify-between items-center">
-        <h2 className="text-white font-semibold text-lg sm:text-xl">
-          Customer Screen
-        </h2>
-        <div className="flex gap-2">
-          <button
-            onClick={() => {
-              window.resizeTo(screen.width, screen.height);
-              window.moveTo(0, 0);
-            }}
-            className="p-2 hover:bg-white/20 rounded-lg transition-colors duration-200"
-            title="Full Screen"
-          >
-            <Maximize2 size={20} className="text-white" />
-          </button>
-          <button
-            onClick={() => window.close()}
-            className="p-2 hover:bg-white/20 rounded-lg transition-colors duration-200"
-          >
-            <X size={20} className="text-white" />
-          </button>
-        </div>
-      </div>
-
       {/* Content Area */}
-      <div className="flex flex-col md:flex-row h-[calc(100vh-80px)] overflow-hidden">
+      <div className="flex flex-col md:flex-row h-screen overflow-hidden">
         {/* Mobile Logo */}
         <div className="flex md:hidden justify-center items-center p-6 bg-gradient-to-b from-[#f8f8f8] to-[#f0f0f0]">
-          <div className="w-full max-w-[200px]">
+          <div className="w-full max-w-[350px]">
             <img
               src={SellsyncLogo}
               alt="Sellsync"
@@ -99,7 +74,7 @@ const CustomerScreenPage = () => {
 
         {/* Desktop Logo */}
         <div className="hidden md:flex w-2/5 bg-gradient-to-b from-[#f8f8f8] to-[#f0f0f0] flex-col items-center justify-center p-6">
-          <div className="w-full max-w-[220px]">
+          <div className="w-full max-w-[400px]">
             <img
               src={SellsyncLogo}
               alt="Sellsync"
