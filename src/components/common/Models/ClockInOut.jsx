@@ -9,7 +9,7 @@ export const ClockInOut = ({
   time,
   setCurrentStateOutter,
   setCurrentStateInner,
-  
+
   currentStateOutter,
   currentStateInner,
   setPunchInTime,
@@ -219,16 +219,16 @@ export const ClockInOut = ({
           setCurrentStateInner(clockInVarient.exit);
         }}
         key={currentStateOutter}
-        className="absolute h-screen bg-transparent flex justify-center items-center backdrop-blur-[1px] w-full top-0 z-50"
+        className="absolute h-screen bg-transparent flex justify-center items-center backdrop-blur-[1px] w-full max-w-full top-0 z-50 p-3 sm:p-0 overflow-x-hidden"
       >
         <motion.div
           variants={clockInVarient}
           initial="initial"
           animate={currentStateInner}
-          className="w-[30%] bg-(--primary-color) py-4 px-6 rounded-md"
+          className="w-[95%] sm:w-[80%] md:w-[50%] lg:w-[30%] bg-(--primary-color) py-3 sm:py-4 px-3 sm:px-4 lg:px-6 rounded-md max-h-[90vh] overflow-y-auto"
         >
-          <div className="flex justify-between items-center border-b border-(--border-color) py-2.5 px-3">
-            <h3 className="text-[1.5dvw] text-(--button-color2) font-semibold">
+          <div className="flex justify-between items-center border-b border-(--border-color) py-2 sm:py-2.5 px-2 sm:px-3">
+            <h3 className="text-base sm:text-lg lg:text-[1.5dvw] text-(--button-color2) font-semibold">
               {punchStatus === "completed"
                 ? "Work Completed"
                 : punchStatus === "punched-in"
@@ -243,21 +243,24 @@ export const ClockInOut = ({
               }}
               className="cursor-pointer"
             >
-              <CircleX size={30} />
+              <CircleX
+                size={24}
+                className="sm:w-7 sm:h-7 lg:w-[30px] lg:h-[30px]"
+              />
             </button>
           </div>
-          <div className="my-5 flex flex-col gap-4">
+          <div className="my-3 sm:my-4 lg:my-5 flex flex-col gap-3 sm:gap-4">
             {punchStatus !== "completed" && (
-              <div className="flex justify-start items-center gap-4">
-                <p className="text-[1.2dvw] paraFont capitalize font-normal text-(--button-color4)">
+              <div className="flex flex-col sm:flex-row justify-start items-start sm:items-center gap-2 sm:gap-4">
+                <p className="text-xs sm:text-sm lg:text-[1.2dvw] paraFont capitalize font-normal text-(--button-color4)">
                   {punchStatus === "punched-in"
                     ? "Working Since"
                     : "Start Working"}
                 </p>
-                <p className="text-[1.2dvw] paraFont capitalize font-normal text-(--button-color4)">
+                <p className="hidden sm:block text-sm lg:text-[1.2dvw] paraFont capitalize font-normal text-(--button-color4)">
                   |
                 </p>
-                <h3 className="text-[1.5dvw] font-semibold">
+                <h3 className="text-lg sm:text-xl lg:text-[1.5dvw] font-semibold">
                   {punchStatus === "punched-in" && localPunchInTime
                     ? `${localPunchInTime
                         .getHours()
@@ -275,11 +278,11 @@ export const ClockInOut = ({
             )}
 
             {punchStatus === "punched-in" && localPunchInTime && (
-              <div className="flex justify-between items-center border border-blue-400 rounded-md px-3 py-2 bg-blue-500/10">
-                <p className="text-[1.1dvw] paraFont font-normal text-blue-600">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border border-blue-400 rounded-md px-2 sm:px-3 py-2 bg-blue-500/10">
+                <p className="text-xs sm:text-sm lg:text-[1.1dvw] paraFont font-normal text-blue-600">
                   Current Work Duration
                 </p>
-                <h5 className="font-semibold text-[1.2dvw] text-blue-700">
+                <h5 className="font-semibold text-sm sm:text-base lg:text-[1.2dvw] text-blue-700">
                   {(() => {
                     const diff =
                       currentTime.getTime() - localPunchInTime.getTime();
@@ -293,14 +296,14 @@ export const ClockInOut = ({
             )}
 
             {punchStatus === "on-break" && (
-              <div className="flex justify-start items-center gap-4 border border-(--button-color3) rounded-md px-2 py-2 bg-(--button-color3)/10">
-                <p className="text-[1dvw] paraFont font-normal text-(--button-color3)">
+              <div className="flex flex-col sm:flex-row justify-start items-start sm:items-center gap-2 sm:gap-4 border border-(--button-color3) rounded-md px-2 py-2 bg-(--button-color3)/10">
+                <p className="text-xs sm:text-sm lg:text-[1dvw] paraFont font-normal text-(--button-color3)">
                   On Break Since
                 </p>
-                <p className="text-[1dvw] paraFont font-normal text-(--button-color3)">
+                <p className="hidden sm:block text-sm lg:text-[1dvw] paraFont font-normal text-(--button-color3)">
                   |
                 </p>
-                <h5 className="font-semibold text-[1.2dvw] text-(--button-color3)">
+                <h5 className="font-semibold text-sm sm:text-base lg:text-[1.2dvw] text-(--button-color3)">
                   {breakStartTime
                     ? `${breakStartTime
                         .getHours()
@@ -320,12 +323,12 @@ export const ClockInOut = ({
             {punchStatus === "completed" &&
               localPunchInTime &&
               punchOutTime && (
-                <div className="flex flex-col gap-3 border border-green-500 rounded-md px-3 py-3 bg-green-500/10">
+                <div className="flex flex-col gap-2 sm:gap-3 border border-green-500 rounded-md px-2 sm:px-3 py-2 sm:py-3 bg-green-500/10">
                   <div className="flex justify-between items-center">
-                    <p className="text-[1.1dvw] paraFont font-normal text-green-600">
+                    <p className="text-xs sm:text-sm lg:text-[1.1dvw] paraFont font-normal text-green-600">
                       Punch In Time
                     </p>
-                    <h5 className="font-semibold text-[1.2dvw] text-green-600">
+                    <h5 className="font-semibold text-sm sm:text-base lg:text-[1.2dvw] text-green-600">
                       {`${localPunchInTime
                         .getHours()
                         .toString()
@@ -339,10 +342,10 @@ export const ClockInOut = ({
                     </h5>
                   </div>
                   <div className="flex justify-between items-center">
-                    <p className="text-[1.1dvw] paraFont font-normal text-green-600">
+                    <p className="text-xs sm:text-sm lg:text-[1.1dvw] paraFont font-normal text-green-600">
                       Punch Out Time
                     </p>
-                    <h5 className="font-semibold text-[1.2dvw] text-green-600">
+                    <h5 className="font-semibold text-sm sm:text-base lg:text-[1.2dvw] text-green-600">
                       {`${punchOutTime
                         .getHours()
                         .toString()
@@ -356,10 +359,10 @@ export const ClockInOut = ({
                     </h5>
                   </div>
                   <div className="border-t border-green-400 pt-2 flex justify-between items-center">
-                    <p className="text-[1.1dvw] paraFont font-semibold text-green-600">
+                    <p className="text-xs sm:text-sm lg:text-[1.1dvw] paraFont font-semibold text-green-600">
                       Total Work Duration
                     </p>
-                    <h4 className="font-bold text-[1.3dvw] text-green-700">
+                    <h4 className="font-bold text-sm sm:text-base lg:text-[1.3dvw] text-green-700">
                       {(() => {
                         const diff =
                           punchOutTime.getTime() -
@@ -374,10 +377,10 @@ export const ClockInOut = ({
                   </div>
                   {totalBreakTime > 0 && (
                     <div className="border-t border-green-400 pt-2 flex justify-between items-center">
-                      <p className="text-[1.1dvw] paraFont font-normal text-green-600">
+                      <p className="text-xs sm:text-sm lg:text-[1.1dvw] paraFont font-normal text-green-600">
                         Total Break Time
                       </p>
-                      <h5 className="font-semibold text-[1.2dvw] text-green-600">
+                      <h5 className="font-semibold text-sm sm:text-base lg:text-[1.2dvw] text-green-600">
                         {(() => {
                           const hours = Math.floor(totalBreakTime / 3600000);
                           const minutes = Math.floor(
@@ -396,31 +399,34 @@ export const ClockInOut = ({
 
             {punchStatus === "punched-in" && (
               <div className="flex flex-col gap-2">
-                <label className="text-[1dvw] paraFont font-normal">
+                <label className="text-xs sm:text-sm lg:text-[1dvw] paraFont font-normal">
                   Punch Out Notes (Optional)
                 </label>
                 <textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Add notes for punch out..."
-                  className="w-full px-3 py-2 border border-(--border-color) rounded-md text-[0.9dvw] focus:outline focus:outline-[var(--button-color1)]"
+                  className="w-full px-2 sm:px-3 py-2 border border-(--border-color) rounded-md text-xs sm:text-sm lg:text-[0.9dvw] focus:outline focus:outline-[var(--button-color1)]"
                   rows="3"
                 />
               </div>
             )}
 
-            <div className="flex justify-center items-center gap-5">
+            <div className="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-2 sm:gap-3 lg:gap-5">
               {!punchStatus && (
                 <button
                   onClick={handlePunchIn}
                   disabled={isLoading}
-                  className="w-full py-3 rounded-md text-[1.3dvw] cursor-pointer bg-(--button-color1) text-(--primary-color) font-semibold mainFont flex justify-center items-center gap-5 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-transform"
+                  className="w-full py-2.5 sm:py-3 rounded-md text-sm sm:text-base lg:text-[1.3dvw] cursor-pointer bg-(--button-color1) text-(--primary-color) font-semibold mainFont flex justify-center items-center gap-2 sm:gap-3 lg:gap-5 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-transform"
                 >
-                  <span className="p-1.5 bg-(--primary-color) flex justify-center items-center rounded-full text-(--mainText-color)">
+                  <span className="p-1 sm:p-1.5 bg-(--primary-color) flex justify-center items-center rounded-full text-(--mainText-color)">
                     {isLoading ? (
-                      <Loader size={20} className="animate-spin" />
+                      <Loader
+                        size={16}
+                        className="sm:w-5 sm:h-5 animate-spin"
+                      />
                     ) : (
-                      <LogIn size={20} />
+                      <LogIn size={16} className="sm:w-5 sm:h-5" />
                     )}
                   </span>
                   {isLoading ? "Punching In..." : "Clock In"}
@@ -432,31 +438,42 @@ export const ClockInOut = ({
                   <button
                     onClick={handlePunchOut}
                     disabled={isLoading}
-                    className="w-full py-3 rounded-md text-[1.3dvw] cursor-pointer bg-(--Negative-color) text-(--primary-color) font-semibold mainFont flex justify-center items-center gap-5 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-transform"
+                    className="w-full py-2.5 sm:py-3 rounded-md text-sm sm:text-base lg:text-[1.3dvw] cursor-pointer bg-(--Negative-color) text-(--primary-color) font-semibold mainFont flex justify-center items-center gap-2 sm:gap-3 lg:gap-5 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-transform"
                   >
-                    <span className="p-1.5 bg-(--primary-color) flex justify-center items-center rounded-full text-(--mainText-color)">
+                    <span className="p-1 sm:p-1.5 bg-(--primary-color) flex justify-center items-center rounded-full text-(--mainText-color)">
                       {isLoading ? (
-                        <Loader size={20} className="animate-spin" />
+                        <Loader
+                          size={16}
+                          className="sm:w-5 sm:h-5 animate-spin"
+                        />
                       ) : (
-                        <LogOut size={20} />
+                        <LogOut size={16} className="sm:w-5 sm:h-5" />
                       )}
                     </span>
-                    {isLoading ? "Punching Out..." : "Clock Out"}
+                    <span className="hidden sm:inline">
+                      {isLoading ? "Punching Out..." : "Clock Out"}
+                    </span>
+                    <span className="sm:hidden">
+                      {isLoading ? "..." : "Out"}
+                    </span>
                   </button>
 
                   <button
                     onClick={handleBreakTime}
                     disabled={isLoading}
-                    className="w-full py-3 rounded-md text-[1.3dvw] cursor-pointer bg-(--button-color3) text-(--primary-color) font-semibold mainFont flex justify-center items-center gap-5 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-transform"
+                    className="w-full py-2.5 sm:py-3 rounded-md text-sm sm:text-base lg:text-[1.3dvw] cursor-pointer bg-(--button-color3) text-(--primary-color) font-semibold mainFont flex justify-center items-center gap-2 sm:gap-3 lg:gap-5 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-transform"
                   >
-                    <span className="p-1.5 bg-(--primary-color) flex justify-center items-center rounded-full text-(--mainText-color)">
+                    <span className="p-1 sm:p-1.5 bg-(--primary-color) flex justify-center items-center rounded-full text-(--mainText-color)">
                       {isLoading ? (
-                        <Loader size={20} className="animate-spin" />
+                        <Loader
+                          size={16}
+                          className="sm:w-5 sm:h-5 animate-spin"
+                        />
                       ) : (
-                        <UtensilsCrossed size={20} />
+                        <UtensilsCrossed size={16} className="sm:w-5 sm:h-5" />
                       )}
                     </span>
-                    {isLoading ? "Starting Break..." : "Break"}
+                    {isLoading ? "Starting..." : "Break"}
                   </button>
                 </>
               )}
@@ -466,13 +483,16 @@ export const ClockInOut = ({
                   <button
                     onClick={handleResumeWork}
                     disabled={isLoading}
-                    className="w-full py-3 rounded-md text-[1.3dvw] cursor-pointer bg-(--button-color1) text-(--primary-color) font-semibold mainFont flex justify-center items-center gap-5 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-transform"
+                    className="w-full py-2.5 sm:py-3 rounded-md text-sm sm:text-base lg:text-[1.3dvw] cursor-pointer bg-(--button-color1) text-(--primary-color) font-semibold mainFont flex justify-center items-center gap-2 sm:gap-3 lg:gap-5 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-transform"
                   >
-                    <span className="p-1.5 bg-(--primary-color) flex justify-center items-center rounded-full text-(--mainText-color)">
+                    <span className="p-1 sm:p-1.5 bg-(--primary-color) flex justify-center items-center rounded-full text-(--mainText-color)">
                       {isLoading ? (
-                        <Loader size={20} className="animate-spin" />
+                        <Loader
+                          size={16}
+                          className="sm:w-5 sm:h-5 animate-spin"
+                        />
                       ) : (
-                        <LogIn size={20} />
+                        <LogIn size={16} className="sm:w-5 sm:h-5" />
                       )}
                     </span>
                     {isLoading ? "Resuming..." : "Resume Work"}
@@ -481,16 +501,24 @@ export const ClockInOut = ({
                   <button
                     onClick={handlePunchOut}
                     disabled={isLoading}
-                    className="w-full py-3 rounded-md text-[1.3dvw] cursor-pointer bg-(--Negative-color) text-(--primary-color) font-semibold mainFont flex justify-center items-center gap-5 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-transform"
+                    className="w-full py-2.5 sm:py-3 rounded-md text-sm sm:text-base lg:text-[1.3dvw] cursor-pointer bg-(--Negative-color) text-(--primary-color) font-semibold mainFont flex justify-center items-center gap-2 sm:gap-3 lg:gap-5 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-transform"
                   >
-                    <span className="p-1.5 bg-(--primary-color) flex justify-center items-center rounded-full text-(--mainText-color)">
+                    <span className="p-1 sm:p-1.5 bg-(--primary-color) flex justify-center items-center rounded-full text-(--mainText-color)">
                       {isLoading ? (
-                        <Loader size={20} className="animate-spin" />
+                        <Loader
+                          size={16}
+                          className="sm:w-5 sm:h-5 animate-spin"
+                        />
                       ) : (
-                        <LogOut size={20} />
+                        <LogOut size={16} className="sm:w-5 sm:h-5" />
                       )}
                     </span>
-                    {isLoading ? "Punching Out..." : "Clock Out"}
+                    <span className="hidden sm:inline">
+                      {isLoading ? "Punching Out..." : "Clock Out"}
+                    </span>
+                    <span className="sm:hidden">
+                      {isLoading ? "..." : "Out"}
+                    </span>
                   </button>
                 </>
               )}
@@ -508,9 +536,9 @@ export const ClockInOut = ({
                     setBreakStartTime(null);
                     setTotalBreakTime(0);
                   }}
-                  className="w-full py-3 rounded-md text-[1.3dvw] cursor-pointer bg-(--button-color1) text-(--primary-color) font-semibold mainFont flex justify-center items-center gap-5 hover:scale-105 transition-transform"
+                  className="w-full py-2.5 sm:py-3 rounded-md text-sm sm:text-base lg:text-[1.3dvw] cursor-pointer bg-(--button-color1) text-(--primary-color) font-semibold mainFont flex justify-center items-center gap-2 sm:gap-3 lg:gap-5 hover:scale-105 transition-transform"
                 >
-                  <CircleX size={20} />
+                  <CircleX size={16} className="sm:w-5 sm:h-5" />
                   Close
                 </button>
               )}

@@ -133,7 +133,7 @@ export const AllSalesReports = () => {
   return (
     <>
       <SellerNavbar />
-      <div className="w-full p-3 sm:p-4 lg:p-6 overflow-y-auto h-[calc(100vh-70px)] sm:h-[calc(100vh-80px)]">
+      <div className="w-full max-w-full p-3 sm:p-4 lg:p-6 overflow-y-auto overflow-x-hidden h-[calc(100vh-70px)] sm:h-[calc(100vh-80px)]">
         <div className="w-full flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 mb-4">
           <button
             onClick={handleGoBack}

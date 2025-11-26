@@ -233,7 +233,7 @@ const Sales = () => {
   return (
     <>
       <SellerNavbar />
-      <div className="w-full p-3 sm:p-4 lg:p-8 overflow-y-auto h-[calc(100vh-70px)] sm:h-[calc(100vh-80px)]">
+      <div className="w-full max-w-full p-3 sm:p-4 lg:p-8 overflow-y-auto overflow-x-hidden h-[calc(100vh-70px)] sm:h-[calc(100vh-80px)]">
         <div className="w-full mb-4 sm:mb-6">
           <div className="flex justify-between items-center mb-4 sm:mb-6">
             <h3 className="text-lg sm:text-xl lg:text-2xl xl:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
@@ -277,7 +277,7 @@ const Sales = () => {
           </div>
 
           {/* Table Container with responsive height */}
-          <div className="w-full mt-4 sm:mt-5 max-h-[50vh] sm:max-h-[60vh]">
+          <div className="w-full max-w-full mt-4 sm:mt-5 max-h-[50vh] sm:max-h-[60vh] overflow-x-auto">
             <AgGridReact
               rowData={rowData}
               columnDefs={colDefs}

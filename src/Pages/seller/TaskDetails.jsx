@@ -55,7 +55,7 @@ export const TaskDetails = () => {
     return (
       <>
         <SellerNavbar />
-        <div className="w-full sm:w-[90%] lg:w-[85%] mx-auto py-3 sm:py-4 overflow-y-auto h-[calc(100vh-70px)] sm:h-[calc(100vh-80px)] scrollCustom flex justify-center items-center">
+        <div className="w-full max-w-full sm:w-[90%] lg:w-[85%] mx-auto py-3 sm:py-4 overflow-y-auto overflow-x-hidden h-[calc(100vh-70px)] sm:h-[calc(100vh-80px)] scrollCustom flex justify-center items-center">
           <Loader className="animate-spin" size={40} />
         </div>
       </>
@@ -66,7 +66,7 @@ export const TaskDetails = () => {
     return (
       <>
         <SellerNavbar />
-        <div className="w-full sm:w-[90%] lg:w-[85%] mx-auto py-3 sm:py-4 overflow-y-auto h-[calc(100vh-70px)] sm:h-[calc(100vh-80px)] scrollCustom">
+        <div className="w-full max-w-full sm:w-[90%] lg:w-[85%] mx-auto py-3 sm:py-4 overflow-y-auto overflow-x-hidden h-[calc(100vh-70px)] sm:h-[calc(100vh-80px)] scrollCustom">
           <div className="w-full flex items-center gap-2 sm:gap-4">
             <button
               onClick={handleGoBack}
@@ -88,7 +88,7 @@ export const TaskDetails = () => {
   return (
     <>
       <SellerNavbar />
-      <div className="w-full sm:w-[90%] lg:w-[85%] mx-auto py-3 sm:py-4 overflow-y-auto h-[calc(100vh-70px)] sm:h-[calc(100vh-80px)] scrollCustom">
+      <div className="w-full max-w-full sm:w-[90%] lg:w-[85%] mx-auto py-3 sm:py-4 overflow-y-auto overflow-x-hidden h-[calc(100vh-70px)] sm:h-[calc(100vh-80px)] scrollCustom px-3 sm:px-0">
         <div className="w-full flex items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
           <button
             onClick={handleGoBack}

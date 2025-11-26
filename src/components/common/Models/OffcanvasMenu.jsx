@@ -52,7 +52,7 @@ export const OffcanvasMenu = ({
         variants={varient}
         key={showOffcanvasMenu}
         animate={showOffcanvasMenu}
-        className="absolute z-50 min-w-[35%] p-5 right-0 top-0 h-screen bg-(--primary-color) border-l border-(--border-color)/30 shadow overflow-y-auto"
+        className="absolute z-50 w-full sm:w-[70%] md:w-[50%] lg:min-w-[35%] max-w-full p-3 sm:p-4 lg:p-5 right-0 top-0 h-screen bg-(--primary-color) border-l border-(--border-color)/30 shadow overflow-y-auto overflow-x-hidden"
       >
         <motion.div
           initial={{
@@ -69,14 +69,19 @@ export const OffcanvasMenu = ({
           }}
           className=" flex justify-between items-center px-2 border-b border-(--border-color) p-4"
         >
-          <h3 className="text-[1.7dvw] font-semibold">Menu</h3>
+          <h3 className="text-lg sm:text-xl lg:text-[1.7dvw] font-semibold">
+            Menu
+          </h3>
           <button
             onClick={() => {
               setShowOffcanvasMenu(varient.exit);
             }}
             className="cursor-pointer"
           >
-            <CircleX size={30} />
+            <CircleX
+              size={24}
+              className="sm:w-7 sm:h-7 lg:w-[30px] lg:h-[30px]"
+            />
           </button>
         </motion.div>
         <motion.div
@@ -96,10 +101,13 @@ export const OffcanvasMenu = ({
         >
           <button
             onClick={handleTasksClick}
-            className="flex justify-start px-5 py-2.5 mainFont font-semibold tracking-wider text-[1.8dvw] items-center gap-6 border-b hover:bg-(--button-color5) hover:text-(--primary-color) hover:rounded-md transition-all duration-300 ease-linear cursor-pointer border-(--border-color) text-(--button-color5)"
+            className="flex justify-start px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 mainFont font-semibold tracking-wider text-sm sm:text-base lg:text-[1.8dvw] items-center gap-3 sm:gap-4 lg:gap-6 border-b hover:bg-(--button-color5) hover:text-(--primary-color) hover:rounded-md transition-all duration-300 ease-linear cursor-pointer border-(--border-color) text-(--button-color5)"
           >
             <span>
-              <ClipboardList size={40} />
+              <ClipboardList
+                size={24}
+                className="sm:w-8 sm:h-8 lg:w-10 lg:h-10"
+              />
             </span>
             My Tasks
           </button>
@@ -112,42 +120,48 @@ export const OffcanvasMenu = ({
               );
               setShowOffcanvasMenu(varient.exit);
             }}
-            className="flex justify-start px-5 py-2.5 mainFont font-semibold tracking-wider text-[1.8dvw] items-center gap-6 border-b hover:bg-(--button-color4) hover:text-(--primary-color) hover:rounded-md transition-all duration-300 ease-linear cursor-pointer border-(--border-color) text-(--button-color4)"
+            className="flex justify-start px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 mainFont font-semibold tracking-wider text-sm sm:text-base lg:text-[1.8dvw] items-center gap-3 sm:gap-4 lg:gap-6 border-b hover:bg-(--button-color4) hover:text-(--primary-color) hover:rounded-md transition-all duration-300 ease-linear cursor-pointer border-(--border-color) text-(--button-color4)"
           >
             <span>
-              <Airplay size={40} />
+              <Airplay size={24} className="sm:w-8 sm:h-8 lg:w-10 lg:h-10" />
             </span>
             Customer Screen
           </button>
-          <button className="flex justify-start px-5 py-2.5 mainFont font-semibold tracking-wider text-[1.8dvw] items-center gap-6 border-b hover:bg-(--button-color1) hover:text-(--primary-color) hover:rounded-md transition-all duration-300 ease-linear cursor-pointer border-(--border-color) text-(--button-color1)">
+          <button className="flex justify-start px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 mainFont font-semibold tracking-wider text-sm sm:text-base lg:text-[1.8dvw] items-center gap-3 sm:gap-4 lg:gap-6 border-b hover:bg-(--button-color1) hover:text-(--primary-color) hover:rounded-md transition-all duration-300 ease-linear cursor-pointer border-(--border-color) text-(--button-color1)">
             <span>
-              <Tags size={40} />
+              <Tags size={24} className="sm:w-8 sm:h-8 lg:w-10 lg:h-10" />
             </span>
             Get Labels
           </button>
           <NavLink
             onClick={() => setShowOffcanvasMenu(varient.exit)}
             to="/seller/sales-report"
-            className="flex justify-start px-5 py-2.5 mainFont font-semibold tracking-wider text-[1.8dvw] items-center gap-6 border-b hover:bg-(--button-color2) hover:text-(--primary-color) hover:rounded-md transition-all duration-300 ease-linear cursor-pointer border-(--border-color) text-(--button-color2)"
+            className="flex justify-start px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 mainFont font-semibold tracking-wider text-sm sm:text-base lg:text-[1.8dvw] items-center gap-3 sm:gap-4 lg:gap-6 border-b hover:bg-(--button-color2) hover:text-(--primary-color) hover:rounded-md transition-all duration-300 ease-linear cursor-pointer border-(--border-color) text-(--button-color2)"
           >
             <span>
-              <BadgeDollarSign size={40} />
+              <BadgeDollarSign
+                size={24}
+                className="sm:w-8 sm:h-8 lg:w-10 lg:h-10"
+              />
             </span>
             Sales
           </NavLink>
           <NavLink
             onClick={() => setShowOffcanvasMenu(varient.exit)}
             to="/seller/reports"
-            className="flex justify-start px-5 py-2.5 mainFont font-semibold tracking-wider text-[1.8dvw] items-center gap-6 border-b hover:bg-(--button-color2) hover:text-(--primary-color) hover:rounded-md transition-all duration-300 ease-linear cursor-pointer border-(--border-color) text-(--button-color2)"
+            className="flex justify-start px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 mainFont font-semibold tracking-wider text-sm sm:text-base lg:text-[1.8dvw] items-center gap-3 sm:gap-4 lg:gap-6 border-b hover:bg-(--button-color2) hover:text-(--primary-color) hover:rounded-md transition-all duration-300 ease-linear cursor-pointer border-(--border-color) text-(--button-color2)"
           >
             <span>
-              <ClipboardMinus size={40} />
+              <ClipboardMinus
+                size={24}
+                className="sm:w-8 sm:h-8 lg:w-10 lg:h-10"
+              />
             </span>
             Reports
           </NavLink>
-          <button className="flex justify-start px-5 py-2.5 mainFont font-semibold tracking-wider text-[1.8dvw] items-center gap-6 border-b hover:bg-(--button-color1) hover:text-(--primary-color) hover:rounded-md transition-all duration-300 ease-linear cursor-pointer border-(--border-color) text-(--button-color1)">
+          <button className="flex justify-start px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 mainFont font-semibold tracking-wider text-sm sm:text-base lg:text-[1.8dvw] items-center gap-3 sm:gap-4 lg:gap-6 border-b hover:bg-(--button-color1) hover:text-(--primary-color) hover:rounded-md transition-all duration-300 ease-linear cursor-pointer border-(--border-color) text-(--button-color1)">
             <span>
-              <Settings size={40} />
+              <Settings size={24} className="sm:w-8 sm:h-8 lg:w-10 lg:h-10" />
             </span>
             Settings
           </button>
@@ -156,10 +170,10 @@ export const OffcanvasMenu = ({
               handleLogout();
               setShowOffcanvasMenu(varient.exit);
             }}
-            className="flex justify-start px-5 py-2.5 mainFont font-semibold tracking-wider text-[1.8dvw] items-center gap-6 border-b hover:bg-(--Negative-color) hover:text-(--primary-color) hover:rounded-md transition-all duration-300 ease-linear cursor-pointer border-(--border-color) text-(--Negative-color)"
+            className="flex justify-start px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 mainFont font-semibold tracking-wider text-sm sm:text-base lg:text-[1.8dvw] items-center gap-3 sm:gap-4 lg:gap-6 border-b hover:bg-(--Negative-color) hover:text-(--primary-color) hover:rounded-md transition-all duration-300 ease-linear cursor-pointer border-(--border-color) text-(--Negative-color)"
           >
             <span>
-              <ShieldUser size={40} />
+              <ShieldUser size={24} className="sm:w-8 sm:h-8 lg:w-10 lg:h-10" />
             </span>
             Logout
           </button>

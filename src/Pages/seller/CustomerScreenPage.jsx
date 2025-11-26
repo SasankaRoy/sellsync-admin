@@ -58,9 +58,9 @@ const CustomerScreenPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white overflow-x-hidden max-w-full">
       {/* Content Area */}
-      <div className="flex flex-col md:flex-row h-screen overflow-hidden">
+      <div className="flex flex-col md:flex-row h-screen overflow-hidden overflow-x-hidden">
         {/* Mobile Logo */}
         <div className="flex md:hidden justify-center items-center p-6 bg-gradient-to-b from-[#f8f8f8] to-[#f0f0f0]">
           <div className="w-full max-w-[350px]">

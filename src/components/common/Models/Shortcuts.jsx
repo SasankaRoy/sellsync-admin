@@ -49,7 +49,7 @@ export const Shortcuts = ({
         initial="initial"
         animate={showShortcuts}
         key={showShortcuts}
-        className="absolute flex flex-col gap-5 top-1.5 p-4 right-2 w-full h-full bg-(--primary-color)"
+        className="absolute flex flex-col gap-3 sm:gap-4 lg:gap-5 top-0 sm:top-1.5 p-2 sm:p-3 lg:p-4 right-0 sm:right-2 w-full h-full bg-(--primary-color) overflow-x-hidden max-w-full"
       >
         <motion.div
           initial={{ opacity: 0 }}
@@ -62,21 +62,21 @@ export const Shortcuts = ({
             type: "tween",
             delay: 0.5,
           }}
-          className="flex justify-between shrink-0 w-full items-center border-b border-(--border-color) pb-2 px-3"
+          className="flex flex-col sm:flex-row justify-between shrink-0 w-full items-start sm:items-center gap-3 sm:gap-0 border-b border-(--border-color) pb-2 px-2 sm:px-3"
         >
-          <h3 className="text-[1.5dvw] font-semibold text-(--button-color3)">
+          <h3 className="text-sm sm:text-base lg:text-[1.5dvw] font-semibold text-(--button-color3)">
             {currentFilterItems.title} Items{" "}
-            <span className="text-[.9dvw]">
+            <span className="text-xs sm:text-sm lg:text-[.9dvw]">
               {" "}
               - ( {currentFilterItems.totalItems} )
             </span>
           </h3>
-          <div className="flex justify-center items-center gap-5">
+          <div className="flex justify-center items-center gap-2 sm:gap-3 lg:gap-5 w-full sm:w-auto">
             <button
               onClick={() => {
                 setCurrentSliderVarient(categoriesSlideVarient.inView);
               }}
-              className="text-[1dvw] py-2.5 bg-(--button-color1) text-(--primary-color) px-5 rounded-md mainFont cursor-pointer font-semibold"
+              className="text-xs sm:text-sm lg:text-[1dvw] py-1.5 sm:py-2 lg:py-2.5 bg-(--button-color1) text-(--primary-color) px-3 sm:px-4 lg:px-5 rounded-md mainFont cursor-pointer font-semibold flex-1 sm:flex-none"
             >
               Browse Categories
             </button>
@@ -86,7 +86,10 @@ export const Shortcuts = ({
               }}
               className="cursor-pointer"
             >
-              <CircleX size={30} />
+              <CircleX
+                size={24}
+                className="sm:w-7 sm:h-7 lg:w-[30px] lg:h-[30px]"
+              />
             </button>
           </div>
         </motion.div>
@@ -101,28 +104,33 @@ export const Shortcuts = ({
             type: "tween",
             delay: 0.5,
           }}
-          className=" p-2 grid bg-red-00 scrollCustom grid-cols-4 gap-4 w-full max-h-full overflow-y-auto"
+          className=" p-2 grid bg-red-00 scrollCustom grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-4 w-full max-h-full overflow-y-auto"
         >
           {Array.from({ length: currentFilterItems.totalItems }).map(
             (cur, id) => (
-              <div className="bg-(--primary-color) cursor-pointer hover:scale-105 transition-all ease-in-out duration-300 border border-(--border-color)/20 flex flex-col gap-3 shadow-sm rounded-md p-2">
-                <div className="h-[20vh] rounded-md w-full bg-(--secondary-color) py-4">
+              <div
+                key={id}
+                className="bg-(--primary-color) cursor-pointer hover:scale-105 transition-all ease-in-out duration-300 border border-(--border-color)/20 flex flex-col gap-2 sm:gap-3 shadow-sm rounded-md p-2"
+              >
+                <div className="h-[15vh] sm:h-[18vh] lg:h-[20vh] rounded-md w-full bg-(--secondary-color) py-2 sm:py-3 lg:py-4">
                   <img
                     className="w-full h-full object-contain"
                     src={ProductImg1}
                     alt="product-image"
                   />
                 </div>
-                <div className="flex flex-col gap-1 px-2 py-1">
+                <div className="flex flex-col gap-1 px-1 sm:px-2 py-1">
                   <div className="flex flex-col gap-.5">
-                    <h3 className="text-[1dvw] font-semibold line-clamp-2 mainFont">
+                    <h3 className="text-xs sm:text-sm lg:text-[1dvw] font-semibold line-clamp-2 mainFont">
                       Budwiser Magnum 750ML
                     </h3>
-                    <p className="paraFont text-[.9dvw] text-(--button-color4) line-clamp-1">
+                    <p className="paraFont text-xs sm:text-sm lg:text-[.9dvw] text-(--button-color4) line-clamp-1">
                       Product small info
                     </p>
                   </div>
-                  <h3 className="font-semibold text-[1.2dvw]">$ 20.00</h3>
+                  <h3 className="font-semibold text-sm sm:text-base lg:text-[1.2dvw]">
+                    $ 20.00
+                  </h3>
                 </div>
               </div>
             )
@@ -154,7 +162,7 @@ const AllCategoryListSlide = ({
         initial="initial"
         key={currentSliderVarient}
         animate={currentSliderVarient}
-        className="absolute top-2 right-0 w-[50%] bg-white shadow-md border-l border-(--border-color)/20 p-5 z-40 h-full"
+        className="absolute top-2 right-0 w-full sm:w-[70%] lg:w-[50%] bg-white shadow-md border-l border-(--border-color)/20 p-3 sm:p-4 lg:p-5 z-40 h-full overflow-y-auto overflow-x-hidden max-w-full"
       >
         <motion.div
           initial={{
@@ -171,19 +179,24 @@ const AllCategoryListSlide = ({
             ease: "anticipate",
             type: "tween",
           }}
-          className="flex justify-between items-center border-b border-(--border-color) px-4 py-1.5"
+          className="flex justify-between items-center border-b border-(--border-color) px-2 sm:px-3 lg:px-4 py-1.5"
         >
-          <h3 className="text-[1.5dvw] font-semibold">All Categories</h3>
+          <h3 className="text-base sm:text-lg lg:text-[1.5dvw] font-semibold">
+            All Categories
+          </h3>
           <button
             onClick={() => {
               setCurrentSliderVarient(variants.exit);
             }}
             className="cursor-pointer"
           >
-            <CircleX size={25} />
+            <CircleX
+              size={20}
+              className="sm:w-6 sm:h-6 lg:w-[25px] lg:h-[25px]"
+            />
           </button>
         </motion.div>
-        <div className="grid grid-cols-2 gap-4 w-full  my-4 p-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 lg:gap-4 w-full my-3 sm:my-4 p-2">
           <motion.button
             initial={{
               scale: 1,
@@ -209,12 +222,12 @@ const AllCategoryListSlide = ({
                 queryName: "",
                 totalItems: "12",
               });
-              setCurrentSliderVarient(variants.exit)
+              setCurrentSliderVarient(variants.exit);
             }}
-            className="w-full flex gap-3 bg-(--button-color2) text-(--primary-color) rounded justify-between items-center px-4 border shadow cursor-pointer border-(--border-color)  py-5 mainFont font-semibold text-[1dvw]"
+            className="w-full flex gap-2 sm:gap-3 bg-(--button-color2) text-(--primary-color) rounded justify-between items-center px-3 sm:px-4 border shadow cursor-pointer border-(--border-color) py-3 sm:py-4 lg:py-5 mainFont font-semibold text-xs sm:text-sm lg:text-[1dvw]"
           >
             <p>Shortcuts</p>
-            <span className="text-[.8dvw]">12</span>
+            <span className="text-xs sm:text-sm lg:text-[.8dvw]">12</span>
           </motion.button>
           <motion.button
             onClick={() => {
@@ -223,7 +236,7 @@ const AllCategoryListSlide = ({
                 queryName: "",
                 totalItems: "15",
               });
-              setCurrentSliderVarient(variants.exit)
+              setCurrentSliderVarient(variants.exit);
             }}
             initial={{
               scale: 1,
@@ -243,10 +256,10 @@ const AllCategoryListSlide = ({
               ease: "anticipate",
               type: "tween",
             }}
-            className="w-full flex gap-3 bg-(--button-color2) text-(--primary-color) rounded justify-between items-center px-4 border shadow cursor-pointer border-(--border-color)  py-5 mainFont font-semibold text-[1dvw]"
+            className="w-full flex gap-2 sm:gap-3 bg-(--button-color2) text-(--primary-color) rounded justify-between items-center px-3 sm:px-4 border shadow cursor-pointer border-(--border-color) py-3 sm:py-4 lg:py-5 mainFont font-semibold text-xs sm:text-sm lg:text-[1dvw]"
           >
             <p>Wine</p>
-            <span className="text-[.8dvw]">15</span>
+            <span className="text-xs sm:text-sm lg:text-[.8dvw]">15</span>
           </motion.button>
           <motion.button
             onClick={() => {
@@ -255,7 +268,7 @@ const AllCategoryListSlide = ({
                 queryName: "",
                 totalItems: "20",
               });
-              setCurrentSliderVarient(variants.exit)
+              setCurrentSliderVarient(variants.exit);
             }}
             initial={{
               scale: 1,
@@ -275,10 +288,10 @@ const AllCategoryListSlide = ({
               ease: "anticipate",
               type: "tween",
             }}
-            className="w-full flex gap-3 bg-(--button-color2) text-(--primary-color) rounded justify-between items-center px-4 border shadow cursor-pointer border-(--border-color)  py-5 mainFont font-semibold text-[1dvw]"
+            className="w-full flex gap-2 sm:gap-3 bg-(--button-color2) text-(--primary-color) rounded justify-between items-center px-3 sm:px-4 border shadow cursor-pointer border-(--border-color) py-3 sm:py-4 lg:py-5 mainFont font-semibold text-xs sm:text-sm lg:text-[1dvw]"
           >
             <p>Beer</p>
-            <span className="text-[.8dvw]">20</span>
+            <span className="text-xs sm:text-sm lg:text-[.8dvw]">20</span>
           </motion.button>
           <motion.button
             onClick={() => {
@@ -287,7 +300,7 @@ const AllCategoryListSlide = ({
                 queryName: "",
                 totalItems: "10",
               });
-              setCurrentSliderVarient(variants.exit)
+              setCurrentSliderVarient(variants.exit);
             }}
             initial={{
               scale: 1,
@@ -307,10 +320,10 @@ const AllCategoryListSlide = ({
               ease: "anticipate",
               type: "tween",
             }}
-            className="w-full flex gap-3 bg-(--button-color2) text-(--primary-color) rounded justify-between items-center px-4 border shadow cursor-pointer border-(--border-color)  py-5 mainFont font-semibold text-[1dvw]"
+            className="w-full flex gap-2 sm:gap-3 bg-(--button-color2) text-(--primary-color) rounded justify-between items-center px-3 sm:px-4 border shadow cursor-pointer border-(--border-color) py-3 sm:py-4 lg:py-5 mainFont font-semibold text-xs sm:text-sm lg:text-[1dvw]"
           >
             <p className="line-clamp-1">PIZZA / WINGS COMBO</p>
-            <span className="text-[.8dvw]">10</span>
+            <span className="text-xs sm:text-sm lg:text-[.8dvw]">10</span>
           </motion.button>
           <motion.button
             onClick={() => {
@@ -319,7 +332,7 @@ const AllCategoryListSlide = ({
                 queryName: "",
                 totalItems: "150",
               });
-              setCurrentSliderVarient(variants.exit)
+              setCurrentSliderVarient(variants.exit);
             }}
             initial={{
               scale: 1,
@@ -339,10 +352,10 @@ const AllCategoryListSlide = ({
               ease: "anticipate",
               type: "tween",
             }}
-            className="w-full flex gap-3 bg-(--button-color2) text-(--primary-color) rounded justify-between items-center px-4 border shadow cursor-pointer border-(--border-color)  py-5 mainFont font-semibold text-[1dvw]"
+            className="w-full flex gap-2 sm:gap-3 bg-(--button-color2) text-(--primary-color) rounded justify-between items-center px-3 sm:px-4 border shadow cursor-pointer border-(--border-color) py-3 sm:py-4 lg:py-5 mainFont font-semibold text-xs sm:text-sm lg:text-[1dvw]"
           >
             <p className="line-clamp-1">Cigaretes</p>
-            <span className="text-[.8dvw]">150</span>
+            <span className="text-xs sm:text-sm lg:text-[.8dvw]">150</span>
           </motion.button>
         </div>
       </motion.div>

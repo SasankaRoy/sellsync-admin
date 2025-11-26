@@ -255,14 +255,14 @@ export const SellerNavbar = ({ showPunchInModal, setShowPunchInModal }) => {
 
   return (
     <>
-      <header className="flex justify-center items-center py-3 bg-[#f8f8f8]/70 shadow-sm">
+      <header className="flex justify-center items-center py-2 sm:py-3 bg-[#f8f8f8]/70 shadow-sm w-full max-w-full overflow-x-hidden">
         <div className="w-[95%] flex justify-between items-center">
           <div>
             <div
               onClick={() => {
                 navigate("/seller/dashboard");
               }}
-              className=" flex cursor-pointer justify-center items-center w-[14dvw] h-auto"
+              className=" flex cursor-pointer justify-center items-center w-[120px] sm:w-[140px] md:w-[14dvw] h-auto"
             >
               <img
                 alt="sellsync.com"
@@ -350,18 +350,32 @@ export const SellerNavbar = ({ showPunchInModal, setShowPunchInModal }) => {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center gap-2">
+          <div className="md:hidden flex items-center gap-1.5 sm:gap-2">
+            {/* Tasks Button for mobile */}
+            <button
+              onClick={() => {
+                setShowTaskListInner(TaskListVarient.inView);
+                setShowTaskListOutter(TaskListVarient.OutterWrapper.inView);
+              }}
+              className="flex justify-center items-center border border-(--border-color) rounded-full p-1.5 sm:p-2 cursor-pointer"
+              title="My Tasks"
+            >
+              <span className="bg-(--button-color5) text-(--primary-color) rounded-full p-1.5 sm:p-2 flex justify-center items-center">
+                <ClipboardList size={16} className="sm:w-[18px] sm:h-[18px]" />
+              </span>
+            </button>
+
             {/* Clock In/Out Button for mobile */}
             <button
               onClick={() => {
                 setCurrentStateOutter(clockInVarient.OutterWrapper.inView);
                 setCurrentStateInner(clockInVarient.inView);
               }}
-              className="flex justify-center items-center border border-(--border-color) rounded-full p-2 cursor-pointer"
+              className="flex justify-center items-center border border-(--border-color) rounded-full p-1.5 sm:p-2 cursor-pointer"
               title="Clock In/Out"
             >
-              <span className="bg-(--button-color1) text-(--primary-color) rounded-full p-2 flex justify-center items-center">
-                <CalendarClock size={18} />
+              <span className="bg-(--button-color1) text-(--primary-color) rounded-full p-1.5 sm:p-2 flex justify-center items-center">
+                <CalendarClock size={16} className="sm:w-[18px] sm:h-[18px]" />
               </span>
             </button>
 
@@ -370,10 +384,10 @@ export const SellerNavbar = ({ showPunchInModal, setShowPunchInModal }) => {
               onClick={() => {
                 setShowOffcanvasMenu(OffcanvasMenuVarients.inView);
               }}
-              className="p-2 border border-(--border-color)/40 rounded-full cursor-pointer hover:bg-(--button-color1) hover:text-(--primary-color) transition-all duration-300"
+              className="p-1.5 sm:p-2 border border-(--border-color)/40 rounded-full cursor-pointer hover:bg-(--button-color1) hover:text-(--primary-color) transition-all duration-300"
               title="Menu"
             >
-              <Logs size={20} />
+              <Logs size={18} className="sm:w-5 sm:h-5" />
             </button>
           </div>
         </div>

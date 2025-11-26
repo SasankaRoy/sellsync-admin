@@ -104,7 +104,7 @@ export const SalePoint = () => {
   }, [isKeyboardOpen]);
 
   return (
-    <>
+    <div className="h-screen w-full max-w-full overflow-hidden fixed inset-0">
       <SellerNavbar
         showPunchInModal={showPunchInModal}
         setShowPunchInModal={setShowPunchInModal}
@@ -114,9 +114,9 @@ export const SalePoint = () => {
           e.stopPropagation();
           setIsKeyboardOpen(false);
         }}
-        className="flex flex-col lg:flex-row justify-start items-stretch lg:items-start gap-0 lg:gap-4 h-[calc(100vh-70px)] sm:h-[calc(100vh-80px)] overflow-hidden"
+        className="flex flex-col lg:flex-row justify-start items-stretch lg:items-start gap-0 lg:gap-4 h-[calc(100vh-70px)] sm:h-[calc(100vh-80px)] overflow-hidden overflow-x-hidden w-full max-w-full"
       >
-        <div className="flex-1 flex flex-col relative overflow-hidden">
+        <div className="flex-1 flex flex-col relative overflow-hidden overflow-x-hidden w-full max-w-full">
           <div className="flex flex-col gap-1 lg:gap-2 justify-start items-center w-full p-2 sm:p-4">
             <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center w-full gap-3 sm:gap-4">
               <div className="flex-1 sm:flex-shrink-0 w-full sm:w-[50%] flex justify-center items-center gap-2 sm:gap-4 bg-(--secondary-color) p-2 rounded-full">
@@ -284,6 +284,34 @@ export const SalePoint = () => {
                           <p className="text-sm font-semibold">
                             $ {(item.qty * item.price).toFixed(2)}
                           </p>
+                        </div>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() =>
+                              setCart((prev) =>
+                                prev.map((i, idx) =>
+                                  idx === index ? { ...i, qty: i.qty + 1 } : i
+                                )
+                              )
+                            }
+                            className="bg-(--button-color1) text-(--primary-color) rounded-full p-1.5 flex justify-center items-center cursor-pointer"
+                          >
+                            <Plus size={16} />
+                          </button>
+                          <button
+                            onClick={() =>
+                              setCart((prev) =>
+                                prev
+                                  .map((i, idx) =>
+                                    idx === index ? { ...i, qty: i.qty - 1 } : i
+                                  )
+                                  .filter((i) => i.qty > 0)
+                              )
+                            }
+                            className="bg-(--Negative-color) text-(--primary-color) rounded-full p-1.5 flex justify-center items-center cursor-pointer"
+                          >
+                            <Minus size={16} />
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -497,6 +525,51 @@ export const SalePoint = () => {
                 Void
               </button>
             </div>
+            {/* Mobile Options - Collapsible */}
+            <div className="lg:hidden">
+              <details className="group">
+                <summary className="flex items-center justify-between cursor-pointer py-2 border-t border-(--border-color)/30">
+                  <h3 className="font-medium mainFont text-(--button-color4) text-sm">
+                    More Options
+                  </h3>
+                  <span className="transition-transform group-open:rotate-180">
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </span>
+                </summary>
+                <div className="grid grid-cols-3 gap-2 pt-2">
+                  <button className="py-2 text-xs mainFont font-semibold bg-(--button-color5) text-(--primary-color) rounded-md">
+                    Payout
+                  </button>
+                  <button className="py-2 text-xs mainFont font-semibold bg-(--button-color2) text-(--primary-color) rounded-md">
+                    Suspend
+                  </button>
+                  <button className="py-2 text-xs mainFont font-semibold bg-(--button-color1) text-(--primary-color) rounded-md">
+                    Recall
+                  </button>
+                  <button className="py-2 text-xs mainFont font-semibold bg-(--button-color2) text-(--primary-color) rounded-md">
+                    Reprint
+                  </button>
+                  <button className="py-2 text-xs mainFont font-semibold bg-(--Negative-color) text-(--primary-color) rounded-md">
+                    No Sale
+                  </button>
+                  <button className="py-2 text-xs mainFont font-semibold bg-(--button-color3) text-(--primary-color) rounded-md">
+                    Cancel
+                  </button>
+                </div>
+              </details>
+            </div>
             <div className="hidden lg:block">
               <h3 className="font-medium mainFont text-(--button-color4) text-[1.2dvw] mb-2">
                 Options
@@ -542,7 +615,7 @@ export const SalePoint = () => {
           </motion.div>
         </AnimatePresence>
       )}
-    </>
+    </div>
   );
 };
 
