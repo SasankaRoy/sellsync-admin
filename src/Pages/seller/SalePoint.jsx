@@ -306,6 +306,7 @@ export const SalePoint = () => {
                                     idx === index ? { ...i, qty: i.qty - 1 } : i
                                   )
                                   .filter((i) => i.qty > 0)
+                                  
                               )
                             }
                             className="bg-(--Negative-color) text-(--primary-color) rounded-full p-1.5 flex justify-center items-center cursor-pointer"
@@ -315,7 +316,7 @@ export const SalePoint = () => {
                         </div>
                       </div>
                     </div>
-
+                
                     {/* Desktop Table Layout */}
                     <div className="hidden lg:flex justify-center items-center w-full">
                       <div className="border-r border-(--border-color) py-3 px-1 min-w-[5dvw] flex justify-center items-center">
