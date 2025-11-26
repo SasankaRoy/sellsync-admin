@@ -35,7 +35,7 @@ const EmployeeModal = ({ forState, setEditUserModel, productData }) => {
       [name]: value,
     });
   };
-
+  
   const handleSubmit = async () => {
     setIsLoading(true);
 

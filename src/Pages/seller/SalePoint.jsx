@@ -302,7 +302,7 @@ export const SalePoint = () => {
                               )
                             );
                           }}
-                          className="text-[1dvw] font-semibold mainFont outline-none text-center bg-transparent"
+                          className="text-[1dvw] font-semibold mainFont outline-none text-center bg-transparent w-full max-w-[3rem]"
                         />
                       </div>
                       <div className="border-r border-(--border-color) py-3 w-full flex justify-between gap-3 px-1 items-center">
