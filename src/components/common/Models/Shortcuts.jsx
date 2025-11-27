@@ -1,7 +1,11 @@
 import { CircleX } from "lucide-react";
-import React, { useState } from "react";
+import React, { lazy, Suspense, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import ProductImg1 from "../../../assets/images/ProductImg1.png";
+import { useQuery } from "@tanstack/react-query";
+import axiosInstance from "../../../utils/axios-interceptor";
+// import { AllCategoryListSlide } from "./AllCategoryListSlide";
+const AllCategoryListSlide = lazy(() => import("./AllCategoryListSlide"));
 
 const categoriesSlideVarient = {
   initial: {
@@ -34,6 +38,7 @@ export const Shortcuts = ({
   showShortcuts,
   setShowShortcuts,
 }) => {
+  const [limit, setLimit] = useState(10);
   const [currentSliderVarient, setCurrentSliderVarient] = useState(
     categoriesSlideVarient.initial
   );
@@ -42,6 +47,69 @@ export const Shortcuts = ({
     queryName: "",
     totalItems: "20",
   });
+
+  const handleGetLists = async (title, queryName) => {
+    try {
+      if (title === "Shortcuts") {
+        const reqList = await axiosInstance.post(
+          "/api/v1/product/shortcut-product-list",
+          {
+            page: 1,
+            limit: limit,
+            // selected_category_id: "",
+            // search_text: "",
+          }
+        );
+        if (reqList.status === 200) {
+          console.log(reqList.data.results, "shortcuts");
+          return reqList.data.results || [];
+        }
+        return reqList.data.results || [];
+      } else {
+        const reqList = await axiosInstance.post(
+          "/api/v1/employee/category-wise-product-list",
+          {
+            page: 1,
+            limit: limit,
+            selected_category_id: queryName,
+            // selected_category_id: '68adb20884f3336f436a8769',
+            // search_text: "",
+          }
+        );
+        if (reqList.status === 200) {
+          console.log(reqList.data.results, "category", queryName);
+          return reqList.data.results || [];
+        }
+        return reqList.data.results || [];
+      }
+      return [];
+    } catch (error) {
+      console.log(error);
+      return error?.response?.data.message || "Faild to fetch product list";
+    }
+  };
+
+  const {
+    data = [],
+    isError,
+    isFetching,
+    isLoading,
+  } = useQuery({
+    queryFn: async () =>
+      await handleGetLists(
+        currentFilterItems.title,
+        currentFilterItems.queryName
+      ),
+    queryKey: [
+      "get_shortcuts_list",
+      limit,
+      currentFilterItems.title,
+      currentFilterItems.queryName,
+    ],
+  });
+
+  // console.log(data, "lists data");
+
   return (
     <>
       <motion.div
@@ -93,272 +161,96 @@ export const Shortcuts = ({
             </button>
           </div>
         </motion.div>
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{
-            opacity: 1,
-          }}
-          transition={{
-            duration: 0.8,
-            ease: "circInOut",
-            type: "tween",
-            delay: 0.5,
-          }}
-          className=" p-2 grid bg-red-00 scrollCustom grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-4 w-full max-h-full overflow-y-auto"
-        >
-          {Array.from({ length: currentFilterItems.totalItems }).map(
-            (cur, id) => (
-              <div
-                key={id}
-                className="bg-(--primary-color) cursor-pointer hover:scale-105 transition-all ease-in-out duration-300 border border-(--border-color)/20 flex flex-col gap-2 sm:gap-3 shadow-sm rounded-md p-2"
-              >
-                <div className="h-[15vh] sm:h-[18vh] lg:h-[20vh] rounded-md w-full bg-(--secondary-color) py-2 sm:py-3 lg:py-4">
-                  <img
-                    className="w-full h-full object-contain"
-                    src={ProductImg1}
-                    alt="product-image"
-                  />
-                </div>
-                <div className="flex flex-col gap-1 px-1 sm:px-2 py-1">
-                  <div className="flex flex-col gap-.5">
-                    <h3 className="text-xs sm:text-sm lg:text-[1dvw] font-semibold line-clamp-2 mainFont">
-                      Budwiser Magnum 750ML
-                    </h3>
-                    <p className="paraFont text-xs sm:text-sm lg:text-[.9dvw] text-(--button-color4) line-clamp-1">
-                      Product small info
-                    </p>
-                  </div>
-                  <h3 className="font-semibold text-sm sm:text-base lg:text-[1.2dvw]">
-                    $ 20.00
-                  </h3>
-                </div>
+        {isLoading ? (
+          <div className="w-full h-full flex justify-center items-center gap-2">
+            <img src="/logo.png" className="h-[7dvw] w-[5dvw] object-contain" />
+            <p className="text-center mainFont text-[1.5dvw] font-semibold animate-pulse">
+              Fetching items.....
+            </p>
+          </div>
+        ) : (
+          <>
+            {data.length === 0 ? (
+              <div className="w-full h-full flex justify-center items-center gap-2">
+                <img
+                  src="/logo.png"
+                  className="h-[7dvw] w-[5dvw] object-contain"
+                />
+                <p className="text-center mainFont text-(--mainText-color)/70 text-[1.5dvw] font-semibold">
+                  No Products Found.....
+                </p>
               </div>
-            )
-          )}
-        </motion.div>
-      </motion.div>
-      <AnimatePresence mode="popLayout">
-        <AllCategoryListSlide
-          variants={categoriesSlideVarient}
-          currentSliderVarient={currentSliderVarient}
-          setCurrentSliderVarient={setCurrentSliderVarient}
-          setCurrentFilterItems={setCurrentFilterItems}
-        />
-      </AnimatePresence>
-    </>
-  );
-};
+            ) : (
+              <motion.div
+                initial={{ opacity: 0 }}
+                whileInView={{
+                  opacity: 1,
+                }}
+                transition={{
+                  duration: 0.8,
+                  ease: "circInOut",
+                  type: "tween",
+                  delay: 0.5,
+                }}
+                className=" p-2 grid bg-red-00 scrollCustom grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-4 w-full max-h-full overflow-y-auto"
+              >
+                {data.map((cur, id) => (
+                  <div
+                    key={id}
+                    className="bg-(--primary-color) cursor-pointer hover:scale-105 transition-all ease-in-out duration-300 border border-(--border-color)/20 flex flex-col gap-2 sm:gap-3 shadow-sm rounded-md p-2"
+                  >
+                    <div className="h-[15vh] sm:h-[18vh] lg:h-[20vh] rounded-md w-full bg-(--secondary-color) py-2 sm:py-3 lg:py-4">
+                      <img
+                        className="w-full h-full object-contain"
+                        src={cur.product_image}
+                        alt="product-image"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1 px-1 sm:px-2 py-1">
+                      <div className="flex flex-col gap-.5">
+                        <h3 className="text-xs sm:text-sm lg:text-[1dvw] font-semibold line-clamp-2 mainFont">
+                          {cur.name}
+                        </h3>
+                        <p className="paraFont text-xs sm:text-sm lg:text-[.9dvw] text-(--button-color4) line-clamp-1">
+                          {cur.product_size}
+                        </p>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <h3 className="font-semibold text-sm sm:text-base lg:text-[1.2dvw]">
+                          $ {cur.product_price}
+                        </h3>
+                        <button className="px-5 py-1 tracking-wider bg-(--button-color1) text-white mainFont cursor-pointer font-semibold rounded-lg">
+                          Add
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </motion.div>
+            )}
+          </>
+        )}
 
-const AllCategoryListSlide = ({
-  variants,
-  currentSliderVarient,
-  setCurrentSliderVarient,
-  setCurrentFilterItems,
-}) => {
-  return (
-    <>
-      <motion.div
-        variants={variants}
-        initial="initial"
-        key={currentSliderVarient}
-        animate={currentSliderVarient}
-        className="absolute top-2 right-0 w-full sm:w-[70%] lg:w-[50%] bg-white shadow-md border-l border-(--border-color)/20 p-3 sm:p-4 lg:p-5 z-40 h-full overflow-y-auto overflow-x-hidden max-w-full"
-      >
-        <motion.div
-          initial={{
-            opacity: 0,
-          }}
-          whileInView={{
-            opacity: 1,
-            transition: {
-              delay: 0.3,
-            },
-          }}
-          transition={{
-            duration: 0.4,
-            ease: "anticipate",
-            type: "tween",
-          }}
-          className="flex justify-between items-center border-b border-(--border-color) px-2 sm:px-3 lg:px-4 py-1.5"
-        >
-          <h3 className="text-base sm:text-lg lg:text-[1.5dvw] font-semibold">
-            All Categories
-          </h3>
-          <button
-            onClick={() => {
-              setCurrentSliderVarient(variants.exit);
-            }}
-            className="cursor-pointer"
-          >
-            <CircleX
-              size={20}
-              className="sm:w-6 sm:h-6 lg:w-[25px] lg:h-[25px]"
-            />
-          </button>
-        </motion.div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 lg:gap-4 w-full my-3 sm:my-4 p-2">
-          <motion.button
-            initial={{
-              scale: 1,
-              opacity: 0,
-            }}
-            whileHover={{
-              scale: 1.05,
-            }}
-            whileInView={{
-              opacity: 1,
-              transition: {
-                delay: 0.3,
-              },
-            }}
-            transition={{
-              duration: 0.4,
-              ease: "anticipate",
-              type: "tween",
-            }}
-            onClick={() => {
-              setCurrentFilterItems({
-                title: "Shortcuts",
-                queryName: "",
-                totalItems: "12",
-              });
-              setCurrentSliderVarient(variants.exit);
-            }}
-            className="w-full flex gap-2 sm:gap-3 bg-(--button-color2) text-(--primary-color) rounded justify-between items-center px-3 sm:px-4 border shadow cursor-pointer border-(--border-color) py-3 sm:py-4 lg:py-5 mainFont font-semibold text-xs sm:text-sm lg:text-[1dvw]"
-          >
-            <p>Shortcuts</p>
-            <span className="text-xs sm:text-sm lg:text-[.8dvw]">12</span>
-          </motion.button>
-          <motion.button
-            onClick={() => {
-              setCurrentFilterItems({
-                title: "Wine",
-                queryName: "",
-                totalItems: "15",
-              });
-              setCurrentSliderVarient(variants.exit);
-            }}
-            initial={{
-              scale: 1,
-              opacity: 0,
-            }}
-            whileHover={{
-              scale: 1.05,
-            }}
-            whileInView={{
-              opacity: 1,
-              transition: {
-                delay: 0.3,
-              },
-            }}
-            transition={{
-              duration: 0.4,
-              ease: "anticipate",
-              type: "tween",
-            }}
-            className="w-full flex gap-2 sm:gap-3 bg-(--button-color2) text-(--primary-color) rounded justify-between items-center px-3 sm:px-4 border shadow cursor-pointer border-(--border-color) py-3 sm:py-4 lg:py-5 mainFont font-semibold text-xs sm:text-sm lg:text-[1dvw]"
-          >
-            <p>Wine</p>
-            <span className="text-xs sm:text-sm lg:text-[.8dvw]">15</span>
-          </motion.button>
-          <motion.button
-            onClick={() => {
-              setCurrentFilterItems({
-                title: "Beer",
-                queryName: "",
-                totalItems: "20",
-              });
-              setCurrentSliderVarient(variants.exit);
-            }}
-            initial={{
-              scale: 1,
-              opacity: 0,
-            }}
-            whileHover={{
-              scale: 1.05,
-            }}
-            whileInView={{
-              opacity: 1,
-              transition: {
-                delay: 0.3,
-              },
-            }}
-            transition={{
-              duration: 0.4,
-              ease: "anticipate",
-              type: "tween",
-            }}
-            className="w-full flex gap-2 sm:gap-3 bg-(--button-color2) text-(--primary-color) rounded justify-between items-center px-3 sm:px-4 border shadow cursor-pointer border-(--border-color) py-3 sm:py-4 lg:py-5 mainFont font-semibold text-xs sm:text-sm lg:text-[1dvw]"
-          >
-            <p>Beer</p>
-            <span className="text-xs sm:text-sm lg:text-[.8dvw]">20</span>
-          </motion.button>
-          <motion.button
-            onClick={() => {
-              setCurrentFilterItems({
-                title: "PIZZA / WINGS COMBO",
-                queryName: "",
-                totalItems: "10",
-              });
-              setCurrentSliderVarient(variants.exit);
-            }}
-            initial={{
-              scale: 1,
-              opacity: 0,
-            }}
-            whileHover={{
-              scale: 1.05,
-            }}
-            whileInView={{
-              opacity: 1,
-              transition: {
-                delay: 0.3,
-              },
-            }}
-            transition={{
-              duration: 0.4,
-              ease: "anticipate",
-              type: "tween",
-            }}
-            className="w-full flex gap-2 sm:gap-3 bg-(--button-color2) text-(--primary-color) rounded justify-between items-center px-3 sm:px-4 border shadow cursor-pointer border-(--border-color) py-3 sm:py-4 lg:py-5 mainFont font-semibold text-xs sm:text-sm lg:text-[1dvw]"
-          >
-            <p className="line-clamp-1">PIZZA / WINGS COMBO</p>
-            <span className="text-xs sm:text-sm lg:text-[.8dvw]">10</span>
-          </motion.button>
-          <motion.button
-            onClick={() => {
-              setCurrentFilterItems({
-                title: "Cigaretes",
-                queryName: "",
-                totalItems: "150",
-              });
-              setCurrentSliderVarient(variants.exit);
-            }}
-            initial={{
-              scale: 1,
-              opacity: 0,
-            }}
-            whileHover={{
-              scale: 1.05,
-            }}
-            whileInView={{
-              opacity: 1,
-              transition: {
-                delay: 0.3,
-              },
-            }}
-            transition={{
-              duration: 0.4,
-              ease: "anticipate",
-              type: "tween",
-            }}
-            className="w-full flex gap-2 sm:gap-3 bg-(--button-color2) text-(--primary-color) rounded justify-between items-center px-3 sm:px-4 border shadow cursor-pointer border-(--border-color) py-3 sm:py-4 lg:py-5 mainFont font-semibold text-xs sm:text-sm lg:text-[1dvw]"
-          >
-            <p className="line-clamp-1">Cigaretes</p>
-            <span className="text-xs sm:text-sm lg:text-[.8dvw]">150</span>
-          </motion.button>
-        </div>
+
+        <div className="absolute right-0 bottom-[5%] w-[30%]  z-30">
+        <button className="bg-(--button-color1) text-white mainFont flex justify-center items-center gap-4 font-semibold text-[1.5dvw] cursor-pointer py-2 w-full rounded-xl">
+          Contiune <span className="text-[1dvw]">( 0 items )</span>
+        </button>
+      </div>
+
       </motion.div>
+      <Suspense fallback={null}>
+        <AnimatePresence mode="popLayout">
+          <AllCategoryListSlide
+            variants={categoriesSlideVarient}
+            currentSliderVarient={currentSliderVarient}
+            setCurrentSliderVarient={setCurrentSliderVarient}
+            setCurrentFilterItems={setCurrentFilterItems}
+          />
+        </AnimatePresence>
+      </Suspense>
+
+      
     </>
   );
 };
