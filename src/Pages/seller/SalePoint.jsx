@@ -8,6 +8,8 @@ import ProductImg1 from "../../assets/images/ProductImg1.png";
 import { styled } from "@mui/material/styles";
 import { Shortcuts } from "../../components/common/Models/Shortcuts";
 import { SellerNavbar } from "../../components/common/Navbars/SellerNavbar";
+import { useDispatch, useSelector } from "react-redux";
+import { decreaseQyt, increaseQyt } from "../../Redux/RingUpSlice";
 
 const itemListVarient = {
   initial: {
@@ -41,6 +43,10 @@ export const SalePoint = () => {
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
   const [showShortcuts, setShowShortcuts] = useState(itemListVarient.initial);
   const [showPunchInModal, setShowPunchInModal] = useState(false);
+  const currentRingUpData = useSelector((state) => state.ringUps);
+  const dispatch = useDispatch();
+
+  console.log(currentRingUpData, "in the ");
 
   const [cart, setCart] = useState([
     {
@@ -102,6 +108,14 @@ export const SalePoint = () => {
       setIsKeyboardOpen(false);
     }
   }, [isKeyboardOpen]);
+
+  const handleIncreaseQty = (id, action) => {
+    if (action === "increase") {
+      dispatch(increaseQyt(id));
+    } else if (action === "decrease") {
+      dispatch(decreaseQyt(id));
+    }
+  };
 
   return (
     // <div className="h-screen w-full max-w-full overflow-hidden fixed inset-0">
@@ -711,7 +725,7 @@ export const SalePoint = () => {
 
               {/* item list start */}
               <div className="flex flex-col gap-2 scrollCustom h-[100%] overflow-y-auto justify-start items-center  mt-1.5">
-                {[1, 2, 3, 4].map((cur, id) => (
+                {currentRingUpData?.map((cur, id) => (
                   <div
                     key={id}
                     className={`flex justify-center items-center w-full ${
@@ -720,22 +734,23 @@ export const SalePoint = () => {
                         : "bg-transparent"
                     }`}
                   >
-                    <div className="border-r border-(--border-color) py-3 px-1  min-w-[5dvw] flex justify-center items-center">
-                      <p className="text-[1dvw] font-semibold mainFont">
-                        {cur}
-                      </p>
+                    <div className="border-r border-(--border-color) py-3 px-1  min-w-[5dvw] max-w-[5dvw] flex justify-center items-center">
+                      {/* <p className="text-[1dvw] font-semibold mainFont">
+                        {cur.qty}
+                      </p> */}
+                      <input value={cur.qty} type="text" className="w-full border-none active:border-none outline-none mainFont text-[1dvw] font-semibold text-center"/>
                     </div>
                     <div className="border-r  border-(--border-color) py-3 w-full flex justify-between gap-3 px-1 items-center">
                       <div className="flex justify-start items-center gap-3">
                         <div className="w-8 h-8 shrink-0 rounded-full overflow-hidden">
                           <img
-                            src={ProductImg1}
+                            src={cur.product_image}
                             alt="product"
                             className="w-full h-full object-cover"
                           />
                         </div>
                         <p className="text-[1dvw] font-semibold mainFont line-clamp-1">
-                          Budwiser Magnum 750ML
+                          {cur.name}
                         </p>
                       </div>
                       <div className="shrink-0">
@@ -748,12 +763,15 @@ export const SalePoint = () => {
                       <input
                         type="text"
                         placeholder="0.00"
-                        value={`$ ${cur * 3}.00`}
+                        value={`$ ${cur.product_price}.00`}
                         className="w-full text-center outline-none text-[1dvw] mainFont font-semibold border-(--border-color) py-2 bg-(--secondary-color)/50 appearance-none"
                       />
                     </div>
                     <div className="border-r border-(--border-color) py-3  min-w-[8dvw] w-[8dvw] shrink-0 flex justify-center items-center px-2">
-                      <select className="w-full text-center outline-none text-[1dvw] font-semibold mainFont  border-(--border-color) py-2 bg-(--secondary-color)/50 rounded-md appearance-none">
+                      <select
+                        value={cur.tax_percentage}
+                        className="w-full text-center outline-none text-[1dvw] font-semibold mainFont  border-(--border-color) py-2 bg-(--secondary-color)/50 rounded-md appearance-none"
+                      >
                         <option>No Tax</option>
                         <option>Low Tax</option>
                         <option>High Tax</option>
@@ -761,14 +779,24 @@ export const SalePoint = () => {
                     </div>
                     <div className="border-r border-(--border-color) py-3  min-w-[8dvw] shrink-0 flex justify-center items-center">
                       <p className="text-[1dvw] font-semibold mainFont">
-                        $ {cur * 5}.00
+                        $ {cur.product_price * cur.qty}.00
                       </p>
                     </div>
                     <div className="py-3  min-w-[8dvw] flex justify-center gap-3 items-center shrink-0">
-                      <button className="bg-(--button-color1) text-(--primary-color) rounded-full p-2 flex justify-center items-center cursor-pointer">
+                      <button
+                        onClick={() => {
+                          handleIncreaseQty(cur.id, "increase");
+                        }}
+                        className="bg-(--button-color1) text-(--primary-color) rounded-full p-2 flex justify-center items-center cursor-pointer"
+                      >
                         <Plus />
                       </button>
-                      <button className="bg-(--Negative-color) text-(--primary-color) rounded-full p-2 flex justify-center items-center cursor-pointer">
+                      <button
+                        onClick={() => {
+                          handleIncreaseQty(cur.id, "decrease");
+                        }}
+                        className="bg-(--Negative-color) text-(--primary-color) rounded-full p-2 flex justify-center items-center cursor-pointer"
+                      >
                         <Minus />
                       </button>
                     </div>

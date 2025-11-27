@@ -4,6 +4,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import ProductImg1 from "../../../assets/images/ProductImg1.png";
 import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "../../../utils/axios-interceptor";
+import { useDispatch, useSelector } from "react-redux";
+import { addNewItem } from "../../../Redux/RingUpSlice";
 // import { AllCategoryListSlide } from "./AllCategoryListSlide";
 const AllCategoryListSlide = lazy(() => import("./AllCategoryListSlide"));
 
@@ -47,6 +49,8 @@ export const Shortcuts = ({
     queryName: "",
     totalItems: "20",
   });
+  const dispatch = useDispatch();
+  const currentRingUpData = useSelector((state) => state.ringUps);
 
   const handleGetLists = async (title, queryName) => {
     try {
@@ -109,6 +113,20 @@ export const Shortcuts = ({
   });
 
   // console.log(data, "lists data");
+
+  const handleAddItem = (curData) => {
+    const { id, name, product_image, product_price, tax_percentage } = curData;
+    dispatch(
+      addNewItem({
+        id,
+        name,
+        product_image,
+        product_price,
+        tax_percentage,
+        qty: 1,
+      })
+    );
+  };
 
   return (
     <>
@@ -219,7 +237,10 @@ export const Shortcuts = ({
                         <h3 className="font-semibold text-sm sm:text-base lg:text-[1.2dvw]">
                           $ {cur.product_price}
                         </h3>
-                        <button className="px-5 py-1 tracking-wider bg-(--button-color1) text-white mainFont cursor-pointer font-semibold rounded-lg">
+                        <button
+                          onClick={() => handleAddItem(cur)}
+                          className="px-5 py-1 tracking-wider bg-(--button-color1) text-white mainFont cursor-pointer font-semibold rounded-lg"
+                        >
                           Add
                         </button>
                       </div>
@@ -230,14 +251,16 @@ export const Shortcuts = ({
             )}
           </>
         )}
-
-
-        <div className="absolute right-0 bottom-[5%] w-[30%]  z-30">
-        <button className="bg-(--button-color1) text-white mainFont flex justify-center items-center gap-4 font-semibold text-[1.5dvw] cursor-pointer py-2 w-full rounded-xl">
-          Contiune <span className="text-[1dvw]">( 0 items )</span>
-        </button>
-      </div>
-
+        {currentRingUpData?.length >= 1 && (
+          <div className="absolute right-0 bottom-[5%] w-[30%]  z-30">
+            <button className="bg-(--button-color1) text-white mainFont flex justify-center items-center gap-4 font-semibold text-[1.5dvw] cursor-pointer py-2 w-full rounded-xl">
+              Contiune{" "}
+              <span className="text-[1dvw]">
+                ( {currentRingUpData.length} items )
+              </span>
+            </button>
+          </div>
+        )}
       </motion.div>
       <Suspense fallback={null}>
         <AnimatePresence mode="popLayout">
@@ -249,8 +272,6 @@ export const Shortcuts = ({
           />
         </AnimatePresence>
       </Suspense>
-
-      
     </>
   );
 };
