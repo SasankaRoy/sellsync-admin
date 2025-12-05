@@ -1,10 +1,33 @@
-import React, { useState } from "react";
+import React from "react";
 import { X, Maximize2 } from "lucide-react";
 import SellsyncLogo from "../../assets/images/SellsyncLogo.png";
 
 const CustomerScreenPage = () => {
-  const [cartItems, setCartItems] = useState([]);
+  // Read snapshot from localStorage so a new tab can render without Redux context
+  const [snapshot, setSnapshot] = React.useState([]);
 
+  React.useEffect(() => {
+    try {
+      console.log(localStorage.getItem('ringUpsSnapshot'))
+      const raw = localStorage.getItem("ringUpsSnapshot");
+      console.log(raw)
+      if (raw) {
+        setSnapshot(JSON.parse(raw));
+      }
+
+      const onStorage = (e) => {
+        if (e.key === "ringUpsSnapshot" && e.newValue) {
+          try {
+            setSnapshot(JSON.parse(e.newValue));
+          } catch {}
+        }
+      };
+      window.addEventListener("storage", onStorage);
+      return () => window.removeEventListener("storage", onStorage);
+    } catch (e) {}
+  }, []);
+
+  
   // Mock data - Replace with actual data from props or state
   const customer = {
     id: 1,
@@ -15,46 +38,32 @@ const CustomerScreenPage = () => {
     totalSpent: "$2,450.00",
   };
 
-  // Mock cart items - Replace with actual products
-  const mockProducts = [
-    {
-      id: 1,
-      name: "Corona Extra Beer",
-      quantity: 2,
-      price: 5.99,
-      total: 11.98,
-    },
-    {
-      id: 2,
-      name: "Heineken 6-Pack",
-      quantity: 1,
-      price: 12.99,
-      total: 12.99,
-    },
-    {
-      id: 3,
-      name: "Red Wine Bottle",
-      quantity: 3,
-      price: 15.99,
-      total: 47.97,
-    },
-  ];
+  // Derive products from Redux ringUps
+  const products = React.useMemo(() => {
+    return (snapshot || []).map((item) => {
+      const qty = Number(item?.qty || 0);
+      const price = Number(item?.product_price || 0);
+      return {
+        id: item?.id ?? item?.name,
+        name: item?.name || "Item",
+        quantity: qty,
+        price: price,
+        total: qty * price,
+      };
+    });
+  }, [snapshot]);
 
   const calculateTotal = () => {
-    return mockProducts.reduce((sum, item) => sum + item.total, 0).toFixed(2);
+    return products.reduce((sum, item) => sum + item.total, 0).toFixed(2);
   };
 
   const calculateSubtotal = () => {
-    return mockProducts.reduce((sum, item) => sum + item.total, 0).toFixed(2);
+    return products.reduce((sum, item) => sum + item.total, 0).toFixed(2);
   };
 
   const calculateTax = () => {
     const subtotal = parseFloat(calculateSubtotal());
     return (subtotal * 0.1).toFixed(2); // 10% tax
-  };
-
-  const handleRemoveItem = (itemId) => {
-    setCartItems(cartItems.filter((item) => item.id !== itemId));
   };
 
   return (
@@ -118,8 +127,8 @@ const CustomerScreenPage = () => {
               Products in Cart
             </h4>
             <div className="space-y-3">
-              {mockProducts.length > 0 ? (
-                mockProducts.map((product) => (
+              {products.length > 0 ? (
+                products.map((product) => (
                   <div
                     key={product.id}
                     className="bg-gray-50 rounded-lg p-3 flex justify-between items-center hover:bg-gray-100 transition-colors"

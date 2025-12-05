@@ -1,4 +1,6 @@
+import React, { useEffect } from "react";
 import { BrowserRouter, Route, Router, Routes } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { AdminDashboard } from "./Pages/admin/AdminDashboard/AdminDashboard";
 import { Sale } from "./Pages/admin/sales/Sale";
 import { Inventory } from "./Pages/admin/Inventory/Inventory";
@@ -49,6 +51,17 @@ import { AllSalesReports } from "./Pages/seller/AllSalesReports";
 import CustomerScreenPage from "./Pages/seller/CustomerScreenPage";
 
 function App() {
+  // Mirror ringUps into localStorage for customer screen tab to consume
+  const ringUps = useSelector((state) => state.ringUps);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("ringUpsSnapshot", JSON.stringify(ringUps || []));
+    } catch (e) {
+      // ignore storage errors to avoid impacting flow
+    }
+  }, [ringUps]);
+
   return (
     <>
       <BrowserRouter>

@@ -7,9 +7,11 @@ import { AnimatePresence, motion } from "framer-motion";
 import ProductImg1 from "../../assets/images/ProductImg1.png";
 import { styled } from "@mui/material/styles";
 import { Shortcuts } from "../../components/common/Models/Shortcuts";
+import { CustomerDetailsModal } from "../../components/common/Models/CustomerDetailsModal";
+import { CheckoutModal } from "../../components/common/Models/CheckoutModal";
 import { SellerNavbar } from "../../components/common/Navbars/SellerNavbar";
 import { useDispatch, useSelector } from "react-redux";
-import { decreaseQyt, increaseQyt } from "../../Redux/RingUpSlice";
+import { decreaseQyt, increaseQyt, updatePrice, updateQty } from "../../Redux/RingUpSlice";
 
 const itemListVarient = {
   initial: {
@@ -45,6 +47,11 @@ export const SalePoint = () => {
   const [showPunchInModal, setShowPunchInModal] = useState(false);
   const currentRingUpData = useSelector((state) => state.ringUps);
   const dispatch = useDispatch();
+  const [editingQty, setEditingQty] = useState({});
+  const [showCustomerModal, setShowCustomerModal] = useState(false);
+  const [customerInfo, setCustomerInfo] = useState({});
+  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const hasItems = (currentRingUpData?.length || 0) > 0;
 
   console.log(currentRingUpData, "in the ");
 
@@ -64,9 +71,10 @@ export const SalePoint = () => {
   const [discount, setDiscount] = useState(2.5);
   const [isPercentage, setIsPercentage] = useState(false);
 
-  const subtotal = cart.reduce((sum, item) => sum + item.qty * item.price, 0);
-  const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
-  const tax = 2.5;
+  // Calculate values from currentRingUpData
+  const subtotal = currentRingUpData?.reduce((sum, item) => sum + (item.qty * item.product_price), 0) || 0;
+  const totalItems = currentRingUpData?.reduce((sum, item) => sum + item.qty, 0) || 0;
+  const tax = 2.5; // You can calculate this from tax_percentage if needed
   const discountAmount = isPercentage ? subtotal * (discount / 100) : discount;
   const total = subtotal + tax - discountAmount;
 
@@ -115,6 +123,13 @@ export const SalePoint = () => {
     } else if (action === "decrease") {
       dispatch(decreaseQyt(id));
     }
+  };
+
+  const handleCustomerSubmit = (data) => {
+    setCustomerInfo(data);
+    setShowCustomerModal(false);
+    setShowCheckoutModal(true);
+    // Place any payment trigger here if needed, keeping existing flow unchanged
   };
 
   return (
@@ -735,10 +750,44 @@ export const SalePoint = () => {
                     }`}
                   >
                     <div className="border-r border-(--border-color) py-3 px-1  min-w-[5dvw] max-w-[5dvw] flex justify-center items-center">
-                      {/* <p className="text-[1dvw] font-semibold mainFont">
-                        {cur.qty}
-                      </p> */}
-                      <input value={cur.qty} type="text" className="w-full border-none active:border-none outline-none mainFont text-[1dvw] font-semibold text-center"/>
+                      <input
+                        value={
+                          editingQty[cur.id] !== undefined
+                            ? editingQty[cur.id]
+                            : cur.qty
+                        }
+                        type="text"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                        className="w-full border-none active:border-none outline-none mainFont text-[1dvw] font-semibold text-center"
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          // allow only digits
+                          if (!/^\d*$/.test(val)) return;
+                          setEditingQty((prev) => ({
+                            ...prev,
+                            [cur.id]: val,
+                          }));
+
+                          if (val === "") return;
+                          const parsed = parseInt(val, 10);
+                          if (Number.isNaN(parsed)) return;
+                          dispatch(
+                            updateQty({
+                              id: cur.id,
+                              name: cur.name,
+                              qty: parsed,
+                            })
+                          );
+                        }}
+                        onBlur={() => {
+                          setEditingQty((prev) => {
+                            const next = { ...prev };
+                            delete next[cur.id];
+                            return next;
+                          });
+                        }}
+                      />
                     </div>
                     <div className="border-r  border-(--border-color) py-3 w-full flex justify-between gap-3 px-1 items-center">
                       <div className="flex justify-start items-center gap-3">
@@ -761,9 +810,21 @@ export const SalePoint = () => {
                     </div>
                     <div className="border-r border-(--border-color) py-3  min-w-[8dvw] w-[8dvw] shrink-0 flex justify-center items-center px-2">
                       <input
-                        type="text"
+                        type="number"
                         placeholder="0.00"
-                        value={`$ ${cur.product_price}.00`}
+                        value={cur.product_price ?? ""}
+                        onChange={(e) => {
+                          const parsed = parseFloat(e.target.value);
+                          dispatch(
+                            updatePrice({
+                              id: cur.id,
+                              name: cur.name,
+                              price: Number.isNaN(parsed) ? 0 : parsed,
+                            })
+                          );
+                        }}
+                        step="0.01"
+                        min="0"
                         className="w-full text-center outline-none text-[1dvw] mainFont font-semibold border-(--border-color) py-2 bg-(--secondary-color)/50 appearance-none"
                       />
                     </div>
@@ -822,9 +883,12 @@ export const SalePoint = () => {
               </h3>
               <div>
                 <lable className="mainFont font-semibold text-[.9dvw]">
-                  Discount Type -
+                  Discount Type ({isPercentage ? "%" : "$"}) -
                 </lable>
-                <MaterialUISwitch />
+                <MaterialUISwitch
+                  checked={isPercentage}
+                  onChange={(e) => setIsPercentage(e.target.checked)}
+                />
               </div>
             </div>
             <div className="p-5 flex flex-col gap-4">
@@ -833,7 +897,7 @@ export const SalePoint = () => {
                   Total Items :
                 </p>
                 <strong className="text-[1.5dvw] paraFont font-semibold">
-                  5
+                  {totalItems}
                 </strong>
               </div>
               <div className="flex justify-between items-center">
@@ -841,7 +905,7 @@ export const SalePoint = () => {
                   SubTotal :
                 </p>
                 <strong className="text-[1.5dvw] paraFont font-semibold">
-                  $ 100
+                  $ {subtotal.toFixed(2)}
                 </strong>
               </div>
               <div className="flex justify-between items-center">
@@ -849,21 +913,29 @@ export const SalePoint = () => {
                   Tax :
                 </p>
                 <strong className="text-[1.5dvw] paraFont font-semibold text-(--Negative-color)">
-                  $ 2.50
+                  $ {tax.toFixed(2)}
                 </strong>
               </div>
 
               <div className="flex justify-between items-center  border-b border-(--border-color) pb-4">
                 <p className="text-[1.2dvw] mainFont font-semibold text-(--paraText-color)">
-                  Discount ($) :
+                  Discount ({isPercentage ? "%" : "$"}) :
                 </p>
-                {/* <strong className="text-[1.5dvw] paraFont font-semibold">
-                  $ 2.50
-                </strong> */}
                 <input
                   type="text"
-                  placeholder="$"
-                  value={"$ 2.50"}
+                  placeholder={isPercentage ? "%" : "$"}
+                  value={isPercentage ? `${discount}%` : `$ ${discount.toFixed(2)}`}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    // Remove currency/percentage symbols and spaces, then parse the number
+                    const cleanedValue = value
+                      .replace(/[%$]/g, "")
+                      .replace(/\s/g, "")
+                      .trim();
+                    const numericValue = parseFloat(cleanedValue) || 0;
+                    // Ensure non-negative values
+                    setDiscount(Math.max(0, numericValue));
+                  }}
                   className="w-[20%] text-center outline-none text-[1.5dvw] mainFont font-semibold border-(--border-color) py-2 bg-transparent paraFont appearance-none border-b "
                 />
               </div>
@@ -872,15 +944,26 @@ export const SalePoint = () => {
                   Total :
                 </p>
                 <strong className="text-[2dvw] paraFont font-semibold text-(--Positive-color)">
-                  $ 100.00
+                  $ {total.toFixed(2)}
                 </strong>
               </div>
             </div>
           </div>
           <div className="flex flex-col gap-3">
             <div className="flex justify-between items-center gap-3">
-              <button className="w-1/2 py-4 text-[1.2dvw] mainFont font-semibold bg-(--button-color5) text-(--primary-color) rounded-md">
-                Pay $ 100.00
+              <button
+                className={`w-1/2 py-4 text-[1.2dvw] mainFont font-semibold rounded-md ${
+                  hasItems
+                    ? "bg-(--button-color5) text-(--primary-color)"
+                    : "bg-(--button-color5)/40 text-(--primary-color)/60 cursor-not-allowed"
+                }`}
+                disabled={!hasItems}
+                onClick={() => {
+                  if (!hasItems) return;
+                  setShowCustomerModal(true);
+                }}
+              >
+                Pay $ {total.toFixed(2)}
               </button>
               <button className="w-1/2 py-4 text-[1.2dvw] mainFont font-semibold bg-(--Negative-color) text-(--primary-color) rounded-md">
                 Cancel
@@ -931,6 +1014,29 @@ export const SalePoint = () => {
           </motion.div>
         </AnimatePresence>
       )}
+      <CustomerDetailsModal
+        open={showCustomerModal}
+        onClose={() => setShowCustomerModal(false)}
+        onSubmit={handleCustomerSubmit}
+        defaultValues={customerInfo}
+      />
+      <CheckoutModal
+        open={showCheckoutModal}
+        onClose={() => setShowCheckoutModal(false)}
+        customerInfo={customerInfo}
+        summary={{
+          subtotal,
+          tax,
+          discount: discountAmount,
+          total,
+          totalItems,
+        }}
+        onPay={(method) => {
+          // hook for payment handling; keeping flow unchanged
+          console.log("Pay via:", method);
+          setShowCheckoutModal(false);
+        }}
+      />
     </>
   );
 };

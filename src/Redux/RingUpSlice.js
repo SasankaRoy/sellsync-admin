@@ -94,12 +94,55 @@ export const RingUpSlice = createSlice({
         state.splice(itemIndex, 1);
       }
     },
+    updatePrice: (state, action) => {
+      const { id, name, price } = action.payload || {};
+
+      const itemIndex = state.findIndex((item) => {
+        if (id && item.id) {
+          return item.id === id;
+        }
+        if (name) {
+          return item.name === name;
+        }
+        return false;
+      });
+
+      if (itemIndex !== -1) {
+        const newPrice = Number(price);
+        if (!Number.isNaN(newPrice) && newPrice >= 0) {
+          state[itemIndex].product_price = newPrice;
+        }
+      }
+    },
+    updateQty: (state, action) => {
+      const { id, name, qty } = action.payload || {};
+
+      const itemIndex = state.findIndex((item) => {
+        if (id && item.id) {
+          return item.id === id;
+        }
+        if (name) {
+          return item.name === name;
+        }
+        return false;
+      });
+
+      if (itemIndex !== -1) {
+        const newQty = Number(qty);
+        if (Number.isNaN(newQty)) return;
+        if (newQty <= 0) {
+          state.splice(itemIndex, 1);
+        } else {
+          state[itemIndex].qty = newQty;
+        }
+      }
+    },
     clearCart: (state) => {
       return [];
     },
   },
 });
 
-export const { addNewItem, decreaseQyt, increaseQyt, removeItem, clearCart } = RingUpSlice.actions;
+export const { addNewItem, decreaseQyt, increaseQyt, removeItem, clearCart, updatePrice, updateQty } = RingUpSlice.actions;
 
 export default RingUpSlice.reducer;
