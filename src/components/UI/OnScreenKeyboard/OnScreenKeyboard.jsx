@@ -58,7 +58,7 @@ export const OnScreenKeyboard = ({Change, inputValue, layoutName = "default"}) =
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 100 }}
         transition={{ duration: 0.3, ease: "easeInOut", type: "tween" }}
-        className="fixed bottom-0 left-0 w-full p-4 bg-(--secondary-color) backdrop-blur-3xl z-50"
+        className="fixed bottom-0 left-0 w-full p-4 bg-(--secondary-color) backdrop-blur-3xl z-[999]"
       >
         <Keyboard
           key={layoutName} // Force remount when layout changes

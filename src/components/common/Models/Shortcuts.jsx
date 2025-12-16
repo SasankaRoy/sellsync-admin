@@ -1,11 +1,11 @@
-import { CircleX } from "lucide-react";
+import { CircleX, Plus, Trash } from "lucide-react";
 import React, { lazy, Suspense, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import ProductImg1 from "../../../assets/images/ProductImg1.png";
 import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "../../../utils/axios-interceptor";
 import { useDispatch, useSelector } from "react-redux";
-import { addNewItem } from "../../../Redux/RingUpSlice";
+import { addNewItem, removeItem } from "../../../Redux/RingUpSlice";
 // import { AllCategoryListSlide } from "./AllCategoryListSlide";
 const AllCategoryListSlide = lazy(() => import("./AllCategoryListSlide"));
 
@@ -128,6 +128,14 @@ export const Shortcuts = ({
     );
   };
 
+  const handleRemoveItem = (itemId) => {
+    dispatch(removeItem(itemId));
+  };
+
+  const isItemInCart = (itemId) => {
+    return currentRingUpData?.some(item => item.id === itemId);
+  };
+
   return (
     <>
       <motion.div
@@ -215,7 +223,7 @@ export const Shortcuts = ({
                 {data.map((cur, id) => (
                   <div
                     key={id}
-                    className="bg-(--primary-color) cursor-pointer hover:scale-105 transition-all ease-in-out duration-300 border border-(--border-color)/20 flex flex-col gap-2 sm:gap-3 shadow-sm rounded-md p-2"
+                    className={`bg-(--primary-color) cursor-pointer hover:scale-105 transition-all ease-in-out duration-300 border border-(--border-color)/20 flex flex-col gap-2 sm:gap-3 shadow-sm rounded-md p-2 ${isItemInCart(cur.id)? 'bg-(--sideMenu-color)/15':'bg-(--primary-color)' }`}
                   >
                     <div className="h-[15vh] sm:h-[18vh] lg:h-[20vh] rounded-md w-full bg-(--secondary-color) py-2 sm:py-3 lg:py-4">
                       <img
@@ -237,12 +245,21 @@ export const Shortcuts = ({
                         <h3 className="font-semibold text-sm sm:text-base lg:text-[1.2dvw]">
                           $ {cur.product_price}
                         </h3>
-                        <button
-                          onClick={() => handleAddItem(cur)}
-                          className="px-5 py-1 tracking-wider bg-(--button-color1) text-white mainFont cursor-pointer font-semibold rounded-lg"
-                        >
-                          Add
-                        </button>
+                        {isItemInCart(cur.id) ? (
+                          <button
+                            onClick={() => handleRemoveItem(cur.id)}
+                            className="px-5 py-1 tracking-wider bg-(--Negative-color) text-white mainFont cursor-pointer font-semibold text-[.95dvw] rounded-lg"
+                          >
+                            <Trash />
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handleAddItem(cur)}
+                            className="px-5 py-1 tracking-wider bg-(--button-color1) text-white mainFont cursor-pointer font-semibold rounded-lg"
+                          >
+                            <Plus />
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -253,7 +270,12 @@ export const Shortcuts = ({
         )}
         {currentRingUpData?.length >= 1 && (
           <div className="absolute right-0 bottom-[5%] w-[30%]  z-30">
-            <button className="bg-(--button-color1) text-white mainFont flex justify-center items-center gap-4 font-semibold text-[1.5dvw] cursor-pointer py-2 w-full rounded-xl">
+            <button
+              onClick={() => {
+                setShowShortcuts(itemListVarient.exit);
+              }}
+              className="bg-(--button-color1) text-white mainFont flex justify-center items-center gap-4 font-semibold text-[1.5dvw] cursor-pointer py-2 w-full rounded-xl"
+            >
               Contiune{" "}
               <span className="text-[1dvw]">
                 ( {currentRingUpData.length} items )

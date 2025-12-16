@@ -55,13 +55,13 @@ export const SalePoint = () => {
   const [showPunchInModal, setShowPunchInModal] = useState(false);
   const currentRingUpData = useSelector((state) => state.ringUps);
   const dispatch = useDispatch();
-  
+
   // Search states
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [searchError, setSearchError] = useState("");
   const [showSearchResults, setShowSearchResults] = useState(false);
-  
+
   // Keyboard input tracking
   const [activeInputField, setActiveInputField] = useState(null); // { type: 'search' | 'quantity' | 'price', itemId: null | id }
   const [keyboardInput, setKeyboardInput] = useState("");
@@ -85,6 +85,19 @@ export const SalePoint = () => {
   const tax = 2.5; // You can calculate this from tax_percentage if needed
   const discountAmount = isPercentage ? subtotal * (discount / 100) : discount;
   const total = subtotal + tax - discountAmount;
+
+  // Sync discount and tax data to localStorage for customer screen
+  useEffect(() => {
+    const discountData = {
+      discount,
+      isPercentage,
+      discountAmount,
+      tax,
+      subtotal,
+      total
+    };
+    localStorage.setItem('discountSnapshot', JSON.stringify(discountData));
+  }, [discount, isPercentage, discountAmount, tax, subtotal, total]);
 
   // const [layoutName, setLayoutName] = useState("default");
   const [input, setInput] = useState("");
@@ -121,27 +134,41 @@ export const SalePoint = () => {
 
   // Sync keyboard input when active field changes
   useEffect(() => {
-    if (activeInputField?.type === 'search') {
+    if (activeInputField?.type === "search") {
       setKeyboardInput(input);
-    } else if (activeInputField?.type === 'quantity') {
-      const item = currentRingUpData?.find(item => item.id === activeInputField.itemId);
+    } else if (activeInputField?.type === "quantity") {
+      const item = currentRingUpData?.find(
+        (item) => item.id === activeInputField.itemId
+      );
       if (item) {
         setKeyboardInput(String(item.qty || ""));
       }
-    } else if (activeInputField?.type === 'price') {
-      const item = currentRingUpData?.find(item => item.id === activeInputField.itemId);
+    } else if (activeInputField?.type === "price") {
+      const item = currentRingUpData?.find(
+        (item) => item.id === activeInputField.itemId
+      );
       if (item) {
         setKeyboardInput(String(item.product_price || ""));
       }
-    } else if (activeInputField?.type === 'discount') {
+    } else if (activeInputField?.type === "discount") {
       setKeyboardInput(String(discount || ""));
+    } else if (activeInputField?.type === "customerName") {
+      setKeyboardInput(String(customerInfo.name || ""));
+    } else if (activeInputField?.type === "customerPhone") {
+      setKeyboardInput(String(customerInfo.phone || ""));
+    } else if (activeInputField?.type === "customerEmail") {
+      setKeyboardInput(String(customerInfo.email || ""));
+    } else if (activeInputField?.type === "customerAddress") {
+      setKeyboardInput(String(customerInfo.address || ""));
+    } else if (activeInputField?.type === "customerNotes") {
+      setKeyboardInput(String(customerInfo.notes || ""));
     }
-  }, [activeInputField, input, currentRingUpData, discount]);
+  }, [activeInputField, input, currentRingUpData, discount, customerInfo]);
 
   const onChange = (input) => {
     console.log("Input changed", input);
     setKeyboardInput(input);
-    
+
     // Handle different input types based on active field
     if (!activeInputField) {
       setInput(input);
@@ -149,27 +176,27 @@ export const SalePoint = () => {
       if (input && input.trim().length > 0) {
         setIsSearching(true);
         setShowSearchResults(true);
-        debounceCallback(input, "api/v1/product/list");
+        debounceCallback(input, "api/v1/product/shortcut-product-list");
       } else {
         setSearchResults([]);
         setIsSearching(false);
         setShowSearchResults(false);
         setSearchError("");
       }
-    } else if (activeInputField.type === 'search') {
+    } else if (activeInputField.type === "search") {
       setInput(input);
       // Trigger search with debounce
       if (input && input.trim().length > 0) {
         setIsSearching(true);
         setShowSearchResults(true);
-        debounceCallback(input, "api/v1/product/list");
+        debounceCallback(input, "api/v1/product/shortcut-product-list");
       } else {
         setSearchResults([]);
         setIsSearching(false);
         setShowSearchResults(false);
         setSearchError("");
       }
-    } else if (activeInputField.type === 'quantity') {
+    } else if (activeInputField.type === "quantity") {
       // Handle quantity input - only allow digits
       if (!/^\d*$/.test(input) && input !== "") return;
       const parsed = parseInt(input, 10);
@@ -181,7 +208,7 @@ export const SalePoint = () => {
           })
         );
       }
-    } else if (activeInputField.type === 'price') {
+    } else if (activeInputField.type === "price") {
       // Handle price input - allow digits and decimal point
       if (!/^\d*\.?\d*$/.test(input) && input !== "") return;
       const parsed = parseFloat(input);
@@ -193,7 +220,7 @@ export const SalePoint = () => {
           })
         );
       }
-    } else if (activeInputField.type === 'discount') {
+    } else if (activeInputField.type === "discount") {
       // Handle discount input - allow digits and decimal point
       if (!/^\d*\.?\d*$/.test(input) && input !== "") return;
       const parsed = parseFloat(input);
@@ -202,19 +229,32 @@ export const SalePoint = () => {
       } else if (input === "") {
         setDiscount(0);
       }
+    } else if (activeInputField.type === 'customerName' || 
+               activeInputField.type === 'customerPhone' || 
+               activeInputField.type === 'customerEmail' || 
+               activeInputField.type === 'customerAddress' || 
+               activeInputField.type === 'customerNotes') {
+      // Handle customer modal inputs - allow all characters
+      // The actual form state is managed in CustomerDetailsModal
+      // Keyboard just provides input display
     }
   };
 
   // Handle adding product to ring up
   const handleAddToRingUp = (product) => {
-    dispatch(addNewItem({
-      id: product.id || product._id,
-      product_name: product.name || product.product_name,
-      product_price: parseFloat(product.sale_price || product.price || 0),
-      product_image: product.image || product.product_image || "",
-      qty: 1,
-      tax_percentage: product.tax_percentage || 0,
-    }));
+    console.log("Adding product to ring up:", product);
+    dispatch(
+      addNewItem({
+        id: product.id || product._id,
+        name: product.name || product.product_name,
+        product_price: parseFloat(
+          product.sale_price || product.price || product.product_avg_price || 0
+        ),
+        product_image: product.image || product.product_image || "",
+        qty: 1,
+        tax_percentage: product.tax_percentage || 0,
+      })
+    );
     // Clear search and keyboard state
     setInput("");
     setKeyboardInput("");
@@ -307,9 +347,9 @@ export const SalePoint = () => {
               <div className="flex flex-col gap-2 scrollCustom h-[100%] overflow-y-auto justify-start items-center  mt-1.5">
                 {currentRingUpData?.map((cur, id) => (
                   <>
-                    <ItemList 
-                      key={id} 
-                      id={id} 
+                    <ItemList
+                      key={id}
+                      id={id}
                       cur={cur}
                       setIsKeyboardOpen={setIsKeyboardOpen}
                       setActiveInputField={setActiveInputField}
@@ -380,20 +420,22 @@ export const SalePoint = () => {
                   type="text"
                   placeholder={isPercentage ? "%" : "$"}
                   value={
-                    activeInputField?.type === 'discount'
+                    activeInputField?.type === "discount"
                       ? keyboardInput
-                      : (isPercentage ? `${discount}%` : `$ ${discount.toFixed(2)}`)
+                      : isPercentage
+                      ? `${discount}%`
+                      : `$ ${discount.toFixed(2)}`
                   }
                   onFocus={(e) => {
                     e.stopPropagation();
                     setIsKeyboardOpen(true);
-                    setActiveInputField({ type: 'discount', itemId: null });
+                    setActiveInputField({ type: "discount", itemId: null });
                   }}
                   onClick={(e) => {
                     e.stopPropagation();
                     // Ensure active field is set even if keyboard is already open
                     setIsKeyboardOpen(true);
-                    setActiveInputField({ type: 'discount', itemId: null });
+                    setActiveInputField({ type: "discount", itemId: null });
                   }}
                   onChange={(e) => {
                     const value = e.target.value;
@@ -469,13 +511,13 @@ export const SalePoint = () => {
       </div>
       {isKeyboardOpen && (
         <AnimatePresence mode="popLayout">
-          <OnScreenKeyboard 
-            Change={onChange} 
+          <OnScreenKeyboard
+            Change={onChange}
             inputValue={keyboardInput}
             layoutName={
-              activeInputField?.type === 'quantity' || 
-              activeInputField?.type === 'price' || 
-              activeInputField?.type === 'discount'
+              activeInputField?.type === "quantity" ||
+              activeInputField?.type === "price" ||
+              activeInputField?.type === "discount"
                 ? "numeric"
                 : "default"
             }
@@ -487,6 +529,10 @@ export const SalePoint = () => {
         onClose={() => setShowCustomerModal(false)}
         onSubmit={handleCustomerSubmit}
         defaultValues={customerInfo}
+        setIsKeyboardOpen={setIsKeyboardOpen}
+        setActiveInputField={setActiveInputField}
+        keyboardInput={keyboardInput}
+        activeInputField={activeInputField}
       />
       <CheckoutModal
         open={showCheckoutModal}

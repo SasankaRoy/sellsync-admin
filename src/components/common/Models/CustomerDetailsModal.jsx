@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { CircleX } from "lucide-react";
 
@@ -29,6 +29,10 @@ export const CustomerDetailsModal = ({
   onClose,
   onSubmit,
   defaultValues = {},
+  setIsKeyboardOpen,
+  setActiveInputField,
+  keyboardInput,
+  activeInputField,
 }) => {
   const [form, setForm] = useState({
     name: defaultValues.name || "",
@@ -37,6 +41,21 @@ export const CustomerDetailsModal = ({
     address: defaultValues.address || "",
     notes: defaultValues.notes || "",
   });
+
+  // Sync keyboard input to form state
+  useEffect(() => {
+    if (activeInputField?.type === "customerName") {
+      setForm((prev) => ({ ...prev, name: keyboardInput }));
+    } else if (activeInputField?.type === "customerPhone") {
+      setForm((prev) => ({ ...prev, phone: keyboardInput }));
+    } else if (activeInputField?.type === "customerEmail") {
+      setForm((prev) => ({ ...prev, email: keyboardInput }));
+    } else if (activeInputField?.type === "customerAddress") {
+      setForm((prev) => ({ ...prev, address: keyboardInput }));
+    } else if (activeInputField?.type === "customerNotes") {
+      setForm((prev) => ({ ...prev, notes: keyboardInput }));
+    }
+  }, [keyboardInput, activeInputField]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -65,7 +84,10 @@ export const CustomerDetailsModal = ({
             initial="initial"
             animate="inView"
             exit="exit"
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsKeyboardOpen(false);
+            }}
             className="w-full max-w-lg bg-(--primary-color) rounded-xl shadow-2xl border border-(--border-color)/60 p-4 sm:p-6 flex flex-col gap-4"
           >
             <div className="flex items-center justify-between border-b border-(--border-color)/60 pb-3">
@@ -94,8 +116,32 @@ export const CustomerDetailsModal = ({
                   <input
                     type="text"
                     name="name"
-                    value={form.name}
+                    value={
+                      activeInputField?.type === "customerName"
+                        ? keyboardInput
+                        : form.name
+                    }
                     onChange={handleChange}
+                    onFocus={(e) => {
+                      e.stopPropagation();
+                      if (setIsKeyboardOpen && setActiveInputField) {
+                        setIsKeyboardOpen(true);
+                        setActiveInputField({
+                          type: "customerName",
+                          itemId: null,
+                        });
+                      }
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (setIsKeyboardOpen && setActiveInputField) {
+                        setIsKeyboardOpen(true);
+                        setActiveInputField({
+                          type: "customerName",
+                          itemId: null,
+                        });
+                      }
+                    }}
                     placeholder="Enter customer name"
                     className="w-full border border-(--border-color) rounded-md bg-(--secondary-color) text-(--mainText-color) mainFont text-sm sm:text-base px-3 py-2 outline-none focus:border-(--button-color1)"
                   />
@@ -107,8 +153,32 @@ export const CustomerDetailsModal = ({
                   <input
                     type="tel"
                     name="phone"
-                    value={form.phone}
+                    value={
+                      activeInputField?.type === "customerPhone"
+                        ? keyboardInput
+                        : form.phone
+                    }
                     onChange={handleChange}
+                    onFocus={(e) => {
+                      e.stopPropagation();
+                      if (setIsKeyboardOpen && setActiveInputField) {
+                        setIsKeyboardOpen(true);
+                        setActiveInputField({
+                          type: "customerPhone",
+                          itemId: null,
+                        });
+                      }
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (setIsKeyboardOpen && setActiveInputField) {
+                        setIsKeyboardOpen(true);
+                        setActiveInputField({
+                          type: "customerPhone",
+                          itemId: null,
+                        });
+                      }
+                    }}
                     placeholder="e.g. +1 555 123 4567"
                     className="w-full border border-(--border-color) rounded-md bg-(--secondary-color) text-(--mainText-color) mainFont text-sm sm:text-base px-3 py-2 outline-none focus:border-(--button-color1)"
                   />
@@ -122,8 +192,32 @@ export const CustomerDetailsModal = ({
                   <input
                     type="email"
                     name="email"
-                    value={form.email}
+                    value={
+                      activeInputField?.type === "customerEmail"
+                        ? keyboardInput
+                        : form.email
+                    }
                     onChange={handleChange}
+                    onFocus={(e) => {
+                      e.stopPropagation();
+                      if (setIsKeyboardOpen && setActiveInputField) {
+                        setIsKeyboardOpen(true);
+                        setActiveInputField({
+                          type: "customerEmail",
+                          itemId: null,
+                        });
+                      }
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (setIsKeyboardOpen && setActiveInputField) {
+                        setIsKeyboardOpen(true);
+                        setActiveInputField({
+                          type: "customerEmail",
+                          itemId: null,
+                        });
+                      }
+                    }}
                     placeholder="customer@email.com"
                     className="w-full border border-(--border-color) rounded-md bg-(--secondary-color) text-(--mainText-color) mainFont text-sm sm:text-base px-3 py-2 outline-none focus:border-(--button-color1)"
                   />
@@ -135,8 +229,32 @@ export const CustomerDetailsModal = ({
                   <input
                     type="text"
                     name="address"
-                    value={form.address}
+                    value={
+                      activeInputField?.type === "customerAddress"
+                        ? keyboardInput
+                        : form.address
+                    }
                     onChange={handleChange}
+                    onFocus={(e) => {
+                      e.stopPropagation();
+                      if (setIsKeyboardOpen && setActiveInputField) {
+                        setIsKeyboardOpen(true);
+                        setActiveInputField({
+                          type: "customerAddress",
+                          itemId: null,
+                        });
+                      }
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (setIsKeyboardOpen && setActiveInputField) {
+                        setIsKeyboardOpen(true);
+                        setActiveInputField({
+                          type: "customerAddress",
+                          itemId: null,
+                        });
+                      }
+                    }}
                     placeholder="Street, City"
                     className="w-full border border-(--border-color) rounded-md bg-(--secondary-color) text-(--mainText-color) mainFont text-sm sm:text-base px-3 py-2 outline-none focus:border-(--button-color1)"
                   />
@@ -148,8 +266,32 @@ export const CustomerDetailsModal = ({
                 </span>
                 <textarea
                   name="notes"
-                  value={form.notes}
+                  value={
+                    activeInputField?.type === "customerNotes"
+                      ? keyboardInput
+                      : form.notes
+                  }
                   onChange={handleChange}
+                  onFocus={(e) => {
+                    e.stopPropagation();
+                    if (setIsKeyboardOpen && setActiveInputField) {
+                      setIsKeyboardOpen(true);
+                      setActiveInputField({
+                        type: "customerNotes",
+                        itemId: null,
+                      });
+                    }
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (setIsKeyboardOpen && setActiveInputField) {
+                      setIsKeyboardOpen(true);
+                      setActiveInputField({
+                        type: "customerNotes",
+                        itemId: null,
+                      });
+                    }
+                  }}
                   rows={3}
                   placeholder="Order notes, preferences, delivery instructions..."
                   className="w-full border border-(--border-color) rounded-md bg-(--secondary-color) text-(--mainText-color) mainFont text-sm sm:text-base px-3 py-2 outline-none focus:border-(--button-color1) resize-none"
@@ -178,4 +320,3 @@ export const CustomerDetailsModal = ({
     </AnimatePresence>
   );
 };
-

@@ -5,6 +5,14 @@ import SellsyncLogo from "../../assets/images/SellsyncLogo.png";
 const CustomerScreenPage = () => {
   // Read snapshot from localStorage so a new tab can render without Redux context
   const [snapshot, setSnapshot] = React.useState([]);
+  const [discountData, setDiscountData] = React.useState({
+    discount: 0,
+    isPercentage: false,
+    discountAmount: 0,
+    tax: 0,
+    subtotal: 0,
+    total: 0
+  });
 
   React.useEffect(() => {
     try {
@@ -15,10 +23,21 @@ const CustomerScreenPage = () => {
         setSnapshot(JSON.parse(raw));
       }
 
+      // Load discount data
+      const discountRaw = localStorage.getItem("discountSnapshot");
+      if (discountRaw) {
+        setDiscountData(JSON.parse(discountRaw));
+      }
+
       const onStorage = (e) => {
         if (e.key === "ringUpsSnapshot" && e.newValue) {
           try {
             setSnapshot(JSON.parse(e.newValue));
+          } catch {}
+        }
+        if (e.key === "discountSnapshot" && e.newValue) {
+          try {
+            setDiscountData(JSON.parse(e.newValue));
           } catch {}
         }
       };
@@ -160,24 +179,31 @@ const CustomerScreenPage = () => {
               <div className="flex justify-between">
                 <span className="text-gray-700">Subtotal:</span>
                 <span className="font-semibold text-[var(--mainText-color)]">
-                  ${calculateSubtotal()}
+                  ${(discountData.subtotal || parseFloat(calculateSubtotal())).toFixed(2)}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-700">Tax (10%):</span>
+                <span className="text-gray-700">Tax:</span>
                 <span className="font-semibold text-[var(--mainText-color)]">
-                  ${calculateTax()}
+                  ${(discountData.tax || parseFloat(calculateTax())).toFixed(2)}
                 </span>
               </div>
+              {discountData.discountAmount > 0 && (
+                <div className="flex justify-between">
+                  <span className="text-gray-700">
+                    Discount ({discountData.isPercentage ? `${discountData.discount}%` : `$${discountData.discount}`}):
+                  </span>
+                  <span className="font-semibold text-[var(--Negative-color)]">
+                    -${discountData.discountAmount.toFixed(2)}
+                  </span>
+                </div>
+              )}
               <div className="flex justify-between border-t pt-2 mt-2">
                 <span className="font-bold text-[var(--mainText-color)]">
                   Total:
                 </span>
                 <span className="font-bold text-[var(--button-color1)] text-lg sm:text-xl">
-                  $
-                  {(
-                    parseFloat(calculateSubtotal()) + parseFloat(calculateTax())
-                  ).toFixed(2)}
+                  ${(discountData.total || (parseFloat(calculateSubtotal()) + parseFloat(calculateTax()))).toFixed(2)}
                 </span>
               </div>
             </div>
