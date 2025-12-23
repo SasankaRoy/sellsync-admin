@@ -63,7 +63,7 @@ export const OnScreenKeyboard = ({Change, inputValue, layoutName = "default"}) =
         <Keyboard
           key={layoutName} // Force remount when layout changes
           keyboardRef={(r) => (keyboardRef.current = r)}
-          onChange={Change}
+          onKeyPress={Change}
           {...keyboardProps}
           theme={"hg-theme-default myTheme1"}
         />

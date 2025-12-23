@@ -20,6 +20,7 @@ import { ItemList } from "../../components/Seller/MainPosScreen/ItemsLists/ItemL
 import { useDeboune } from "../../hooks/useDebounce";
 import { addNewItem, updateQty, updatePrice } from "../../Redux/RingUpSlice";
 import { useDispatch } from "react-redux";
+import { PaymentOptions } from "../../components/common/Models/PaymentOptions";
 
 const itemListVarient = {
   initial: {
@@ -53,6 +54,7 @@ export const SalePoint = () => {
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
   const [showShortcuts, setShowShortcuts] = useState(itemListVarient.initial);
   const [showPunchInModal, setShowPunchInModal] = useState(false);
+  const [isOpenPaymentModel, setIsOpenPaymentModel] = useState(false);
   const currentRingUpData = useSelector((state) => state.ringUps);
   const dispatch = useDispatch();
 
@@ -67,6 +69,7 @@ export const SalePoint = () => {
   const [keyboardInput, setKeyboardInput] = useState("");
 
   const [showCustomerModal, setShowCustomerModal] = useState(false);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
   const [customerInfo, setCustomerInfo] = useState({});
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const hasItems = (currentRingUpData?.length || 0) > 0;
@@ -94,9 +97,9 @@ export const SalePoint = () => {
       discountAmount,
       tax,
       subtotal,
-      total
+      total,
     };
-    localStorage.setItem('discountSnapshot', JSON.stringify(discountData));
+    localStorage.setItem("discountSnapshot", JSON.stringify(discountData));
   }, [discount, isPercentage, discountAmount, tax, subtotal, total]);
 
   // const [layoutName, setLayoutName] = useState("default");
@@ -229,11 +232,13 @@ export const SalePoint = () => {
       } else if (input === "") {
         setDiscount(0);
       }
-    } else if (activeInputField.type === 'customerName' || 
-               activeInputField.type === 'customerPhone' || 
-               activeInputField.type === 'customerEmail' || 
-               activeInputField.type === 'customerAddress' || 
-               activeInputField.type === 'customerNotes') {
+    } else if (
+      activeInputField.type === "customerName" ||
+      activeInputField.type === "customerPhone" ||
+      activeInputField.type === "customerEmail" ||
+      activeInputField.type === "customerAddress" ||
+      activeInputField.type === "customerNotes"
+    ) {
       // Handle customer modal inputs - allow all characters
       // The actual form state is managed in CustomerDetailsModal
       // Keyboard just provides input display
@@ -287,8 +292,25 @@ export const SalePoint = () => {
   const handleCustomerSubmit = (data) => {
     setCustomerInfo(data);
     setShowCustomerModal(false);
-    setShowCheckoutModal(true);
+    setIsOpenPaymentModel(true);
+    // setShowCheckoutModal(true);
     // Place any payment trigger here if needed, keeping existing flow unchanged
+  };
+
+  const handlePaymentMethod = (method) => {
+    if (!method) return toast.error("Please select a payment method");
+
+    switch (method) {
+      case "Cash":
+        setSelectedPaymentMethod(method);
+        setShowCheckoutModal(true);
+        setIsOpenPaymentModel(false);
+
+        break;
+
+      default:
+        break;
+    }
   };
 
   return (
@@ -533,7 +555,14 @@ export const SalePoint = () => {
         setActiveInputField={setActiveInputField}
         keyboardInput={keyboardInput}
         activeInputField={activeInputField}
+        onchange={onChange}
       />
+      {isOpenPaymentModel && (
+        <PaymentOptions
+          setIsOpenPaymentModel={setIsOpenPaymentModel}
+          onSelecte={handlePaymentMethod}
+        />
+      )}
       <CheckoutModal
         open={showCheckoutModal}
         onClose={() => setShowCheckoutModal(false)}

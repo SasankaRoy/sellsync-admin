@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { CircleX, CreditCard, Smartphone, Wallet, QrCode } from "lucide-react";
+import { OnScreenKeyboard } from "../../UI/OnScreenKeyboard/OnScreenKeyboard";
 
 const modalVariants = {
   initial: { opacity: 0, y: 20, scale: 0.98 },
@@ -31,10 +32,17 @@ export const CheckoutModal = ({
   customerInfo = {},
   summary = {},
 }) => {
-  const { subtotal = 0, tax = 0, discount = 0, total = 0, totalItems = 0 } = summary;
+  const {
+    subtotal = 0,
+    tax = 0,
+    discount = 0,
+    total = 0,
+    totalItems = 0,
+  } = summary;
   const [tendered, setTendered] = useState("");
   const [emailReceipt, setEmailReceipt] = useState(false);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
+  const [showKeyboard, setShowKeyboard] = useState(false);
 
   const tenderedAmount = parseFloat(tendered) || 0;
   const balance = Math.max(0, total - tenderedAmount);
@@ -50,6 +58,20 @@ export const CheckoutModal = ({
       return;
     }
     setTendered((prev) => prev + value);
+  };
+
+  const handleKeyboardChange = (button) => {
+    let newVal;
+    if (button === "{bksp}") {
+      newVal = tendered.slice(0, -1);
+    } else if (button === ".") {
+      if (tendered.includes(".")) return;
+      newVal = tendered + button;
+    } else {
+      newVal = tendered + button;
+    }
+    const val = newVal.replace(/[^0-9.]/g, "");
+    setTendered(val);
   };
 
   const handleQuickCash = (amount) => {
@@ -75,16 +97,16 @@ export const CheckoutModal = ({
   const quickCashAmounts = useMemo(() => {
     const amounts = [];
     const totalNum = parseFloat(total) || 0;
-    
+
     // Always show exact total as first option
     amounts.push(parseFloat(totalNum.toFixed(2)));
-    
+
     // Show rounded up to nearest dollar if different from total
     const roundedUp = Math.ceil(totalNum);
     if (roundedUp !== totalNum && !amounts.includes(roundedUp)) {
       amounts.push(roundedUp);
     }
-    
+
     // Show common payment amounts that are >= total
     const commonAmounts = [10, 20, 50, 100];
     commonAmounts.forEach((amt) => {
@@ -92,7 +114,7 @@ export const CheckoutModal = ({
         amounts.push(amt);
       }
     });
-    
+
     // Fill remaining slots with higher amounts if needed
     const higherAmounts = [200, 500];
     let idx = 0;
@@ -103,7 +125,7 @@ export const CheckoutModal = ({
       }
       idx++;
     }
-    
+
     // Sort amounts to show in ascending order
     return amounts.sort((a, b) => a - b).slice(0, 6);
   }, [total]);
@@ -131,8 +153,11 @@ export const CheckoutModal = ({
             initial="initial"
             animate="inView"
             exit="exit"
-            onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-5xl bg-(--primary-color) rounded-xl shadow-2xl border border-(--border-color)/60 p-4 sm:p-6 flex flex-col gap-4"
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowKeyboard(false);
+            }}
+            className="w-full max-w-[50%] bg-(--primary-color) rounded-xl shadow-2xl border border-(--border-color)/60 p-4 sm:p-6 flex flex-col gap-4"
           >
             {/* Header */}
             <div className="flex items-center justify-center border-b border-(--border-color)/60 pb-3">
@@ -144,34 +169,34 @@ export const CheckoutModal = ({
             {/* Three Column Layout */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
               {/* Left Column - Payment Summary */}
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-4 col-span-3">
                 {/* Order Summary */}
                 <div className="flex flex-col gap-2">
-                  <h4 className="text-base sm:text-lg font-semibold mainFont text-(--mainText-color)">
+                  <h4 className="text-[1.3dvw] font-semibold mainFont text-(--mainText-color)">
                     Order Summary
                   </h4>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm sm:text-base paraFont text-(--paraText-color)">
+                    <span className="text-[1.2dvw] paraFont text-(--paraText-color)">
                       # Items:
                     </span>
-                    <span className="text-sm sm:text-base mainFont font-semibold text-(--mainText-color)">
+                    <span className="text-[1.2dvw] mainFont font-semibold text-(--mainText-color)">
                       {totalItems}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm sm:text-base paraFont text-(--paraText-color)">
+                    <span className="text-[1.2dvw] paraFont text-(--paraText-color)">
                       Cash Total:
                     </span>
-                    <span className="text-sm sm:text-base mainFont font-semibold text-(--mainText-color)">
+                    <span className="text-[1.2dvw] mainFont font-semibold text-(--mainText-color)">
                       $ {total.toFixed(2)}
                     </span>
                   </div>
                 </div>
 
                 {/* Tendering Section */}
-                <div className="flex flex-col gap-2 border-t border-(--border-color)/60 pt-3">
+                <div className="flex flex-col gap-5 border-t border-(--border-color)/60 pt-5 my-4">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs sm:text-sm paraFont text-(--paraText-color)">
+                    <span className="text-[1.2dvw] paraFont text-(--paraText-color)">
                       Tendered: $
                     </span>
                     <input
@@ -181,25 +206,33 @@ export const CheckoutModal = ({
                         const val = e.target.value.replace(/[^0-9.]/g, "");
                         setTendered(val);
                       }}
+                      onFocus={() => setShowKeyboard(true)}
+                      onClick={(e)=>{
+                        e.stopPropagation()
+                      }}
                       placeholder="0.00"
-                      className="flex-1 border-b border-(--border-color) bg-transparent text-(--mainText-color) mainFont text-sm sm:text-base outline-none focus:border-(--button-color1)"
+                      className="flex-1 border-b border-(--border-color) bg-transparent text-(--mainText-color) mainFont text-[1.2dvw] outline-none focus:border-(--button-color1) px-3 py-1.5  cursor-(--button-color1)"
                     />
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-xs sm:text-sm paraFont text-(--paraText-color)">
+                    <span className="text-[1.2dvw] paraFont text-(--paraText-color)">
                       Balance:
                     </span>
-                    <span className="text-xs sm:text-sm mainFont font-semibold text-(--mainText-color)">
+                    <span className="text-[1.2dvw] mainFont font-semibold text-(--mainText-color)">
                       $ {balance.toFixed(2)}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-xs sm:text-sm paraFont text-(--paraText-color)">
+                    <span className="text-[1.2dvw] paraFont text-(--paraText-color)">
                       Change:
                     </span>
-                    <span className={`text-xs sm:text-sm mainFont font-semibold ${
-                      change > 0 ? "text-(--Positive-color)" : "text-(--mainText-color)"
-                    }`}>
+                    <span
+                      className={`text-[1.2dvw] mainFont font-semibold ${
+                        change > 0
+                          ? "text-(--Positive-color)"
+                          : "text-(--mainText-color)"
+                      }`}
+                    >
                       $ {change.toFixed(2)}
                     </span>
                   </div>
@@ -211,7 +244,7 @@ export const CheckoutModal = ({
                     <button
                       key={idx}
                       onClick={() => handleQuickCash(amount)}
-                      className="px-3 py-2 rounded-md bg-(--button-color5) text-(--primary-color) mainFont text-xs sm:text-sm font-semibold hover:opacity-90 transition-opacity"
+                      className="px-3 py-2 rounded-md bg-(--button-color5) text-(--primary-color) mainFont text-[1.2dvw] cursor-pointer font-semibold hover:opacity-90 transition-opacity"
                     >
                       $ {amount.toFixed(2)}
                     </button>
@@ -219,25 +252,48 @@ export const CheckoutModal = ({
                 </div>
 
                 {/* Email Receipt */}
-                <div className="flex items-center gap-2 pt-2 border-t border-(--border-color)/60">
-                  <input
-                    type="checkbox"
-                    id="emailReceipt"
-                    checked={emailReceipt}
-                    onChange={(e) => setEmailReceipt(e.target.checked)}
-                    className="w-4 h-4 cursor-pointer"
-                  />
-                  <label
-                    htmlFor="emailReceipt"
-                    className="text-xs sm:text-sm paraFont text-(--paraText-color) cursor-pointer"
-                  >
-                    Email Receipt
-                  </label>
+                <div className="flex justify-between items-center w-full border-t border-(--border-color)/60 py-4">
+                  <div className="flex items-center gap-2 pt-2 ">
+                    <input
+                      type="checkbox"
+                      id="emailReceipt"
+                      checked={emailReceipt}
+                      onChange={(e) => setEmailReceipt(e.target.checked)}
+                      className="w-4 h-4 cursor-pointer"
+                    />
+                    <label
+                      htmlFor="emailReceipt"
+                      className="text-xs sm:text-sm paraFont text-(--paraText-color) cursor-pointer"
+                    >
+                      Email Receipt
+                    </label>
+                  </div>
+
+                  <div className="flex gap-2 pt-2 ">
+                    <button
+                      onClick={onClose}
+                      className="flex-1 px-6 py-2 rounded-md bg-(--button-color1) text-(--primary-color) mainFont text-sm sm:text-base font-semibold hover:opacity-90 transition-opacity cursor-pointer"
+                    >
+                      Payout
+                    </button>
+                    <button
+                      onClick={onClose}
+                      className="flex-1 px-4 py-2 rounded-md bg-(--Negative-color) text-(--primary-color) mainFont text-sm sm:text-base font-semibold hover:opacity-90 transition-opacity"
+                    >
+                      Return
+                    </button>
+                    <button
+                      onClick={onClose}
+                      className="flex-1 px-4 py-2 rounded-md bg-(--Negative-color)/70 text-(--primary-color) mainFont text-sm sm:text-base font-semibold hover:opacity-90 transition-opacity"
+                    >
+                      Cancel
+                    </button>
+                  </div>
                 </div>
               </div>
 
               {/* Middle Column - Numeric Keypad */}
-              <div className="flex flex-col gap-2">
+              {/* <div className="flex flex-col gap-2">
                 <div className="grid grid-cols-3 gap-2">
                   {keypadButtons.map((row, rowIdx) =>
                     row.map((btn, colIdx) => (
@@ -251,10 +307,10 @@ export const CheckoutModal = ({
                     ))
                   )}
                 </div>
-              </div>
+              </div> */}
 
               {/* Right Column - Payment Methods */}
-              <div className="flex flex-col gap-3">
+              {/* <div className="flex flex-col gap-3">
                 <h4 className="text-sm sm:text-base font-semibold mainFont text-(--mainText-color)">
                   Payment Methods
                 </h4>
@@ -301,7 +357,7 @@ export const CheckoutModal = ({
                   </button>
                 </div>
 
-                {/* Action Buttons */}
+                
                 <div className="flex gap-2 pt-2 border-t border-(--border-color)/60">
                   <button
                     onClick={onClose}
@@ -316,12 +372,20 @@ export const CheckoutModal = ({
                     Cancel
                   </button>
                 </div>
-              </div>
+              </div> */}
             </div>
           </motion.div>
+          {showKeyboard && (
+            <div onClick={(e) => e.stopPropagation()}>
+              <OnScreenKeyboard
+                Change={handleKeyboardChange}
+                inputValue={tendered}
+                layoutName="numeric"
+              />
+            </div>
+          )}
         </motion.div>
       )}
     </AnimatePresence>
   );
 };
-
