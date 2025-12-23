@@ -9,7 +9,12 @@ import {
 import React, { useMemo, useState, useEffect } from "react";
 import SellsyncLogo from "../../../assets/images/SellsyncLogo.png";
 import { AnimatePresence } from "framer-motion";
-import { TaskListModel } from "../Models/TaskListModel";
+// import { TaskListModel } from "../Models/TaskListModel";
+const TaskListModel = React.lazy(() =>
+  import("../Models/TaskListModel").then((module) => ({
+    default: module.TaskListModel,
+  }))
+);
 import { ClockInOut } from "../Models/ClockInOut";
 import { useNavigate } from "react-router-dom";
 import { OffcanvasMenu } from "../Models/OffcanvasMenu";
@@ -168,6 +173,7 @@ export const SellerNavbar = ({ showPunchInModal, setShowPunchInModal }) => {
     minutes: "0",
     seconds: "0",
   });
+  const [showTaskListModel, setShowTaskListModel] = useState(false);
   const [punchInTime, setPunchInTime] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
   const navigate = useNavigate();
@@ -276,6 +282,7 @@ export const SellerNavbar = ({ showPunchInModal, setShowPunchInModal }) => {
               onClick={() => {
                 setShowTaskListInner(TaskListVarient.inView);
                 setShowTaskListOutter(TaskListVarient.OutterWrapper.inView);
+                setShowTaskListModel(true);
               }}
               className="flex justify-center items-center gap-3 border border-(--border-color) rounded-full px-2 py-1 sm:px-4 sm:py-2 cursor-pointer"
             >
@@ -404,7 +411,13 @@ export const SellerNavbar = ({ showPunchInModal, setShowPunchInModal }) => {
           setPunchInTime={setPunchInTime}
         />
       </AnimatePresence>
-      <AnimatePresence mode="popLayout">
+
+      {showTaskListModel && <TaskListModel varient={TaskListVarient}
+          setShowTaskListInner={setShowTaskListInner}
+          setShowTaskListOutter={setShowTaskListOutter}
+          showTaskListInner={showTaskListInner}
+          showTaskListOutter={showTaskListOutter} />}
+      {/* <AnimatePresence mode="popLayout">
         <TaskListModel
           varient={TaskListVarient}
           setShowTaskListInner={setShowTaskListInner}
@@ -412,7 +425,7 @@ export const SellerNavbar = ({ showPunchInModal, setShowPunchInModal }) => {
           showTaskListInner={showTaskListInner}
           showTaskListOutter={showTaskListOutter}
         />
-      </AnimatePresence>
+      </AnimatePresence> */}
       <AnimatePresence mode="popLayout">
         <OffcanvasMenu
           varient={OffcanvasMenuVarients}

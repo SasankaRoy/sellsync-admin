@@ -5,6 +5,8 @@ import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import axiosInstance from "../../../utils/axios-interceptor";
 import { useDeboune } from "../../../hooks/useDebounce";
+import { toast } from "react-toastify";
+import { useQueryClient } from "@tanstack/react-query";
 ModuleRegistry.registerModules([AllCommunityModule]);
 const rowSelection = {
   mode: "multiRow",
@@ -90,6 +92,7 @@ export const AddProductModel = ({ productData, setShowModel, actionType }) => {
     itemType: "",
     images: [],
   });
+  const [isLoading, setIsLoading] = useState(false);
   const [currentActiveTab, setCurrentActiveTab] = useState("Details");
   const handleCloseModle = () => {
     setShowModel({
@@ -101,6 +104,7 @@ export const AddProductModel = ({ productData, setShowModel, actionType }) => {
   const handleChangeTab = (currentTab) => {
     setCurrentActiveTab(currentTab);
   };
+  const queryClient = useQueryClient();
 
   const handleRenderTab = (currentTab) => {
     switch (currentTab) {
@@ -133,6 +137,7 @@ export const AddProductModel = ({ productData, setShowModel, actionType }) => {
   };
 
   const handleAddProduct = async () => {
+    setIsLoading(true);
     const productData = new FormData();
     productInfo.images.forEach((file) => {
       productData.append("product_images", file);
@@ -196,11 +201,15 @@ export const AddProductModel = ({ productData, setShowModel, actionType }) => {
         }
       );
 
-      console.log(reqAddProduct.data);
-      toast.success("Product added successfully!");
-      handleCloseModle();
+      if (reqAddProduct.status === 200) {
+        toast.success("Product added successfully!");
+        queryClient.invalidateQueries(["get_items_list"]);
+        setIsLoading(false);
+        handleCloseModle();
+      }
     } catch (error) {
       console.error(error);
+      toast.error("Failed to add product");
     }
   };
 
@@ -264,7 +273,12 @@ export const AddProductModel = ({ productData, setShowModel, actionType }) => {
                 onClick={handleAddProduct}
                 className="w-full sm:w-auto px-4 sm:px-6 py-1.5 sm:py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300"
               >
-                Update
+                {isLoading
+                  ? "Updating..."
+                  : actionType === "Add"
+                  ? "Add"
+                  : "Save Changes"}
+                {/* Update */}
               </button>
               <button className="w-full sm:w-auto px-4 sm:px-6 py-1.5 sm:py-2 bg-[var(--button-color4)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300">
                 Cancel

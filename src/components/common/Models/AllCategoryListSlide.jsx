@@ -150,7 +150,7 @@ const AllCategoryListSlide = ({
                   }}
                   className="w-full flex gap-2 sm:gap-3 bg-(--button-color2) text-(--primary-color) rounded justify-between items-center px-3 sm:px-4 border shadow cursor-pointer border-(--border-color) py-3 sm:py-4 lg:py-5 mainFont font-semibold text-xs sm:text-sm lg:text-[1dvw]"
                 >
-                  <p>{cur.category_name}</p>
+                  <p className="text-start">{cur.category_name}</p>
                   <span className="text-xs sm:text-sm lg:text-[.8dvw]">
                     {cur.number_of_product || cur.products.length || 0}
                   </span>
