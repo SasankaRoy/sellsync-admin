@@ -107,11 +107,11 @@ export const Category = () => {
   };
 
   const onDelete = (product) => {
-    console.log(product, "delete");
+    // console.log(product, "delete");
     setDeleteModel({
       state: true,
-      productId: product.id,
-      path: ``,
+      productId: product.id || product._id,
+      path: `api/v1/common/category-delete/${product._id}`,
     });
   };
 
@@ -255,8 +255,9 @@ export const Category = () => {
         <DeleteModel
           setDeleteModel={setDeleteModel}
           productId={deleteModel.productId}
-          setRowData={setRowData}
-          rowData={rowData}
+          path={deleteModel.path}
+          // setRowData={setRowData}
+          // rowData={rowData}
         />
       )}
     </Layout>

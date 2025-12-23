@@ -152,7 +152,7 @@ const AllCategoryListSlide = ({
                 >
                   <p>{cur.category_name}</p>
                   <span className="text-xs sm:text-sm lg:text-[.8dvw]">
-                    {cur.number_of_product}
+                    {cur.number_of_product || cur.products.length || 0}
                   </span>
                 </motion.button>
               ))}

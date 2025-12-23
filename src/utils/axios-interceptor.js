@@ -12,8 +12,8 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     // Set headers here
-    config.headers["Content-Type"] = "application/json";
-    config.headers["Accept"] = "application/json";
+    // config.headers["Content-Type"] = "application/json";
+    // config.headers["Accept"] = "application/json";
 
     const token = Cookies.get("authToken");
     if (token) {

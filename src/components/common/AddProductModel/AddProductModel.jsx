@@ -135,8 +135,9 @@ export const AddProductModel = ({ productData, setShowModel, actionType }) => {
   const handleAddProduct = async () => {
     const productData = new FormData();
     productInfo.images.forEach((file) => {
-      productData.append("product_image", file);
+      productData.append("product_images", file);
     });
+
     productData.append("stock_code", productInfo.stockCode);
     productData.append("qty_on_hand", productInfo.quantityInHandItem);
     productData.append("qty_cases", productInfo.quantityInHandCase);
@@ -147,7 +148,7 @@ export const AddProductModel = ({ productData, setShowModel, actionType }) => {
     productData.append("selected_category_id", productInfo.category.id);
     productData.append("selected_supplier_id", productInfo.supplier.id);
     productData.append("product_sku", productInfo.sku);
-    productData.append("product_price",productInfo.price);   
+    productData.append("product_price", productInfo.price);
     productData.append("product_avg_price", productInfo.avgCost);
     productData.append("product_latest_cost", productInfo.latestCost);
     productData.append("product_margin", productInfo.margin);
@@ -195,7 +196,9 @@ export const AddProductModel = ({ productData, setShowModel, actionType }) => {
         }
       );
 
-      console.log(reqAddProduct.data)
+      console.log(reqAddProduct.data);
+      toast.success("Product added successfully!");
+      handleCloseModle();
     } catch (error) {
       console.error(error);
     }
@@ -1238,7 +1241,7 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo }) => {
               if (!selectedCategory) {
                 setShowCategoryList(true);
                 if (!categoryQuery) {
-                  fetchInitialCategories();
+                  // fetchInitialCategories();
                 }
               }
             }}
@@ -1586,9 +1589,9 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo }) => {
               value={productInfo.tax}
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
             >
-              <option value="no tax">No Tax</option>
-              <option value="low-tax">Low Tax</option>
-              <option value="high-tax">High Tax</option>
+              <option value="No Tax">No Tax</option>
+              <option value="Low Tax">Low Tax</option>
+              <option value="High Tax">High Tax</option>
             </select>
           </div>
 
