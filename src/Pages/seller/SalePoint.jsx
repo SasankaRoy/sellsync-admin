@@ -18,9 +18,17 @@ import { SearchItemsInput } from "../../components/Seller/MainPosScreen/SearchIt
 import { ItemsListHeader } from "../../components/Seller/MainPosScreen/ItemsLists/ItemsListHeader";
 import { ItemList } from "../../components/Seller/MainPosScreen/ItemsLists/ItemList";
 import { useDeboune } from "../../hooks/useDebounce";
-import { addNewItem, updateQty, updatePrice } from "../../Redux/RingUpSlice";
+import {
+  addNewItem,
+  updateQty,
+  updatePrice,
+  clearCart,
+} from "../../Redux/RingUpSlice";
 import { useDispatch } from "react-redux";
 import { PaymentOptions } from "../../components/common/Models/PaymentOptions";
+import { useMutation } from "@tanstack/react-query";
+import axiosInstance from "../../utils/axios-interceptor";
+import { toast } from "react-toastify";
 
 const itemListVarient = {
   initial: {
@@ -56,6 +64,7 @@ export const SalePoint = () => {
   const [showPunchInModal, setShowPunchInModal] = useState(false);
   const [isOpenPaymentModel, setIsOpenPaymentModel] = useState(false);
   const currentRingUpData = useSelector((state) => state.ringUps);
+  const employeeDetails = useSelector((state) => state.loggedUser);
   const dispatch = useDispatch();
 
   // Search states
@@ -267,27 +276,6 @@ export const SalePoint = () => {
     setShowSearchResults(false);
     setActiveInputField(null);
   };
-  // const handleLayoutName = () => {
-  //   if (layoutName === "default") {
-  //     setLayoutName("shift");
-  //     return "shift";
-  //   } else {
-  //     setLayoutName("default");
-  //     return "default";
-  //   }
-  // };
-
-  // const onKeyPress = (button) => {
-  //   console.log("Button pressed", button);
-  // };
-
-  // const handleIncreaseQty = (id, action) => {
-  //   if (action === "increase") {
-  //     dispatch(increaseQyt(id));
-  //   } else if (action === "decrease") {
-  //     dispatch(decreaseQyt(id));
-  //   }
-  // };
 
   const handleCustomerSubmit = (data) => {
     setCustomerInfo(data);
@@ -312,6 +300,44 @@ export const SalePoint = () => {
         break;
     }
   };
+
+  // hold order all functions
+
+  const createPayload = (state = []) => {
+    const payload = [];
+    state.forEach((item) => {
+      payload.push({
+        productId: item.id,
+        name: item.name,
+        qty: item.qty,
+        price: item.product_price,
+        taxRate: 5,
+        taxAmount: 12,
+        total: item.qty * item.product_price,
+      });
+    });
+
+    return payload;
+  };
+
+  const handleHoldOrder = async (payload) => {
+    try {
+      const holdOrder = await axiosInstance.post("/api/v1/bills/create", {
+        ...payload,
+      });
+      if (holdOrder.data || holdOrder.status === 200) {
+        dispatch(clearCart());
+        console.log(holdOrder.data);
+        toast.success("Order On Hold");
+      }
+    } catch (error) {
+      console.log("🚀 ~ handleHoldOrder ~ error:", error);
+      return error.message || error.response.data.message;
+    }
+  };
+  const { mutate, isError, isPending } = useMutation({
+    mutationFn: handleHoldOrder,
+  });
 
   return (
     <>
@@ -511,7 +537,29 @@ export const SalePoint = () => {
                 <button className="bg-(--button-color5) text-(--primary-color) py-3 mainFont font-semibold rounded-md">
                   Payout
                 </button>
-                <button className="bg-(--button-color2) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md">
+                <button
+                  onClick={() =>
+                    mutate({
+                      status: "HOLD",
+                      device_location: "Device T25",
+                      items: createPayload(currentRingUpData),
+                      summary: {
+                        totalItems: totalItems,
+                        subTotal: subtotal,
+                        taxTotal: tax,
+                        discount: {
+                          type: isPercentage ? "PERCENT" : "FLAT",
+                          value: isPercentage && discount,
+                          amount: discountAmount,
+                        },
+                        grandTotal: total,
+                      },
+                      business_id: employeeDetails?.business_id,
+                      created_by: employeeDetails?.id,
+                    })
+                  }
+                  className="bg-(--button-color2) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md"
+                >
                   Hold Order
                 </button>
                 <button className="bg-(--button-color1) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md">
