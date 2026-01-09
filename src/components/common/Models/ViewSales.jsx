@@ -68,8 +68,6 @@ export const ViewSales = ({ setViewSale, billID }) => {
     queryFn: handleGetBillDetails,
   });
 
-
-
   const handleCompleteTranscation = () => {
     dispatch(clearCart());
 
@@ -77,11 +75,11 @@ export const ViewSales = ({ setViewSale, billID }) => {
       dispatch(
         addNewItem({
           id: item._id || item.productId._id || item.productId.id || item.id,
-          name: item.name || item.productId.name,
+          name: item.productId.product_name,
           qty: item.qty,
           tax_percentage: item.taxRate,
           product_price: item.price,
-          product_image: "",
+          product_image: item.product_image,
         })
       );
     });
@@ -191,7 +189,7 @@ export const ViewSales = ({ setViewSale, billID }) => {
                     </span>
                     <div className="flex shrink-0 justify-center items-center gap-2">
                       <h5 className="text-[1dvw] font-bold line-clamp-1">
-                        Sasanka
+                        {data.created_by_user_name}
                       </h5>
                     </div>
                   </div>
@@ -319,7 +317,7 @@ const AmountTab = ({ billData }) => {
 };
 const ItemsTab = ({ billData }) => {
   const { items } = billData;
-  console.log(items);
+
   return (
     <>
       <div className="w-full border  border-(--button-color1)/90 p-1.5 rounded-md ">
@@ -363,7 +361,7 @@ const ItemsTab = ({ billData }) => {
               </div>
               <div className="flex justify-center items-center p-3 border-r w-full border-(--border-color)">
                 <h5 className="font-semibold text-(--mainText-color)/70 text-[1dvw] line-clamp-1">
-                  {cur.name || cur.productId.name}
+                  {cur.name || cur.productId.name || cur.productId.product_name}
                 </h5>
               </div>
               <div className="flex justify-center items-center p-3 border-r w-full border-(--border-color)">
