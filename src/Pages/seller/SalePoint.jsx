@@ -557,7 +557,11 @@ export const SalePoint = () => {
                   Payout
                 </button>
                 <button
-                  onClick={() =>
+                  disabled={currentRingUpData.length === 0}
+                  onClick={() => {
+                    if (currentRingUpData.length === 0) {
+                      return toast.warn("No checkout products/tems found");
+                    }
                     mutate({
                       status: "HOLD",
                       device_location: "Device T25",
@@ -575,9 +579,9 @@ export const SalePoint = () => {
                       },
                       business_id: employeeDetails?.business_id,
                       created_by: employeeDetails?.id,
-                    })
-                  }
-                  className="bg-(--button-color2) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md"
+                    });
+                  }}
+                  className="bg-(--button-color2) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-80"
                 >
                   Hold Order
                 </button>
