@@ -29,6 +29,7 @@ import { PaymentOptions } from "../../components/common/Models/PaymentOptions";
 import { useMutation } from "@tanstack/react-query";
 import axiosInstance from "../../utils/axios-interceptor";
 import { toast } from "react-toastify";
+import { ViewSales } from "../../components/common/Models/ViewSales";
 
 const itemListVarient = {
   initial: {
@@ -65,6 +66,10 @@ export const SalePoint = () => {
   const [isOpenPaymentModel, setIsOpenPaymentModel] = useState(false);
   const currentRingUpData = useSelector((state) => state.ringUps);
   const employeeDetails = useSelector((state) => state.loggedUser);
+  const [viewBillDetails, setViewBillDetails] = useState({
+    state: false,
+    billId: null,
+  });
   const dispatch = useDispatch();
 
   // Search states
@@ -327,7 +332,10 @@ export const SalePoint = () => {
       });
       if (holdOrder.data || holdOrder.status === 200) {
         dispatch(clearCart());
-        console.log(holdOrder.data);
+        localStorage.setItem(
+          "pre_or_id",
+          holdOrder.data.bill._id || holdOrder.data.bill.id
+        );
         toast.success("Order On Hold");
       }
     } catch (error) {
@@ -338,6 +346,17 @@ export const SalePoint = () => {
   const { mutate, isError, isPending } = useMutation({
     mutationFn: handleHoldOrder,
   });
+
+  const getPreviousOrder = async () => {
+    const previousOrderId = localStorage.getItem("pre_or_id");
+
+    if (!previousOrderId) return toast.error("No Orders Found !");
+
+    setViewBillDetails({
+      state: true,
+      billId: previousOrderId,
+    });
+  };
 
   return (
     <>
@@ -562,7 +581,10 @@ export const SalePoint = () => {
                 >
                   Hold Order
                 </button>
-                <button className="bg-(--button-color1) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md">
+                <button
+                  onClick={getPreviousOrder}
+                  className="bg-(--button-color1) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md"
+                >
                   Last Order
                 </button>
                 <button className="bg-(--button-color2) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md">
@@ -649,6 +671,12 @@ export const SalePoint = () => {
           setShowCheckoutModal(false);
         }}
       />
+      {viewBillDetails.state && viewBillDetails.billId && (
+        <ViewSales
+          billID={viewBillDetails.billId}
+          setViewSale={setViewBillDetails}
+        />
+      )}
     </>
   );
 };

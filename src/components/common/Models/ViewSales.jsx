@@ -11,7 +11,7 @@ import axiosInstance from "../../../utils/axios-interceptor";
 import { Loading } from "../../UI/Loading/Loading";
 import moment from "moment";
 import { useDispatch } from "react-redux";
-import { addNewItem } from "../../../Redux/RingUpSlice";
+import { addNewItem, clearCart } from "../../../Redux/RingUpSlice";
 import { useNavigate } from "react-router-dom";
 
 const tabPrefix = {
@@ -68,8 +68,24 @@ export const ViewSales = ({ setViewSale, billID }) => {
     queryFn: handleGetBillDetails,
   });
 
+
+
   const handleCompleteTranscation = () => {
-    dispatch(addNewItem({ ...data.items }));
+    dispatch(clearCart());
+
+    data.items.forEach((item) => {
+      dispatch(
+        addNewItem({
+          id: item._id || item.productId._id || item.productId.id || item.id,
+          name: item.name || item.productId.name,
+          qty: item.qty,
+          tax_percentage: item.taxRate,
+          product_price: item.price,
+          product_image: "",
+        })
+      );
+    });
+
     router("/seller/dashboard");
     setViewSale({
       status: false,
