@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "../../../utils/axios-interceptor";
 import { useDispatch, useSelector } from "react-redux";
 import { addNewItem, removeItem } from "../../../Redux/RingUpSlice";
+import { toast } from "react-toastify";
 // import { AllCategoryListSlide } from "./AllCategoryListSlide";
 const AllCategoryListSlide = lazy(() => import("./AllCategoryListSlide"));
 
@@ -51,6 +52,7 @@ export const Shortcuts = ({
   });
   const dispatch = useDispatch();
   const currentRingUpData = useSelector((state) => state.ringUps);
+  const currentBillId = useSelector((state) => state.currentBill.billId);
 
   const handleGetLists = async (title, queryName) => {
     try {
@@ -114,8 +116,28 @@ export const Shortcuts = ({
 
   // console.log(data, "lists data");
 
-  const handleAddItem = (curData) => {
+  const handleAddItem = async (curData) => {
     const { id, name, product_image, product_price, tax_percentage } = curData;
+    if (currentBillId) {
+      try {
+        // mean the bill is already created and we are adding items to it
+        const billDetails = await axiosInstance.post(
+          `api/v1/bills/${currentBillId}/items`,
+          {
+            productId: id,
+            qty: 1,
+          }
+        );
+
+        if (billDetails.status === 200) {
+          toast.success("Item added to bill");
+        }
+      } catch (error) {
+        toast.error(
+          error.response.data.message || "Failed to add item to bill"
+        );
+      }
+    }
     dispatch(
       addNewItem({
         id,
@@ -133,7 +155,7 @@ export const Shortcuts = ({
   };
 
   const isItemInCart = (itemId) => {
-    return currentRingUpData?.some(item => item.id === itemId);
+    return currentRingUpData?.some((item) => item.id === itemId);
   };
 
   return (
@@ -223,7 +245,11 @@ export const Shortcuts = ({
                 {data.map((cur, id) => (
                   <div
                     key={id}
-                    className={`bg-(--primary-color) cursor-pointer hover:scale-105 transition-all ease-in-out duration-300 border border-(--border-color)/20 flex flex-col gap-2 sm:gap-3 shadow-sm rounded-md p-2 ${isItemInCart(cur.id)? 'bg-(--sideMenu-color)/15':'bg-(--primary-color)' }`}
+                    className={`bg-(--primary-color) cursor-pointer hover:scale-105 transition-all ease-in-out duration-300 border border-(--border-color)/20 flex flex-col gap-2 sm:gap-3 shadow-sm rounded-md p-2 ${
+                      isItemInCart(cur.id)
+                        ? "bg-(--sideMenu-color)/15"
+                        : "bg-(--primary-color)"
+                    }`}
                   >
                     <div className="h-[15vh] sm:h-[18vh] lg:h-[20vh] rounded-md w-full bg-(--secondary-color) py-2 sm:py-3 lg:py-4">
                       <img

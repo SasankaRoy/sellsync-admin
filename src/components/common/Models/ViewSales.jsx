@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   BaggageClaim,
   BanknoteArrowDown,
@@ -10,9 +10,15 @@ import React, { useState } from "react";
 import axiosInstance from "../../../utils/axios-interceptor";
 import { Loading } from "../../UI/Loading/Loading";
 import moment from "moment";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addNewItem, clearCart } from "../../../Redux/RingUpSlice";
 import { useNavigate } from "react-router-dom";
+import {
+  clearCurrentBill,
+  setCurrentBill,
+} from "../../../Redux/CurrentBillSlice";
+import { toast } from "react-toastify";
+import { handleBillStatusUpdate } from "../../../utils/apis/billStatusUpdate";
 
 const tabPrefix = {
   amount: "AMOUNT",
@@ -23,7 +29,9 @@ const tabPrefix = {
 export const ViewSales = ({ setViewSale, billID }) => {
   const [currentActiveTab, setCurrentActiveTab] = useState(tabPrefix.amount);
   const dispatch = useDispatch();
+  const currentBillId = useSelector((state) => state.currentBill.billId);
   const router = useNavigate();
+  const queryClient = useQueryClient();
   const handleTabSwitch = (prefix) => {
     setCurrentActiveTab(prefix);
   };
@@ -68,27 +76,66 @@ export const ViewSales = ({ setViewSale, billID }) => {
     queryFn: handleGetBillDetails,
   });
 
-  const handleCompleteTranscation = () => {
-    dispatch(clearCart());
+  const handleCompleteTranscation = async () => {
+    const reqUpdateBillStatus = await handleBillStatusUpdate(
+      data._id || data.id,
+      "OPEN"
+    );
 
-    data.items.forEach((item) => {
-      dispatch(
-        addNewItem({
-          id: item._id || item.productId._id || item.productId.id || item.id,
-          name: item.productId.product_name,
-          qty: item.qty,
-          tax_percentage: item.taxRate,
-          product_price: item.price,
-          product_image: item.product_image,
-        })
-      );
-    });
+    if (reqUpdateBillStatus) {
+      dispatch(clearCart());
+      dispatch(clearCurrentBill());
+      data.items.forEach((item) => {
+        dispatch(
+          addNewItem({
+            id: item._id || item.productId._id || item.productId.id || item.id,
+            name: item.productId.product_name,
+            qty: item.qty,
+            tax_percentage: item.taxRate,
+            product_price: item.price,
+            product_image: item.product_image,
+          })
+        );
+      });
 
-    router("/seller/dashboard");
-    setViewSale({
-      status: false,
-      billId: null,
-    });
+      dispatch(setCurrentBill({ billId: data._id || data.id }));
+      router("/seller/dashboard");
+      setViewSale({
+        status: false,
+        billId: null,
+      });
+      queryClient.invalidateQueries(["get_bill_details"]);
+      // toast.success("Transcation completed successfully");
+    }
+  };
+
+  const handleCancelTranscation = async () => {
+    const reqUpdateBillStatus = await handleBillStatusUpdate(
+      billID,
+      "CANCELLED"
+    );
+    if (reqUpdateBillStatus) {
+      if (billID === currentBillId) dispatch(clearCurrentBill());
+      dispatch(clearCart());
+      setViewSale({
+        status: false,
+        billId: null,
+      });
+      queryClient.invalidateQueries(["get_bill_details"]);
+    }
+  };
+
+  const handleStatusColor = (status) => {
+    switch (status) {
+      case "OPEN":
+        return "bg-(--button-color5)/20 text-(--button-color5)/90";
+      case "HOLD":
+        return "bg-(--button-color2)/20 text-(--button-color2)/90";
+      case "CANCELLED":
+        return "bg-(--Negative-color)/20 text-(--Negative-color)/90";
+      default:
+        return "bg-(--button-color5)/20 text-(--button-color5)/90";
+    }
   };
 
   return (
@@ -168,7 +215,11 @@ export const ViewSales = ({ setViewSale, billID }) => {
                     <span className="mainFont shrink-0 text-[.9dvw] text-(--mainText-color)/70 font-semibold">
                       Transcation Status :
                     </span>
-                    <h5 className="text-[1dvw] shrink-0 font-bold text-(--button-color5)/90 bg-(--button-color5)/20 px-3 py-1 rounded">
+                    <h5
+                      className={`text-[1dvw] shrink-0 font-bold  ${handleStatusColor(
+                        data.status
+                      )} px-3 py-1 rounded`}
+                    >
                       {data.status}
                     </h5>
                   </div>
@@ -261,8 +312,11 @@ export const ViewSales = ({ setViewSale, billID }) => {
                 >
                   Complete Transcation
                 </button>
-                <button className="w-full sm:w-auto px-6 py-2 bg-[var(--Negative-color)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300">
-                  Remove Transcation
+                <button
+                  onClick={handleCancelTranscation}
+                  className="w-full sm:w-auto px-6 py-2 bg-[var(--Negative-color)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300"
+                >
+                  Cancel Transcation
                 </button>
               </div>
             </div>

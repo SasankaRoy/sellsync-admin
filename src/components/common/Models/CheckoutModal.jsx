@@ -79,6 +79,7 @@ export const CheckoutModal = ({
   };
 
   const handlePay = (method) => {
+    // console.log("handlePay",tenderedAmount,total);
     setSelectedPaymentMethod(method);
     if (method === "cash" && tenderedAmount < total) {
       // Don't proceed if cash tendered is less than total
@@ -207,8 +208,8 @@ export const CheckoutModal = ({
                         setTendered(val);
                       }}
                       onFocus={() => setShowKeyboard(true)}
-                      onClick={(e)=>{
-                        e.stopPropagation()
+                      onClick={(e) => {
+                        e.stopPropagation();
                       }}
                       placeholder="0.00"
                       className="flex-1 border-b border-(--border-color) bg-transparent text-(--mainText-color) mainFont text-[1.2dvw] outline-none focus:border-(--button-color1) px-3 py-1.5  cursor-(--button-color1)"
@@ -271,7 +272,7 @@ export const CheckoutModal = ({
 
                   <div className="flex gap-2 pt-2 ">
                     <button
-                      onClick={onClose}
+                      onClick={() => handlePay("cash")}
                       className="flex-1 px-6 py-2 rounded-md bg-(--button-color1) text-(--primary-color) mainFont text-sm sm:text-base font-semibold hover:opacity-90 transition-opacity cursor-pointer"
                     >
                       Payout

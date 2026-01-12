@@ -30,6 +30,8 @@ import { useMutation } from "@tanstack/react-query";
 import axiosInstance from "../../utils/axios-interceptor";
 import { toast } from "react-toastify";
 import { ViewSales } from "../../components/common/Models/ViewSales";
+import { clearCurrentBill } from "../../Redux/CurrentBillSlice";
+import { handleBillStatusUpdate } from "../../utils/apis/billStatusUpdate";
 
 const itemListVarient = {
   initial: {
@@ -65,6 +67,7 @@ export const SalePoint = () => {
   const [showPunchInModal, setShowPunchInModal] = useState(false);
   const [isOpenPaymentModel, setIsOpenPaymentModel] = useState(false);
   const currentRingUpData = useSelector((state) => state.ringUps);
+  const currentBillId = useSelector((state) => state.currentBill.billId);
   const employeeDetails = useSelector((state) => state.loggedUser);
   const [viewBillDetails, setViewBillDetails] = useState({
     state: false,
@@ -358,6 +361,54 @@ export const SalePoint = () => {
     });
   };
 
+  const handleCheckout = async (method, checkoutData) => {
+    const checkoutPayload = {
+      timestamp: new Date().toISOString(),
+      metadata: {
+        storeId: "Store T25",
+        posTerminalId: "POS Terminal T25",
+        employeeId: employeeDetails?.id,
+        employeeName: employeeDetails?.name,
+        business_id: employeeDetails?.business_id,
+      },
+      status: "PAID",
+      items: createPayload(currentRingUpData),
+      customerInfo: {
+        name: checkoutData.customerInfo.name,
+        phone: checkoutData.customerInfo.phone,
+        email: checkoutData.customerInfo.email,
+        address: checkoutData.customerInfo.address,
+        notes: checkoutData.customerInfo.notes,
+      },
+      payment: {
+        totalItems: totalItems,
+        subTotal: subtotal,
+        taxTotal: tax,
+        discount: discountAmount,
+        grandTotal: total,
+        discount: {
+          type: isPercentage ? "PERCENT" : "FLAT",
+          value: isPercentage && discount,
+          amount: discountAmount,
+        },
+        method: method,
+        tendered: checkoutData.tendered,
+        change: checkoutData.change,
+        emailReceipt: checkoutData.emailReceipt,
+        cardLast4: method === "card" ? checkoutData.cardLast4 : "",
+        cardBrand: method === "card" ? checkoutData.cardBrand : "",
+        transactionReference:
+          method === "card" ? checkoutData.transactionReference : undefined,
+      },
+      receipt: {
+        emailReceipt: checkoutData.emailReceipt,
+        printReceipt: false,
+        format: "pdf",
+      },
+    };
+    console.log("handleCheckout", checkoutPayload);
+  };
+
   return (
     <>
       <SellerNavbar />
@@ -544,7 +595,13 @@ export const SalePoint = () => {
               >
                 Pay $ {total.toFixed(2)}
               </button>
-              <button className="w-1/2 py-4 text-[1.2dvw] mainFont font-semibold bg-(--Negative-color) text-(--primary-color) rounded-md">
+              <button
+                onClick={() => {
+                  dispatch(clearCart());
+                  dispatch(clearCurrentBill());
+                }}
+                className="w-1/2 py-4 text-[1.2dvw] mainFont font-semibold bg-(--Negative-color) text-(--primary-color) rounded-md"
+              >
                 Cancel
               </button>
             </div>
@@ -558,9 +615,13 @@ export const SalePoint = () => {
                 </button>
                 <button
                   disabled={currentRingUpData.length === 0}
-                  onClick={() => {
+                  onClick={async () => {
                     if (currentRingUpData.length === 0) {
                       return toast.warn("No checkout products/tems found");
+                    }
+                    if (currentBillId) {
+                      await handleBillStatusUpdate(currentBillId, "HOLD");
+                      return dispatch(clearCart());
                     }
                     mutate({
                       status: "HOLD",
@@ -648,31 +709,38 @@ export const SalePoint = () => {
           total,
           totalItems,
         }}
-        onPay={(method) => {
+        onPay={(method, checkoutData) => {
           // hook for payment handling; keeping flow unchanged
-          console.log("Pay via:", { method, customerInfo, currentRingUpData });
+          console.log("Pay via:", {
+            method,
+            customerInfo,
+            currentRingUpData,
+            checkoutData,
+          });
+
+          handleCheckout(method, checkoutData);
 
           // Generate and log sample receipt request object
-          const receiptRequest = buildReceiptRequest(
-            currentRingUpData,
-            customerInfo,
-            {
-              subtotal,
-              tax,
-              discount: discountAmount,
-              total,
-              totalItems,
-            },
-            method
-          );
+          // const receiptRequest = buildReceiptRequest(
+          //   currentRingUpData,
+          //   customerInfo,
+          //   {
+          //     subtotal,
+          //     tax,
+          //     discount: discountAmount,
+          //     total,
+          //     totalItems,
+          //   },
+          //   method
+          // );
 
-          console.log("📧 Receipt Request Object:", receiptRequest);
-          console.log(
-            "📧 Receipt Request JSON:",
-            JSON.stringify(receiptRequest, null, 2)
-          );
+          // console.log("📧 Receipt Request Object:", receiptRequest);
+          // console.log(
+          //   "📧 Receipt Request JSON:",
+          //   JSON.stringify(receiptRequest, null, 2)
+          // );
 
-          setShowCheckoutModal(false);
+          // setShowCheckoutModal(false);
         }}
       />
       {viewBillDetails.state && viewBillDetails.billId && (

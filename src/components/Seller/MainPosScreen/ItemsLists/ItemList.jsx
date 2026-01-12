@@ -1,5 +1,5 @@
 import { Minus, Plus } from "lucide-react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   decreaseQyt,
   increaseQyt,
@@ -7,24 +7,62 @@ import {
   updateQty,
 } from "../../../../Redux/RingUpSlice";
 import { useState } from "react";
+import axiosInstance from "../../../../utils/axios-interceptor";
+import { useDeboune } from "../../../../hooks/useDebounce";
+import { toast } from "react-toastify";
+import { useQueryClient } from "@tanstack/react-query";
 
-export const ItemList = ({ 
-  id, 
+export const ItemList = ({
+  id,
   cur,
   setIsKeyboardOpen,
   setActiveInputField,
   keyboardInput,
-  activeInputField
+  activeInputField,
 }) => {
   const [editingQty, setEditingQty] = useState({});
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
+  const currentBillId = useSelector((state) => state.currentBill.billId);
+  const currentQty = useSelector((state) => state.ringUps);
+  // Debounce callback
+  const debounceCallback = useDeboune((results, error) => {
+    if (results) {
+      queryClient.invalidateQueries(["get_bill_details"]);
+      console.log("results", results);
+    }
+    console.log("error", error);
+  }, 500);
 
-  const handleIncreaseQty = (id, action) => {
+  const reqQtyUpdate = async (billId, productId, newQty) => {
+    try {
+      const billDetails = await axiosInstance.put(
+        `/api/v1/bills/${billId}/items/${productId}`,
+        {
+          qty: Number(newQty),
+        }
+      );
+      if (billDetails.status === 200) {
+        // toast.success("Quantity updated successfully");
+        queryClient.invalidateQueries(["get_bill_details"]);
+        return true;
+      }
+    } catch (error) {
+      console.error("Error in reqQtyUpdate", error);
+      toast.error(error.response.data.message || "Failed to update quantity");
+    }
+  };
+
+  const handleIncreaseQty = async (id, action) => {
+    const currentItemQty = currentQty.find((item) => item.id === id)?.qty;
+    const newQty =
+      action === "increase" ? currentItemQty + 1 : currentItemQty - 1;
     if (action === "increase") {
       dispatch(increaseQyt(id));
     } else if (action === "decrease") {
       dispatch(decreaseQyt(id));
     }
+    await reqQtyUpdate(currentBillId, id, newQty);
   };
 
   return (
@@ -38,9 +76,12 @@ export const ItemList = ({
         <div className="border-r border-(--border-color) py-3 px-1  min-w-[5dvw] max-w-[5dvw] flex justify-center items-center">
           <input
             value={
-              activeInputField?.type === 'quantity' && activeInputField?.itemId === cur.id
+              activeInputField?.type === "quantity" &&
+              activeInputField?.itemId === cur.id
                 ? keyboardInput
-                : (editingQty[cur.id] !== undefined ? editingQty[cur.id] : cur.qty)
+                : editingQty[cur.id] !== undefined
+                ? editingQty[cur.id]
+                : cur.qty
             }
             type="text"
             inputMode="numeric"
@@ -50,10 +91,10 @@ export const ItemList = ({
               e.stopPropagation();
               if (setIsKeyboardOpen && setActiveInputField) {
                 setIsKeyboardOpen(true);
-                setActiveInputField({ type: 'quantity', itemId: cur.id });
+                setActiveInputField({ type: "quantity", itemId: cur.id });
               }
             }}
-            onChange={(e) => {
+            onChange={async (e) => {
               const val = e.target.value;
               // allow only digits
               if (!/^\d*$/.test(val)) return;
@@ -72,13 +113,19 @@ export const ItemList = ({
                   qty: parsed,
                 })
               );
+              // await debounceCallback(currentBillId, cur.id, parsed);
+              await debounceCallback(
+                `/api/v1/bills/${currentBillId}/items/${cur.id}`,
+                parsed,
+                "QTY_UPDATE"
+              );
             }}
             onClick={(e) => {
               e.stopPropagation();
               // Ensure active field is set even if keyboard is already open
               if (setIsKeyboardOpen && setActiveInputField) {
                 setIsKeyboardOpen(true);
-                setActiveInputField({ type: 'quantity', itemId: cur.id });
+                setActiveInputField({ type: "quantity", itemId: cur.id });
               }
             }}
             onBlur={() => {
@@ -114,15 +161,16 @@ export const ItemList = ({
             type="text"
             placeholder="0.00"
             value={
-              activeInputField?.type === 'price' && activeInputField?.itemId === cur.id
+              activeInputField?.type === "price" &&
+              activeInputField?.itemId === cur.id
                 ? keyboardInput
-                : (` $ ${cur.product_price}.00` ?? "")
+                : ` $ ${cur.product_price}.00` ?? ""
             }
             onFocus={(e) => {
               e.stopPropagation();
               if (setIsKeyboardOpen && setActiveInputField) {
                 setIsKeyboardOpen(true);
-                setActiveInputField({ type: 'price', itemId: cur.id });
+                setActiveInputField({ type: "price", itemId: cur.id });
               }
             }}
             onChange={(e) => {
@@ -140,7 +188,7 @@ export const ItemList = ({
               // Ensure active field is set even if keyboard is already open
               if (setIsKeyboardOpen && setActiveInputField) {
                 setIsKeyboardOpen(true);
-                setActiveInputField({ type: 'price', itemId: cur.id });
+                setActiveInputField({ type: "price", itemId: cur.id });
               }
             }}
             className="w-full text-center outline-none text-[1dvw] mainFont font-semibold border-(--border-color) py-2 bg-(--secondary-color)/50 appearance-none"
