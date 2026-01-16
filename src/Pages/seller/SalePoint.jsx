@@ -26,12 +26,15 @@ import {
 } from "../../Redux/RingUpSlice";
 import { useDispatch } from "react-redux";
 import { PaymentOptions } from "../../components/common/Models/PaymentOptions";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "../../utils/axios-interceptor";
 import { toast } from "react-toastify";
 import { ViewSales } from "../../components/common/Models/ViewSales";
 import { clearCurrentBill } from "../../Redux/CurrentBillSlice";
 import { handleBillStatusUpdate } from "../../utils/apis/billStatusUpdate";
+import { requestPrintBill } from "../../utils/apis/printBill";
+import { saveTranscation } from "../../utils/apis/saveTranscations";
+import { Loading } from "../../components/UI/Loading/Loading";
 
 const itemListVarient = {
   initial: {
@@ -62,6 +65,7 @@ const itemListVarient = {
 };
 
 export const SalePoint = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
   const [showShortcuts, setShowShortcuts] = useState(itemListVarient.initial);
   const [showPunchInModal, setShowPunchInModal] = useState(false);
@@ -74,6 +78,7 @@ export const SalePoint = () => {
     billId: null,
   });
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
 
   // Search states
   const [searchResults, setSearchResults] = useState([]);
@@ -318,7 +323,7 @@ export const SalePoint = () => {
         productId: item.id,
         name: item.name,
         qty: item.qty,
-        price: item.product_price,
+        price: item.product_price.toFixed(2),
         taxRate: 5,
         taxAmount: 12,
         total: item.qty * item.product_price,
@@ -328,7 +333,7 @@ export const SalePoint = () => {
     return payload;
   };
 
-  const handleHoldOrder = async (payload) => {
+  const handleOrderState = async (payload) => {
     try {
       const holdOrder = await axiosInstance.post("/api/v1/bills/create", {
         ...payload,
@@ -347,7 +352,7 @@ export const SalePoint = () => {
     }
   };
   const { mutate, isError, isPending } = useMutation({
-    mutationFn: handleHoldOrder,
+    mutationFn: handleOrderState,
   });
 
   const getPreviousOrder = async () => {
@@ -361,8 +366,17 @@ export const SalePoint = () => {
     });
   };
 
+  const handleCancelTransaction = () => {
+    dispatch(clearCart());
+    dispatch(clearCurrentBill());
+    setCustomerInfo({});
+    setShowCheckoutModal(false);
+  };
+
   const handleCheckout = async (method, checkoutData) => {
+    setIsLoading(true);
     const checkoutPayload = {
+      billId: currentBillId,
       timestamp: new Date().toISOString(),
       metadata: {
         storeId: "Store T25",
@@ -372,13 +386,13 @@ export const SalePoint = () => {
         business_id: employeeDetails?.business_id,
       },
       status: "PAID",
-      items: createPayload(currentRingUpData),
+      // items: createPayload(currentRingUpData),
       customerInfo: {
-        name: checkoutData.customerInfo.name,
-        phone: checkoutData.customerInfo.phone,
-        email: checkoutData.customerInfo.email,
-        address: checkoutData.customerInfo.address,
-        notes: checkoutData.customerInfo.notes,
+        name: checkoutData.customerInfo.name || "",
+        phone: checkoutData.customerInfo.phone || "",
+        email: checkoutData.customerInfo.email || "",
+        address: checkoutData.customerInfo.address || "",
+        notes: checkoutData.customerInfo.notes || "",
       },
       payment: {
         totalItems: totalItems,
@@ -402,352 +416,381 @@ export const SalePoint = () => {
       },
       receipt: {
         emailReceipt: checkoutData.emailReceipt,
-        printReceipt: false,
-        format: "pdf",
+        // printReceipt: false,
+        // format: "pdf",
       },
     };
-    console.log("handleCheckout", checkoutPayload);
+    const billPayload = {
+      status: "PAID",
+      billId: currentBillId,
+      items: createPayload(currentRingUpData),
+      customerInfo: {
+        name: checkoutData.customerInfo.name,
+        phone: checkoutData.customerInfo.phone,
+        email: checkoutData.customerInfo.email,
+        address: checkoutData.customerInfo.address,
+        notes: checkoutData.customerInfo.notes,
+      },
+      payment: checkoutPayload.payment,
+      TranscationType: "SALE",
+      transactionId: currentBillId,
+      transactionDate: new Date().toISOString(),
+      storeId: "STORE_001",
+      posTerminalId: "POS_TERMINAL_03",
+      employeeId: employeeDetails?.id,
+      employeeName: employeeDetails?.name,
+      business_id: employeeDetails?.business_id,
+      isEmailRepciet: checkoutPayload.receipt.emailReceipt,
+    };
+
+    const isTranscationSaved = await saveTranscation(checkoutPayload);
+
+    if (isTranscationSaved.message === "Transaction saved successfully") {
+      const isBillPrinted = await requestPrintBill(billPayload);
+      if (isBillPrinted.success) {
+        setIsLoading(false);
+        handleCancelTransaction();
+        queryClient.invalidateQueries(["get_bill_details"]);
+        toast.success("Transaction Successfull and Receipt Printed !");
+      }
+    } else {
+      setIsLoading(false);
+      toast.error("Transaction Failed");
+    }
   };
 
   return (
     <>
-      <SellerNavbar />
-      <div
-        onClick={(e) => {
-          e.stopPropagation();
-          setIsKeyboardOpen(false);
-          setShowSearchResults(false);
-          setActiveInputField(null);
-          setKeyboardInput("");
-        }}
-        className="flex justify-center items-center gap-4 h-[88vh]"
-      >
-        <div className="flex-1  h-full relative overflow-hidden">
-          <div className=" flex flex-col h-full gap-5 justify-center items-center w-full  p-4">
-            <div className="flex justify-between items-center w-full">
-              <SearchItemsInput
-                input={input}
-                onchange={onChange}
-                setIsKeyboardOpen={setIsKeyboardOpen}
-                searchResults={searchResults}
-                isSearching={isSearching}
-                searchError={searchError}
-                showSearchResults={showSearchResults}
-                onSelectProduct={handleAddToRingUp}
-                setActiveInputField={setActiveInputField}
-              />
-              <div className="flex justify-center items-center gap-3">
-                <button className="flex cursor-pointer  justify-center items-center gap-1.5 mainFont font-semibold border border-(--border-color) rounded-full px-5 py-1.5">
-                  <span className="p-1 flex justify-center bg-(--button-color1) items-center text-(--primary-color) rounded-full">
-                    <Plus size={20} />
-                  </span>
-                  Add Item
-                </button>
-                <button
-                  onClick={() => {
-                    setShowShortcuts(itemListVarient.inView);
-                  }}
-                  className="flex cursor-pointer  justify-center items-center gap-1.5 mainFont font-semibold border border-(--border-color) rounded-full px-5 py-1.5"
-                >
-                  <span className="p-1 flex justify-center bg-(--button-color1) items-center text-(--primary-color) rounded-full">
-                    <Logs size={18} />
-                  </span>
-                  Shortcuts
-                </button>
-              </div>
-            </div>
-            <div className="w-full h-full overflow-y-hidden flex flex-col">
-              {/* list header start */}
-              <ItemsListHeader />
-              {/* list header end */}
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <>
+          <SellerNavbar />
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsKeyboardOpen(false);
+              setShowSearchResults(false);
+              setActiveInputField(null);
+              setKeyboardInput("");
+            }}
+            className="flex justify-center items-center gap-4 h-[88vh]"
+          >
+            <div className="flex-1  h-full relative overflow-hidden">
+              <div className=" flex flex-col h-full gap-5 justify-center items-center w-full  p-4">
+                <div className="flex justify-between items-center w-full">
+                  <SearchItemsInput
+                    input={input}
+                    onchange={onChange}
+                    setIsKeyboardOpen={setIsKeyboardOpen}
+                    searchResults={searchResults}
+                    isSearching={isSearching}
+                    searchError={searchError}
+                    showSearchResults={showSearchResults}
+                    onSelectProduct={handleAddToRingUp}
+                    setActiveInputField={setActiveInputField}
+                  />
+                  <div className="flex justify-center items-center gap-3">
+                    <button className="flex cursor-pointer  justify-center items-center gap-1.5 mainFont font-semibold border border-(--border-color) rounded-full px-5 py-1.5">
+                      <span className="p-1 flex justify-center bg-(--button-color1) items-center text-(--primary-color) rounded-full">
+                        <Plus size={20} />
+                      </span>
+                      Add Item
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowShortcuts(itemListVarient.inView);
+                      }}
+                      className="flex cursor-pointer  justify-center items-center gap-1.5 mainFont font-semibold border border-(--border-color) rounded-full px-5 py-1.5"
+                    >
+                      <span className="p-1 flex justify-center bg-(--button-color1) items-center text-(--primary-color) rounded-full">
+                        <Logs size={18} />
+                      </span>
+                      Shortcuts
+                    </button>
+                  </div>
+                </div>
+                <div className="w-full h-full overflow-y-hidden flex flex-col">
+                  {/* list header start */}
+                  <ItemsListHeader />
+                  {/* list header end */}
 
-              {/* item list start */}
-              <div className="flex flex-col gap-2 scrollCustom h-[100%] overflow-y-auto justify-start items-center  mt-1.5">
-                {currentRingUpData?.map((cur, id) => (
-                  <>
-                    <ItemList
-                      key={id}
-                      id={id}
-                      cur={cur}
-                      setIsKeyboardOpen={setIsKeyboardOpen}
-                      setActiveInputField={setActiveInputField}
-                      keyboardInput={keyboardInput}
-                      activeInputField={activeInputField}
-                    />
-                  </>
-                ))}
+                  {/* item list start */}
+                  <div className="flex flex-col gap-2 scrollCustom h-[100%] overflow-y-auto justify-start items-center  mt-1.5">
+                    {currentRingUpData?.map((cur, id) => (
+                      <>
+                        <ItemList
+                          key={id}
+                          id={id}
+                          cur={cur}
+                          setIsKeyboardOpen={setIsKeyboardOpen}
+                          setActiveInputField={setActiveInputField}
+                          keyboardInput={keyboardInput}
+                          activeInputField={activeInputField}
+                        />
+                      </>
+                    ))}
+                  </div>
+                  {/* item list end */}
+                </div>
               </div>
-              {/* item list end */}
+              <AnimatePresence mode="popLayout">
+                <Shortcuts
+                  itemListVarient={itemListVarient}
+                  showShortcuts={showShortcuts}
+                  setShowShortcuts={setShowShortcuts}
+                />
+              </AnimatePresence>
             </div>
-          </div>
-          <AnimatePresence mode="popLayout">
-            <Shortcuts
-              itemListVarient={itemListVarient}
-              showShortcuts={showShortcuts}
-              setShowShortcuts={setShowShortcuts}
-            />
-          </AnimatePresence>
-        </div>
-        <div className="w-[33dvw] border-l border-(--border-color)/50 flex flex-col justify-between bg-(--secondary-color)/40 h-full p-4">
-          <div>
-            <div className="border-b flex justify-between items-center border-(--border-color) pb-4">
-              <h3 className="text-[2dvw] font-semibold mainFont">
-                Bill Details
-              </h3>
+            <div className="w-[33dvw] border-l border-(--border-color)/50 flex flex-col justify-between bg-(--secondary-color)/40 h-full p-4">
               <div>
-                <lable className="mainFont font-semibold text-[.9dvw]">
-                  Discount Type ({isPercentage ? "%" : "$"}) -
-                </lable>
-                <MaterialUISwitch
-                  checked={isPercentage}
-                  onChange={(e) => setIsPercentage(e.target.checked)}
-                />
-              </div>
-            </div>
-            <div className="p-5 flex flex-col gap-4">
-              <div className="flex justify-between items-center">
-                <p className="text-[1.2dvw] mainFont font-semibold text-(--paraText-color)">
-                  Total Items :
-                </p>
-                <strong className="text-[1.5dvw] paraFont font-semibold">
-                  {totalItems}
-                </strong>
-              </div>
-              <div className="flex justify-between items-center">
-                <p className="text-[1.2dvw] mainFont font-semibold text-(--paraText-color)">
-                  SubTotal :
-                </p>
-                <strong className="text-[1.5dvw] paraFont font-semibold">
-                  $ {subtotal.toFixed(2)}
-                </strong>
-              </div>
-              <div className="flex justify-between items-center">
-                <p className="text-[1.2dvw] mainFont font-semibold text-(--paraText-color)">
-                  Tax :
-                </p>
-                <strong className="text-[1.5dvw] paraFont font-semibold text-(--Negative-color)">
-                  $ {tax.toFixed(2)}
-                </strong>
-              </div>
+                <div className="border-b flex justify-between items-center border-(--border-color) pb-4">
+                  <h3 className="text-[2dvw] font-semibold mainFont">
+                    Bill Details
+                  </h3>
+                  <div>
+                    <lable className="mainFont font-semibold text-[.9dvw]">
+                      Discount Type ({isPercentage ? "%" : "$"}) -
+                    </lable>
+                    <MaterialUISwitch
+                      checked={isPercentage}
+                      onChange={(e) => setIsPercentage(e.target.checked)}
+                    />
+                  </div>
+                </div>
+                <div className="p-5 flex flex-col gap-4">
+                  <div className="flex justify-between items-center">
+                    <p className="text-[1.2dvw] mainFont font-semibold text-(--paraText-color)">
+                      Total Items :
+                    </p>
+                    <strong className="text-[1.5dvw] paraFont font-semibold">
+                      {totalItems}
+                    </strong>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <p className="text-[1.2dvw] mainFont font-semibold text-(--paraText-color)">
+                      SubTotal :
+                    </p>
+                    <strong className="text-[1.5dvw] paraFont font-semibold">
+                      $ {subtotal.toFixed(2)}
+                    </strong>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <p className="text-[1.2dvw] mainFont font-semibold text-(--paraText-color)">
+                      Tax :
+                    </p>
+                    <strong className="text-[1.5dvw] paraFont font-semibold text-(--Negative-color)">
+                      $ {tax.toFixed(2)}
+                    </strong>
+                  </div>
 
-              <div className="flex justify-between items-center  border-b border-(--border-color) pb-4">
-                <p className="text-[1.2dvw] mainFont font-semibold text-(--paraText-color)">
-                  Discount ({isPercentage ? "%" : "$"}) :
-                </p>
-                <input
-                  type="text"
-                  placeholder={isPercentage ? "%" : "$"}
-                  value={
-                    activeInputField?.type === "discount"
-                      ? keyboardInput
-                      : isPercentage
-                      ? `${discount}%`
-                      : `$ ${discount.toFixed(2)}`
-                  }
-                  onFocus={(e) => {
-                    e.stopPropagation();
-                    setIsKeyboardOpen(true);
-                    setActiveInputField({ type: "discount", itemId: null });
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    // Ensure active field is set even if keyboard is already open
-                    setIsKeyboardOpen(true);
-                    setActiveInputField({ type: "discount", itemId: null });
-                  }}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    // Remove currency/percentage symbols and spaces, then parse the number
-                    const cleanedValue = value
-                      .replace(/[%$]/g, "")
-                      .replace(/\s/g, "")
-                      .trim();
-                    const numericValue = parseFloat(cleanedValue) || 0;
-                    // Ensure non-negative values
-                    setDiscount(Math.max(0, numericValue));
-                  }}
-                  className="w-[20%] text-center outline-none text-[1.5dvw] mainFont font-semibold border-(--border-color) py-2 bg-transparent paraFont appearance-none border-b "
-                />
+                  <div className="flex justify-between items-center  border-b border-(--border-color) pb-4">
+                    <p className="text-[1.2dvw] mainFont font-semibold text-(--paraText-color)">
+                      Discount ({isPercentage ? "%" : "$"}) :
+                    </p>
+                    <input
+                      type="text"
+                      placeholder={isPercentage ? "%" : "$"}
+                      value={
+                        activeInputField?.type === "discount"
+                          ? keyboardInput
+                          : isPercentage
+                          ? `${discount}%`
+                          : `$ ${discount.toFixed(2)}`
+                      }
+                      onFocus={(e) => {
+                        e.stopPropagation();
+                        setIsKeyboardOpen(true);
+                        setActiveInputField({ type: "discount", itemId: null });
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Ensure active field is set even if keyboard is already open
+                        setIsKeyboardOpen(true);
+                        setActiveInputField({ type: "discount", itemId: null });
+                      }}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        // Remove currency/percentage symbols and spaces, then parse the number
+                        const cleanedValue = value
+                          .replace(/[%$]/g, "")
+                          .replace(/\s/g, "")
+                          .trim();
+                        const numericValue = parseFloat(cleanedValue) || 0;
+                        // Ensure non-negative values
+                        setDiscount(Math.max(0, numericValue));
+                      }}
+                      className="w-[20%] text-center outline-none text-[1.5dvw] mainFont font-semibold border-(--border-color) py-2 bg-transparent paraFont appearance-none border-b "
+                    />
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <p className="text-[1.6dvw] mainFont font-semibold text-(--paraText-color)">
+                      Total :
+                    </p>
+                    <strong className="text-[2dvw] paraFont font-semibold text-(--Positive-color)">
+                      $ {total.toFixed(2)}
+                    </strong>
+                  </div>
+                </div>
               </div>
-              <div className="flex justify-between items-center">
-                <p className="text-[1.6dvw] mainFont font-semibold text-(--paraText-color)">
-                  Total :
-                </p>
-                <strong className="text-[2dvw] paraFont font-semibold text-(--Positive-color)">
-                  $ {total.toFixed(2)}
-                </strong>
+              <div className="flex flex-col gap-3">
+                <div className="flex justify-between items-center gap-3">
+                  <button
+                    className={`w-1/2 py-4 text-[1.2dvw] mainFont font-semibold rounded-md ${
+                      hasItems
+                        ? "bg-(--button-color5) text-(--primary-color)"
+                        : "bg-(--button-color5)/40 text-(--primary-color)/60 cursor-not-allowed"
+                    }`}
+                    disabled={!hasItems}
+                    onClick={() => {
+                      if (!hasItems) return;
+                      if (!currentBillId) {
+                        mutate({
+                          status: "OPEN",
+                          device_location: "Device T25",
+                          items: createPayload(currentRingUpData),
+                          summary: {
+                            totalItems: totalItems,
+                            subTotal: subtotal,
+                            taxTotal: tax,
+                            discount: {
+                              type: isPercentage ? "PERCENT" : "FLAT",
+                              value: isPercentage && discount,
+                              amount: discountAmount,
+                            },
+                            grandTotal: total,
+                          },
+                          business_id: employeeDetails?.business_id,
+                          created_by: employeeDetails?.id,
+                        });
+                      }
+                      setShowCustomerModal(true);
+                    }}
+                  >
+                    Pay $ {total.toFixed(2)}
+                  </button>
+                  <button
+                    onClick={handleCancelTransaction}
+                    className="w-1/2 py-4 text-[1.2dvw] mainFont font-semibold bg-(--Negative-color) text-(--primary-color) rounded-md"
+                  >
+                    Cancel
+                  </button>
+                </div>
+                <div>
+                  <h3 className="font-medium mainFont text-(--button-color4) text-[1.2dvw]">
+                    Options
+                  </h3>
+                  <div className="my-2 grid grid-cols-3 gap-2">
+                    <button className="bg-(--button-color5) text-(--primary-color) py-3 mainFont font-semibold rounded-md">
+                      Payout
+                    </button>
+                    <button
+                      disabled={currentRingUpData.length === 0}
+                      onClick={async () => {
+                        if (currentRingUpData.length === 0) {
+                          return toast.warn("No checkout products/tems found");
+                        }
+                        if (currentBillId) {
+                          await handleBillStatusUpdate(currentBillId, "HOLD");
+                          return dispatch(clearCart());
+                        }
+                        mutate({
+                          status: "HOLD",
+                          device_location: "Device T25",
+                          items: createPayload(currentRingUpData),
+                          summary: {
+                            totalItems: totalItems,
+                            subTotal: subtotal,
+                            taxTotal: tax,
+                            discount: {
+                              type: isPercentage ? "PERCENT" : "FLAT",
+                              value: isPercentage && discount,
+                              amount: discountAmount,
+                            },
+                            grandTotal: total,
+                          },
+                          business_id: employeeDetails?.business_id,
+                          created_by: employeeDetails?.id,
+                        });
+                      }}
+                      className="bg-(--button-color2) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-80"
+                    >
+                      Hold Order
+                    </button>
+                    <button
+                      onClick={getPreviousOrder}
+                      className="bg-(--button-color1) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md"
+                    >
+                      Last Order
+                    </button>
+                    <button className="bg-(--button-color2) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md">
+                      Reprint
+                    </button>
+                    <button className="bg-(--Negative-color) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md">
+                      No Sale
+                    </button>
+                    <button className="bg-(--button-color3) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md">
+                      Other
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-          <div className="flex flex-col gap-3">
-            <div className="flex justify-between items-center gap-3">
-              <button
-                className={`w-1/2 py-4 text-[1.2dvw] mainFont font-semibold rounded-md ${
-                  hasItems
-                    ? "bg-(--button-color5) text-(--primary-color)"
-                    : "bg-(--button-color5)/40 text-(--primary-color)/60 cursor-not-allowed"
-                }`}
-                disabled={!hasItems}
-                onClick={() => {
-                  if (!hasItems) return;
-                  setShowCustomerModal(true);
-                }}
-              >
-                Pay $ {total.toFixed(2)}
-              </button>
-              <button
-                onClick={() => {
-                  dispatch(clearCart());
-                  dispatch(clearCurrentBill());
-                }}
-                className="w-1/2 py-4 text-[1.2dvw] mainFont font-semibold bg-(--Negative-color) text-(--primary-color) rounded-md"
-              >
-                Cancel
-              </button>
-            </div>
-            <div>
-              <h3 className="font-medium mainFont text-(--button-color4) text-[1.2dvw]">
-                Options
-              </h3>
-              <div className="my-2 grid grid-cols-3 gap-2">
-                <button className="bg-(--button-color5) text-(--primary-color) py-3 mainFont font-semibold rounded-md">
-                  Payout
-                </button>
-                <button
-                  disabled={currentRingUpData.length === 0}
-                  onClick={async () => {
-                    if (currentRingUpData.length === 0) {
-                      return toast.warn("No checkout products/tems found");
-                    }
-                    if (currentBillId) {
-                      await handleBillStatusUpdate(currentBillId, "HOLD");
-                      return dispatch(clearCart());
-                    }
-                    mutate({
-                      status: "HOLD",
-                      device_location: "Device T25",
-                      items: createPayload(currentRingUpData),
-                      summary: {
-                        totalItems: totalItems,
-                        subTotal: subtotal,
-                        taxTotal: tax,
-                        discount: {
-                          type: isPercentage ? "PERCENT" : "FLAT",
-                          value: isPercentage && discount,
-                          amount: discountAmount,
-                        },
-                        grandTotal: total,
-                      },
-                      business_id: employeeDetails?.business_id,
-                      created_by: employeeDetails?.id,
-                    });
-                  }}
-                  className="bg-(--button-color2) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-80"
-                >
-                  Hold Order
-                </button>
-                <button
-                  onClick={getPreviousOrder}
-                  className="bg-(--button-color1) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md"
-                >
-                  Last Order
-                </button>
-                <button className="bg-(--button-color2) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md">
-                  Reprint
-                </button>
-                <button className="bg-(--Negative-color) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md">
-                  No Sale
-                </button>
-                <button className="bg-(--button-color3) cursor-pointer text-(--primary-color) py-3 mainFont font-semibold rounded-md">
-                  Other
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      {isKeyboardOpen && (
-        <AnimatePresence mode="popLayout">
-          <OnScreenKeyboard
-            Change={onChange}
-            inputValue={keyboardInput}
-            layoutName={
-              activeInputField?.type === "quantity" ||
-              activeInputField?.type === "price" ||
-              activeInputField?.type === "discount"
-                ? "numeric"
-                : "default"
-            }
+          {isKeyboardOpen && (
+            <AnimatePresence mode="popLayout">
+              <OnScreenKeyboard
+                Change={onChange}
+                inputValue={keyboardInput}
+                layoutName={
+                  activeInputField?.type === "quantity" ||
+                  activeInputField?.type === "price" ||
+                  activeInputField?.type === "discount"
+                    ? "numeric"
+                    : "default"
+                }
+              />
+            </AnimatePresence>
+          )}
+          <CustomerDetailsModal
+            open={showCustomerModal}
+            onClose={() => setShowCustomerModal(false)}
+            onSubmit={handleCustomerSubmit}
+            defaultValues={customerInfo}
+            setIsKeyboardOpen={setIsKeyboardOpen}
+            setActiveInputField={setActiveInputField}
+            keyboardInput={keyboardInput}
+            activeInputField={activeInputField}
+            onchange={onChange}
           />
-        </AnimatePresence>
-      )}
-      <CustomerDetailsModal
-        open={showCustomerModal}
-        onClose={() => setShowCustomerModal(false)}
-        onSubmit={handleCustomerSubmit}
-        defaultValues={customerInfo}
-        setIsKeyboardOpen={setIsKeyboardOpen}
-        setActiveInputField={setActiveInputField}
-        keyboardInput={keyboardInput}
-        activeInputField={activeInputField}
-        onchange={onChange}
-      />
-      {isOpenPaymentModel && (
-        <PaymentOptions
-          setIsOpenPaymentModel={setIsOpenPaymentModel}
-          onSelecte={handlePaymentMethod}
-        />
-      )}
-      <CheckoutModal
-        open={showCheckoutModal}
-        onClose={() => setShowCheckoutModal(false)}
-        customerInfo={customerInfo}
-        summary={{
-          subtotal,
-          tax,
-          discount: discountAmount,
-          total,
-          totalItems,
-        }}
-        onPay={(method, checkoutData) => {
-          // hook for payment handling; keeping flow unchanged
-          console.log("Pay via:", {
-            method,
-            customerInfo,
-            currentRingUpData,
-            checkoutData,
-          });
-
-          handleCheckout(method, checkoutData);
-
-          // Generate and log sample receipt request object
-          // const receiptRequest = buildReceiptRequest(
-          //   currentRingUpData,
-          //   customerInfo,
-          //   {
-          //     subtotal,
-          //     tax,
-          //     discount: discountAmount,
-          //     total,
-          //     totalItems,
-          //   },
-          //   method
-          // );
-
-          // console.log("📧 Receipt Request Object:", receiptRequest);
-          // console.log(
-          //   "📧 Receipt Request JSON:",
-          //   JSON.stringify(receiptRequest, null, 2)
-          // );
-
-          // setShowCheckoutModal(false);
-        }}
-      />
-      {viewBillDetails.state && viewBillDetails.billId && (
-        <ViewSales
-          billID={viewBillDetails.billId}
-          setViewSale={setViewBillDetails}
-        />
+          {isOpenPaymentModel && (
+            <PaymentOptions
+              setIsOpenPaymentModel={setIsOpenPaymentModel}
+              onSelecte={handlePaymentMethod}
+            />
+          )}
+          <CheckoutModal
+            open={showCheckoutModal}
+            onClose={() => setShowCheckoutModal(false)}
+            customerInfo={customerInfo}
+            summary={{
+              subtotal,
+              tax,
+              discount: discountAmount,
+              total,
+              totalItems,
+            }}
+            onPay={(method, checkoutData) => {
+              handleCheckout(method, checkoutData);
+            }}
+          />
+          {viewBillDetails.state && viewBillDetails.billId && (
+            <ViewSales
+              billID={viewBillDetails.billId}
+              setViewSale={setViewBillDetails}
+            />
+          )}
+        </>
       )}
     </>
   );

@@ -36,16 +36,27 @@ export const ItemList = ({
 
   const reqQtyUpdate = async (billId, productId, newQty) => {
     try {
-      const billDetails = await axiosInstance.put(
-        `/api/v1/bills/${billId}/items/${productId}`,
-        {
-          qty: Number(newQty),
+      if (newQty <= 0) {
+        const billDetails = await axiosInstance.delete(
+          `/api/v1/bills/${billId}/items/${productId}`
+        );
+        if (billDetails.status === 200) {
+          // toast.success("Quantity updated successfully");
+          queryClient.invalidateQueries(["get_bill_details"]);
+          return true;
         }
-      );
-      if (billDetails.status === 200) {
-        // toast.success("Quantity updated successfully");
-        queryClient.invalidateQueries(["get_bill_details"]);
-        return true;
+      } else {
+        const billDetails = await axiosInstance.put(
+          `/api/v1/bills/${billId}/items/${productId}`,
+          {
+            qty: Number(newQty),
+          }
+        );
+        if (billDetails.status === 200) {
+          // toast.success("Quantity updated successfully");
+          queryClient.invalidateQueries(["get_bill_details"]);
+          return true;
+        }
       }
     } catch (error) {
       console.error("Error in reqQtyUpdate", error);
@@ -62,6 +73,7 @@ export const ItemList = ({
     } else if (action === "decrease") {
       dispatch(decreaseQyt(id));
     }
+    console.log("newQty", newQty <= 0);
     await reqQtyUpdate(currentBillId, id, newQty);
   };
 

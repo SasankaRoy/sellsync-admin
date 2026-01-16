@@ -1,5 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  BadgeDollarSign,
   BaggageClaim,
   BanknoteArrowDown,
   Calendar,
@@ -12,13 +13,14 @@ import { Loading } from "../../UI/Loading/Loading";
 import moment from "moment";
 import { useDispatch, useSelector } from "react-redux";
 import { addNewItem, clearCart } from "../../../Redux/RingUpSlice";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   clearCurrentBill,
   setCurrentBill,
 } from "../../../Redux/CurrentBillSlice";
-import { toast } from "react-toastify";
+
 import { handleBillStatusUpdate } from "../../../utils/apis/billStatusUpdate";
+import { handleGetBillDetails } from "../../../utils/apis/getBillDetails";
 
 const tabPrefix = {
   amount: "AMOUNT",
@@ -31,6 +33,7 @@ export const ViewSales = ({ setViewSale, billID }) => {
   const dispatch = useDispatch();
   const currentBillId = useSelector((state) => state.currentBill.billId);
   const router = useNavigate();
+  const navigate = useLocation();
   const queryClient = useQueryClient();
   const handleTabSwitch = (prefix) => {
     setCurrentActiveTab(prefix);
@@ -53,27 +56,9 @@ export const ViewSales = ({ setViewSale, billID }) => {
     }
   };
 
-  const handleGetBillDetails = async () => {
-    try {
-      const getBillDetails = await axiosInstance.get(`api/v1/bills/${billID}`);
-
-      if (getBillDetails.status && getBillDetails.data) {
-        return getBillDetails.data.bill;
-      }
-      return getBillDetails.data.bill || {};
-    } catch (error) {
-      console.log(error);
-      return (
-        error.message ||
-        error.response.data.message ||
-        "Failed to fetch bill details"
-      );
-    }
-  };
-
   const { data, isError, isLoading, isFetching } = useQuery({
     queryKey: ["get_bill_details", billID],
-    queryFn: handleGetBillDetails,
+    queryFn: async () => await handleGetBillDetails(billID),
   });
 
   const handleCompleteTranscation = async () => {
@@ -137,6 +122,8 @@ export const ViewSales = ({ setViewSale, billID }) => {
         return "bg-(--button-color5)/20 text-(--button-color5)/90";
     }
   };
+
+  console.log(navigate.pathname);
 
   return (
     <>
@@ -292,6 +279,16 @@ export const ViewSales = ({ setViewSale, billID }) => {
                 </div>
               </div>
               <div className="flex justify-end items-center gap-4 my-3">
+                {navigate.pathname !== "/seller/sales-report" && (
+                  <button
+                    onClick={() => {
+                      router(`/seller/sales-report`);
+                    }}
+                    className="w-full flex gap-4 justify-center items-center sm:w-auto px-6 py-2 bg-[var(--button-color1)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-200"
+                  >
+                    View Sales <BadgeDollarSign />
+                  </button>
+                )}
                 <button
                   onClick={() => {
                     setViewSale({
@@ -304,17 +301,19 @@ export const ViewSales = ({ setViewSale, billID }) => {
                   Cancel
                 </button>
                 <button className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color2)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300">
-                  Print Bill
+                  {data.status === "PAID" ? "Reprint Bill" : "Print Bill"}
                 </button>
                 <button
+                  // disabled={data.status === "PAID"}
                   onClick={handleCompleteTranscation}
-                  className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300"
+                  className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Complete Transcation
                 </button>
                 <button
+                  disabled={data.status === "PAID"}
                   onClick={handleCancelTranscation}
-                  className="w-full sm:w-auto px-6 py-2 bg-[var(--Negative-color)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300"
+                  className="w-full sm:w-auto px-6 py-2 bg-[var(--Negative-color)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Cancel Transcation
                 </button>
@@ -339,7 +338,7 @@ const AmountTab = ({ billData }) => {
             </span>
             <h5 className="text-[1dvw] shrink-0 font-semibold line-clamp-1">
               {" "}
-              $ {summary.subTotal}.00
+              $ {summary.subTotal.toFixed(2)}.00
             </h5>
           </div>
         </div>
@@ -361,7 +360,7 @@ const AmountTab = ({ billData }) => {
             </span>
             <h5 className="text-[1dvw] shrink-0 line-clamp-1 font-semibold">
               {" "}
-              $ {summary.grandTotal}.00
+              $ {summary.grandTotal.toFixed(2)}.00
             </h5>
           </div>
         </div>
