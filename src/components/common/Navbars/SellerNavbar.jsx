@@ -197,18 +197,21 @@ export const SellerNavbar = ({ showPunchInModal, setShowPunchInModal }) => {
   );
 
   const handleLogout = () => {
+    toast.warn("Please Close your Register first !");
+    navigate("/seller/reports");
+
     // Remove all auth cookies
-    Cookies.remove("authToken", { path: "/" });
-    Cookies.remove("u_id", { path: "/" });
-    Cookies.remove("u_type", { path: "/" });
+    // Cookies.remove("authToken", { path: "/" });
+    // Cookies.remove("u_id", { path: "/" });
+    // Cookies.remove("u_type", { path: "/" });
 
     // Optionally dispatch logout action to Redux
     // dispatch(clearUser()); // if you have a clearUser action
 
-    toast.success("Logged out successfully");
+    // toast.success("Logged out successfully");
 
-    // Redirect to login page
-    navigate("/auth/login", { replace: true });
+    // // Redirect to login page
+    // navigate("/auth/login", { replace: true });
   };
 
   useMemo(() => {
@@ -412,11 +415,15 @@ export const SellerNavbar = ({ showPunchInModal, setShowPunchInModal }) => {
         />
       </AnimatePresence>
 
-      {showTaskListModel && <TaskListModel varient={TaskListVarient}
+      {showTaskListModel && (
+        <TaskListModel
+          varient={TaskListVarient}
           setShowTaskListInner={setShowTaskListInner}
           setShowTaskListOutter={setShowTaskListOutter}
           showTaskListInner={showTaskListInner}
-          showTaskListOutter={showTaskListOutter} />}
+          showTaskListOutter={showTaskListOutter}
+        />
+      )}
       {/* <AnimatePresence mode="popLayout">
         <TaskListModel
           varient={TaskListVarient}

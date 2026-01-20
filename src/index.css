@@ -110,3 +110,6 @@ h6,
 .scrollCustom::-webkit-scrollbar {
   display: none;
 }
+#root::-webkit-scrollbar {
+  display: none;
+}

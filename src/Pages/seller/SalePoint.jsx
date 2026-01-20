@@ -464,6 +464,7 @@ export const SalePoint = () => {
       toast.success("Transaction Successfull !");
       toast.error("Receipt Printed failed !");
       setIsLoading(false);
+      handleCancelTransaction()
     } else {
       setIsLoading(false);
       toast.error("Transaction Failed");
