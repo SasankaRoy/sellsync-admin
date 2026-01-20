@@ -446,13 +446,24 @@ export const SalePoint = () => {
     const isTranscationSaved = await saveTranscation(checkoutPayload);
 
     if (isTranscationSaved.message === "Transaction saved successfully") {
-      const isBillPrinted = await requestPrintBill(billPayload);
-      if (isBillPrinted.success) {
-        setIsLoading(false);
-        handleCancelTransaction();
-        queryClient.invalidateQueries(["get_bill_details"]);
-        toast.success("Transaction Successfull and Receipt Printed !");
-      }
+      // -------------- For Reciept print-------------
+      // const isBillPrinted = await requestPrintBill(billPayload);
+      // if (isBillPrinted.success) {
+      //   setIsLoading(false);
+      //   handleCancelTransaction();
+      //   queryClient.invalidateQueries(["get_bill_details"]);
+      //   toast.success("Transaction Successfull and Receipt Printed !");
+      // } else {
+      //   toast.success("Transaction Successfull !");
+      //   toast.error("Receipt Printed failed !");
+      //   setIsLoading(false);
+      // }
+      // -------------- For Reciept print-------------
+
+      queryClient.invalidateQueries(["get_bill_details"]);
+      toast.success("Transaction Successfull !");
+      toast.error("Receipt Printed failed !");
+      setIsLoading(false);
     } else {
       setIsLoading(false);
       toast.error("Transaction Failed");
