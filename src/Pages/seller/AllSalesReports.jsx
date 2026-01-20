@@ -26,43 +26,55 @@ const rowSelection = {
 };
 
 export const AllSalesReports = () => {
-  const [totalTransaction, setTotalTransaction] = useState(0);
-  const [refunds, setRefunds] = useState([]);
-  const [totalTaking, setTotalTaking] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(50);
   const {
-    data: rowData = [],
+    data,
     isLoading,
     isError,
   } = useQuery({
     queryKey: ["get_all_transaction"],
     queryFn: async () => {
-      const { pagination, transactions } = await getAllTransactions({
+      const response = await getAllTransactions({
         storeId: "",
         method: "",
         status: "",
-        page: 1,
-        limit: 50,
+        page: currentPage,
+        limit: itemsPerPage,
         search: "",
       });
-
-      if (pagination) {
-        console.log(pagination.total);
-        setTotalTransaction(pagination.total);
-      }
-      if (transactions) {
-        setRefunds(transactions.filter((item) => item.status === "REFUND"));
-        const total = transactions.reduce((acc, cur) => {
-          if (cur.status === "PAID") {
-            return acc + cur.grandTotal;
-          }
-        }, 0);
-
-        setTotalTaking(total.toFixed(2));
-      }
-
-      return transactions || [];
+      return response;
     },
   });
+
+  const transactions = useMemo(() => data?.transactions || [], [data]);
+  const pagination = useMemo(() => data?.pagination || {}, [data]);
+
+  const totalTransaction = pagination.total || 0;
+  const totalPages = Math.ceil(totalTransaction / itemsPerPage);
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
+
+  const refunds = useMemo(() => {
+    return transactions.filter((item) => item.status === "REFUND");
+  }, [transactions]);
+
+  const totalTaking = useMemo(() => {
+    const total = transactions.reduce((acc, cur) => {
+      if (cur.status === "PAID") {
+        return acc + cur.grandTotal;
+      }
+      return acc;
+    }, 0);
+
+    return total.toFixed(2);
+  }, [transactions]);
+
+  const rowData = transactions;
 
   // Column Definitions: Defines & controls grid columns.
   const [colDefs, setColDefs] = useState([
@@ -191,7 +203,7 @@ export const AllSalesReports = () => {
                   columnDefs={colDefs}
                   defaultColDef={defaultColDef}
                   pagination={true}
-                  paginationPageSize={5}
+                  paginationPageSize={10}
                   onSelectionChanged={(event) => console.log("Row Selected!")}
                   onCellValueChanged={(event) =>
                     console.log(`New Cell Value: ${event.value}`)
@@ -199,6 +211,25 @@ export const AllSalesReports = () => {
                   className="w-full h-full text-xs sm:text-sm ag-theme-quartz"
                   domLayout="autoHeight"
                 />
+                {/* <div className="flex justify-between items-center p-2 border-t border-(--border-color)">
+                  <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className={`px-3 py-1 rounded text-xs sm:text-sm border ${currentPage === 1 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-(--button-color1) text-white hover:bg-blue-700'}`}
+                  >
+                    Previous
+                  </button>
+                  <span className="text-xs sm:text-sm">
+                    Page {currentPage} of {totalPages || 1}
+                  </span>
+                  <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className={`px-3 py-1 rounded text-xs sm:text-sm border ${currentPage === totalPages || totalPages === 0 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-(--button-color1) text-white hover:bg-blue-700'}`}
+                  >
+                    Next
+                  </button>
+                </div> */}
               </div>
               <div className="w-full  lg:flex-shrink-0 p-2 sm:p-3 lg:p-0">
                 <div className="border-b flex justify-start items-center gap-2 sm:gap-4 border-(--border-color) p-2 sm:p-3">
@@ -267,8 +298,8 @@ export const AllSalesReports = () => {
                   </div>
                 </div>
                 <div className="flex justify-center items-center mt-2 sm:mt-3">
-                  <button className="bg-(--button-color1) text-(--primary-color) mainFont font-semibold w-[85%] text-xs sm:text-sm lg:text-[1.3dvw] py-2 sm:py-3 rounded-md cursor-pointer">
-                    Log Off
+                  <button className="bg-(--Negative-color) text-(--primary-color) mainFont font-semibold w-[85%] text-xs sm:text-sm lg:text-[1.3dvw] py-2 sm:py-3 rounded-md cursor-pointer">
+                    Log Off / Close Register
                   </button>
                 </div>
               </div>
