@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { CircleX } from "lucide-react";
+import { useSelector } from "react-redux";
 
 const modalVariants = {
   initial: { opacity: 0, y: 20, scale: 0.98 },
@@ -28,7 +29,7 @@ export const CustomerDetailsModal = ({
   open,
   onClose,
   onSubmit,
-  defaultValues = {},
+  // defaultValues = {},
   setIsKeyboardOpen,
   setActiveInputField,
   keyboardInput,
@@ -36,33 +37,37 @@ export const CustomerDetailsModal = ({
   onchange,
 }) => {
   const fullNameRef = useRef(null);
-  const [form, setForm] = useState({
-    name: defaultValues.name || "",
-    phone: defaultValues.phone || "",
-    email: defaultValues.email || "",
-    address: defaultValues.address || "",
-    notes: defaultValues.notes || "",
-  });
+  const currentCustomerDetails = useSelector(
+    (state) => state.currentBill.currentCustomerDetails,
+  );
+
+  // const [form, setForm] = useState({
+  //   name: currentCustomerDetails.customerName || "",
+  //   phone: defaultValues.phone || "",
+  //   email: defaultValues.email || "",
+  //   address: defaultValues.address || "",
+  //   notes: defaultValues.notes || "",
+  // });
 
   // Sync keyboard input to form state
-  useEffect(() => {
-    if (activeInputField?.type === "customerName") {
-      setForm((prev) => ({ ...prev, name: keyboardInput }));
-    } else if (activeInputField?.type === "customerPhone") {
-      setForm((prev) => ({ ...prev, phone: keyboardInput }));
-    } else if (activeInputField?.type === "customerEmail") {
-      setForm((prev) => ({ ...prev, email: keyboardInput }));
-    } else if (activeInputField?.type === "customerAddress") {
-      setForm((prev) => ({ ...prev, address: keyboardInput }));
-    } else if (activeInputField?.type === "customerNotes") {
-      setForm((prev) => ({ ...prev, notes: keyboardInput }));
-    }
-  }, [keyboardInput, activeInputField]);
+  // useEffect(() => {
+  //   if (activeInputField?.type === "customerName") {
+  //     setForm((prev) => ({ ...prev, name: keyboardInput }));
+  //   } else if (activeInputField?.type === "customerPhone") {
+  //     setForm((prev) => ({ ...prev, phone: keyboardInput }));
+  //   } else if (activeInputField?.type === "customerEmail") {
+  //     setForm((prev) => ({ ...prev, email: keyboardInput }));
+  //   } else if (activeInputField?.type === "customerAddress") {
+  //     setForm((prev) => ({ ...prev, address: keyboardInput }));
+  //   } else if (activeInputField?.type === "customerNotes") {
+  //     setForm((prev) => ({ ...prev, notes: keyboardInput }));
+  //   }
+  // }, [keyboardInput, activeInputField]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-    
+    // setForm((prev) => ({ ...prev, [name]: value }));
+
     // Call parent's onChange to update keyboardInput (same pattern as SearchItemsInput)
     if (onchange) {
       onchange(value);
@@ -71,9 +76,9 @@ export const CustomerDetailsModal = ({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit?.(form);
+    onSubmit?.(currentCustomerDetails);
     onClose?.();
-  };
+  };                   
 
   useEffect(() => {
     if (fullNameRef.current) {
@@ -131,7 +136,7 @@ export const CustomerDetailsModal = ({
                     name="name"
                     ref={fullNameRef}
                     autoFocus
-                    value={form.name}
+                    value={currentCustomerDetails.customerName}
                     onChange={handleChange}
                     onFocus={(e) => {
                       e.stopPropagation();
@@ -164,7 +169,7 @@ export const CustomerDetailsModal = ({
                   <input
                     type="tel"
                     name="phone"
-                    value={form.phone}
+                    value={currentCustomerDetails.customerPhone}
                     onChange={handleChange}
                     onFocus={(e) => {
                       e.stopPropagation();
@@ -199,7 +204,7 @@ export const CustomerDetailsModal = ({
                   <input
                     type="email"
                     name="email"
-                    value={form.email}
+                    value={currentCustomerDetails.customerEmail}
                     onChange={handleChange}
                     onFocus={(e) => {
                       e.stopPropagation();
@@ -232,7 +237,7 @@ export const CustomerDetailsModal = ({
                   <input
                     type="text"
                     name="address"
-                    value={form.address}
+                    value={currentCustomerDetails.customerAddress}
                     onChange={handleChange}
                     onFocus={(e) => {
                       e.stopPropagation();
@@ -265,7 +270,7 @@ export const CustomerDetailsModal = ({
                 </span>
                 <textarea
                   name="notes"
-                  value={form.notes}
+                  value={currentCustomerDetails.customerNotes}
                   onChange={handleChange}
                   onFocus={(e) => {
                     e.stopPropagation();

@@ -27,6 +27,9 @@ export const OnScreenKeyboard = ({Change, inputValue, layoutName = "default"}) =
     "{bksp}": "⌫",
     "{enter}": "Enter",
     "{space}": "Space",
+    "{tab}": "Tab",
+    "{lock}": "Caps Lock",
+    "{shift}": "^ Shift",
   };
 
   // Determine which props to pass based on layout
@@ -51,6 +54,10 @@ export const OnScreenKeyboard = ({Change, inputValue, layoutName = "default"}) =
         display: display
       };
 
+      const handleonChange = (e)=>{
+        console.log(e)
+      }
+
   return (
     <>
       <motion.div
@@ -63,7 +70,9 @@ export const OnScreenKeyboard = ({Change, inputValue, layoutName = "default"}) =
         <Keyboard
           key={layoutName} // Force remount when layout changes
           keyboardRef={(r) => (keyboardRef.current = r)}
-          onKeyPress={Change}
+          onChange={Change}
+          // onKeyPress={handleonChange}
+          // onKeyPress={Change}
           {...keyboardProps}
           theme={"hg-theme-default myTheme1"}
         />

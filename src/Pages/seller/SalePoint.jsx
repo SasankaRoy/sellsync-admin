@@ -30,7 +30,11 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "../../utils/axios-interceptor";
 import { toast } from "react-toastify";
 import { ViewSales } from "../../components/common/Models/ViewSales";
-import { clearCurrentBill } from "../../Redux/CurrentBillSlice";
+import {
+  clearCurrentBill,
+  setCurrentBill,
+  setCurrentCustomerDetails,
+} from "../../Redux/CurrentBillSlice";
 import { handleBillStatusUpdate } from "../../utils/apis/billStatusUpdate";
 import { requestPrintBill } from "../../utils/apis/printBill";
 import { saveTranscation } from "../../utils/apis/saveTranscations";
@@ -92,7 +96,9 @@ export const SalePoint = () => {
 
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
-  const [customerInfo, setCustomerInfo] = useState({});
+  const currentCustomerDetails = useSelector(
+    (state) => state.currentBill.currentCustomerDetails,
+  );
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const hasItems = (currentRingUpData?.length || 0) > 0;
 
@@ -103,7 +109,7 @@ export const SalePoint = () => {
   const subtotal =
     currentRingUpData?.reduce(
       (sum, item) => sum + item.qty * item.product_price,
-      0
+      0,
     ) || 0;
   const totalItems =
     currentRingUpData?.reduce((sum, item) => sum + item.qty, 0) || 0;
@@ -123,6 +129,10 @@ export const SalePoint = () => {
     };
     localStorage.setItem("discountSnapshot", JSON.stringify(discountData));
   }, [discount, isPercentage, discountAmount, tax, subtotal, total]);
+  useEffect(() => {
+   
+    localStorage.setItem("customerDetails", JSON.stringify(currentCustomerDetails));
+  }, [currentCustomerDetails]);
 
   // const [layoutName, setLayoutName] = useState("default");
   const [input, setInput] = useState("");
@@ -163,32 +173,33 @@ export const SalePoint = () => {
       setKeyboardInput(input);
     } else if (activeInputField?.type === "quantity") {
       const item = currentRingUpData?.find(
-        (item) => item.id === activeInputField.itemId
+        (item) => item.id === activeInputField.itemId,
       );
       if (item) {
         setKeyboardInput(String(item.qty || ""));
       }
     } else if (activeInputField?.type === "price") {
       const item = currentRingUpData?.find(
-        (item) => item.id === activeInputField.itemId
+        (item) => item.id === activeInputField.itemId,
       );
       if (item) {
         setKeyboardInput(String(item.product_price || ""));
       }
     } else if (activeInputField?.type === "discount") {
       setKeyboardInput(String(discount || ""));
-    } else if (activeInputField?.type === "customerName") {
-      setKeyboardInput(String(customerInfo.name || ""));
-    } else if (activeInputField?.type === "customerPhone") {
-      setKeyboardInput(String(customerInfo.phone || ""));
-    } else if (activeInputField?.type === "customerEmail") {
-      setKeyboardInput(String(customerInfo.email || ""));
-    } else if (activeInputField?.type === "customerAddress") {
-      setKeyboardInput(String(customerInfo.address || ""));
-    } else if (activeInputField?.type === "customerNotes") {
-      setKeyboardInput(String(customerInfo.notes || ""));
     }
-  }, [activeInputField, input, currentRingUpData, discount, customerInfo]);
+    //  else if (activeInputField?.type === "customerName") {
+    //   setKeyboardInput(String(customerInfo.name || ""));
+    // } else if (activeInputField?.type === "customerPhone") {
+    //   setKeyboardInput(String(customerInfo.phone || ""));
+    // } else if (activeInputField?.type === "customerEmail") {
+    //   setKeyboardInput(String(customerInfo.email || ""));
+    // } else if (activeInputField?.type === "customerAddress") {
+    //   setKeyboardInput(String(customerInfo.address || ""));
+    // } else if (activeInputField?.type === "customerNotes") {
+    //   setKeyboardInput(String(customerInfo.notes || ""));
+    // }
+  }, [activeInputField, input, currentRingUpData, discount, ]);
 
   const onChange = (input) => {
     console.log("Input changed", input);
@@ -230,7 +241,7 @@ export const SalePoint = () => {
           updateQty({
             id: activeInputField.itemId,
             qty: parsed,
-          })
+          }),
         );
       }
     } else if (activeInputField.type === "price") {
@@ -242,7 +253,7 @@ export const SalePoint = () => {
           updatePrice({
             id: activeInputField.itemId,
             price: parsed,
-          })
+          }),
         );
       }
     } else if (activeInputField.type === "discount") {
@@ -261,6 +272,15 @@ export const SalePoint = () => {
       activeInputField.type === "customerAddress" ||
       activeInputField.type === "customerNotes"
     ) {
+      dispatch(
+        setCurrentCustomerDetails({
+          currentCustomerDetails: {
+            name: activeInputField.type,
+            value: input,
+          },
+        }),
+      );
+      console.log(input, activeInputField.type);
       // Handle customer modal inputs - allow all characters
       // The actual form state is managed in CustomerDetailsModal
       // Keyboard just provides input display
@@ -275,12 +295,12 @@ export const SalePoint = () => {
         id: product.id || product._id,
         name: product.name || product.product_name,
         product_price: parseFloat(
-          product.sale_price || product.price || product.product_avg_price || 0
+          product.sale_price || product.price || product.product_avg_price || 0,
         ),
         product_image: product.image || product.product_image || "",
         qty: 1,
         tax_percentage: product.tax_percentage || 0,
-      })
+      }),
     );
     // Clear search and keyboard state
     setInput("");
@@ -291,7 +311,7 @@ export const SalePoint = () => {
   };
 
   const handleCustomerSubmit = (data) => {
-    setCustomerInfo(data);
+    // setCustomerInfo(data);
     setShowCustomerModal(false);
     setIsOpenPaymentModel(true);
     // setShowCheckoutModal(true);
@@ -342,7 +362,7 @@ export const SalePoint = () => {
         dispatch(clearCart());
         localStorage.setItem(
           "pre_or_id",
-          holdOrder.data.bill._id || holdOrder.data.bill.id
+          holdOrder.data.bill._id || holdOrder.data.bill.id,
         );
         toast.success("Order On Hold");
       }
@@ -369,7 +389,6 @@ export const SalePoint = () => {
   const handleCancelTransaction = () => {
     dispatch(clearCart());
     dispatch(clearCurrentBill());
-    setCustomerInfo({});
     setShowCheckoutModal(false);
   };
 
@@ -388,11 +407,11 @@ export const SalePoint = () => {
       status: "PAID",
       // items: createPayload(currentRingUpData),
       customerInfo: {
-        name: checkoutData.customerInfo.name || "",
-        phone: checkoutData.customerInfo.phone || "",
-        email: checkoutData.customerInfo.email || "",
-        address: checkoutData.customerInfo.address || "",
-        notes: checkoutData.customerInfo.notes || "",
+        name: currentCustomerDetails.customerName || "",
+        phone: currentCustomerDetails.customerPhone || "",
+        email: currentCustomerDetails.customerEmail || "",
+        address: currentCustomerDetails.customerAddress || "",
+        notes: currentCustomerDetails.customerNotes || "",
       },
       payment: {
         totalItems: totalItems,
@@ -425,11 +444,11 @@ export const SalePoint = () => {
       billId: currentBillId,
       items: createPayload(currentRingUpData),
       customerInfo: {
-        name: checkoutData.customerInfo.name,
-        phone: checkoutData.customerInfo.phone,
-        email: checkoutData.customerInfo.email,
-        address: checkoutData.customerInfo.address,
-        notes: checkoutData.customerInfo.notes,
+        name: currentCustomerDetails.customerName || "",
+        phone: currentCustomerDetails.customerPhone || "",
+        email: currentCustomerDetails.customerEmail || "",
+        address: currentCustomerDetails.customerAddress || "",
+        notes: currentCustomerDetails.customerNotes || "",
       },
       payment: checkoutPayload.payment,
       TranscationType: "SALE",
@@ -447,24 +466,26 @@ export const SalePoint = () => {
 
     if (isTranscationSaved.message === "Transaction saved successfully") {
       // -------------- For Reciept print-------------
-      // const isBillPrinted = await requestPrintBill(billPayload);
-      // if (isBillPrinted.success) {
-      //   setIsLoading(false);
-      //   handleCancelTransaction();
-      //   queryClient.invalidateQueries(["get_bill_details"]);
-      //   toast.success("Transaction Successfull and Receipt Printed !");
-      // } else {
-      //   toast.success("Transaction Successfull !");
-      //   toast.error("Receipt Printed failed !");
-      //   setIsLoading(false);
-      // }
+      const isBillPrinted = await requestPrintBill(billPayload);
+      if (isBillPrinted.success) {
+        setIsLoading(false);
+        handleCancelTransaction();
+        queryClient.invalidateQueries(["get_bill_details"]);
+        toast.success("Transaction Successfull and Receipt Printed !");
+        handleCancelTransaction();
+      } else {
+        toast.success("Transaction Successfull !");
+        toast.error("Receipt Printed failed !");
+        setIsLoading(false);
+        handleCancelTransaction();
+      }
       // -------------- For Reciept print-------------
 
-      queryClient.invalidateQueries(["get_bill_details"]);
-      toast.success("Transaction Successfull !");
-      toast.error("Receipt Printed failed !");
-      setIsLoading(false);
-      handleCancelTransaction()
+      // queryClient.invalidateQueries(["get_bill_details"]);
+      // toast.success("Transaction Successfull !");
+      // toast.error("Receipt Printed failed !");
+      // setIsLoading(false);
+      // handleCancelTransaction()
     } else {
       setIsLoading(false);
       toast.error("Transaction Failed");
@@ -607,8 +628,8 @@ export const SalePoint = () => {
                         activeInputField?.type === "discount"
                           ? keyboardInput
                           : isPercentage
-                          ? `${discount}%`
-                          : `$ ${discount.toFixed(2)}`
+                            ? `${discount}%`
+                            : `$ ${discount.toFixed(2)}`
                       }
                       onFocus={(e) => {
                         e.stopPropagation();
@@ -768,7 +789,7 @@ export const SalePoint = () => {
             open={showCustomerModal}
             onClose={() => setShowCustomerModal(false)}
             onSubmit={handleCustomerSubmit}
-            defaultValues={customerInfo}
+           
             setIsKeyboardOpen={setIsKeyboardOpen}
             setActiveInputField={setActiveInputField}
             keyboardInput={keyboardInput}
@@ -783,8 +804,7 @@ export const SalePoint = () => {
           )}
           <CheckoutModal
             open={showCheckoutModal}
-            onClose={() => setShowCheckoutModal(false)}
-            customerInfo={customerInfo}
+            onClose={() => setShowCheckoutModal(false)}            
             summary={{
               subtotal,
               tax,

@@ -12,6 +12,7 @@ import axiosInstance from "../../utils/axios-interceptor";
 import moment from "moment";
 import { Loading } from "../../components/UI/Loading/Loading";
 import { ViewSales } from "../../components/common/Models/ViewSales";
+import { handleGetAllBills } from "../../utils/apis/getBillDetails";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 const rowSelection = {
@@ -105,30 +106,13 @@ const Sales = () => {
     };
   }, []);
 
-  const handleGetSalesData = async () => {
-    try {
-      const getSalesData = await axiosInstance.get("/api/v1/bills");
-      if (getSalesData.data && getSalesData.status === 200) {
-        return getSalesData.data.bills;
-      }
-
-      return getSalesData.data.bills;
-    } catch (error) {
-      console.log("🚀 ~ handleGetSalesData ~ error:", error);
-      return (
-        error.message ||
-        error.response.data.message ||
-        "Failed to fetch sales data"
-      );
-    }
-  };
   const {
     data: rowData,
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["get_sales"],
-    queryFn: handleGetSalesData,
+    queryKey: ["get_bill_details"],
+    queryFn: handleGetAllBills,
   });
 
   return (

@@ -11,22 +11,26 @@ const CustomerScreenPage = () => {
     discountAmount: 0,
     tax: 0,
     subtotal: 0,
-    total: 0
+    total: 0,
   });
+  const [customerDetails, setCustomerDetails] = React.useState({});
 
   React.useEffect(() => {
     try {
-      console.log(localStorage.getItem('ringUpsSnapshot'))
       const raw = localStorage.getItem("ringUpsSnapshot");
-      console.log(raw)
+      console.log(raw);
       if (raw) {
         setSnapshot(JSON.parse(raw));
       }
 
       // Load discount data
       const discountRaw = localStorage.getItem("discountSnapshot");
+      const customerData = localStorage.getItem("customerDetails");
       if (discountRaw) {
         setDiscountData(JSON.parse(discountRaw));
+      }
+      if (customerData) {
+        setCustomerDetails(JSON.parse(customerData));
       }
 
       const onStorage = (e) => {
@@ -40,13 +44,17 @@ const CustomerScreenPage = () => {
             setDiscountData(JSON.parse(e.newValue));
           } catch {}
         }
+        if (e.key === "customerDetails" && e.newValue) {
+          try {
+            setCustomerDetails(JSON.parse(e.newValue));
+          } catch {}
+        }
       };
       window.addEventListener("storage", onStorage);
       return () => window.removeEventListener("storage", onStorage);
     } catch (e) {}
   }, []);
 
-  
   // Mock data - Replace with actual data from props or state
   const customer = {
     id: 1,
@@ -116,25 +124,25 @@ const CustomerScreenPage = () => {
           {/* Customer Info */}
           <div className="bg-white border-b border-gray-200 p-4 sm:p-5">
             <h3 className="text-xl sm:text-2xl font-bold text-[var(--mainText-color)] mb-2">
-              {customer.name}
+              {customerDetails.customerName}
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-sm">
               <div>
                 <p className="text-gray-600 text-xs font-semibold">EMAIL</p>
                 <p className="text-[var(--mainText-color)] font-medium truncate">
-                  {customer.email}
+                  {customerDetails.customerEmail}
                 </p>
               </div>
               <div>
                 <p className="text-gray-600 text-xs font-semibold">PHONE</p>
                 <p className="text-[var(--mainText-color)] font-medium">
-                  {customer.phone}
+                  {customerDetails.customerPhone}
                 </p>
               </div>
               <div>
-                <p className="text-gray-600 text-xs font-semibold">POINTS</p>
+                <p className="text-gray-600 text-xs font-semibold">Address</p>
                 <p className="text-[var(--button-color1)] font-bold">
-                  {customer.points}
+                  {customerDetails.customerAddress}
                 </p>
               </div>
             </div>
@@ -179,7 +187,10 @@ const CustomerScreenPage = () => {
               <div className="flex justify-between">
                 <span className="text-gray-700">Subtotal:</span>
                 <span className="font-semibold text-[var(--mainText-color)]">
-                  ${(discountData.subtotal || parseFloat(calculateSubtotal())).toFixed(2)}
+                  $
+                  {(
+                    discountData.subtotal || parseFloat(calculateSubtotal())
+                  ).toFixed(2)}
                 </span>
               </div>
               <div className="flex justify-between">
@@ -191,7 +202,11 @@ const CustomerScreenPage = () => {
               {discountData.discountAmount > 0 && (
                 <div className="flex justify-between">
                   <span className="text-gray-700">
-                    Discount ({discountData.isPercentage ? `${discountData.discount}%` : `$${discountData.discount}`}):
+                    Discount (
+                    {discountData.isPercentage
+                      ? `${discountData.discount}%`
+                      : `$${discountData.discount}`}
+                    ):
                   </span>
                   <span className="font-semibold text-[var(--Negative-color)]">
                     -${discountData.discountAmount.toFixed(2)}
@@ -203,7 +218,11 @@ const CustomerScreenPage = () => {
                   Total:
                 </span>
                 <span className="font-bold text-[var(--button-color1)] text-lg sm:text-xl">
-                  ${(discountData.total || (parseFloat(calculateSubtotal()) + parseFloat(calculateTax()))).toFixed(2)}
+                  $
+                  {(
+                    discountData.total ||
+                    parseFloat(calculateSubtotal()) + parseFloat(calculateTax())
+                  ).toFixed(2)}
                 </span>
               </div>
             </div>

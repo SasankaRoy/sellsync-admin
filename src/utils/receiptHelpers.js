@@ -111,15 +111,15 @@ export const buildReceiptRequest = (
     customer:
       Object.keys(customerInfo).length > 0
         ? {
-            ...(customerInfo.name && { name: customerInfo.name }),
-            ...(customerInfo.phone && { phone: customerInfo.phone }),
-            ...(customerInfo.email && { email: customerInfo.email }),
-            ...(customerInfo.address && { address: customerInfo.address }),
-            ...(customerInfo.notes && { notes: customerInfo.notes }),
-            ...(customerInfo.customerId && {
-              customerId: customerInfo.customerId,
-            }),
-          }
+          ...(customerInfo.name && { name: customerInfo.name }),
+          ...(customerInfo.phone && { phone: customerInfo.phone }),
+          ...(customerInfo.email && { email: customerInfo.email }),
+          ...(customerInfo.address && { address: customerInfo.address }),
+          ...(customerInfo.notes && { notes: customerInfo.notes }),
+          ...(customerInfo.customerId && {
+            customerId: customerInfo.customerId,
+          }),
+        }
         : null,
 
     items,
@@ -486,4 +486,30 @@ const holdOrderSchema = {
 //   },
 //   "status": "PAID",  // "OPEN", "HOLD", "PAID", "CANCELLED"
 //   "timestamp": "2026-01-12T09:51:42.146Z"
+// }
+
+
+
+// {
+//   startingCash: 1000,
+//   employeeId: '',
+//   totalTaking: 500,
+//   dollerNotation: { // default value will be 0 for each.
+//    100: 2,
+//     50: 1,
+//     20: 0,
+//     10: 0,
+//     5: 0,
+//     2: 0,
+//     1: 0
+//   },
+//   centsNotation: { // default value will be 0 for each.
+//     50:0,
+//     25:0,
+//     10:0,
+//     5:0,
+//     1:0
+//   },
+//   totalNotationAmount: 1500,
+//   totalBalance: 1500 // starting cach + total taking of that  day
 // }

@@ -4,16 +4,36 @@ export const CurrentBillSlice = createSlice({
   name: "currentBill",
   initialState: {
     billId: null,
+    currentCustomerDetails: {
+      customerName: '',
+      customerPhone: '',
+      customerEmail: '',
+      customerAddress: '',
+      customerNotes: ''
+    }
   },
   reducers: {
     setCurrentBill: (state, action) => {
-      state.billId = action.payload.billId;
+      const { billId } = action.payload
+      state.billId = billId;
+
+    },
+    setCurrentCustomerDetails: (state, action) => {
+      const { currentCustomerDetails } = action.payload
+      state.currentCustomerDetails[currentCustomerDetails.name] = currentCustomerDetails.value
     },
     clearCurrentBill: (state) => {
       state.billId = null;
+      state.currentCustomerDetails = {
+        customerName: '',
+        customerPhone: '',
+        customerEmail: '',
+        customerAddress: '',
+        customerNotes: ''
+      };
     },
   },
 });
 
-export const { setCurrentBill, clearCurrentBill } = CurrentBillSlice.actions;
+export const { setCurrentBill, clearCurrentBill, setCurrentCustomerDetails } = CurrentBillSlice.actions;
 export default CurrentBillSlice.reducer;
