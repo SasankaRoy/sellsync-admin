@@ -148,6 +148,10 @@ export const Shortcuts = ({
         qty: 1,
       })
     );
+    localStorage.setItem('processingPayment', JSON.stringify({
+      state: false,
+      message: ''
+    }))
   };
 
   const handleRemoveItem = (itemId) => {

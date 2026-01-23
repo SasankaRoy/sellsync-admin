@@ -130,7 +130,7 @@ export const SalePoint = () => {
     localStorage.setItem("discountSnapshot", JSON.stringify(discountData));
   }, [discount, isPercentage, discountAmount, tax, subtotal, total]);
   useEffect(() => {
-   
+
     localStorage.setItem("customerDetails", JSON.stringify(currentCustomerDetails));
   }, [currentCustomerDetails]);
 
@@ -199,7 +199,7 @@ export const SalePoint = () => {
     // } else if (activeInputField?.type === "customerNotes") {
     //   setKeyboardInput(String(customerInfo.notes || ""));
     // }
-  }, [activeInputField, input, currentRingUpData, discount, ]);
+  }, [activeInputField, input, currentRingUpData, discount,]);
 
   const onChange = (input) => {
     console.log("Input changed", input);
@@ -289,7 +289,7 @@ export const SalePoint = () => {
 
   // Handle adding product to ring up
   const handleAddToRingUp = (product) => {
-    console.log("Adding product to ring up:", product);
+    // console.log("Adding product to ring up:", product);
     dispatch(
       addNewItem({
         id: product.id || product._id,
@@ -302,6 +302,10 @@ export const SalePoint = () => {
         tax_percentage: product.tax_percentage || 0,
       }),
     );
+    localStorage.setItem('processingPayment', JSON.stringify({
+      state: false,
+      message: ''
+    }))
     // Clear search and keyboard state
     setInput("");
     setKeyboardInput("");
@@ -359,12 +363,15 @@ export const SalePoint = () => {
         ...payload,
       });
       if (holdOrder.data || holdOrder.status === 200) {
-        dispatch(clearCart());
-        localStorage.setItem(
-          "pre_or_id",
-          holdOrder.data.bill._id || holdOrder.data.bill.id,
-        );
-        toast.success("Order On Hold");
+        dispatch(setCurrentBill({ billId: holdOrder.data.bill._id || holdOrder.data.bill.id }));
+        if (payload.status === 'HOLD') {
+          localStorage.setItem(
+            "pre_or_id",
+            holdOrder.data.bill._id || holdOrder.data.bill.id,
+          );
+          dispatch(clearCart());
+          toast.success("Order On Hold");
+        }
       }
     } catch (error) {
       console.log("🚀 ~ handleHoldOrder ~ error:", error);
@@ -394,6 +401,10 @@ export const SalePoint = () => {
 
   const handleCheckout = async (method, checkoutData) => {
     setIsLoading(true);
+    localStorage.setItem('processingPayment', JSON.stringify({
+      state: true,
+      message: 'Processing Payment'
+    }))
     const checkoutPayload = {
       billId: currentBillId,
       timestamp: new Date().toISOString(),
@@ -472,11 +483,19 @@ export const SalePoint = () => {
         handleCancelTransaction();
         queryClient.invalidateQueries(["get_bill_details"]);
         toast.success("Transaction Successfull and Receipt Printed !");
+        localStorage.setItem('processingPayment', JSON.stringify({
+          state: false,
+          message: 'Payment Done!'
+        }))
         handleCancelTransaction();
       } else {
         toast.success("Transaction Successfull !");
         toast.error("Receipt Printed failed !");
         setIsLoading(false);
+        localStorage.setItem('processingPayment', JSON.stringify({
+          state: false,
+          message: 'Payment Done!'
+        }))
         handleCancelTransaction();
       }
       // -------------- For Reciept print-------------
@@ -488,6 +507,10 @@ export const SalePoint = () => {
       // handleCancelTransaction()
     } else {
       setIsLoading(false);
+      localStorage.setItem('processingPayment', JSON.stringify({
+        state: false,
+        message: 'Payment Faild'
+      }))
       toast.error("Transaction Failed");
     }
   };
@@ -545,7 +568,7 @@ export const SalePoint = () => {
                 </div>
                 <div className="w-full h-full overflow-y-hidden flex flex-col">
                   {/* list header start */}
-                  <ItemsListHeader />
+                  <ItemsListHeader isCustomerScreen={false} />
                   {/* list header end */}
 
                   {/* item list start */}
@@ -669,11 +692,10 @@ export const SalePoint = () => {
               <div className="flex flex-col gap-3">
                 <div className="flex justify-between items-center gap-3">
                   <button
-                    className={`w-1/2 py-4 text-[1.2dvw] mainFont font-semibold rounded-md ${
-                      hasItems
-                        ? "bg-(--button-color5) text-(--primary-color)"
-                        : "bg-(--button-color5)/40 text-(--primary-color)/60 cursor-not-allowed"
-                    }`}
+                    className={`w-1/2 py-4 text-[1.2dvw] mainFont font-semibold rounded-md ${hasItems
+                      ? "bg-(--button-color5) text-(--primary-color)"
+                      : "bg-(--button-color5)/40 text-(--primary-color)/60 cursor-not-allowed"
+                      }`}
                     disabled={!hasItems}
                     onClick={() => {
                       if (!hasItems) return;
@@ -777,8 +799,8 @@ export const SalePoint = () => {
                 inputValue={keyboardInput}
                 layoutName={
                   activeInputField?.type === "quantity" ||
-                  activeInputField?.type === "price" ||
-                  activeInputField?.type === "discount"
+                    activeInputField?.type === "price" ||
+                    activeInputField?.type === "discount"
                     ? "numeric"
                     : "default"
                 }
@@ -789,7 +811,7 @@ export const SalePoint = () => {
             open={showCustomerModal}
             onClose={() => setShowCustomerModal(false)}
             onSubmit={handleCustomerSubmit}
-           
+
             setIsKeyboardOpen={setIsKeyboardOpen}
             setActiveInputField={setActiveInputField}
             keyboardInput={keyboardInput}
@@ -804,7 +826,7 @@ export const SalePoint = () => {
           )}
           <CheckoutModal
             open={showCheckoutModal}
-            onClose={() => setShowCheckoutModal(false)}            
+            onClose={() => setShowCheckoutModal(false)}
             summary={{
               subtotal,
               tax,

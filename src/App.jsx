@@ -142,11 +142,11 @@ function App() {
             <Route path="/seller/reports" element={<AllSalesReports />} />
             <Route path="/seller/inventory" element={<InventorySeller />} />
             <Route path="/seller/settings" element={<SettingSeller />} />
-            <Route
-              path="/seller/customer-screen"
-              element={<CustomerScreenPage />}
-            />
           </Route>
+          <Route
+            path="/seller/customer-screen"
+            element={<CustomerScreenPage />}
+          />
 
           <Route path="/auth/login" element={<Login />} />
           <Route path="/auth/register" element={<Register />} />

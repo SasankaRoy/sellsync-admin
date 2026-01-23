@@ -19,6 +19,7 @@ export const ItemList = ({
   setActiveInputField,
   keyboardInput,
   activeInputField,
+  isCustomerScreen
 }) => {
   const [editingQty, setEditingQty] = useState({});
   const dispatch = useDispatch();
@@ -81,19 +82,19 @@ export const ItemList = ({
     <>
       <div
         key={id}
-        className={`flex justify-center items-center w-full ${
-          id % 2 === 0 ? "bg-(--secondary-color)/70" : "bg-transparent"
-        }`}
+        className={`flex justify-center items-center w-full ${id % 2 === 0 ? "bg-(--secondary-color)/70" : "bg-transparent"
+          }`}
       >
         <div className="border-r border-(--border-color) py-3 px-1  min-w-[5dvw] max-w-[5dvw] flex justify-center items-center">
           <input
-            value={
+            readOnly={isCustomerScreen}
+            value={isCustomerScreen ? cur.quantity :
               activeInputField?.type === "quantity" &&
-              activeInputField?.itemId === cur.id
+                activeInputField?.itemId === cur.id
                 ? keyboardInput
                 : editingQty[cur.id] !== undefined
-                ? editingQty[cur.id]
-                : cur.qty
+                  ? editingQty[cur.id]
+                  : cur.qty
             }
             type="text"
             inputMode="numeric"
@@ -153,7 +154,7 @@ export const ItemList = ({
           <div className="flex justify-start items-center gap-3">
             <div className="w-8 h-8 shrink-0 rounded-full overflow-hidden">
               <img
-                src={cur.product_image}
+                src={isCustomerScreen ? cur.product_image : cur.product_image}
                 alt="product"
                 className="w-full h-full object-cover"
               />
@@ -172,9 +173,10 @@ export const ItemList = ({
           <input
             type="text"
             placeholder="0.00"
-            value={
+            readOnly={isCustomerScreen}
+            value={isCustomerScreen ? `$ ${cur.price.toFixed(2)}` :
               activeInputField?.type === "price" &&
-              activeInputField?.itemId === cur.id
+                activeInputField?.itemId === cur.id
                 ? keyboardInput
                 : ` $ ${cur.product_price}.00` ?? ""
             }
@@ -206,39 +208,57 @@ export const ItemList = ({
             className="w-full text-center outline-none text-[1dvw] mainFont font-semibold border-(--border-color) py-2 bg-(--secondary-color)/50 appearance-none"
           />
         </div>
-        <div className="border-r border-(--border-color) py-3  min-w-[8dvw] w-[8dvw] shrink-0 flex justify-center items-center px-2">
-          <select
-            value={cur.tax_percentage}
-            className="w-full text-center outline-none text-[1dvw] font-semibold mainFont  border-(--border-color) py-2 bg-(--secondary-color)/50 rounded-md appearance-none"
-          >
-            <option>No Tax</option>
-            <option>Low Tax</option>
-            <option>High Tax</option>
-          </select>
-        </div>
+        {
+          !isCustomerScreen && (
+
+            <div className="border-r border-(--border-color) py-3  min-w-[8dvw] w-[8dvw] shrink-0 flex justify-center items-center px-2">
+              <select
+                value={cur.tax_percentage}
+                className="w-full text-center outline-none text-[1dvw] font-semibold mainFont  border-(--border-color) py-2 bg-(--secondary-color)/50 rounded-md appearance-none"
+              >
+                <option>No Tax</option>
+                <option>Low Tax</option>
+                <option>High Tax</option>
+              </select>
+            </div>
+          )
+        }
+
+
+
+
         <div className="border-r border-(--border-color) py-3  min-w-[8dvw] shrink-0 flex justify-center items-center">
           <p className="text-[1dvw] font-semibold mainFont">
-            $ {cur.product_price * cur.qty}.00
+            $ {isCustomerScreen ? cur.total.toFixed(2) : `$ ${cur.product_price * cur.qty}.00`}
           </p>
         </div>
-        <div className="py-3  min-w-[8dvw] flex justify-center gap-3 items-center shrink-0">
-          <button
-            onClick={() => {
-              handleIncreaseQty(cur.id, "increase");
-            }}
-            className="bg-(--button-color1) text-(--primary-color) rounded-full p-2 flex justify-center items-center cursor-pointer"
-          >
-            <Plus />
-          </button>
-          <button
-            onClick={() => {
-              handleIncreaseQty(cur.id, "decrease");
-            }}
-            className="bg-(--Negative-color) text-(--primary-color) rounded-full p-2 flex justify-center items-center cursor-pointer"
-          >
-            <Minus />
-          </button>
-        </div>
+
+        {
+          !isCustomerScreen && (
+
+            <div className="py-3  min-w-[8dvw] flex justify-center gap-3 items-center shrink-0">
+              <button
+                onClick={() => {
+                  handleIncreaseQty(cur.id, "increase");
+                }}
+                className="bg-(--button-color1) text-(--primary-color) rounded-full p-2 flex justify-center items-center cursor-pointer"
+              >
+                <Plus />
+              </button>
+              <button
+                onClick={() => {
+                  handleIncreaseQty(cur.id, "decrease");
+                }}
+                className="bg-(--Negative-color) text-(--primary-color) rounded-full p-2 flex justify-center items-center cursor-pointer"
+              >
+                <Minus />
+              </button>
+            </div>
+          )
+        }
+
+
+
       </div>
     </>
   );

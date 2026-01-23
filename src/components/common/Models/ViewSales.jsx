@@ -90,6 +90,10 @@ export const ViewSales = ({ setViewSale, billID }) => {
         billId: null,
       });
       queryClient.invalidateQueries(["get_bill_details"]);
+      localStorage.setItem('processingPayment', JSON.stringify({
+        state: false,
+        message: ''
+      }))
       // toast.success("Transcation completed successfully");
     }
   };
@@ -157,10 +161,9 @@ export const ViewSales = ({ setViewSale, billID }) => {
                     onClick={() => {
                       handleTabSwitch(tabPrefix.amount);
                     }}
-                    className={` p-3 font-semibold mainFont text-(--mainText-color)/70 cursor-pointer hover:bg-(--button-color1) hover:text-white   flex justify-center items-center ${
-                      currentActiveTab === tabPrefix.amount &&
+                    className={` p-3 font-semibold mainFont text-(--mainText-color)/70 cursor-pointer hover:bg-(--button-color1) hover:text-white   flex justify-center items-center ${currentActiveTab === tabPrefix.amount &&
                       "bg-(--button-color1) text-white "
-                    } gap-3 transition-all duration-300 ease-linear`}
+                      } gap-3 transition-all duration-300 ease-linear`}
                   >
                     <BanknoteArrowDown />
                     Amount and Payments
@@ -169,10 +172,9 @@ export const ViewSales = ({ setViewSale, billID }) => {
                     onClick={() => {
                       handleTabSwitch(tabPrefix.items);
                     }}
-                    className={` p-3 font-semibold mainFont text-(--mainText-color)/70 cursor-pointer hover:bg-(--button-color1) hover:text-white   flex justify-center ${
-                      currentActiveTab === tabPrefix.items &&
+                    className={` p-3 font-semibold mainFont text-(--mainText-color)/70 cursor-pointer hover:bg-(--button-color1) hover:text-white   flex justify-center ${currentActiveTab === tabPrefix.items &&
                       "bg-(--button-color1) text-white "
-                    } items-center gap-3 transition-all duration-300 ease-linear`}
+                      } items-center gap-3 transition-all duration-300 ease-linear`}
                   >
                     <BaggageClaim />
                     Items/Products
@@ -181,10 +183,9 @@ export const ViewSales = ({ setViewSale, billID }) => {
                     onClick={() => {
                       handleTabSwitch(tabPrefix.customer);
                     }}
-                    className={` p-3 font-semibold mainFont text-(--mainText-color)/70 cursor-pointer hover:bg-(--button-color1) hover:text-white   flex justify-center ${
-                      currentActiveTab === tabPrefix.customer &&
+                    className={` p-3 font-semibold mainFont text-(--mainText-color)/70 cursor-pointer hover:bg-(--button-color1) hover:text-white   flex justify-center ${currentActiveTab === tabPrefix.customer &&
                       "bg-(--button-color1) text-white "
-                    } items-center gap-3 transition-all duration-200 ease-linear`}
+                      } items-center gap-3 transition-all duration-200 ease-linear`}
                   >
                     <Users />
                     Customer Info
