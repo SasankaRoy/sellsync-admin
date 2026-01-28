@@ -49,6 +49,7 @@ import { SalePoint } from "./Pages/seller/SalePoint";
 import { TaskDetails } from "./Pages/seller/TaskDetails";
 import { AllSalesReports } from "./Pages/seller/AllSalesReports";
 import CustomerScreenPage from "./Pages/seller/CustomerScreenPage";
+import NewLogin from "./Pages/auth/NewLogin";
 
 function App() {
   // Mirror ringUps into localStorage for customer screen tab to consume
@@ -148,7 +149,8 @@ function App() {
             element={<CustomerScreenPage />}
           />
 
-          <Route path="/auth/login" element={<Login />} />
+          {/* <Route path="/auth/login" element={<Login />} /> */}
+          <Route path="/auth/login" element={<NewLogin />} />
           <Route path="/auth/register" element={<Register />} />
         </Routes>
       </BrowserRouter>

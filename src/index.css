@@ -64,9 +64,11 @@ body {
   --mainFont: "Orbitron", sans-serif;
   --paraFont: "Rubik", sans-serif;
 }
+
 body {
   overflow-x: hidden;
 }
+
 h1,
 h2,
 h3,
@@ -75,6 +77,7 @@ h6,
 .mainFont {
   font-family: var(--mainFont);
 }
+
 .paraFont {
   font-family: var(--paraFont);
 }
@@ -95,21 +98,64 @@ h6,
 .deActiveLink svg g path {
   fill: var(--secondary-color) !important;
 }
+
 .hideScrollbar::-webkit-scrollbar {
   display: none;
 }
 
 .customBg {
   background: #e7711d;
-  background: linear-gradient(
-    87deg,
-    rgba(231, 113, 29, 1) 0%,
-    rgba(38, 106, 174, 1) 100%
-  );
+  background: linear-gradient(87deg,
+      rgba(231, 113, 29, 1) 0%,
+      rgba(38, 106, 174, 1) 100%);
 }
+
 .scrollCustom::-webkit-scrollbar {
   display: none;
 }
+
 #root::-webkit-scrollbar {
   display: none;
+}
+
+.customShadow {
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.25),
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.buttonOutterWrapper:hover button {
+  transform: translateY(-30px) scale(1.3);
+  box-shadow: 0px 50px 70px -35px rgba(255, 255, 255, 0.8);
+  transition: all .3s ease-in-out;
+}
+
+.buttonOutterWrapper button {
+  cursor: pointer;
+  transition: all .3s ease-in-out;
+}
+
+.buttonOutterWrapper {
+  position: relative;
+
+}
+
+.buttonOutterWrapper::before {
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  background: rgba(255, 255, 255, 0.8);
+  content: '';
+  height: .5dvw;
+  z-index: 20;
+  width: 0%;
+  border-radius: 50px;
+  transition: all .6s ease-in-out;
+}
+
+.buttonOutterWrapper:hover.buttonOutterWrapper::before {
+  width: 100%;
 }
