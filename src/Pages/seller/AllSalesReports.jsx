@@ -16,7 +16,10 @@ import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 // Core CSS
 import { AgGridReact } from "ag-grid-react";
 import { getAllTransactions } from "../../utils/apis/getAllTransaction";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { GetStartingCash } from "../../utils/apis/getStartingCash";
+import { handleLogOut } from "../../utils/apis/handleLogout";
+import { useSelector } from "react-redux";
 // import { Loading } from "../../components/UI/Loading/Loading";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -32,6 +35,22 @@ export const AllSalesReports = () => {
   const [dayFilter, setDayFilter] = useState('TODAY');
   const queryClient = useQueryClient();
   const [gridApi, setGridApi] = useState(null);
+  const [cashNotation, setCashNotation] = useState({
+    100: '',
+    50: '',
+    20: '',
+    10: '',
+    5: '',
+    2: '',
+    1: '',
+    0.50: '',
+    0.25: '',
+    0.10: '',
+    0.05: '',
+    0.01: ''
+  });
+  const [totalNotationAmount, setTotalNotationAmount] = useState(0);
+  const loggedUser = useSelector(state => state.loggedUser)
 
 
   const onGridReady = (params) => {
@@ -164,6 +183,46 @@ export const AllSalesReports = () => {
   const handleGoBack = () => {
     navigate(-1);
   };
+
+  // get starting cash...
+  const { data: startingCash, isLoading, isError } = useQuery({
+    queryKey: ['get_starting_cash'],
+    queryFn: GetStartingCash
+  });
+
+
+
+  const handleOnChange = (e) => {
+    const { name, value } = e.target;
+    setCashNotation({
+      ...cashNotation, [name]: value
+    })
+  }
+
+  useEffect(() => {
+    const calculateNotationAmount = () => {
+      const amount = Object.entries(cashNotation).reduce(
+        (sum, [note, count]) => sum + Number(note) * count,
+        0
+      )
+
+      setTotalNotationAmount(amount)
+    }
+
+    calculateNotationAmount()
+  }, [cashNotation])
+
+
+
+
+
+
+
+
+
+
+
+
   return (
     <>
       <SellerNavbar />
@@ -240,23 +299,25 @@ export const AllSalesReports = () => {
               </p>
               <input
                 className="bg-(--secondary-color) text-xs sm:text-sm lg:text-[1.3dvw] px-2 sm:px-3 py-1 sm:py-1.5 outline-none border-none w-24 sm:w-32"
-                placeholder="1000"
+                placeholder={startingCash}
+                readOnly
+                value={startingCash}
               />
             </div>
             <div className="grid grid-cols-2 gap-6 border-b border-(--border-color) px-2 sm:px-3 py-3 sm:py-5  ">
               {[
-                { label: "$100" },
-                { label: "$50" },
-                { label: "$20" },
-                { label: "$10" },
-                { label: "$5" },
-                { label: "$2" },
-                { label: "$1" },
-                { label: "50¢" },
-                { label: "25¢" },
-                { label: "10¢" },
-                { label: "5¢" },
-                { label: "1¢" },
+                { label: "$100", name: '100' },
+                { label: "$50", name: '50' },
+                { label: "$20", name: '20' },
+                { label: "$10", name: '10' },
+                { label: "$5", name: '5' },
+                { label: "$2", name: '2' },
+                { label: "$1", name: '1' },
+                { label: "50¢", name: '0.5' },
+                { label: "25¢", name: '0.25' },
+                { label: "10¢", name: '0.1' },
+                { label: "5¢", name: '0.05' },
+                { label: "1¢", name: '0.01' },
               ].map((item, index) => (
                 <div
                   key={index}
@@ -267,7 +328,7 @@ export const AllSalesReports = () => {
                   </h3>
                   <input
                     className="bg-(--secondary-color) border border-transparent w-full px-1.5 sm:px-2 py-2 sm:py-2 rounded text-[1.2dvw] active:border-(--button-color1) focus:border-(--button-color1) focus:ring-(--button-color1) focus:outline-(--button-color1) active:outline-(--button-color1) transition-all ease-linear duration-200  mainFont focus:shadow-(--button-color1) active:shadow-(--button-color1)"
-                    placeholder="00"
+                    placeholder="00" name={item.name} value={cashNotation[item.name]} onChange={handleOnChange} min='0'
                   />
                 </div>
               ))}
@@ -278,8 +339,8 @@ export const AllSalesReports = () => {
                   Total:
                 </p>
                 <input
-                  className="bg-(--secondary-color) text-xs sm:text-sm lg:text-[1.3dvw] px-2 sm:px-3 py-1 sm:py-1.5 outline-none border-none w-24 sm:w-32" readOnly
-                  placeholder="0.00"
+                  className={`bg-(--secondary-color) text-xs sm:text-sm lg:text-[1.3dvw] px-2 sm:px-3 py-1 sm:py-1.5 outline-none border-none font-semibold w-24 sm:w-32 ${(parseFloat(totalTaking) + parseFloat(startingCash)) === totalNotationAmount ? 'text-(--button-color5)' : 'text-(--Negative-color)'}`}
+                  placeholder="00" value={totalNotationAmount}
                 />
               </div>
               <div className="flex justify-start items-center gap-2 sm:gap-5 px-2 sm:px-6 w-full sm:w-auto">
@@ -287,14 +348,24 @@ export const AllSalesReports = () => {
                   Sale:
                 </p>
                 <input
-                  className="bg-(--secondary-color) text-xs sm:text-sm lg:text-[1.3dvw] px-2 sm:px-3 py-1 sm:py-1.5 outline-none border-none w-24 sm:w-32" readOnly
+                  className={`bg-(--secondary-color) text-xs sm:text-sm lg:text-[1.3dvw] px-2 sm:px-3 py-1 sm:py-1.5 outline-none border-none font-semibold w-24 sm:w-32 `} readOnly
                   placeholder="1000"
-                  value={1000}
+                  value={parseFloat(startingCash) + parseFloat(totalTaking)}
                 />
               </div>
             </div>
             <div className="flex justify-center items-center mt-2 sm:mt-3">
-              <button className="bg-(--Negative-color) text-(--primary-color) mainFont font-semibold w-[85%] text-xs sm:text-sm lg:text-[1.3dvw] py-2 sm:py-3 rounded-md cursor-pointer">
+              <button onClick={() => {
+                handleLogOut({
+                  startingCash: startingCash,
+                  employeeId: loggedUser.id,
+                  currency: '$',
+                  totalTaking: totalTaking,
+                  totalNotationAmount: totalNotationAmount,
+                  totalBalance: parseFloat(startingCash) + parseFloat(totalTaking),
+                  cashNotation
+                })
+              }} disabled={(parseFloat(totalTaking) + parseFloat(startingCash)) !== totalNotationAmount} className="bg-(--Negative-color) text-(--primary-color) mainFont font-semibold w-[85%] text-xs sm:text-sm lg:text-[1.3dvw] py-2 sm:py-3 rounded-md cursor-pointer disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-70">
                 Log Off / Close Register
               </button>
             </div>

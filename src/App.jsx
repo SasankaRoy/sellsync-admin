@@ -149,7 +149,7 @@ function App() {
             element={<CustomerScreenPage />}
           />
 
-          {/* <Route path="/auth/login" element={<Login />} /> */}
+          <Route path="/auth/old-login" element={<Login />} />
           <Route path="/auth/login" element={<NewLogin />} />
           <Route path="/auth/register" element={<Register />} />
         </Routes>
