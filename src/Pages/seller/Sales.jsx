@@ -45,12 +45,12 @@ const ActionBtns = (props) => {
           <Eye size={18} />
         </button>
 
-        <button
+        {/* <button
           className="font-semibold font-[var(--paraFont)] bg-[var(--Negative-color)] text-white p-1.5 rounded-full border-none cursor-pointer"
           // onClick={handleDelete}
         >
           <Trash size={18} />
-        </button>
+        </button> */}
       </div>
     </>
   );
@@ -68,16 +68,65 @@ const Sales = () => {
       billId: currentBillData._id,
     });
   };
+  const [filter, setFilter] = useState({
+    byDate: 'TODAY',
+    byStatus: ''
+  });
+
+
+  const checkStatus = (status) => {
+    switch (status) {
+      case 'OPEN':
+        return {
+          forDot: 'bg-blue-500',
+          forText: 'text-blue-500'
+        }
+        break;
+      case 'PAID':
+        return {
+          forDot: 'bg-green-500',
+          forText: 'text-green-500'
+        }
+        break;
+      case 'HOLD':
+        return {
+          forDot: 'bg-yellow-500',
+          forText: 'text-yellow-500'
+        }
+        break;
+      case 'CANCELLED':
+        return {
+          forDot: 'bg-red-500',
+          forText: 'text-red-500'
+        }
+        break;
+
+      default:
+        break;
+    }
+  }
 
   // Column Definitions: Defines & controls grid columns.
   const [colDefs, setColDefs] = useState([
     { field: "_id", headerName: "ID" },
     // { field: "Ref" },
     { field: "device_location", headerName: "Device/Location" },
-    { headerName: "Customer Name", field: "CustomerName" },
-    { field: "mobile_number", headerName: "Mobile Number" },
+    {
+      headerName: "Customer Name", field: "CustomerName", cellRenderer: (name) => {
+        return name.value ? name.value : 'Unknown Customer'
+      }
+    },
+    {
+      field: "mobile_number", headerName: "Mobile Number", cellRenderer: (number) => {
+        return number.value ? number.value : 'Not Provided'
+      }
+    },
     { field: "total_items", headerName: "Total Items" },
-    { headerName: "Total Amount", field: "total_amount" },
+    {
+      headerName: "Total Amount", field: "total_amount", cellRenderer: (amount) => {
+        return `$ ${amount.value.toFixed(2)}`;
+      },
+    },
     {
       headerName: "Date and Time",
       field: "created_at",
@@ -85,7 +134,19 @@ const Sales = () => {
         return moment(time.value).format("lll");
       },
     },
-    { headerName: "Status", field: "status" },
+    {
+      headerName: "Status", field: "status", cellRenderer: (status) => {
+        return (
+          <>
+            <div className=" px-3 flex justify-center items-center w-auto gap-3">
+              <div className={`h-[.8dvw] w-[.8dvw] rounded-full ${checkStatus(status.value).forDot}`}>
+              </div>
+              <p className={`font-medium ${checkStatus(status.value).forText} text-[1.2dvw]`}>{status.value}</p>
+            </div>
+          </>
+        )
+      }
+    },
     {
       headerName: "Actions",
       field: "actions",
@@ -111,8 +172,8 @@ const Sales = () => {
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["get_bill_details"],
-    queryFn: handleGetAllBills,
+    queryKey: ["get_bill_details", filter],
+    queryFn: async () => await handleGetAllBills(filter),
   });
 
   return (
@@ -134,34 +195,43 @@ const Sales = () => {
             <div className="border shadow-md border-(--border-color) rounded-md p-3 sm:p-4">
               <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center py-2 sm:py-1.5 shrink-0 gap-3 sm:gap-0 flex-wrap">
                 <div className="flex justify-between sm:justify-center items-center gap-2 sm:gap-3 w-full sm:w-auto">
-                  <select className="font-[500] border-b border-(--border-color) mainFont px-2 sm:px-4 py-1 sm:p-2 outline-none text-xs sm:text-sm lg:text-base">
-                    <option>All</option>
-                    <option>Order</option>
-                    <option>Completed</option>
-                    <option>Canceled</option>
-                    <option>Refunded</option>
-                    <option>No Sale</option>
+                  <select onChange={(e) => {
+                    setFilter({
+                      ...filter,
+                      byStatus: e.target.value
+                    })
+                  }} value={filter.byStatus} className="font-[500] border-b border-(--border-color) mainFont px-2 sm:px-4 py-1 sm:p-2 outline-none text-xs sm:text-sm lg:text-base">
+                    <option value=''>All</option>
+                    <option value='OPEN'>Open</option>
+                    <option value='HOLD'>Order</option>
+                    <option value='PAID'>Completed</option>
+                    <option value='CANCELLED'>Canceled</option>
                   </select>
                   <div className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7 lg:h-[1.8dvw] lg:w-[1.8dvw] bg-[#F8A61B] rounded-full flex justify-center items-center min-w-[1.25rem] min-h-[1.25rem] sm:min-w-[1.5rem] sm:min-h-[1.5rem]">
                     <p className="text-xs sm:text-xs md:text-sm lg:text-[0.8dvw] font-[500] text-white">
-                      2
+                      {rowData.length || 0}
                     </p>
                   </div>
                 </div>
                 <div className="flex gap-2 sm:gap-3 lg:gap-4 justify-between items-center flex-wrap w-full sm:w-auto">
-                  <select className="font-[500] border-b border-(--border-color) mainFont px-2 sm:px-4 py-1 sm:p-2 outline-none text-xs sm:text-sm lg:text-base flex-1 sm:flex-none">
-                    <option>Today</option>
-                    <option>Last Day</option>
-                    <option>Last 3 Day</option>
-                    <option>Last 7 Day</option>
-                    <option>Last 30 Day</option>
+                  <select onChange={(e) => {
+                    setFilter({
+                      ...filter,
+                      byDate: e.target.value
+                    })
+                  }} value={filter.byDate} className="font-[500] border-b border-(--border-color) mainFont px-2 sm:px-4 py-1 sm:p-2 outline-none text-xs sm:text-sm lg:text-base flex-1 sm:flex-none">
+                    <option value='TODAY'>Today</option>
+                    <option value='LAST_DAY'>Last Day</option>
+                    <option value='LAST_3_DAY'>Last 3 Day</option>
+                    <option value='LAST_7_DAY'>Last 7 Day</option>
+                    <option value='LAST_30_DAY'>Last 30 Day</option>
                   </select>
                   <button className="px-3 sm:px-4 lg:px-5 py-1.5 sm:py-1 lg:py-1.5 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-1 sm:gap-2 lg:gap-4 text-white mainFont font-[500] cursor-pointer text-xs sm:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear whitespace-nowrap">
                     Export CSV <Download size={14} className="sm:w-4 sm:h-4" />
                   </button>
-                  <button className="cursor-pointer p-1.5 sm:p-2">
+                  {/* <button className="cursor-pointer p-1.5 sm:p-2">
                     <DeleteIcon className="w-4 h-4 sm:w-5 sm:h-5" />
-                  </button>
+                  </button> */}
                 </div>
               </div>
 

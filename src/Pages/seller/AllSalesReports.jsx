@@ -20,6 +20,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { GetStartingCash } from "../../utils/apis/getStartingCash";
 import { handleLogOut } from "../../utils/apis/handleLogout";
 import { useSelector } from "react-redux";
+import { AnimatePresence } from "framer-motion";
+import { OnScreenKeyboard } from "../../components/UI/OnScreenKeyboard/OnScreenKeyboard";
 // import { Loading } from "../../components/UI/Loading/Loading";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -29,6 +31,11 @@ const rowSelection = {
 };
 
 export const AllSalesReports = () => {
+  const [isKeyboardOpen, setIsKeyboardOpen] = useState(false)
+  const [activeInputField, setActiveInputField] = useState({
+    name: '',
+    value: ''
+  })
   const [itemsPerPage, setItemsPerPage] = useState(50);
   const [transactions, setTransactions] = useState([]);
   const [totalTransaction, setTotalTransaction] = useState(0);
@@ -193,10 +200,18 @@ export const AllSalesReports = () => {
 
 
   const handleOnChange = (e) => {
-    const { name, value } = e.target;
     setCashNotation({
-      ...cashNotation, [name]: value
+      ...cashNotation, [activeInputField.name]: e
     })
+    setActiveInputField({
+      ...activeInputField, value: e
+    })
+    if (e.target) {
+      const { name, value } = e.target
+      setCashNotation({
+        ...cashNotation, [name]: value
+      })
+    }
   }
 
   useEffect(() => {
@@ -329,6 +344,23 @@ export const AllSalesReports = () => {
                   <input
                     className="bg-(--secondary-color) border border-transparent w-full px-1.5 sm:px-2 py-2 sm:py-2 rounded text-[1.2dvw] active:border-(--button-color1) focus:border-(--button-color1) focus:ring-(--button-color1) focus:outline-(--button-color1) active:outline-(--button-color1) transition-all ease-linear duration-200  mainFont focus:shadow-(--button-color1) active:shadow-(--button-color1)"
                     placeholder="00" name={item.name} value={cashNotation[item.name]} onChange={handleOnChange} min='0'
+                    onFocus={(e) => {
+                      e.stopPropagation();
+                      setActiveInputField({
+                        ...activeInputField,
+                        name: item.name,
+                      })
+                      if (setIsKeyboardOpen) {
+                        setIsKeyboardOpen(true);
+                        // setActiveInputField({ type: "quantity", itemId: cur.id });
+                      }
+                    }}
+                    onBlur={() => {
+                      setActiveInputField({
+                        name: '',
+                        value: ''
+                      })
+                    }}
                   />
                 </div>
               ))}
@@ -372,6 +404,19 @@ export const AllSalesReports = () => {
           </div>
         </div>
       </div>
+
+
+      {isKeyboardOpen && (
+        <AnimatePresence mode="popLayout">
+          <OnScreenKeyboard
+            Change={handleOnChange}
+            inputValue={activeInputField.value}
+            layoutName={
+              "numeric"
+            }
+          />
+        </AnimatePresence>
+      )}
     </>
   );
 };

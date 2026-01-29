@@ -81,6 +81,10 @@ export const SalePoint = () => {
     state: false,
     billId: null,
   });
+
+
+
+
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
 
@@ -166,6 +170,8 @@ export const SalePoint = () => {
       setIsKeyboardOpen(false);
     }
   }, [isKeyboardOpen]);
+
+  console.log(keyboardInput, 'keyborderInput')
 
   // Sync keyboard input when active field changes
   useEffect(() => {
