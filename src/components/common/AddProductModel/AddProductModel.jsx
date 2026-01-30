@@ -40,7 +40,7 @@ function useDebounce(callback, delay) {
 export const AddProductModel = ({ productData, setShowModel, actionType }) => {
   const [productInfo, setProductInfo] = useState({
     stockCode: "",
-    quantityInHandItem: "",
+    quantityInHandItem: '',
     quantityInHandCase: "",
     productName: "",
     quantity: "1",
@@ -67,7 +67,7 @@ export const AddProductModel = ({ productData, setShowModel, actionType }) => {
       name: "",
     },
     sku: "",
-    unitsPerCase: "",
+    unitsPerCase: 1,
     caseCostTotal: "",
     tax: "",
     reorderPoints: "",
@@ -232,21 +232,19 @@ export const AddProductModel = ({ productData, setShowModel, actionType }) => {
           <div className="bg-[#E6E6E6] p-2 rounded-full w-auto my-5 inline-flex flex-wrap gap-2 sm:gap-3">
             <button
               onClick={() => handleChangeTab("Details")}
-              className={` ${
-                currentActiveTab === "Details"
-                  ? "bg-[var(--sideMenu-color)] text-white"
-                  : "bg-transparent text-[#333333]/70"
-              } border-none outline-none px-4 sm:px-8 py-1 text-sm sm:text-base lg:text-[.9dvw] cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
+              className={` ${currentActiveTab === "Details"
+                ? "bg-[var(--sideMenu-color)] text-white"
+                : "bg-transparent text-[#333333]/70"
+                } border-none outline-none px-4 sm:px-8 py-1 text-sm sm:text-base lg:text-[.9dvw] cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
             >
               Details
             </button>
             <button
               onClick={() => handleChangeTab("Options")}
-              className={` ${
-                currentActiveTab === "Options"
-                  ? "bg-[var(--sideMenu-color)] text-white"
-                  : "bg-transparent text-[#333333]/70"
-              } border-none outline-none px-4 sm:px-8 py-1 text-sm sm:text-base lg:text-[.9dvw] cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
+              className={` ${currentActiveTab === "Options"
+                ? "bg-[var(--sideMenu-color)] text-white"
+                : "bg-transparent text-[#333333]/70"
+                } border-none outline-none px-4 sm:px-8 py-1 text-sm sm:text-base lg:text-[.9dvw] cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
             >
               Options
             </button>
@@ -254,11 +252,10 @@ export const AddProductModel = ({ productData, setShowModel, actionType }) => {
               <>
                 <button
                   onClick={() => handleChangeTab("Promotions")}
-                  className={` ${
-                    currentActiveTab === "Promotions"
-                      ? "bg-[var(--sideMenu-color)] text-white"
-                      : "bg-transparent text-[#333333]/70"
-                  } border-none outline-none px-4 sm:px-8 py-1 text-sm sm:text-base lg:text-[.9dvw] cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
+                  className={` ${currentActiveTab === "Promotions"
+                    ? "bg-[var(--sideMenu-color)] text-white"
+                    : "bg-transparent text-[#333333]/70"
+                    } border-none outline-none px-4 sm:px-8 py-1 text-sm sm:text-base lg:text-[.9dvw] cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
                 >
                   Promotions
                 </button>
@@ -276,8 +273,8 @@ export const AddProductModel = ({ productData, setShowModel, actionType }) => {
                 {isLoading
                   ? "Updating..."
                   : actionType === "Add"
-                  ? "Add"
-                  : "Save Changes"}
+                    ? "Add"
+                    : "Save Changes"}
                 {/* Update */}
               </button>
               <button className="w-full sm:w-auto px-4 sm:px-6 py-1.5 sm:py-2 bg-[var(--button-color4)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300">
@@ -764,6 +761,61 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo }) => {
     }
   };
 
+  const calculateTotalItemsAndCntainer = (currentChangeField, value) => {
+    // main logic no. of items / no. of items in one container...
+
+    if (currentChangeField === 'quantityInHandItem' && value) {
+      const getTotalContainer = parseFloat(value) / parseFloat(productInfo.unitsPerCase);
+      setProductInfo({
+        ...productInfo,
+        quantityInHandCase: getTotalContainer.toFixed(2),
+        quantityInHandItem: parseFloat(value)
+      })
+      return;
+    }
+    if (currentChangeField === 'unitsPerCase' && value) {
+      const getTotalContainer = parseFloat(productInfo.quantityInHandItem) / parseFloat(value);
+      
+      setProductInfo({
+        ...productInfo,
+        quantityInHandCase: getTotalContainer.toFixed(2),
+        unitsPerCase: parseFloat(value)
+      })
+      return;
+    }
+
+    if (currentChangeField === 'quantityInHandCase' && value) {
+      const itemsPerCase = parseFloat(productInfo.quantityInHandItem) / parseFloat(value);
+      setProductInfo({
+        ...productInfo,
+        unitsPerCase: itemsPerCase.toFixed(2),
+        quantityInHandCase: parseFloat(value)
+      })
+      return;
+    }
+    setProductInfo({
+      ...productInfo,
+      [currentChangeField]: value ? parseFloat(value) : ''
+    })
+  }
+
+  const calculateAvgCostAsperContainerCost = (currentChangeField, value) => {
+    if (currentChangeField === 'caseCostTotal' && value) {
+      const avgCost = parseFloat(value) / parseFloat(productInfo.unitsPerCase);
+
+      setProductInfo({
+        ...productInfo,
+        avgCost: avgCost,
+        caseCostTotal: parseFloat(value)
+      })
+      return;
+    }
+    setProductInfo({
+      ...productInfo,
+      [currentChangeField]: value ? parseFloat(value) : ''
+    })
+  }
+
   return (
     <>
       <div
@@ -818,7 +870,10 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo }) => {
               placeholder="Number of items..."
               name="quantityInHandItem"
               value={productInfo.quantityInHandItem}
-              onChange={handleonChange}
+              onChange={(e) => {
+                // handleonChange(e)
+                calculateTotalItemsAndCntainer('quantityInHandItem', e.target.value)
+              }}
             />
           </div>
           <div className="flex flex-col gap-2 w-full">
@@ -834,7 +889,10 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo }) => {
               placeholder="Number of cases"
               name="quantityInHandCase"
               value={productInfo.quantityInHandCase}
-              onChange={handleonChange}
+              onChange={(e) => {
+                handleonChange(e)
+                calculateTotalItemsAndCntainer('quantityInHandCase', e.target.value)
+              }}
             />
           </div>
         </div>
@@ -857,9 +915,8 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo }) => {
         </div>
 
         <div
-          className={`grid grid-cols-2 ${
-            actionType === "Edit" ? "sm:grid-cols-4" : "sm:grid-cols-3"
-          }  gap-2 my-4`}
+          className={`grid grid-cols-2 ${actionType === "Edit" ? "sm:grid-cols-4" : "sm:grid-cols-3"
+            }  gap-2 my-4`}
         >
           <div className="w-full flex flex-col gap-1.5">
             <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
@@ -1126,9 +1183,9 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo }) => {
               value={
                 selectedVendor
                   ? selectedVendor.vendor_name ||
-                    selectedVendor.name ||
-                    selectedVendor.full_name ||
-                    ""
+                  selectedVendor.name ||
+                  selectedVendor.full_name ||
+                  ""
                   : vendorQuery
               }
               onChange={(e) => {
@@ -1338,9 +1395,9 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo }) => {
             value={
               selectedGroup
                 ? selectedGroup.group_name ||
-                  selectedGroup.name ||
-                  selectedGroup.title ||
-                  ""
+                selectedGroup.name ||
+                selectedGroup.title ||
+                ""
                 : groupQuery
             }
             onChange={(e) => {
@@ -1575,21 +1632,27 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo }) => {
             <input
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
-              onChange={handleonChange}
+              onChange={(e) => {
+                // handleonChange(e)
+                calculateTotalItemsAndCntainer('unitsPerCase', e.target.value)
+              }}
               name="unitsPerCase"
               value={productInfo.unitsPerCase}
             />
           </div>
           <div className="w-full flex flex-col gap-2">
             <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-              Case Cost Total
+              Cost of 1 Case
             </label>
             <input
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
               name="caseCostTotal"
               value={productInfo.caseCostTotal}
-              onChange={handleonChange}
+              onChange={(e) => {
+                handleonChange(e)
+                calculateAvgCostAsperContainerCost('caseCostTotal', e.target.value)
+              }}
             />
           </div>
           <div className="w-full flex flex-col gap-2">
@@ -1658,11 +1721,10 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo }) => {
             Upload Images
           </label>
           <div
-            className={`w-full border-2 border-dashed rounded-lg p-4 transition-colors duration-300 cursor-pointer ${
-              isDragging
-                ? "border-blue-500 bg-blue-50"
-                : "border-gray-300 bg-gray-50 hover:bg-gray-100"
-            } ${actionType === "View" ? "opacity-50 pointer-events-none" : ""}`}
+            className={`w-full border-2 border-dashed rounded-lg p-4 transition-colors duration-300 cursor-pointer ${isDragging
+              ? "border-blue-500 bg-blue-50"
+              : "border-gray-300 bg-gray-50 hover:bg-gray-100"
+              } ${actionType === "View" ? "opacity-50 pointer-events-none" : ""}`}
             onDragEnter={actionType !== "View" ? handleDragOver : undefined}
             onDragLeave={actionType !== "View" ? handleDragLeave : undefined}
             onDragOver={actionType !== "View" ? handleDragOver : undefined}

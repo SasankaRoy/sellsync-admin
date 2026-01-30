@@ -50,6 +50,7 @@ import { TaskDetails } from "./Pages/seller/TaskDetails";
 import { AllSalesReports } from "./Pages/seller/AllSalesReports";
 import CustomerScreenPage from "./Pages/seller/CustomerScreenPage";
 import NewLogin from "./Pages/auth/NewLogin";
+import Taxes from "./Pages/admin/Daily/GlobalTax";
 
 function App() {
   // Mirror ringUps into localStorage for customer screen tab to consume
@@ -114,6 +115,7 @@ function App() {
 
             <Route path="/admin/daily/purchase" element={<Purchase />} />
             <Route path="/admin/daily/expense" element={<ExpenseList />} />
+            <Route path="/admin/daily/taxes" element={<Taxes />} />
 
             <Route
               path="/admin/lottery/inventory"

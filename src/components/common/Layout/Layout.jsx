@@ -559,6 +559,35 @@ export const Layout = ({ children }) => {
             >
               Expense
             </NavLink>
+            <NavLink
+              onClick={(e) => {
+                e.stopPropagation();
+                handleNavigation("/admin/daily/taxes");
+              }}
+              to="/admin/daily/taxes"
+              className={({ isActive }) => {
+                isActive && setSubMenuStateDaily(true);
+                return isActive
+                  ? `flex py-2 px-5 rounded-full font-[600] ${
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
+                    } paraFont justify-start items-center gap-4 text-[var(--button-color1)] bg-white activeLink`
+                  : `flex py-2 px-5 rounded-full font-[600] ${
+                      isTablet
+                        ? "text-[25px]"
+                        : isMobile
+                        ? "text-[16px]"
+                        : "text-xs lg:text-[1dvw]"
+                    } paraFont justify-start items-center gap-4 deActiveLink ${
+                      isMobile ? "text-white" : ""
+                    }`;
+              }}
+            >
+              Taxes
+            </NavLink>
           </div>
         </div>
 
