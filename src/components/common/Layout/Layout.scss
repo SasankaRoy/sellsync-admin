@@ -320,7 +320,7 @@
         justify-content: space-around;
         align-items: center;
         gap: 20px;
-        width: 40%;
+        width: 50%;
 
         button {
           padding: 5px;
@@ -329,7 +329,7 @@
         }
 
         .addProduct__BTN {
-          background-color: var(--button-color1);
+          // background-color: var(--button-cuolor1);
           color: var(--primary-color);
           display: flex;
           justify-content: center;

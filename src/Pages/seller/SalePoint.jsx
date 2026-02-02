@@ -39,6 +39,7 @@ import { handleBillStatusUpdate } from "../../utils/apis/billStatusUpdate";
 import { requestPrintBill } from "../../utils/apis/printBill";
 import { saveTranscation } from "../../utils/apis/saveTranscations";
 import { Loading } from "../../components/UI/Loading/Loading";
+import { PurchaseAndExpence } from "../../components/common/Models/PurchaseAndExpence";
 
 const itemListVarient = {
   initial: {
@@ -81,6 +82,7 @@ export const SalePoint = () => {
     state: false,
     billId: null,
   });
+  const [isPayout,setIsPayout] = useState(false)
 
 
 
@@ -309,7 +311,7 @@ export const SalePoint = () => {
       }),
     );
     localStorage.setItem('processingPayment', JSON.stringify({
-      state: false,
+      state: false, 
       message: ''
     }))
     // Clear search and keyboard state
@@ -742,7 +744,7 @@ export const SalePoint = () => {
                     Options
                   </h3>
                   <div className="my-2 grid grid-cols-3 gap-2">
-                    <button className="bg-(--button-color5) text-(--primary-color) py-3 mainFont font-semibold rounded-md">
+                    <button onClick={() => setIsPayout(true)} className="bg-(--button-color5) text-(--primary-color) py-3 mainFont font-semibold rounded-md">
                       Payout
                     </button>
                     <button
@@ -850,6 +852,13 @@ export const SalePoint = () => {
               setViewSale={setViewBillDetails}
             />
           )}
+
+
+          {
+            isPayout && (
+              <PurchaseAndExpence setIsPayout={setIsPayout} />
+            )
+          }
         </>
       )}
     </>

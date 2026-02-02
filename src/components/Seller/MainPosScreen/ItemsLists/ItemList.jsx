@@ -229,7 +229,7 @@ export const ItemList = ({
 
         <div className="border-r border-(--border-color) py-3  min-w-[8dvw] shrink-0 flex justify-center items-center">
           <p className="text-[1dvw] font-semibold mainFont">
-            $ {isCustomerScreen ? cur.total.toFixed(2) : `$ ${cur.product_price * cur.qty}.00`}
+            $ {isCustomerScreen ? cur.total.toFixed(2) : `${cur.product_price * cur.qty}.00`}
           </p>
         </div>
 
