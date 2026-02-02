@@ -38,6 +38,7 @@ import { LoyaltyDeals } from "./Pages/admin/Loyalty/LoyaltyDeals";
 import { Purchase } from "./Pages/admin/Daily/Purchase";
 import { ExpenseList } from "./Pages/admin/Daily/Expense";
 import RouteGuard from "./Pages/auth/RouteGuard";
+import AdminRouteGuard from "./Pages/auth/AdminRouteGuard";
 import { Loyaltyreports } from "./Pages/admin/Loyalty/Loyaltyreports";
 import { Groups } from "./Pages/admin/Groups/Groups";
 import SellerDashboard from "./Pages/seller/SellerDashboard";
@@ -60,6 +61,7 @@ function App() {
     try {
       localStorage.setItem("ringUpsSnapshot", JSON.stringify(ringUps || []));
     } catch (e) {
+      console.error(e);
       // ignore storage errors to avoid impacting flow
     }
   }, [ringUps]);
@@ -69,74 +71,83 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route element={<RouteGuard />}>
-            <Route path="/" element={<AdminDashboard />} />
-            <Route path="/admin/sale" element={<Sale />} />
-            <Route path="/admin/inventory/overview" element={<Inventory />} />
-            <Route path="/admin/inventory/item-lists" element={<ItemsList />} />
-            <Route path="/admin/inventory/category" element={<Category />} />
-            <Route path="/admin/inventory/groups" element={<Groups />} />
+            {/* Admin Routes - Only accessible to admin users */}
+            <Route element={<AdminRouteGuard />}>
+              <Route path="/" element={<AdminDashboard />} />
+              <Route path="/admin/sale" element={<Sale />} />
+              <Route path="/admin/inventory/overview" element={<Inventory />} />
+              <Route
+                path="/admin/inventory/item-lists"
+                element={<ItemsList />}
+              />
+              <Route path="/admin/inventory/category" element={<Category />} />
+              <Route path="/admin/inventory/groups" element={<Groups />} />
 
-            <Route path="/admin/inventory/suppliers" element={<Supplier />} />
-            <Route path="/admin/inventory/receive" element={<Receive />} />
-            <Route path="/admin/inventory/order" element={<Orders />} />
-            <Route path="/admin/reports" element={<Reports />} />
-            <Route path="/admin/customers" element={<Customer />} />
-            <Route path="/admin/employees" element={<Employee />} />
+              <Route path="/admin/inventory/suppliers" element={<Supplier />} />
+              <Route path="/admin/inventory/receive" element={<Receive />} />
+              <Route path="/admin/inventory/order" element={<Orders />} />
+              <Route path="/admin/reports" element={<Reports />} />
+              <Route path="/admin/customers" element={<Customer />} />
+              <Route path="/admin/employees" element={<Employee />} />
 
-            <Route path="/admin/pos" element={<POS />} />
-            <Route path="/admin/pos/journals" element={<Journal />} />
-            <Route path="/admin/pos/deals" element={<Deals />} />
-            <Route
-              path="/admin/pos/receipt-settings"
-              element={<ReceiptSettings />}
-            />
-            <Route
-              path="/admin/pos/customer-display-setting"
-              element={<CustomerDisplaySetting />}
-            />
-            <Route path="/admin/pos/edi-file" element={<EDIFile />} />
-            <Route
-              path="/admin/pos/pos-categorries"
-              element={<CategoriesPOS />}
-            />
-            <Route path="/admin/pos/vendors" element={<Vendors />} />
-            <Route path="/admin/pos/fuels" element={<Fule />} />
-            <Route
-              path="/admin/pos/device-and-location"
-              element={<DeviceAndLocation />}
-            />
+              <Route path="/admin/pos" element={<POS />} />
+              <Route path="/admin/pos/journals" element={<Journal />} />
+              <Route path="/admin/pos/deals" element={<Deals />} />
+              <Route
+                path="/admin/pos/receipt-settings"
+                element={<ReceiptSettings />}
+              />
+              <Route
+                path="/admin/pos/customer-display-setting"
+                element={<CustomerDisplaySetting />}
+              />
+              <Route path="/admin/pos/edi-file" element={<EDIFile />} />
+              <Route
+                path="/admin/pos/pos-categorries"
+                element={<CategoriesPOS />}
+              />
+              <Route path="/admin/pos/vendors" element={<Vendors />} />
+              <Route path="/admin/pos/fuels" element={<Fule />} />
+              <Route
+                path="/admin/pos/device-and-location"
+                element={<DeviceAndLocation />}
+              />
 
-            {/* Task Routes */}
-            <Route path="/admin/tasks" element={<Task />} />
-            <Route
-              path="/admin/tasks/task-details/:tid"
-              element={<ViewTask />}
-            />
+              {/* Task Routes */}
+              <Route path="/admin/tasks" element={<Task />} />
+              <Route
+                path="/admin/tasks/task-details/:tid"
+                element={<ViewTask />}
+              />
 
-            <Route path="/admin/daily/purchase" element={<Purchase />} />
-            <Route path="/admin/daily/expense" element={<ExpenseList />} />
-            <Route path="/admin/daily/taxes" element={<Taxes />} />
+              <Route path="/admin/daily/purchase" element={<Purchase />} />
+              <Route path="/admin/daily/expense" element={<ExpenseList />} />
+              <Route path="/admin/daily/taxes" element={<Taxes />} />
 
-            <Route
-              path="/admin/lottery/inventory"
-              element={<InventoryLottery />}
-            />
-            <Route
-              path="/admin/lottery/instant-scan-tickets"
-              element={<ScanTickets />}
-            />
-            <Route
-              path="/admin/lottery/sale-report"
-              element={<SalesReport />}
-            />
-            <Route path="/admin/loyalty/deals" element={<LoyaltyDeals />} />
-            <Route path="/admin/loyalty/reports" element={<Loyaltyreports />} />
+              <Route
+                path="/admin/lottery/inventory"
+                element={<InventoryLottery />}
+              />
+              <Route
+                path="/admin/lottery/instant-scan-tickets"
+                element={<ScanTickets />}
+              />
+              <Route
+                path="/admin/lottery/sale-report"
+                element={<SalesReport />}
+              />
+              <Route path="/admin/loyalty/deals" element={<LoyaltyDeals />} />
+              <Route
+                path="/admin/loyalty/reports"
+                element={<Loyaltyreports />}
+              />
 
-            <Route path="/admin/settings" element={<Settings />} />
-            <Route path="/admin/help" element={<Help />} />
-            <Route path="/admin/rewards" element={<Rewards />} />
-            <Route path="/admin/payroll" element={<Payroll />} />
-            <Route path="/admin/item-report/:id" element={<ItemReport />} />
+              <Route path="/admin/settings" element={<Settings />} />
+              <Route path="/admin/help" element={<Help />} />
+              <Route path="/admin/rewards" element={<Rewards />} />
+              <Route path="/admin/payroll" element={<Payroll />} />
+              <Route path="/admin/item-report/:id" element={<ItemReport />} />
+            </Route>
 
             {/* Seller Routes - Protected by RouteGuard */}
             <Route path="/seller/dashboard" element={<SalePoint />} />
