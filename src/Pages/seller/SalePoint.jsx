@@ -82,7 +82,7 @@ export const SalePoint = () => {
     state: false,
     billId: null,
   });
-  const [isPayout,setIsPayout] = useState(false)
+  const [isPayout, setIsPayout] = useState(false)
 
 
 
@@ -311,7 +311,7 @@ export const SalePoint = () => {
       }),
     );
     localStorage.setItem('processingPayment', JSON.stringify({
-      state: false, 
+      state: false,
       message: ''
     }))
     // Clear search and keyboard state
@@ -505,6 +505,7 @@ export const SalePoint = () => {
           message: 'Payment Done!'
         }))
         handleCancelTransaction();
+        queryClient.invalidateQueries({ queryKey: ['get_all_transactions', 'get_bill_details'] })
       }
       // -------------- For Reciept print-------------
 

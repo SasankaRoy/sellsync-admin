@@ -4,6 +4,7 @@ import {
   ArrowLeft,
   BadgeDollarSign,
   ChartBarStacked,
+  CircleArrowOutDownRight,
   CircleOff,
   PiggyBank,
   TicketX,
@@ -22,6 +23,7 @@ import { handleLogOut } from "../../utils/apis/handleLogout";
 import { useSelector } from "react-redux";
 import { AnimatePresence } from "framer-motion";
 import { OnScreenKeyboard } from "../../components/UI/OnScreenKeyboard/OnScreenKeyboard";
+import { getTotalPayout } from "../../utils/apis/PurchaseAndExpense";
 // import { Loading } from "../../components/UI/Loading/Loading";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -196,6 +198,11 @@ export const AllSalesReports = () => {
     queryKey: ['get_starting_cash'],
     queryFn: GetStartingCash
   });
+  const { data: totalPayout, isLoading: isLoadingPayout, isError: isErrorPayout } = useQuery({
+    queryKey: ['get_total_payout'],
+    queryFn: getTotalPayout
+  });
+
 
 
 
@@ -238,6 +245,8 @@ export const AllSalesReports = () => {
 
 
 
+
+
   return (
     <>
       <SellerNavbar />
@@ -257,7 +266,7 @@ export const AllSalesReports = () => {
           </h3>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 lg:gap-4 mb-4 sm:mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 lg:gap-4 mb-4 sm:mb-6">
           <Overviewcards
             cardTitle="Total Sale"
             cardValue={totalTransaction}
@@ -266,7 +275,7 @@ export const AllSalesReports = () => {
             icon={<BadgeDollarSign size={40} color="green" />}
           />
           <Overviewcards
-            cardTitle="Refunded"
+            cardTitle="Total Refunds"
             cardValue={refunds.length}
             percent="Down"
             className="text-xs sm:text-sm lg:text-base"
@@ -274,11 +283,18 @@ export const AllSalesReports = () => {
           />
 
           <Overviewcards
-            cardTitle="Taking"
+            cardTitle="Total Taking"
             cardValue={totalTaking}
             percent="Up"
             className="text-xs sm:text-sm lg:text-base"
             icon={<ChartBarStacked size={40} color="blue" />}
+          />
+          <Overviewcards
+            cardTitle="Total Payout"
+            cardValue={parseFloat(totalPayout?.total_purchase) + parseFloat(totalPayout?.total_expense)}
+            percent="Up"
+            className="text-xs sm:text-sm lg:text-base"
+            icon={<CircleArrowOutDownRight size={40} color="red" />}
           />
         </div>
 
@@ -382,7 +398,7 @@ export const AllSalesReports = () => {
                 <input
                   className={`bg-(--secondary-color) text-xs sm:text-sm lg:text-[1.3dvw] px-2 sm:px-3 py-1 sm:py-1.5 outline-none border-none font-semibold w-24 sm:w-32 `} readOnly
                   placeholder="1000"
-                  value={parseFloat(startingCash) + parseFloat(totalTaking)}
+                  value={(parseFloat(startingCash) + parseFloat(totalTaking) - (parseFloat(totalPayout?.total_purchase) + parseFloat(totalPayout?.total_expense)))}
                 />
               </div>
             </div>

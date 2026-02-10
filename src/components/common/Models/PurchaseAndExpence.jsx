@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { CircleX } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { getVendorList } from "../../../utils/apis/handleVendors";
@@ -20,6 +20,7 @@ export const PurchaseAndExpence = ({ setIsPayout }) => {
   const [dragActive, setDragActive] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(null);
+  const queryClient = useQueryClient();
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -155,6 +156,8 @@ export const PurchaseAndExpence = ({ setIsPayout }) => {
     });
     if (addPayout.status) {
       toast.success(addPayout.resData.message);
+      queryClient.invalidateQueries({ queryKey: ['get_total_payout'] });
+      queryClient.invalidateQueries({ queryKey: ['get_all_transactions'] });
       setIsPayout(false);
       handleCloseModel();
     }
@@ -327,11 +330,10 @@ export const PurchaseAndExpence = ({ setIsPayout }) => {
           </label>
 
           <div
-            className={`w-full border-2 border-dashed rounded-lg h-[5dvw] p-4 cursor-pointer ${
-              dragActive
+            className={`w-full border-2 border-dashed rounded-lg h-[5dvw] p-4 cursor-pointer ${dragActive
                 ? "border-blue-500 bg-blue-50"
                 : "border-gray-300 bg-gray-50 flex justify-center items-center gap-4"
-            }`}
+              }`}
             onDragEnter={handleDrag}
             onDragLeave={handleDrag}
             onDragOver={handleDrag}
