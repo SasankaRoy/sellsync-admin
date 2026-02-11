@@ -46,3 +46,89 @@ export const getTotalPayout = async () => {
         return error.message || error.response.data.message || 'Failed to get total payout';
     }
 }
+
+export const getAllExpenceList = async () => {
+    try {
+        const getExpenceList = await axiosInstance.post('/api/v1/daily/expense-list',
+            {
+                "page": 1,
+                "limit": 100
+            }
+        );
+
+        if (getExpenceList.status === 200 && getExpenceList.data) {
+            return getExpenceList.data.results;
+        }
+
+        return getExpenceList.data.results;
+    } catch (error) {
+        console.error(error);
+        return error.message || error.response.data.message || 'Failed to get all expence list';
+    }
+}
+
+export const getAllPurchaseList = async () => {
+    try {
+        const getPurchaseList = await axiosInstance.post('/api/v1/daily/purchase-list',
+            {
+                "page": 1,
+                "limit": 100
+            }
+        );
+
+        if (getPurchaseList.status === 200 && getPurchaseList.data) {
+            return getPurchaseList.data.results;
+        }
+
+        return getPurchaseList.data.results;
+    } catch (error) {
+        console.error(error);
+        return error.message || error.response.data.message || 'Failed to get all expence list';
+    }
+}
+
+
+export const exportPurchaseList = async (filters) => {
+    try {
+        const { day, page, items } = filters
+        const exportPurchaseList = await axiosInstance.get(`/api/v1/daily/purchase/export/csv?day=${day}&page=${page}&limit=${items}`
+        );
+
+        if (exportPurchaseList.status === 200 && exportPurchaseList.data) {
+            const blob = new Blob([exportPurchaseList.data], { type: "text/csv" });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "purchase_list.csv";
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+
+    } catch (error) {
+        console.error(error);
+        return error.message || error.response.data.message || 'Failed to export purchase list';
+    }
+}
+export const exportExpenseList = async (filters) => {
+    try {
+        const { day, page, items } = filters
+        const exportPurchaseList = await axiosInstance.get(`/api/v1/daily/expense/export/csv?day=${day}&page=${page}&limit=${items}`
+        );
+
+        if (exportPurchaseList.status === 200 && exportPurchaseList.data) {
+            const blob = new Blob([exportPurchaseList.data], { type: "text/csv" });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "expense_list.csv";
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+
+    } catch (error) {
+        console.error(error);
+        return error.message || error.response.data.message || 'Failed to export purchase list';
+    }
+}

@@ -2,9 +2,9 @@ import { toast } from "react-toastify";
 import axiosInstance from "../axios-interceptor";
 
 export const handleGetAllBills = async (filters) => {
-  const {byDate,byStatus} = filters
+  const { byDate, byStatus, userType } = filters
   try {
-    const getSalesData = await axiosInstance.get(`/api/v1/bills?day=${byDate}&status=${byStatus}&userTyp=emp&page=1&limit=10`);
+    const getSalesData = await axiosInstance.get(`/api/v1/bills?day=${byDate}&status=${byStatus}&userTyp=${userType}&page=1&limit=10`);
     if (getSalesData.data && getSalesData.status === 200) {
       return getSalesData.data.bills;
     }

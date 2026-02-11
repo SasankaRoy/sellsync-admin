@@ -505,7 +505,8 @@ export const SalePoint = () => {
           message: 'Payment Done!'
         }))
         handleCancelTransaction();
-        queryClient.invalidateQueries({ queryKey: ['get_all_transactions', 'get_bill_details'] })
+        queryClient.invalidateQueries({ queryKey: ['get_all_transactions'] })
+        queryClient.invalidateQueries({ queryKey: ['get_bill_details'] })
       }
       // -------------- For Reciept print-------------
 

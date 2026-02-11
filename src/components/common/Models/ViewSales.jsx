@@ -8,7 +8,7 @@ import {
   Users,
 } from "lucide-react";
 import React, { useState } from "react";
-import axiosInstance from "../../../utils/axios-interceptor";
+import Cookies from "js-cookie";
 import { Loading } from "../../UI/Loading/Loading";
 import moment from "moment";
 import { useDispatch, useSelector } from "react-redux";
@@ -32,9 +32,11 @@ export const ViewSales = ({ setViewSale, billID }) => {
   const [currentActiveTab, setCurrentActiveTab] = useState(tabPrefix.amount);
   const dispatch = useDispatch();
   const currentBillId = useSelector((state) => state.currentBill.billId);
+  const loggedUser = useSelector((state) => state.loggedUser);
   const router = useNavigate();
   const navigate = useLocation();
   const queryClient = useQueryClient();
+  const userType = Cookies.get("u_type");
   const handleTabSwitch = (prefix) => {
     setCurrentActiveTab(prefix);
   };
@@ -42,17 +44,15 @@ export const ViewSales = ({ setViewSale, billID }) => {
     switch (currentPrefix) {
       case tabPrefix.amount:
         return <AmountTab billData={data} />;
-        break;
+
       case tabPrefix.items:
         return <ItemsTab billData={data} />;
-        break;
+
       case tabPrefix.customer:
         return <CustomerTab billData={data} />;
-        break;
 
       default:
         return <AmountTab billData={data} />;
-        break;
     }
   };
 
@@ -64,7 +64,7 @@ export const ViewSales = ({ setViewSale, billID }) => {
   const handleCompleteTranscation = async () => {
     const reqUpdateBillStatus = await handleBillStatusUpdate(
       data._id || data.id,
-      "OPEN"
+      "OPEN",
     );
 
     if (reqUpdateBillStatus) {
@@ -79,7 +79,7 @@ export const ViewSales = ({ setViewSale, billID }) => {
             tax_percentage: item.taxRate,
             product_price: item.price,
             product_image: item.product_image,
-          })
+          }),
         );
       });
 
@@ -90,10 +90,13 @@ export const ViewSales = ({ setViewSale, billID }) => {
         billId: null,
       });
       queryClient.invalidateQueries(["get_bill_details"]);
-      localStorage.setItem('processingPayment', JSON.stringify({
-        state: false,
-        message: ''
-      }))
+      localStorage.setItem(
+        "processingPayment",
+        JSON.stringify({
+          state: false,
+          message: "",
+        }),
+      );
       // toast.success("Transcation completed successfully");
     }
   };
@@ -101,7 +104,7 @@ export const ViewSales = ({ setViewSale, billID }) => {
   const handleCancelTranscation = async () => {
     const reqUpdateBillStatus = await handleBillStatusUpdate(
       billID,
-      "CANCELLED"
+      "CANCELLED",
     );
     if (reqUpdateBillStatus) {
       if (billID === currentBillId) dispatch(clearCurrentBill());
@@ -161,9 +164,10 @@ export const ViewSales = ({ setViewSale, billID }) => {
                     onClick={() => {
                       handleTabSwitch(tabPrefix.amount);
                     }}
-                    className={` p-3 font-semibold mainFont text-(--mainText-color)/70 cursor-pointer hover:bg-(--button-color1) hover:text-white   flex justify-center items-center ${currentActiveTab === tabPrefix.amount &&
+                    className={` p-3 font-semibold mainFont text-(--mainText-color)/70 cursor-pointer hover:bg-(--button-color1) hover:text-white   flex justify-center items-center ${
+                      currentActiveTab === tabPrefix.amount &&
                       "bg-(--button-color1) text-white "
-                      } gap-3 transition-all duration-300 ease-linear`}
+                    } gap-3 transition-all duration-300 ease-linear`}
                   >
                     <BanknoteArrowDown />
                     Amount and Payments
@@ -172,9 +176,10 @@ export const ViewSales = ({ setViewSale, billID }) => {
                     onClick={() => {
                       handleTabSwitch(tabPrefix.items);
                     }}
-                    className={` p-3 font-semibold mainFont text-(--mainText-color)/70 cursor-pointer hover:bg-(--button-color1) hover:text-white   flex justify-center ${currentActiveTab === tabPrefix.items &&
+                    className={` p-3 font-semibold mainFont text-(--mainText-color)/70 cursor-pointer hover:bg-(--button-color1) hover:text-white   flex justify-center ${
+                      currentActiveTab === tabPrefix.items &&
                       "bg-(--button-color1) text-white "
-                      } items-center gap-3 transition-all duration-300 ease-linear`}
+                    } items-center gap-3 transition-all duration-300 ease-linear`}
                   >
                     <BaggageClaim />
                     Items/Products
@@ -183,9 +188,10 @@ export const ViewSales = ({ setViewSale, billID }) => {
                     onClick={() => {
                       handleTabSwitch(tabPrefix.customer);
                     }}
-                    className={` p-3 font-semibold mainFont text-(--mainText-color)/70 cursor-pointer hover:bg-(--button-color1) hover:text-white   flex justify-center ${currentActiveTab === tabPrefix.customer &&
+                    className={` p-3 font-semibold mainFont text-(--mainText-color)/70 cursor-pointer hover:bg-(--button-color1) hover:text-white   flex justify-center ${
+                      currentActiveTab === tabPrefix.customer &&
                       "bg-(--button-color1) text-white "
-                      } items-center gap-3 transition-all duration-200 ease-linear`}
+                    } items-center gap-3 transition-all duration-200 ease-linear`}
                   >
                     <Users />
                     Customer Info
@@ -205,7 +211,7 @@ export const ViewSales = ({ setViewSale, billID }) => {
                     </span>
                     <h5
                       className={`text-[1dvw] shrink-0 font-bold  ${handleStatusColor(
-                        data.status
+                        data.status,
                       )} px-3 py-1 rounded`}
                     >
                       {data.status}
@@ -280,16 +286,17 @@ export const ViewSales = ({ setViewSale, billID }) => {
                 </div>
               </div>
               <div className="flex justify-end items-center gap-4 my-3">
-                {navigate.pathname !== "/seller/sales-report" && (
-                  <button
-                    onClick={() => {
-                      router(`/seller/sales-report`);
-                    }}
-                    className="w-full flex gap-4 justify-center items-center sm:w-auto px-6 py-2 bg-[var(--button-color1)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-200"
-                  >
-                    View Sales <BadgeDollarSign />
-                  </button>
-                )}
+                {navigate.pathname !== "/seller/sales-report" &&
+                  userType !== "admin" && (
+                    <button
+                      onClick={() => {
+                        router(`/seller/sales-report`);
+                      }}
+                      className="w-full flex gap-4 justify-center items-center sm:w-auto px-6 py-2 bg-[var(--button-color1)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-200"
+                    >
+                      View Sales <BadgeDollarSign />
+                    </button>
+                  )}
                 <button
                   onClick={() => {
                     setViewSale({
@@ -305,7 +312,10 @@ export const ViewSales = ({ setViewSale, billID }) => {
                   {data.status === "PAID" ? "Reprint Bill" : "Print Bill"}
                 </button>
                 <button
-                  // disabled={data.status === "PAID"}
+                  disabled={
+                    data.status === "PAID" ||
+                    loggedUser?.id !== data?.created_by
+                  }
                   onClick={handleCompleteTranscation}
                   className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed"
                 >
@@ -339,7 +349,7 @@ const AmountTab = ({ billData }) => {
             </span>
             <h5 className="text-[1dvw] shrink-0 font-semibold line-clamp-1">
               {" "}
-              $ {summary.subTotal.toFixed(2)}.00
+              $ {summary?.subTotal.toFixed(2)}.00
             </h5>
           </div>
         </div>
@@ -349,8 +359,8 @@ const AmountTab = ({ billData }) => {
               Discount :-
             </span>
             <h5 className="text-[1dvw] shrink-0 line-clamp-1 font-semibold">
-              {summary.discount.type === "FLAT" ? "$" : "%"}{" "}
-              {summary.discount.amount}.00
+              {summary?.discount.type === "FLAT" ? "$" : "%"}{" "}
+              {summary?.discount.amount}.00
             </h5>
           </div>
         </div>
@@ -361,7 +371,7 @@ const AmountTab = ({ billData }) => {
             </span>
             <h5 className="text-[1dvw] shrink-0 line-clamp-1 font-semibold">
               {" "}
-              $ {summary.grandTotal.toFixed(2)}.00
+              $ {summary?.grandTotal.toFixed(2)}.00
             </h5>
           </div>
         </div>
@@ -440,7 +450,8 @@ const ItemsTab = ({ billData }) => {
     </>
   );
 };
-const CustomerTab = ({ data }) => {
+const CustomerTab = ({ billData }) => {
+  const customerInfo = billData?.customerInfo;
   return (
     <>
       <div className="w-full grid grid-cols-2 gap-5 p-5 border border-(--button-color1) rounded-b-md">
@@ -448,27 +459,33 @@ const CustomerTab = ({ data }) => {
           <span className="text-[1dvw] font-semibold mainFont text-(--mainText-color)/70">
             Name
           </span>
-          <h3 className="font-semibold text-[1.2dvw] mainFont">Sasanka</h3>{" "}
+          <h3 className="font-semibold text-[1.2dvw] mainFont">
+            {customerInfo?.name || "N/A"}
+          </h3>{" "}
         </div>
         <div className="bg-(--border-color)/30 flex justify-start rounded-sm shadow gap-5 p-4 items-center">
           <span className="text-[1dvw] font-semibold mainFont text-(--mainText-color)/70">
             Phone Number
           </span>
-          <h3 className="font-semibold text-[1.2dvw] mainFont">9856325425</h3>{" "}
+          <h3 className="font-semibold text-[1.2dvw] mainFont">
+            {customerInfo?.phone || "N/A"}
+          </h3>{" "}
         </div>
         <div className="bg-(--border-color)/30 flex justify-start rounded-sm shadow gap-5 p-4 items-center">
           <span className="text-[1dvw] font-semibold mainFont text-(--mainText-color)/70">
             Email
           </span>
           <h3 className="font-semibold text-[1.2dvw] mainFont">
-            sasanka.kyptronix@gmail.com
+            {customerInfo?.email || "N/A"}
           </h3>{" "}
         </div>
         <div className="bg-(--border-color)/30 flex justify-start rounded-sm shadow gap-5 p-4 items-center">
           <span className="text-[1dvw] font-semibold mainFont text-(--mainText-color)/70">
             Address
           </span>
-          <h3 className="font-semibold text-[1.2dvw] mainFont">Down town</h3>{" "}
+          <h3 className="font-semibold text-[1.2dvw] mainFont">
+            {customerInfo?.address || "N/A"}
+          </h3>{" "}
         </div>
       </div>
     </>

@@ -70,7 +70,8 @@ const Sales = () => {
   };
   const [filter, setFilter] = useState({
     byDate: 'TODAY',
-    byStatus: ''
+    byStatus: '',
+    userType: 'emp'
   });
 
 

@@ -722,7 +722,7 @@ export const Layout = ({ children }) => {
             >
               Suppliers
             </NavLink>
-            <NavLink
+            {/* <NavLink
               to="/admin/inventory/receive"
               className={({ isActive }) => {
                 isActive && setSubMenuStateInventory(true);
@@ -767,7 +767,7 @@ export const Layout = ({ children }) => {
               onClick={() => handleNavigation("/admin/inventory/order")}
             >
               Orders
-            </NavLink>
+            </NavLink> */}
           </div>
         </div>
 
@@ -908,7 +908,7 @@ export const Layout = ({ children }) => {
             className={`bg-[#0052cc]/50 w-[80%] mx-auto rounded-md flex flex-col gap-2 ${subMenuStatePos ? "h-auto opacity-100 p-2 " : "h-0 opacity-0"
               } transition-all duration-300 ease-linear overflow-hidden`}
           >
-            <NavLink
+            {/* <NavLink
               onClick={(e) => {
                 e.stopPropagation();
                 handleNavigation("/admin/pos/journals");
@@ -933,7 +933,7 @@ export const Layout = ({ children }) => {
               }}
             >
               Journal
-            </NavLink>
+            </NavLink> */}
             <NavLink
               onClick={(e) => {
                 e.stopPropagation();
@@ -1012,7 +1012,7 @@ export const Layout = ({ children }) => {
             >
               Customer Display
             </NavLink>
-            <NavLink
+            {/* <NavLink
               onClick={(e) => {
                 e.stopPropagation();
                 handleNavigation("/admin/pos/edi-file");
@@ -1037,8 +1037,8 @@ export const Layout = ({ children }) => {
               }}
             >
               EDI File
-            </NavLink>
-            <NavLink
+            </NavLink> */}
+            {/* <NavLink
               onClick={(e) => {
                 e.stopPropagation();
                 handleNavigation("/admin/pos/pos-categorries");
@@ -1063,7 +1063,7 @@ export const Layout = ({ children }) => {
               }}
             >
               POS Categorries
-            </NavLink>
+            </NavLink> */}
             <NavLink
               onClick={(e) => {
                 e.stopPropagation();

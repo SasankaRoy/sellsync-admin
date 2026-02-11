@@ -158,6 +158,8 @@ export const PurchaseAndExpence = ({ setIsPayout }) => {
       toast.success(addPayout.resData.message);
       queryClient.invalidateQueries({ queryKey: ['get_total_payout'] });
       queryClient.invalidateQueries({ queryKey: ['get_all_transactions'] });
+      queryClient.invalidateQueries({ queryKey: ["get_purchase_list"] });
+      queryClient.invalidateQueries({ queryKey: ["get_expense_list"] });
       setIsPayout(false);
       handleCloseModel();
     }

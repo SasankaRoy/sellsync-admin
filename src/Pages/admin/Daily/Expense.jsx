@@ -9,6 +9,14 @@ import {
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import { CircleX, Edit, Eye, Trash, Download } from "lucide-react";
+import {
+  exportExpenseList,
+  getAllExpenceList,
+} from "../../../utils/apis/PurchaseAndExpense";
+import { useQuery } from "@tanstack/react-query";
+import { Loading } from "../../../components/UI/Loading/Loading";
+import { InvoiceDownloadBtn } from "../../../components/common/Models/DownloadFileBTN";
+import { PurchaseAndExpence } from "../../../components/common/Models/PurchaseAndExpence";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -58,15 +66,37 @@ const ActionBtns = (props) => {
   );
 };
 
+// const InvoiceDownloadBtn = (props) => {
+//   const { data } = props;
+//   const invoiceUrl = data?.expense_invoice_image;
+
+//   if (!invoiceUrl || invoiceUrl === "N/A") {
+//     return <span className="text-gray-400 italic text-sm">No File</span>;
+//   }
+
+//   return (
+//     <div className="w-full h-full flex justify-center items-center">
+//       <a
+//         href={invoiceUrl}
+//         target="_blank"
+//         rel="noopener noreferrer"
+//         className="text-[var(--button-color5)] hover:text-[#F8A61B] transition-all duration-300"
+//         title="Download Invoice"
+//         download
+//       >
+//         <Download size={18} />
+//       </a>
+//     </div>
+//   );
+// };
+
 export const ExpenseList = () => {
   const [selectedRowData, setSelectedRowData] = useState([]);
-  const [rowData, setRowData] = useState([
-    { key: "1", ID: "1279", ExpenseType: "Office Supplies", DueDate: "2025-07-29", Description: "Expense purchase", InvoiceImage: "N/A", AmountType: "Cash", Amount: 0 },
-    { key: "2", ID: "1280", ExpenseType: "Utilities", DueDate: "2025-07-29", Description: "Expense purchase", InvoiceImage: "N/A", AmountType: "Credit Card", Amount: 0 },
-    { key: "3", ID: "1281", ExpenseType: "Travel", DueDate: "2025-07-29", Description: "Expense purchase", InvoiceImage: "N/A", AmountType: "Bank Transfer", Amount: 0 },
-    { key: "4", ID: "1282", ExpenseType: "Marketing", DueDate: "2025-07-29", Description: "Expense purchase", InvoiceImage: "N/A", AmountType: "Check", Amount: 0 },
-    { key: "5", ID: "1283", ExpenseType: "Equipment", DueDate: "2025-07-29", Description: "Expense purchase", InvoiceImage: "N/A", AmountType: "Cash", Amount: 0 },
-  ]);
+  const [filters, setFilters] = useState({
+    day: "TODAY",
+    page: 1,
+    items: 100,
+  });
 
   const [showModel, setShowModel] = useState({
     state: false,
@@ -133,13 +163,18 @@ export const ExpenseList = () => {
   };
 
   const [colDefs, setColDefs] = useState([
-    { field: "ID" },
-    { field: "ExpenseType", headerName: "Expense Type", width: 150 },
-    { field: "DueDate", headerName: "Due date", width: 120 },
-    { field: "Description", headerName: "Description", width: 200 },
-    { field: "InvoiceImage", headerName: "Invoice Image", width: 150 },
-    { field: "AmountType", headerName: "Amount Type", width: 120 },
-    { field: "Amount", headerName: "Amount", width: 120 },
+    { field: "id", headerName: "ID" },
+    { field: "expense_name", headerName: "Expense Name" },
+    { field: "vendor_name", headerName: "Vendor Name" },
+    { field: "expense_type", headerName: "Expense Type" },
+    { field: "due_date", headerName: "Date" },
+    { field: "payment_mode", headerName: "Payment Mode" },
+    { field: "expense_amount", headerName: "Expense Amount" },
+    {
+      field: "expense_invoice_image",
+      headerName: "Download Invoice file",
+      cellRenderer: InvoiceDownloadBtn,
+    },
     {
       headerName: "Actions",
       field: "actions",
@@ -160,51 +195,58 @@ export const ExpenseList = () => {
     };
   }, []);
 
+  const { data: rowData, isLoading } = useQuery({
+    queryKey: ["get_expense_list"],
+    queryFn: () => getAllExpenceList(),
+  });
+
   return (
     <>
       <Layout>
-        <div className="pb-14 w-full px-4 sm:px-6 lg:px-0">
-          <div className="w-full">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-0">
-              <h3 className="text-2xl sm:text-3xl lg:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
-                Expense List
-              </h3>
-              <div className="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-3 sm:gap-5 w-full sm:w-auto">
-                <button
-                  onClick={onAddExpense}
-                  className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color1)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm sm:text-base lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear w-full sm:w-auto"
-                >
-                  Add Expense <PluseIcon />
-                </button>
-                <button className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
-                Import CSV <PluseIcon />
-                </button>
-
-                
-              </div>
-            </div>
-          </div>
-
-          <div className="w-full h-[60vh] sm:h-[70vh] lg:h-[75vh]">
-            <div className="w-full flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-full">
-              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-1.5 shrink-0 gap-3">
-                <div className="flex justify-between sm:justify-center items-center gap-3">
-                  <select className="font-[500] mainFont px-4 border-none outline-none text-sm lg:text-base">
-                    <option>All Expenses</option>
-                    <option>Office Supplies</option>
-                    <option>Utilities</option>
-                    <option>Travel</option>
-                    <option>Marketing</option>
-                    <option>Equipment</option>
-                  </select>
-                  <div className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-[1.8dvw] lg:w-[1.8dvw] bg-[var(--counterBg-color)] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem] sm:min-w-[1.75rem] sm:min-h-[1.75rem] md:min-w-[2rem] md:min-h-[2rem]">
-                    <p className="text-xs sm:text-xs md:text-sm lg:text-[1dvw] font-[500] text-white">
-                      {rowData.length}
-                    </p>
+        {isLoading ? (
+          <Loading />
+        ) : (
+          <>
+            <div className="pb-14 w-full px-4 sm:px-6 lg:px-0">
+              <div className="w-full">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-0">
+                  <h3 className="text-2xl sm:text-3xl lg:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
+                    Expense List
+                  </h3>
+                  <div className="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-3 sm:gap-5 w-full sm:w-auto">
+                    <button
+                      onClick={onAddExpense}
+                      className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color1)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm sm:text-base lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear w-full sm:w-auto"
+                    >
+                      Add Expense <PluseIcon />
+                    </button>
+                    <button className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
+                      Import CSV <PluseIcon />
+                    </button>
                   </div>
                 </div>
-                <div className="flex gap-2 sm:gap-4 justify-between items-center flex-wrap">
-                  {/*<button
+              </div>
+
+              <div className="w-full h-[60vh] sm:h-[70vh] lg:h-[75vh]">
+                <div className="w-full flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-full">
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-1.5 shrink-0 gap-3">
+                    <div className="flex justify-between sm:justify-center items-center gap-3">
+                      <select className="font-[500] mainFont px-4 border-none outline-none text-sm lg:text-base">
+                        <option>All Expenses</option>
+                        <option>Office Supplies</option>
+                        <option>Utilities</option>
+                        <option>Travel</option>
+                        <option>Marketing</option>
+                        <option>Equipment</option>
+                      </select>
+                      <div className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-[1.8dvw] lg:w-[1.8dvw] bg-[var(--counterBg-color)] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem] sm:min-w-[1.75rem] sm:min-h-[1.75rem] md:min-w-[2rem] md:min-h-[2rem]">
+                        <p className="text-xs sm:text-xs md:text-sm lg:text-[1dvw] font-[500] text-white">
+                          {rowData.length}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 sm:gap-4 justify-between items-center flex-wrap">
+                      {/*<button
                     onClick={handleToolbarEdit}
                     className="flex justify-between items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC] hover:bg-[#003d99] transition-all duration-300"
                   >
@@ -216,54 +258,65 @@ export const ExpenseList = () => {
                   <button className="flex justify-between items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC]">
                     Filter <FilterIcon />
                   </button>*/}
-                  <button className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-1.5 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
-                  Export CSV <Download size={16} />
-                  </button>
-                  <button>
-                    <DeleteIcon />
-                  </button>
-                </div>
-              </div>
-              <div className="h-full w-full overflow-x-auto overflow-y-auto sm:overflow-x-auto sm:overflow-y-auto">
-                <div className="min-w-[800px] h-full">
-                  <AgGridReact
-                    rowData={rowData}
-                    columnDefs={colDefs}
-                    defaultColDef={defaultColDef}
-                    pagination={true}
-                    rowSelection={rowSelection}
-                    onSelectionChanged={(event) => {
-                      const selectedNodes = event.api.getSelectedNodes();
-                      setSelectedRowData(selectedNodes.map((node) => node.data));
-                      console.log("Selected data:", selectedNodes.map((node) => node.data));
-                    }}
-                    onCellValueChanged={(event) =>
-                      console.log(`New Cell Value: ${event.value}`)
-                    }
-                    getRowId={(params) => params.data.key}
-                    className="w-full h-full text-sm"
-                  />
+                      <button
+                        onClick={async () => await exportExpenseList(filters)}
+                        className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-1.5 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
+                      >
+                        Export CSV <Download size={16} />
+                      </button>
+                      <button>
+                        <DeleteIcon />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="h-full w-full overflow-x-auto overflow-y-auto sm:overflow-x-auto sm:overflow-y-auto">
+                    <div className="min-w-[800px] h-full">
+                      <AgGridReact
+                        rowData={rowData}
+                        columnDefs={colDefs}
+                        defaultColDef={defaultColDef}
+                        pagination={true}
+                        rowSelection={rowSelection}
+                        onSelectionChanged={(event) => {
+                          const selectedNodes = event.api.getSelectedNodes();
+                          setSelectedRowData(
+                            selectedNodes.map((node) => node.data),
+                          );
+                          console.log(
+                            "Selected data:",
+                            selectedNodes.map((node) => node.data),
+                          );
+                        }}
+                        onCellValueChanged={(event) =>
+                          console.log(`New Cell Value: ${event.value}`)
+                        }
+                        getRowId={(params) => params.data.key}
+                        className="w-full h-full text-sm"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
+          </>
+        )}
       </Layout>
 
-      {showModel.state && showModel.expenseData && (
+      {/* {showModel.state && showModel.expenseData && (
         <AddExpenseModal
           expenseData={showModel.expenseData}
           setShowModel={setShowModel}
           actionType={showModel.actionType}
-          setRowData={setRowData}
           rowData={rowData}
         />
+      )} */}
+      {showModel.state &&  (
+        <PurchaseAndExpence setIsPayout={setShowModel} />
       )}
       {deleteModel.state && deleteModel.expenseId && (
         <DeleteModel
           setDeleteModel={setDeleteModel}
           expenseId={deleteModel.expenseId}
-          setRowData={setRowData}
           rowData={rowData}
         />
       )}
@@ -271,23 +324,31 @@ export const ExpenseList = () => {
   );
 };
 
-const AddExpenseModal = ({ expenseData, setShowModel, actionType, setRowData, rowData }) => {
-  const [formData, setFormData] = useState(expenseData || {
-    ID: "",
-    ExpenseType: "",
-    DueDate: "",
-    Description: "",
-    InvoiceImage: "",
-    AmountType: "",
-    Amount: 0,
-  });
+const AddExpenseModal = ({
+  expenseData,
+  setShowModel,
+  actionType,
+  setRowData,
+  rowData,
+}) => {
+  const [formData, setFormData] = useState(
+    expenseData || {
+      ID: "",
+      ExpenseType: "",
+      DueDate: "",
+      Description: "",
+      InvoiceImage: "",
+      AmountType: "",
+      Amount: 0,
+    },
+  );
   const [showNewExpenseTypeInput, setShowNewExpenseTypeInput] = useState(false);
   const [expenseTypeOptions, setExpenseTypeOptions] = useState([
     "Office Supplies",
     "Utilities",
     "Travel",
     "Marketing",
-    "Equipment"
+    "Equipment",
   ]);
   const [dragActive, setDragActive] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
@@ -322,7 +383,7 @@ const AddExpenseModal = ({ expenseData, setShowModel, actionType, setRowData, ro
 
   // Handle file upload
   const handleFileUpload = (file) => {
-    if (file && file.type.startsWith('image/')) {
+    if (file && file.type.startsWith("image/")) {
       handleInputChange("InvoiceImage", file.name);
       // Create a preview URL for the image
       const previewUrl = URL.createObjectURL(file);
@@ -340,7 +401,7 @@ const AddExpenseModal = ({ expenseData, setShowModel, actionType, setRowData, ro
       setImagePreview(null);
     }
     handleInputChange("InvoiceImage", "");
-    document.getElementById('file-input').value = null; // Reset file input
+    document.getElementById("file-input").value = null; // Reset file input
   };
 
   // Clean up preview URL to prevent memory leaks
@@ -368,7 +429,7 @@ const AddExpenseModal = ({ expenseData, setShowModel, actionType, setRowData, ro
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    
+
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       handleFileUpload(e.dataTransfer.files[0]);
     }
@@ -395,10 +456,8 @@ const AddExpenseModal = ({ expenseData, setShowModel, actionType, setRowData, ro
       };
       setRowData([...rowData, newExpense]);
     } else if (actionType === "Edit") {
-      const updatedRowData = rowData.map(item => 
-        item.ID === formData.ID 
-          ? { ...item, ...formData }
-          : item
+      const updatedRowData = rowData.map((item) =>
+        item.ID === formData.ID ? { ...item, ...formData } : item,
       );
       setRowData(updatedRowData);
     }
@@ -425,7 +484,9 @@ const AddExpenseModal = ({ expenseData, setShowModel, actionType, setRowData, ro
             <div className="w-full flex flex-col gap-2">
               <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
                 Expense ID
-                <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">*</span>
+                <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
+                  *
+                </span>
               </label>
               <input
                 className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
@@ -438,14 +499,18 @@ const AddExpenseModal = ({ expenseData, setShowModel, actionType, setRowData, ro
             <div className="w-full flex flex-col gap-2">
               <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
                 Expense Type
-                <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">*</span>
+                <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
+                  *
+                </span>
               </label>
               {showNewExpenseTypeInput ? (
                 <div className="relative">
                   <input
                     type="text"
                     value={formData.ExpenseType}
-                    onChange={(e) => handleInputChange("ExpenseType", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("ExpenseType", e.target.value)
+                    }
                     className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                     placeholder="Enter new expense type"
                     autoFocus
@@ -454,7 +519,9 @@ const AddExpenseModal = ({ expenseData, setShowModel, actionType, setRowData, ro
                     type="button"
                     onClick={() => {
                       if (formData.ExpenseType.trim()) {
-                        setExpenseTypeOptions(prev => [...new Set([...prev, formData.ExpenseType.trim()])]);
+                        setExpenseTypeOptions((prev) => [
+                          ...new Set([...prev, formData.ExpenseType.trim()]),
+                        ]);
                       }
                       setShowNewExpenseTypeInput(false);
                     }}
@@ -469,7 +536,7 @@ const AddExpenseModal = ({ expenseData, setShowModel, actionType, setRowData, ro
                   <select
                     value={formData.ExpenseType}
                     onChange={(e) => {
-                      if (e.target.value === 'custom') {
+                      if (e.target.value === "custom") {
                         setShowNewExpenseTypeInput(true);
                         handleInputChange("ExpenseType", "");
                       } else {
@@ -480,13 +547,27 @@ const AddExpenseModal = ({ expenseData, setShowModel, actionType, setRowData, ro
                   >
                     <option value="">Select Expense Type</option>
                     {expenseTypeOptions.map((option, optIndex) => (
-                      <option key={optIndex} value={option}>{option}</option>
+                      <option key={optIndex} value={option}>
+                        {option}
+                      </option>
                     ))}
-                    <option value="custom" className="text-blue-500">➕ Add New Expense Type</option>
+                    <option value="custom" className="text-blue-500">
+                      ➕ Add New Expense Type
+                    </option>
                   </select>
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                    <svg className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                      <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                    <svg
+                      className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                   </div>
                 </div>
@@ -497,7 +578,9 @@ const AddExpenseModal = ({ expenseData, setShowModel, actionType, setRowData, ro
           <div className="w-full flex flex-col gap-2 mt-4">
             <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Due Date
-              <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">*</span>
+              <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
+                *
+              </span>
             </label>
             <input
               className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
@@ -510,7 +593,9 @@ const AddExpenseModal = ({ expenseData, setShowModel, actionType, setRowData, ro
           <div className="w-full flex flex-col gap-2 mt-4">
             <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Description
-              <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">*</span>
+              <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
+                *
+              </span>
             </label>
             <textarea
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
@@ -525,12 +610,16 @@ const AddExpenseModal = ({ expenseData, setShowModel, actionType, setRowData, ro
             <div className="w-full flex flex-col gap-2">
               <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
                 Amount Type
-                <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">*</span>
+                <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
+                  *
+                </span>
               </label>
               <select
                 className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                 value={formData.AmountType}
-                onChange={(e) => handleInputChange("AmountType", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("AmountType", e.target.value)
+                }
               >
                 <option value="">Select Amount Type</option>
                 <option value="Cash">Cash</option>
@@ -542,7 +631,9 @@ const AddExpenseModal = ({ expenseData, setShowModel, actionType, setRowData, ro
             <div className="w-full flex flex-col gap-2">
               <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
                 Amount
-                <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">*</span>
+                <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
+                  *
+                </span>
               </label>
               <input
                 className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
@@ -558,23 +649,33 @@ const AddExpenseModal = ({ expenseData, setShowModel, actionType, setRowData, ro
             <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Invoice Image
             </label>
-            <div 
+            <div
               className={`w-full border-2 border-dashed rounded-lg p-4 transition-colors duration-300 cursor-pointer ${
-                dragActive 
-                  ? 'border-blue-500 bg-blue-50' 
-                  : 'border-gray-300 bg-gray-50 hover:bg-gray-100'
+                dragActive
+                  ? "border-blue-500 bg-blue-50"
+                  : "border-gray-300 bg-gray-50 hover:bg-gray-100"
               }`}
               onDragEnter={handleDrag}
               onDragLeave={handleDrag}
               onDragOver={handleDrag}
               onDrop={handleDrop}
-              onClick={() => document.getElementById('file-input').click()}
+              onClick={() => document.getElementById("file-input").click()}
             >
               <div className="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-4">
                 <div className="flex flex-col items-center justify-center space-y-2">
                   <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                    <svg className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    <svg
+                      className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                      />
                     </svg>
                   </div>
                   <div>
@@ -583,22 +684,24 @@ const AddExpenseModal = ({ expenseData, setShowModel, actionType, setRowData, ro
                     </p>
                   </div>
                 </div>
-                {formData.InvoiceImage && formData.InvoiceImage !== "N/A" && imagePreview && (
-                  <div className="relative flex items-center space-x-2">
-                    <img
-                      src={imagePreview}
-                      alt="Invoice preview"
-                      className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-md"
-                    />
-                    <button
-                      onClick={handleRemoveImage}
-                      className="absolute -top-2 -right-2 bg-[var(--Negative-color)] text-white rounded-full p-1 hover:bg-red-700 transition-all duration-300"
-                      title="Remove image"
-                    >
-                      <CircleX size={14} className="sm:w-4 sm:h-4" />
-                    </button>
-                  </div>
-                )}
+                {formData.InvoiceImage &&
+                  formData.InvoiceImage !== "N/A" &&
+                  imagePreview && (
+                    <div className="relative flex items-center space-x-2">
+                      <img
+                        src={imagePreview}
+                        alt="Invoice preview"
+                        className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-md"
+                      />
+                      <button
+                        onClick={handleRemoveImage}
+                        className="absolute -top-2 -right-2 bg-[var(--Negative-color)] text-white rounded-full p-1 hover:bg-red-700 transition-all duration-300"
+                        title="Remove image"
+                      >
+                        <CircleX size={14} className="sm:w-4 sm:h-4" />
+                      </button>
+                    </div>
+                  )}
               </div>
               <input
                 id="file-input"
@@ -611,13 +714,13 @@ const AddExpenseModal = ({ expenseData, setShowModel, actionType, setRowData, ro
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-end items-center mt-6">
-            <button 
+            <button
               onClick={handleSubmit}
               className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300"
             >
               {actionType === "Add" ? "Create" : "Update"}
             </button>
-            <button 
+            <button
               onClick={handleCloseModel}
               className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color4)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300"
             >
@@ -632,7 +735,7 @@ const AddExpenseModal = ({ expenseData, setShowModel, actionType, setRowData, ro
 
 const DeleteModel = ({ setDeleteModel, expenseId, setRowData, rowData }) => {
   const handleDelete = () => {
-    setRowData(rowData.filter(item => item.ID !== expenseId));
+    setRowData(rowData.filter((item) => item.ID !== expenseId));
     setDeleteModel({
       state: false,
       expenseId: null,
@@ -643,7 +746,9 @@ const DeleteModel = ({ setDeleteModel, expenseId, setRowData, rowData }) => {
     <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center p-4">
       <div className="w-full sm:w-[80%] md:w-[60%] lg:w-[50%] p-4 sm:p-5 bg-white rounded-xl shadow-md flex flex-col gap-4">
         <div className="flex justify-between items-center w-full p-1">
-          <h3 className="text-lg sm:text-xl lg:text-[1.5dvw] font-semibold">Delete Expense</h3>
+          <h3 className="text-lg sm:text-xl lg:text-[1.5dvw] font-semibold">
+            Delete Expense
+          </h3>
           <button
             onClick={() => {
               setDeleteModel({
@@ -675,7 +780,7 @@ const DeleteModel = ({ setDeleteModel, expenseId, setRowData, rowData }) => {
           >
             Cancel
           </button>
-          <button 
+          <button
             onClick={handleDelete}
             className="w-full sm:w-auto bg-[var(--Negative-color)] text-white px-5 py-1.5 rounded-md flex justify-center items-center font-semibold text-base sm:text-lg lg:text-[1.1dvw] cursor-pointer"
           >

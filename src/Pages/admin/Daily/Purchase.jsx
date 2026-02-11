@@ -9,6 +9,14 @@ import {
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import { CircleX, Edit, Eye, Trash, Download } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import {
+  exportPurchaseList,
+  getAllPurchaseList,
+} from "../../../utils/apis/PurchaseAndExpense";
+import { Loading } from "../../../components/UI/Loading/Loading";
+import { InvoiceDownloadBtn } from "../../../components/common/Models/DownloadFileBTN";
+import { PurchaseAndExpence } from "../../../components/common/Models/PurchaseAndExpence";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -64,159 +72,11 @@ const ActionBtns = (props) => {
 };
 
 export const Purchase = () => {
-  const [selectedRowData, setSelectedRowData] = useState([]);
-  const [rowData, setRowData] = useState([
-    {
-      key: "1",
-      ID: "1279",
-      SelectVendor: "ABC Distributors",
-      DueDate: "2025-07-29",
-      InvoiceNbr: "INV-001",
-      Description: "Beverage purchase",
-      InvoiceImage: "N/A",
-      Payments: "$76.00",
-    },
-    {
-      key: "2",
-      ID: "1280",
-      SelectVendor: "ABC Distributors",
-      DueDate: "2025-07-29",
-      InvoiceNbr: "INV-002",
-      Description: "Beverage purchase",
-      InvoiceImage: "N/A",
-      Payments: "$76.00",
-    },
-    {
-      key: "3",
-      ID: "1281",
-      SelectVendor: "ABC Distributors",
-      DueDate: "2025-07-29",
-      InvoiceNbr: "INV-003",
-      Description: "Beverage purchase",
-      InvoiceImage: "N/A",
-      Payments: "$76.00",
-    },
-    {
-      key: "4",
-      ID: "1282",
-      SelectVendor: "ABC Distributors",
-      DueDate: "2025-07-29",
-      InvoiceNbr: "INV-004",
-      Description: "Beverage purchase",
-      InvoiceImage: "N/A",
-      Payments: "$76.00",
-    },
-    {
-      key: "5",
-      ID: "1283",
-      SelectVendor: "ABC Distributors",
-      DueDate: "2025-07-29",
-      InvoiceNbr: "INV-005",
-      Description: "Beverage purchase",
-      InvoiceImage: "N/A",
-      Payments: "$76.00",
-    },
-    {
-      key: "6",
-      ID: "1284",
-      SelectVendor: "ABC Distributors",
-      DueDate: "2025-07-29",
-      InvoiceNbr: "INV-006",
-      Description: "Beverage purchase",
-      InvoiceImage: "N/A",
-      Payments: "$76.00",
-    },
-    {
-      key: "7",
-      ID: "1285",
-      SelectVendor: "ABC Distributors",
-      DueDate: "2025-07-29",
-      InvoiceNbr: "INV-007",
-      Description: "Beverage purchase",
-      InvoiceImage: "N/A",
-      Payments: "$76.00",
-    },
-    {
-      key: "8",
-      ID: "1286",
-      SelectVendor: "ABC Distributors",
-      DueDate: "2025-07-29",
-      InvoiceNbr: "INV-008",
-      Description: "Beverage purchase",
-      InvoiceImage: "N/A",
-      Payments: "$76.00",
-    },
-    {
-      key: "9",
-      ID: "1287",
-      SelectVendor: "ABC Distributors",
-      DueDate: "2025-07-29",
-      InvoiceNbr: "INV-009",
-      Description: "Beverage purchase",
-      InvoiceImage: "N/A",
-      Payments: "$76.00",
-    },
-    {
-      key: "10",
-      ID: "1288",
-      SelectVendor: "ABC Distributors",
-      DueDate: "2025-07-29",
-      InvoiceNbr: "INV-010",
-      Description: "Beverage purchase",
-      InvoiceImage: "N/A",
-      Payments: "$76.00",
-    },
-    {
-      key: "11",
-      ID: "1289",
-      SelectVendor: "ABC Distributors",
-      DueDate: "2025-07-29",
-      InvoiceNbr: "INV-011",
-      Description: "Beverage purchase",
-      InvoiceImage: "N/A",
-      Payments: "$76.00",
-    },
-    {
-      key: "12",
-      ID: "1290",
-      SelectVendor: "ABC Distributors",
-      DueDate: "2025-07-29",
-      InvoiceNbr: "INV-012",
-      Description: "Beverage purchase",
-      InvoiceImage: "N/A",
-      Payments: "$76.00",
-    },
-    {
-      key: "13",
-      ID: "1291",
-      SelectVendor: "ABC Distributors",
-      DueDate: "2025-07-29",
-      InvoiceNbr: "INV-013",
-      Description: "Beverage purchase",
-      InvoiceImage: "N/A",
-      Payments: "$76.00",
-    },
-    {
-      key: "14",
-      ID: "1292",
-      SelectVendor: "ABC Distributors",
-      DueDate: "2025-07-29",
-      InvoiceNbr: "INV-014",
-      Description: "Beverage purchase",
-      InvoiceImage: "N/A",
-      Payments: "$76.00",
-    },
-    {
-      key: "15",
-      ID: "1293",
-      SelectVendor: "ABC Distributors",
-      DueDate: "2025-07-29",
-      InvoiceNbr: "INV-015",
-      Description: "Beverage purchase",
-      InvoiceImage: "N/A",
-      Payments: "$76.00",
-    },
-  ]);
+  const [filters, setFilters] = useState({
+    day: "TODAY",
+    page: 1,
+    items: 100,
+  });
 
   const [showModel, setShowModel] = useState({
     state: false,
@@ -293,13 +153,18 @@ export const Purchase = () => {
 
   // Column Definitions
   const [colDefs, setColDefs] = useState([
-    { field: "ID", headerName: "Purchase ID", width: 120 },
-    { field: "SelectVendor", headerName: "Vendor", width: 150 },
-    { field: "DueDate", headerName: "Due date", width: 120 },
-    { field: "InvoiceNbr", headerName: "Invoice Nbr", width: 120 },
-    { field: "Description", headerName: "Description", width: 200 },
-    { field: "InvoiceImage", headerName: "Invoice Image", width: 150 },
-    { field: "Payments", headerName: "Payments", width: 120 },
+    { field: "id", headerName: "Purchase ID" },
+    { field: "purchase_name", headerName: "Purchase Name" },
+    { field: "purchase_type", headerName: "Purchase Type" },
+    { field: "vendor_name", headerName: "Vendor Name" },
+    { field: "due_date", headerName: "Date" },
+    { field: "payment_mode", headerName: "Payment Mode" },
+    { field: "purchase_pay_amount", headerName: "Amount" },
+    {
+      field: "purchase_invoice_image",
+      headerName: "Download Invoice Image",
+      cellRenderer: InvoiceDownloadBtn,
+    },
     {
       headerName: "Actions",
       field: "actions",
@@ -325,49 +190,58 @@ export const Purchase = () => {
     };
   }, []);
 
+  const { data: rowData, isLoading } = useQuery({
+    queryKey: ["get_purchase_list"],
+    queryFn: () => getAllPurchaseList(),
+  });
+
+  console.log(rowData);
+
   return (
     <>
       <Layout>
-        <div className="pb-14 w-full px-4 sm:px-6 lg:px-0">
-          <div className="w-full">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-0">
-              <h3 className="text-2xl md:text-xl lg:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
-                Purchase Management
-              </h3>
-              <div className="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-3 sm:gap-5 w-full sm:w-auto">
-                <button
-                  onClick={onAddPurchase}
-                  className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color1)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
-                >
-                  Add Purchase <PluseIcon />
-                </button>
-                <button className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
-                Import CSV <PluseIcon />
-                </button>
-
-                
-              </div>
-            </div>
-          </div>
-
-          <div className="w-full h-[60vh] sm:h-[70vh] lg:h-[75vh]">
-            <div className="w-full flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-full">
-              <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center py-1.5 shrink-0 gap-3 sm:gap-0">
-                <div className="flex justify-between sm:justify-center items-center gap-3 w-full sm:w-auto">
-                  <select className="font-[500] mainFont px-4 border-none outline-none text-sm lg:text-base">
-                    <option>All Purchases</option>
-                    <option>Completed</option>
-                    <option>Pending</option>
-                    <option>Processing</option>
-                  </select>
-                  <div className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-[1.8dvw] lg:w-[1.8dvw] bg-[var(--counterBg-color)] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem] sm:min-w-[1.75rem] sm:min-h-[1.75rem] md:min-w-[2rem] md:min-h-[2rem]">
-                    <p className="text-xs sm:text-xs md:text-sm lg:text-[1dvw] font-[500] text-white">
-                      {rowData.length}
-                    </p>
+        {isLoading ? (
+          <Loading />
+        ) : (
+          <>
+            <div className="pb-14 w-full px-4 sm:px-6 lg:px-0">
+              <div className="w-full">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-0">
+                  <h3 className="text-2xl md:text-xl lg:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
+                    Purchase Management
+                  </h3>
+                  <div className="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-3 sm:gap-5 w-full sm:w-auto">
+                    <button
+                      onClick={onAddPurchase}
+                      className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color1)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
+                    >
+                      Add Purchase <PluseIcon />
+                    </button>
+                    <button className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
+                      Import CSV <PluseIcon />
+                    </button>
                   </div>
                 </div>
-                <div className="flex gap-2 sm:gap-4 justify-between items-center flex-wrap">
-                  {/*<button
+              </div>
+
+              <div className="w-full h-[60vh] sm:h-[70vh] lg:h-[75vh]">
+                <div className="w-full flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-full">
+                  <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center py-1.5 shrink-0 gap-3 sm:gap-0">
+                    <div className="flex justify-between sm:justify-center items-center gap-3 w-full sm:w-auto">
+                      <select className="font-[500] mainFont px-4 border-none outline-none text-sm lg:text-base">
+                        <option>All Purchases</option>
+                        <option>Completed</option>
+                        <option>Pending</option>
+                        <option>Processing</option>
+                      </select>
+                      <div className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-[1.8dvw] lg:w-[1.8dvw] bg-[var(--counterBg-color)] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem] sm:min-w-[1.75rem] sm:min-h-[1.75rem] md:min-w-[2rem] md:min-h-[2rem]">
+                        <p className="text-xs sm:text-xs md:text-sm lg:text-[1dvw] font-[500] text-white">
+                          {rowData.length}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 sm:gap-4 justify-between items-center flex-wrap">
+                      {/*<button
                     onClick={handleToolbarEdit}
                     className="flex justify-between items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC] hover:bg-[#003d99] transition-all duration-300"
                   >
@@ -379,59 +253,68 @@ export const Purchase = () => {
                   <button className="flex justify-between items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC]">
                     Filter <FilterIcon />
                   </button>*/}
-                  <button className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-1.5 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
-                  Export CSV <Download size={16} />
-                  </button>
+                      <button
+                        onClick={async () => {
+                          const res = await exportPurchaseList(filters);
+                          console.log(res, "res");
+                        }}
+                        className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-1.5 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
+                      >
+                        Export CSV <Download size={16} />
+                      </button>
 
-                  <button>
-                    <DeleteIcon />
-                  </button>
-                </div>
-              </div>
-              <div className="h-full w-full overflow-x-scroll overflow-y-auto">
-                <div className="min-w-[800px] h-full">
-                  <AgGridReact
-                    rowData={rowData}
-                    columnDefs={colDefs}
-                    defaultColDef={defaultColDef}
-                    pagination={true}
-                    rowSelection={rowSelection}
-                    onSelectionChanged={(event) => {
-                      const selectedNodes = event.api.getSelectedNodes();
-                      const selectedData = selectedNodes.map(
-                        (node) => node.data
-                      );
-                      setSelectedRowData(selectedData);
-                      console.log("Selected data updated:", selectedData);
-                    }}
-                    onCellValueChanged={(event) =>
-                      console.log(`New Cell Value: ${event.value}`)
-                    }
-                    getRowId={(params) => params.data.key}
-                    className="w-full h-full text-sm"
-                  />
+                      <button>
+                        <DeleteIcon />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="h-full w-full overflow-x-scroll overflow-y-auto">
+                    <div className="min-w-[800px] h-full">
+                      <AgGridReact
+                        rowData={rowData}
+                        columnDefs={colDefs}
+                        defaultColDef={defaultColDef}
+                        pagination={true}
+                        rowSelection={rowSelection}
+                        onSelectionChanged={(event) => {
+                          const selectedNodes = event.api.getSelectedNodes();
+                          const selectedData = selectedNodes.map(
+                            (node) => node.data,
+                          );
+                          // setSelectedRowData(selectedData);
+                          console.log("Selected data updated:", selectedData);
+                        }}
+                        onCellValueChanged={(event) =>
+                          console.log(`New Cell Value: ${event.value}`)
+                        }
+                        getRowId={(params) => params.data.key}
+                        className="w-full h-full text-sm"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
+          </>
+        )}
       </Layout>
 
-      {showModel.state && showModel.purchaseData && (
+      {/* {showModel.state && showModel.purchaseData && (
         <AddPurchaseModal
           purchaseData={showModel.purchaseData}
           setShowModel={setShowModel}
           actionType={showModel.actionType}
-          setRowData={setRowData}
           rowData={rowData}
         />
+      )} */}
+      {showModel.state && showModel.purchaseData && (
+        <PurchaseAndExpence setIsPayout={setShowModel} />
       )}
 
       {deleteModel.state && deleteModel.purchaseId && (
         <DeleteModel
           setDeleteModel={setDeleteModel}
           purchaseId={deleteModel.purchaseId}
-          setRowData={setRowData}
           rowData={rowData}
         />
       )}
@@ -455,7 +338,7 @@ const AddPurchaseModal = ({
       Description: "",
       InvoiceImage: "",
       Payments: "",
-    }
+    },
   );
   const [showNewVendorInput, setShowNewVendorInput] = useState(false);
   const [vendorOptions, setVendorOptions] = useState([
@@ -565,7 +448,7 @@ const AddPurchaseModal = ({
       setRowData([...rowData, newPurchase]);
     } else if (actionType === "Edit") {
       const updatedRowData = rowData.map((item) =>
-        item.ID === formData.ID ? { ...item, ...formData } : item
+        item.ID === formData.ID ? { ...item, ...formData } : item,
       );
       setRowData(updatedRowData);
     }
@@ -751,7 +634,8 @@ const AddPurchaseModal = ({
               min="0"
               step="0.01"
               placeholder="Enter Amount"
-              value={formData.Payments.replace(/[^0-9.]/g, "")}
+              // value={formData.Payments.replace(/[^0-9.]/g, "")}
+              // value={formData.Payments.replace(/[^0-9.]/g, "") || 0}
               onChange={(e) => {
                 const value = e.target.value.replace(/[^0-9.]/g, "");
                 handleInputChange("Payments", value);
