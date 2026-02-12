@@ -13,7 +13,7 @@ export const getAllTransactions = async ({
     const getTransaction = await axiosInstance.get(
       `api/v1/bills/transaction/list?storeId=${storeId}&method=${method}&day=${day}&status=${status}&search=${search}&page=${page}&limit=${limit}`
     );
-    if ((getAllTransactions.data && getAllTransactions.status === 200) || 201) {
+    if (getAllTransactions.data && getAllTransactions.status === 200) {
       return getTransaction.data || {};
     }
     return getTransaction.data || {};

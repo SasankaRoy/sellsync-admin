@@ -145,7 +145,7 @@ export const Reports = () => {
   // ]);
 
   // Column Definitions: Defines & controls grid columns.
-  const [colDefs, setColDefs] = useState([
+  const [colDefs,] = useState([
     { field: "billId", headerName: "Bill Id" },
     { field: "method", headerName: "Payment Type" },
     { headerName: "Status", field: "status" },
@@ -195,7 +195,7 @@ export const Reports = () => {
       headerName: "Total Sale",
       field: "Sale",
       cellRenderer: (item) => {
-        const { grandTotal, tendered } = item.data;
+        const { grandTotal, } = item.data;
         // console.log(amount.data.grandTotal amount.data.tendered)
         return `$ ${Math.round(Number(grandTotal) * 100) / 100}`;
       },

@@ -90,25 +90,25 @@ export const Sale = () => {
           forDot: "bg-blue-500",
           forText: "text-blue-500",
         };
-        break;
+       
       case "PAID":
         return {
           forDot: "bg-green-500",
           forText: "text-green-500",
         };
-        break;
+      
       case "HOLD":
         return {
           forDot: "bg-yellow-500",
           forText: "text-yellow-500",
         };
-        break;
+     
       case "CANCELLED":
         return {
           forDot: "bg-red-500",
           forText: "text-red-500",
         };
-        break;
+   
 
       default:
         break;
@@ -116,7 +116,7 @@ export const Sale = () => {
   };
 
   // Column Definitions: Defines & controls grid columns.
-  const [colDefs, setColDefs] = useState([
+  const [colDefs,] = useState([
     { field: "_id", headerName: "ID" },
     {
       field: "MobileNumber",
@@ -184,7 +184,7 @@ export const Sale = () => {
   const {
     data: rowData,
     isLoading,
-    isError,
+    // isError,
   } = useQuery({
     queryKey: ["get_all_transactions", filter, currentPage, itemsPerPage],
     queryFn: () =>
