@@ -38,12 +38,12 @@ export const AllSalesReports = () => {
     name: '',
     value: ''
   })
-  const [itemsPerPage, setItemsPerPage] = useState(50);
   const [transactions, setTransactions] = useState([]);
   const [totalTransaction, setTotalTransaction] = useState(0);
+  const [itemsPerPage, setItemsPerPage] = useState(50);
   const [dayFilter, setDayFilter] = useState('TODAY');
-  const queryClient = useQueryClient();
   const [gridApi, setGridApi] = useState(null);
+  const queryClient = useQueryClient();
   const [cashNotation, setCashNotation] = useState({
     100: '',
     50: '',
@@ -278,6 +278,7 @@ export const AllSalesReports = () => {
             cardTitle="Total Refunds"
             cardValue={refunds.length}
             percent="Down"
+            periodText={dayFilter}
             className="text-xs sm:text-sm lg:text-base"
             icon={<TicketX size={40} color="red" />}
           />
@@ -286,13 +287,18 @@ export const AllSalesReports = () => {
             cardTitle="Total Taking"
             cardValue={totalTaking}
             percent="Up"
+            periodText={dayFilter}
             className="text-xs sm:text-sm lg:text-base"
             icon={<ChartBarStacked size={40} color="blue" />}
           />
           <Overviewcards
             cardTitle="Total Payout"
-            cardValue={parseFloat(totalPayout?.total_purchase) + parseFloat(totalPayout?.total_expense)}
+            cardValue={
+              parseFloat(totalPayout?.total_purchase) +
+              parseFloat(totalPayout?.total_expense)
+            }
             percent="Up"
+            periodText={dayFilter}
             className="text-xs sm:text-sm lg:text-base"
             icon={<CircleArrowOutDownRight size={40} color="red" />}
           />
@@ -337,18 +343,18 @@ export const AllSalesReports = () => {
             </div>
             <div className="grid grid-cols-2 gap-6 border-b border-(--border-color) px-2 sm:px-3 py-3 sm:py-5  ">
               {[
-                { label: "$100", name: '100' },
-                { label: "$50", name: '50' },
-                { label: "$20", name: '20' },
-                { label: "$10", name: '10' },
-                { label: "$5", name: '5' },
-                { label: "$2", name: '2' },
-                { label: "$1", name: '1' },
-                { label: "50¢", name: '0.5' },
-                { label: "25¢", name: '0.25' },
-                { label: "10¢", name: '0.1' },
-                { label: "5¢", name: '0.05' },
-                { label: "1¢", name: '0.01' },
+                { label: "$100", name: "100" },
+                { label: "$50", name: "50" },
+                { label: "$20", name: "20" },
+                { label: "$10", name: "10" },
+                { label: "$5", name: "5" },
+                { label: "$2", name: "2" },
+                { label: "$1", name: "1" },
+                { label: "50¢", name: "0.5" },
+                { label: "25¢", name: "0.25" },
+                { label: "10¢", name: "0.1" },
+                { label: "5¢", name: "0.05" },
+                { label: "1¢", name: "0.01" },
               ].map((item, index) => (
                 <div
                   key={index}
@@ -359,13 +365,17 @@ export const AllSalesReports = () => {
                   </h3>
                   <input
                     className="bg-(--secondary-color) border border-transparent w-full px-1.5 sm:px-2 py-2 sm:py-2 rounded text-[1.2dvw] active:border-(--button-color1) focus:border-(--button-color1) focus:ring-(--button-color1) focus:outline-(--button-color1) active:outline-(--button-color1) transition-all ease-linear duration-200  mainFont focus:shadow-(--button-color1) active:shadow-(--button-color1)"
-                    placeholder="00" name={item.name} value={cashNotation[item.name]} onChange={handleOnChange} min='0'
+                    placeholder="00"
+                    name={item.name}
+                    value={cashNotation[item.name]}
+                    onChange={handleOnChange}
+                    min="0"
                     onFocus={(e) => {
                       e.stopPropagation();
                       setActiveInputField({
                         ...activeInputField,
                         name: item.name,
-                      })
+                      });
                       if (setIsKeyboardOpen) {
                         setIsKeyboardOpen(true);
                         // setActiveInputField({ type: "quantity", itemId: cur.id });
@@ -373,9 +383,9 @@ export const AllSalesReports = () => {
                     }}
                     onBlur={() => {
                       setActiveInputField({
-                        name: '',
-                        value: ''
-                      })
+                        name: "",
+                        value: "",
+                      });
                     }}
                   />
                 </div>
@@ -387,8 +397,9 @@ export const AllSalesReports = () => {
                   Total:
                 </p>
                 <input
-                  className={`bg-(--secondary-color) text-xs sm:text-sm lg:text-[1.3dvw] px-2 sm:px-3 py-1 sm:py-1.5 outline-none border-none font-semibold w-24 sm:w-32 ${(parseFloat(totalTaking) + parseFloat(startingCash)) === totalNotationAmount ? 'text-(--button-color5)' : 'text-(--Negative-color)'}`}
-                  placeholder="00" value={totalNotationAmount}
+                  className={`bg-(--secondary-color) text-xs sm:text-sm lg:text-[1.3dvw] px-2 sm:px-3 py-1 sm:py-1.5 outline-none border-none font-semibold w-24 sm:w-32 ${parseFloat(totalTaking) + parseFloat(startingCash) === totalNotationAmount ? "text-(--button-color5)" : "text-(--Negative-color)"}`}
+                  placeholder="00"
+                  value={totalNotationAmount}
                 />
               </div>
               <div className="flex justify-start items-center gap-2 sm:gap-5 px-2 sm:px-6 w-full sm:w-auto">
@@ -396,24 +407,38 @@ export const AllSalesReports = () => {
                   Sale:
                 </p>
                 <input
-                  className={`bg-(--secondary-color) text-xs sm:text-sm lg:text-[1.3dvw] px-2 sm:px-3 py-1 sm:py-1.5 outline-none border-none font-semibold w-24 sm:w-32 `} readOnly
+                  className={`bg-(--secondary-color) text-xs sm:text-sm lg:text-[1.3dvw] px-2 sm:px-3 py-1 sm:py-1.5 outline-none border-none font-semibold w-24 sm:w-32 `}
+                  readOnly
                   placeholder="1000"
-                  value={(parseFloat(startingCash) + parseFloat(totalTaking) - (parseFloat(totalPayout?.total_purchase) + parseFloat(totalPayout?.total_expense)))}
+                  value={
+                    parseFloat(startingCash) +
+                    parseFloat(totalTaking) -
+                    (parseFloat(totalPayout?.total_purchase) +
+                      parseFloat(totalPayout?.total_expense))
+                  }
                 />
               </div>
             </div>
             <div className="flex justify-center items-center mt-2 sm:mt-3">
-              <button onClick={() => {
-                handleLogOut({
-                  startingCash: startingCash,
-                  employeeId: loggedUser.id,
-                  currency: '$',
-                  totalTaking: totalTaking,
-                  totalNotationAmount: totalNotationAmount,
-                  totalBalance: parseFloat(startingCash) + parseFloat(totalTaking),
-                  cashNotation
-                })
-              }} disabled={(parseFloat(totalTaking) + parseFloat(startingCash)) !== totalNotationAmount} className="bg-(--Negative-color) text-(--primary-color) mainFont font-semibold w-[85%] text-xs sm:text-sm lg:text-[1.3dvw] py-2 sm:py-3 rounded-md cursor-pointer disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-70">
+              <button
+                onClick={() => {
+                  handleLogOut({
+                    startingCash: startingCash,
+                    employeeId: loggedUser.id,
+                    currency: "$",
+                    totalTaking: totalTaking,
+                    totalNotationAmount: totalNotationAmount,
+                    totalBalance:
+                      parseFloat(startingCash) + parseFloat(totalTaking),
+                    cashNotation,
+                  });
+                }}
+                disabled={
+                  parseFloat(totalTaking) + parseFloat(startingCash) !==
+                  totalNotationAmount
+                }
+                className="bg-(--Negative-color) text-(--primary-color) mainFont font-semibold w-[85%] text-xs sm:text-sm lg:text-[1.3dvw] py-2 sm:py-3 rounded-md cursor-pointer disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-70"
+              >
                 Log Off / Close Register
               </button>
             </div>
@@ -421,15 +446,12 @@ export const AllSalesReports = () => {
         </div>
       </div>
 
-
       {isKeyboardOpen && (
         <AnimatePresence mode="popLayout">
           <OnScreenKeyboard
             Change={handleOnChange}
             inputValue={activeInputField.value}
-            layoutName={
-              "numeric"
-            }
+            layoutName={"numeric"}
           />
         </AnimatePresence>
       )}

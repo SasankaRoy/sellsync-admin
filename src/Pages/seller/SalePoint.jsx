@@ -303,7 +303,7 @@ export const SalePoint = () => {
         id: product.id || product._id,
         name: product.name || product.product_name,
         product_price: parseFloat(
-          product.sale_price || product.price || product.product_avg_price || 0,
+          product.sale_price || product.price || product.product_price || 0,
         ),
         product_image: product.image || product.product_image || "",
         qty: 1,

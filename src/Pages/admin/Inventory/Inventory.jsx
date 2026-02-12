@@ -16,6 +16,12 @@ import { AgGridReact } from "ag-grid-react";
 import ProductImg1 from "../../../assets/images/ProductImg1.png";
 import { Doughtchart } from "../../../components/common/charts/Doughtchart";
 import { CircleX, Edit, Eye, Plus, Trash } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import {  
+  getAllProductList,
+} from "../../../utils/apis/handleProducts";
+import { Loading } from "../../../components/UI/Loading/Loading";
+import { DeleteModel } from "../../../components/common/Models/DeleteMode";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -99,112 +105,6 @@ const ActionBtns = (props) => {
 };
 
 export const Inventory = () => {
-  const [rowData, setRowData] = useState([
-    {
-      ID: "1279",
-      ProductName: "AW ROOR BEER 2LITER BTL",
-      Rank: "C",
-      QtyInHand: "-8",
-      OfDaysSupply: "0",
-      Cost: "$1.52",
-      Price: "$3.99",
-      StockCode: "YELLOWSMALLPIPE",
-      ReorderPoint: "0",
-      ReorderValue: "0",
-      Action: ActionBtns,
-    },
-    {
-      ID: "1279",
-      ProductName: "AW ROOR BEER 2LITER BTL",
-      Rank: "C",
-      QtyInHand: "-8",
-      OfDaysSupply: "0",
-      Cost: "$1.52",
-      Price: "$3.99",
-      StockCode: "YELLOWSMALLPIPE",
-      ReorderPoint: "0",
-      ReorderValue: "0",
-      Action: ActionBtns,
-    },
-    {
-      ID: "1279",
-      ProductName: "AW ROOR BEER 2LITER BTL",
-      Rank: "C",
-      QtyInHand: "-8",
-      OfDaysSupply: "0",
-      Cost: "$1.52",
-      Price: "$3.99",
-      StockCode: "YELLOWSMALLPIPE",
-      ReorderPoint: "0",
-      ReorderValue: "0",
-      Action: ActionBtns,
-    },
-    {
-      ID: "1279",
-      ProductName: "AW ROOR BEER 2LITER BTL",
-      Rank: "C",
-      QtyInHand: "-8",
-      OfDaysSupply: "0",
-      Cost: "$1.52",
-      Price: "$3.99",
-      StockCode: "YELLOWSMALLPIPE",
-      ReorderPoint: "0",
-      ReorderValue: "0",
-      Action: ActionBtns,
-    },
-    {
-      ID: "1279",
-      ProductName: "AW ROOR BEER 2LITER BTL",
-      Rank: "C",
-      QtyInHand: "-8",
-      OfDaysSupply: "0",
-      Cost: "$1.52",
-      Price: "$3.99",
-      StockCode: "YELLOWSMALLPIPE",
-      ReorderPoint: "0",
-      ReorderValue: "0",
-      Action: ActionBtns,
-    },
-    {
-      ID: "1279",
-      ProductName: "AW ROOR BEER 2LITER BTL",
-      Rank: "C",
-      QtyInHand: "-8",
-      OfDaysSupply: "0",
-      Cost: "$1.52",
-      Price: "$3.99",
-      StockCode: "YELLOWSMALLPIPE",
-      ReorderPoint: "0",
-      ReorderValue: "0",
-      Action: ActionBtns,
-    },
-    {
-      ID: "1279",
-      ProductName: "AW ROOR BEER 2LITER BTL",
-      Rank: "C",
-      QtyInHand: "-8",
-      OfDaysSupply: "0",
-      Cost: "$1.52",
-      Price: "$3.99",
-      StockCode: "YELLOWSMALLPIPE",
-      ReorderPoint: "0",
-      ReorderValue: "0",
-      Action: ActionBtns,
-    },
-    {
-      ID: "1279",
-      ProductName: "AW ROOR BEER 2LITER BTL",
-      Rank: "C",
-      QtyInHand: "-8",
-      OfDaysSupply: "0",
-      Cost: "$1.52",
-      Price: "$3.99",
-      StockCode: "YELLOWSMALLPIPE",
-      ReorderPoint: "0",
-      ReorderValue: "0",
-      Action: ActionBtns,
-    },
-  ]);
   const [showModel, setShowModel] = useState({
     state: false,
     productData: null,
@@ -213,6 +113,8 @@ export const Inventory = () => {
   const [deleteModel, setDeleteModel] = useState({
     state: false,
     productId: null,
+    path:'',
+    querykey:""
   });
 
   const onAddProduct = () => {
@@ -253,25 +155,48 @@ export const Inventory = () => {
     });
   };
   const onDelete = (product) => {
-    console.log(product, "delete");
+    console.log(product.id, "delete");
     setDeleteModel({
       state: true,
-      productId: product.ID,
+      productId: product.id,
+      path: `api/v1/product/delete/${product.id}`,
+      querykey:"get_all_products_list"
     });
   };
 
   // Column Definitions: Defines & controls grid columns.
   const [colDefs, setColDefs] = useState([
-    { field: "ID", width: 100, minWidth: 80 },
-    { field: "ProductName", minWidth: 150, flex: 1 },
-    { field: "Rank", width: 100, minWidth: 80 },
-    { field: "QtyInHand", width: 120, minWidth: 100 },
-    { field: "OfDaysSupply", width: 120, minWidth: 100, hide: true },
-    { field: "Cost", width: 120, minWidth: 100 },
-    { field: "Price", width: 120, minWidth: 100 },
-    { field: "StockCode", minWidth: 120, hide: true },
-    { field: "ReorderPoint", width: 120, minWidth: 100, hide: true },
-    { field: "ReorderValue", width: 120, minWidth: 100, hide: true },
+    { field: "name", headerName: "Product Name" },
+    { field: "category_name", headerName: "Category Name" },
+    { field: "product_rank", headerName: "Rank" },
+    { field: "qty_on_hand", headerName: "Stock" },
+    {
+      field: "product_avg_price",
+      headerName: "Avrage Cost",
+      cellRenderer: (amount) => {
+        return `$ ${amount.value.toFixed(2)}`;
+      },
+    },
+    {
+      field: "product_latest_cost",
+      headerName: "Latest Cost",
+      cellRenderer: (amount) => {
+        return `$ ${amount.value.toFixed(2)}`;
+      },
+    },
+    {
+      field: "product_price",
+      headerName: "Price",
+      cellRenderer: (amount) => {
+        return `$ ${amount.value.toFixed(2)}`;
+      },
+    },
+    {
+      field: "product_size",
+      headerName: "Size",
+    },
+    { field: "product_sku", headerName: "Code" },
+    { field: "tax_percentage", headerName: "Tax" },
     {
       headerName: "Actions",
       field: "actions",
@@ -297,218 +222,224 @@ export const Inventory = () => {
     };
   }, []);
 
+  const {
+    data: rowData,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["get_all_products_list"],
+    queryFn: async () => await getAllProductList(),
+  });
+
+  console.log(rowData);
+
   return (
     <>
       <Layout onAddProduct={onAddProduct}>
-        <div className="w-full p-2 sm:p-4 lg:p-0">
-          {/* Page Title */}
-          <div className="flex justify-between items-center mb-4 sm:mb-6">
-            <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
-              Inventory
-            </h3>
-          </div>
-
-          {/* Overview Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 md:gap-4 w-full mb-4 sm:mb-6">
-            <Overviewcards
-              cardTitle="Total Inventory"
-              cardValue="12,500"
-              percent="View"
-              icon={<TotalInventoryIcon />}
-            />
-            <Overviewcards
-              cardTitle="Buy Price"
-              cardValue="$25,000"
-              percent="View"
-              icon={<BuyPriceIcon />}
-            />
-            <Overviewcards
-              cardTitle="Sell Price"
-              cardValue="$46,800"
-              percent="View"
-              icon={<SellPriceIcon />}
-            />
-          </div>
-
-          {/* Main Layout Container */}
-          <div className="flex flex-col xl:flex-row justify-center w-full gap-3 sm:gap-4 lg:gap-5">
-            {/* Stats Section */}
-            <div className="w-full xl:w-[26%] shrink-0 order-1 xl:order-2 mb-4 xl:mb-0">
-              <div className="flex justify-between items-center mb-4 sm:mb-6">
-                <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
-                  Stats
-                </h3>
-              </div>
-
-              {/* Inventory Stats Chart */}
-              <div className="my-2 sm:my-4 xl:my-5 bg-white rounded-md p-2 sm:p-3">
-                <div className="flex justify-between items-center mb-3">
-                  <h3 className="text-sm sm:text-base md:text-lg lg:text-[1dvw] font-medium">
-                    Inventory Stats
-                  </h3>
-                  <button className="bg-[#333333] text-white px-2 sm:px-3 text-xs sm:text-sm md:text-base lg:text-[.9dvw] cursor-pointer py-1 rounded-full">
-                    See all
-                  </button>
+        {isLoading ? (
+          <Loading />
+        ) : (
+          <>
+            {isError ? (
+              <>
+                <div className="flex justify-center items-center h-full">
+                  <p className="text-red-500">Error fetching products</p>
                 </div>
-                <div className="p-1 sm:p-2 xl:p-3 my-2 xl:my-3">
-                  <div className="mb-3 xl:mb-4 flex justify-center items-center">
-                    <div className="w-[160px] h-[160px] sm:w-[180px] sm:h-[180px] md:w-[200px] md:h-[200px] lg:w-[220px] lg:h-[220px] xl:w-full xl:h-auto">
-                      <Doughtchart aspectRatio={1.5} />
-                    </div>
+              </>
+            ) : (
+              <>
+                <div className="w-full p-2 sm:p-4 lg:p-0">
+                  {/* Page Title */}
+                  <div className="flex justify-between items-center mb-4 sm:mb-6">
+                    <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
+                      Inventory
+                    </h3>
                   </div>
-                  <div>
-                    <div className="flex-1 shrink-0 flex flex-col gap-1.5 sm:gap-2 md:gap-3 justify-center items-start rounded-md bg-[var(--primary-color)] py-2 sm:py-3 md:py-4 xl:py-6 px-2">
-                      {saleData.map((cur, id) => (
-                        <div
-                          key={id}
-                          className="flex justify-between items-center w-full"
-                        >
-                          <div className="flex justify-start gap-2 sm:gap-3 md:gap-4 items-center">
-                            <div
-                              style={{
-                                background: cur.color,
-                              }}
-                              className="w-2 h-2 sm:w-2.5 sm:h-2.5 md:w-3 md:h-3 lg:w-4 lg:h-4 xl:w-[1dvw] xl:h-[1dvw] rounded-full"
-                            />
-                            <p className="font-semibold font-[var(--paraFont)] text-xs sm:text-sm md:text-base lg:text-[0.9dvw] xl:text-[1dvw] text-[var(--paraText-color)]">
-                              {cur.name}
-                            </p>
+
+                  {/* Main Layout Container */}
+                  <div className="flex flex-col justify-center w-full gap-3 sm:gap-4 lg:gap-0">
+                    {/* Stats Section */}
+                    <div className="w-full  shrink-0 order-1 xl:order-2 mb-4 xl:mb-0">
+                      <div className="flex justify-between items-center mb-4 sm:mb-3">
+                        <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
+                          Stats
+                        </h3>
+                      </div>
+
+                      <div className="flex justify-between w-full gap-3">
+                        {/* Inventory Stats Chart */}
+                        <div className="my-2 sm:my-4 xl:my-2 bg-white rounded-md p-2 sm:p-3">
+                          <div className="flex justify-between items-center mb-3">
+                            <h3 className="text-sm sm:text-base md:text-lg lg:text-[1dvw] font-medium">
+                              Inventory Stats
+                            </h3>
                           </div>
-                          <h5 className="text-black font-medium text-xs sm:text-sm md:text-base lg:text-[0.9dvw] xl:text-[1dvw]">
-                            ${cur.value}
-                          </h5>
+                          <div className="p-1 sm:p-2 xl:p-3 my-2 xl:my-3">
+                            <div className="mb-3 xl:mb-4 flex justify-center items-center">
+                              <div className="w-[160px] h-[160px] sm:w-[180px] sm:h-[180px] md:w-[200px] md:h-[200px] lg:w-[220px] lg:h-[220px] xl:w-full xl:h-auto">
+                                <Doughtchart aspectRatio={1.5} />
+                              </div>
+                            </div>
+                            <div>
+                              <div className="flex-1 shrink-0 flex flex-col gap-1.5 sm:gap-2 md:gap-3 justify-center items-start rounded-md bg-[var(--primary-color)] py-2 sm:py-3 md:py-4 xl:py-6 px-2">
+                                {saleData.map((cur, id) => (
+                                  <div
+                                    key={id}
+                                    className="flex justify-between items-center w-full"
+                                  >
+                                    <div className="flex justify-start gap-2 sm:gap-3 md:gap-4 items-center">
+                                      <div
+                                        style={{
+                                          background: cur.color,
+                                        }}
+                                        className="w-2 h-2 sm:w-2.5 sm:h-2.5 md:w-3 md:h-3 lg:w-4 lg:h-4 xl:w-[1dvw] xl:h-[1dvw] rounded-full"
+                                      />
+                                      <p className="font-semibold font-[var(--paraFont)] text-xs sm:text-sm md:text-base lg:text-[0.9dvw] xl:text-[1dvw] text-[var(--paraText-color)]">
+                                        {cur.name}
+                                      </p>
+                                    </div>
+                                    <h5 className="text-black font-medium text-xs sm:text-sm md:text-base lg:text-[0.9dvw] xl:text-[1dvw]">
+                                      ${cur.value}
+                                    </h5>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
+                        <div className="w-full">
+                          {/* Stock Status Cards */}
+                          <div className="flex  gap-2 sm:gap-3 xl:gap-4 w-full my-2 sm:my-3 xl:my-4 p-1">
+                            <div className="flex justify-between items-center bg-[#E72C1B] p-2 sm:p-3 rounded-md flex-1">
+                              <div className="px-1.5">
+                                <p className="text-white font-semibold text-xs sm:text-sm md:text-base lg:text-[0.9dvw] xl:text-[1dvw]">
+                                  Out Of Stock
+                                </p>
+                                <h3 className="text-white font-semibold text-base sm:text-lg md:text-xl lg:text-[1.5dvw] xl:text-[2dvw]">
+                                  01
+                                </h3>
+                              </div>
+                              <div>
+                                <OutOfStockIcon className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 xl:w-12 xl:h-12" />
+                              </div>
+                            </div>
 
-              {/* Stock Status Cards */}
-              <div className="flex flex-col sm:flex-row xl:flex-col gap-2 sm:gap-3 xl:gap-4 w-full my-2 sm:my-3 xl:my-4 p-1">
-                <div className="flex justify-between items-center bg-[#E72C1B] p-2 sm:p-3 rounded-md flex-1">
-                  <div className="px-1.5">
-                    <p className="text-white font-semibold text-xs sm:text-sm md:text-base lg:text-[0.9dvw] xl:text-[1dvw]">
-                      Out Of Stock
-                    </p>
-                    <h3 className="text-white font-semibold text-base sm:text-lg md:text-xl lg:text-[1.5dvw] xl:text-[2dvw]">
-                      01
-                    </h3>
-                  </div>
-                  <div>
-                    <OutOfStockIcon className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 xl:w-12 xl:h-12" />
-                  </div>
-                </div>
+                            <div className="flex justify-between items-center bg-[#fff] p-2 sm:p-3 rounded-md flex-1">
+                              <div className="px-1.5">
+                                <p className="text-black font-semibold text-xs sm:text-sm md:text-base lg:text-[0.9dvw] xl:text-[1dvw]">
+                                  Low Stock
+                                </p>
+                                <h3 className="text-black font-semibold text-base sm:text-lg md:text-xl lg:text-[1.5dvw] xl:text-[2dvw]">
+                                  03
+                                </h3>
+                              </div>
+                              <div>
+                                <LowStockIcon className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 xl:w-12 xl:h-12" />
+                              </div>
+                            </div>
+                          </div>
 
-                <div className="flex justify-between items-center bg-[#fff] p-2 sm:p-3 rounded-md flex-1">
-                  <div className="px-1.5">
-                    <p className="text-black font-semibold text-xs sm:text-sm md:text-base lg:text-[0.9dvw] xl:text-[1dvw]">
-                      Low Stock
-                    </p>
-                    <h3 className="text-black font-semibold text-base sm:text-lg md:text-xl lg:text-[1.5dvw] xl:text-[2dvw]">
-                      03
-                    </h3>
-                  </div>
-                  <div>
-                    <LowStockIcon className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 xl:w-12 xl:h-12" />
-                  </div>
-                </div>
-              </div>
+                          {/* Low Stocks List */}
+                          <div className="border border-[#D4D4D4] h-[58vh] rounded-md p-2 sm:p-3 bg-white">
+                            <div className="flex justify-between items-center mb-3">
+                              <h3 className="font-semibold text-sm sm:text-base md:text-lg lg:text-[1dvw] xl:text-[1.1dvw]">
+                                Low Stocks
+                              </h3>
+                              <button className="cursor-pointer bg-[var(--button-color2)] text-white px-2 sm:px-3 md:px-4 py-1 rounded-full text-xs sm:text-sm md:text-base lg:text-[0.9dvw] xl:text-[1dvw] font-[var(--paraFont)] font-medium">
+                                See all
+                              </button>
+                            </div>
 
-              {/* Low Stocks List */}
-              <div className="border border-[#D4D4D4] rounded-md p-2 sm:p-3 bg-white">
-                <div className="flex justify-between items-center mb-3">
-                  <h3 className="font-semibold text-sm sm:text-base md:text-lg lg:text-[1dvw] xl:text-[1.1dvw]">
-                    Low Stocks
-                  </h3>
-                  <button className="cursor-pointer bg-[var(--button-color2)] text-white px-2 sm:px-3 md:px-4 py-1 rounded-full text-xs sm:text-sm md:text-base lg:text-[0.9dvw] xl:text-[1dvw] font-[var(--paraFont)] font-medium">
-                    See all
-                  </button>
-                </div>
-
-                <div className="flex flex-col gap-2 sm:gap-3 my-3">
-                  {[1, 2, 3].map((cur, id) => (
-                    <div
-                      key={id}
-                      className="w-full flex justify-start items-center gap-2 sm:gap-3"
-                    >
-                      <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 lg:w-12 lg:h-12 xl:w-[3dvw] xl:h-[3dvw] shrink-0">
-                        <img
-                          className="w-full h-full object-cover rounded"
-                          src={ProductImg1}
-                          alt="sellsync.com"
-                        />
+                            <div className="h-[85%] w-full overflow-auto min-h-0">
+                              <div className="ag-theme-alpine h-full w-full min-w-[800px] xl:min-w-0">
+                                <AgGridReact
+                                  rowData={rowData}
+                                  columnDefs={colDefs}
+                                  defaultColDef={defaultColDef}
+                                  pagination={true}
+                                  paginationPageSize={10}
+                                  paginationPageSizeSelector={[10, 20, 50, 100]}
+                                  rowSelection={rowSelection}
+                                  suppressMenuHide={true}
+                                  onSelectionChanged={(event) =>
+                                    console.log("Row Selected!")
+                                  }
+                                  onCellValueChanged={(event) =>
+                                    console.log(
+                                      `New Cell Value: ${event.value}`,
+                                    )
+                                  }
+                                  domLayout="normal"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold font-[var(--paraFont)] text-xs sm:text-sm md:text-base lg:text-[0.9dvw] xl:text-[1dvw] truncate">
-                          Budwiser Magnum 750ML
-                        </h4>
-                        <p className="text-xs sm:text-sm md:text-base lg:text-[0.8dvw] xl:text-[.9dvw] font-medium text-[#333333] font-[var(--paraFont)]">
-                          Out Of Stock
-                        </p>
+                    </div>
+
+                    {/* Main Data Grid Content */}
+                    <div className="flex-1 order-2 xl:order-1">
+                      {/* Data Grid Container */}
+                      <div className="w-full flex-col flex gap-2 my-2 sm:my-3 xl:my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-1.5 sm:px-2.5 py-2 h-[45vh] sm:h-[50vh] md:h-[55vh] lg:h-[60vh] xl:h-[85dvh]">
+                        {/* Grid Header Controls */}
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-1.5 shrink-0 gap-2 sm:gap-3">
+                          <div className="flex justify-between sm:justify-center items-center gap-2 sm:gap-3">
+                            <select className="font-[500] mainFont px-2 sm:px-3 md:px-4 border-none outline-none text-xs sm:text-sm md:text-base lg:text-[0.9dvw] xl:text-base">
+                              <option>All Products</option>
+                              <option>Category 1</option>
+                              <option>Category 2</option>
+                              <option>Category 3</option>
+                            </select>
+                            <div className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-[1.6dvw] xl:h-[1.8dvw] lg:w-[1.6dvw] xl:w-[1.8dvw] bg-[var(--counterBg-color)] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem] sm:min-w-[1.75rem] sm:min-h-[1.75rem] md:min-w-[2rem] md:min-h-[2rem]">
+                              <p className="text-xs sm:text-xs md:text-sm lg:text-[0.9dvw] xl:text-[1dvw] font-[500] text-white">
+                                {rowData.length}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex gap-1.5 sm:gap-2 md:gap-3 lg:gap-4 justify-end items-center flex-wrap">
+                            {/*<button className="flex justify-between items-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-1 text-xs sm:text-sm md:text-base lg:text-[0.9dvw] xl:text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-semibold">
+                          Sort <SortIcon className="w-3 h-3 sm:w-4 sm:h-4" />
+                        </button>
+                        <button className="flex justify-center items-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-1 text-xs sm:text-sm md:text-base lg:text-[0.9dvw] xl:text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-semibold bg-[#0052CC]">
+                          Filter <FilterIcon className="w-3 h-3 sm:w-4 sm:h-4" />
+                        </button>*/}
+                            <button>
+                              <DeleteIcon className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* AG Grid */}
+                        <div className="h-full w-full overflow-auto min-h-0">
+                          <div className="ag-theme-alpine h-full w-full min-w-[800px] xl:min-w-0">
+                            <AgGridReact
+                              rowData={rowData}
+                              columnDefs={colDefs}
+                              defaultColDef={defaultColDef}
+                              pagination={true}
+                              paginationPageSize={10}
+                              paginationPageSizeSelector={[10, 20, 50, 100]}
+                              rowSelection={rowSelection}
+                              suppressMenuHide={true}
+                              onSelectionChanged={(event) =>
+                                console.log("Row Selected!")
+                              }
+                              onCellValueChanged={(event) =>
+                                console.log(`New Cell Value: ${event.value}`)
+                              }
+                              domLayout="normal"
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Main Data Grid Content */}
-            <div className="flex-1 order-2 xl:order-1">
-              {/* Data Grid Container */}
-              <div className="w-full flex-col flex gap-2 my-2 sm:my-3 xl:my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-1.5 sm:px-2.5 py-2 h-[45vh] sm:h-[50vh] md:h-[55vh] lg:h-[60vh] xl:h-[65dvh]">
-                {/* Grid Header Controls */}
-                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-1.5 shrink-0 gap-2 sm:gap-3">
-                  <div className="flex justify-between sm:justify-center items-center gap-2 sm:gap-3">
-                    <select className="font-[500] mainFont px-2 sm:px-3 md:px-4 border-none outline-none text-xs sm:text-sm md:text-base lg:text-[0.9dvw] xl:text-base">
-                      <option>All Products</option>
-                      <option>Category 1</option>
-                      <option>Category 2</option>
-                      <option>Category 3</option>
-                    </select>
-                    <div className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-[1.6dvw] xl:h-[1.8dvw] lg:w-[1.6dvw] xl:w-[1.8dvw] bg-[var(--counterBg-color)] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem] sm:min-w-[1.75rem] sm:min-h-[1.75rem] md:min-w-[2rem] md:min-h-[2rem]">
-                      <p className="text-xs sm:text-xs md:text-sm lg:text-[0.9dvw] xl:text-[1dvw] font-[500] text-white">
-                        {rowData.length}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex gap-1.5 sm:gap-2 md:gap-3 lg:gap-4 justify-end items-center flex-wrap">
-                    {/*<button className="flex justify-between items-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-1 text-xs sm:text-sm md:text-base lg:text-[0.9dvw] xl:text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-semibold">
-                      Sort <SortIcon className="w-3 h-3 sm:w-4 sm:h-4" />
-                    </button>
-                    <button className="flex justify-center items-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-1 text-xs sm:text-sm md:text-base lg:text-[0.9dvw] xl:text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-semibold bg-[#0052CC]">
-                      Filter <FilterIcon className="w-3 h-3 sm:w-4 sm:h-4" />
-                    </button>*/}
-                    <button>
-                      <DeleteIcon className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
-                    </button>
                   </div>
                 </div>
-
-                {/* AG Grid */}
-                <div className="h-full w-full overflow-auto min-h-0">
-                  <div className="ag-theme-alpine h-full w-full min-w-[800px] xl:min-w-0">
-                    <AgGridReact
-                      rowData={rowData}
-                      columnDefs={colDefs}
-                      defaultColDef={defaultColDef}
-                      pagination={true}
-                      paginationPageSize={10}
-                      paginationPageSizeSelector={[10, 20, 50, 100]}
-                      rowSelection={rowSelection}
-                      suppressMenuHide={true}
-                      onSelectionChanged={(event) => console.log("Row Selected!")}
-                      onCellValueChanged={(event) =>
-                        console.log(`New Cell Value: ${event.value}`)
-                      }
-                      domLayout="normal"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+              </>
+            )}
+          </>
+        )}
       </Layout>
 
       {showModel.state && showModel.productData && (
@@ -522,6 +453,8 @@ export const Inventory = () => {
         <DeleteModel
           setDeleteModel={setDeleteModel}
           productId={deleteModel.productId}
+          path={deleteModel.path}
+          querykey={deleteModel.querykey}
         />
       )}
     </>
@@ -696,7 +629,9 @@ const DetailsTab = () => {
         <div className="w-full my-4 flex flex-col gap-2">
           <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
             Name
-            <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">*</span>
+            <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
+              *
+            </span>
           </label>
           <input
             className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
@@ -739,10 +674,14 @@ const DetailsTab = () => {
             </label>
           </div>
           <div className="w-full flex flex-col gap-1.5">
-            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Margin</label>
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+              Margin
+            </label>
           </div>
           <div className="w-full flex flex-col gap-1.5">
-            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Markup</label>
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+              Markup
+            </label>
           </div>
           <div className="w-full flex flex-col gap-1.5">
             <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
@@ -750,7 +689,9 @@ const DetailsTab = () => {
             </label>
           </div>
           <div className="w-full flex flex-col gap-1.5">
-            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Qty</label>
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+              Qty
+            </label>
           </div>
           {addQuantityData.map((cur, id) => (
             <React.Fragment key={id}>
@@ -802,7 +743,9 @@ const DetailsTab = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
           <div className="flex flex-col gap-2">
-            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Size</label>
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+              Size
+            </label>
             <input
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
@@ -820,7 +763,9 @@ const DetailsTab = () => {
         </div>
 
         <div className="w-full flex flex-col gap-2 my-4">
-          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Category</label>
+          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+            Category
+          </label>
           <select className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3">
             <option>Select Category</option>
             <option>Category 1</option>
@@ -830,7 +775,9 @@ const DetailsTab = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full my-4">
           <div className="w-full flex flex-col gap-2">
-            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Supplier</label>
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+              Supplier
+            </label>
             <select className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3">
               <option>Select Supplier</option>
               <option>Supplier 1</option>
@@ -838,7 +785,9 @@ const DetailsTab = () => {
             </select>
           </div>
           <div className="w-full flex flex-col gap-2">
-            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">SKU</label>
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+              SKU
+            </label>
             <input
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
@@ -866,7 +815,9 @@ const DetailsTab = () => {
             />
           </div>
           <div className="w-full flex flex-col gap-2">
-            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Tax</label>
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+              Tax
+            </label>
             <input
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
@@ -891,7 +842,9 @@ const DetailsTab = () => {
             />
           </div>
           <div className="w-full flex flex-col gap-2">
-            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Rank</label>
+            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+              Rank
+            </label>
             <input
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
@@ -1070,7 +1023,9 @@ const OptionsTab = () => {
         </div>
 
         <div className="flex flex-col gap-2 w-full my-4">
-          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Notes</label>
+          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+            Notes
+          </label>
           <textarea
             className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
             rows={5}
@@ -1079,7 +1034,9 @@ const OptionsTab = () => {
         </div>
 
         <div className="flex flex-col gap-2 w-full my-4">
-          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Tags</label>
+          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+            Tags
+          </label>
           <input
             className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
             type="text"
@@ -1092,9 +1049,7 @@ const OptionsTab = () => {
             <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Points Multiplier
             </label>
-            <select
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-            >
+            <select className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3">
               <option>Select Multiplier</option>
               <option>1x</option>
               <option>2x</option>
@@ -1117,9 +1072,7 @@ const OptionsTab = () => {
             <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Item Type
             </label>
-            <select
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-            >
+            <select className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3">
               <option>Select Item Type</option>
               <option>Inventory Item</option>
               <option>Free Item</option>
@@ -1211,50 +1164,62 @@ const PromotionsTab = () => {
   );
 };
 
-const DeleteModel = ({ setDeleteModel, productId }) => {
-  return (
-    <>
-      <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center p-4">
-        <div className="w-full sm:w-[80%] md:w-[60%] lg:w-[50%] p-4 sm:p-5 bg-white rounded-xl shadow-md flex flex-col gap-4">
-          <div className="flex justify-between items-center w-full p-1">
-            <h3 className="text-lg sm:text-xl lg:text-[1.5dvw] font-semibold">Delete Item</h3>
-            <button
-              onClick={() => {
-                setDeleteModel({
-                  state: false,
-                  productId: null,
-                });
-              }}
-              className="hover:text-[var(--Negative-color)] transition-all duration-300 ease-linear cursor-pointer"
-            >
-              <CircleX size={24} className="sm:w-[30px] sm:h-[30px]" />
-            </button>
-          </div>
-          <p className="text-base sm:text-lg lg:text-[1.2dvw] font-semibold font-[var(--paraFont)]">
-            Product Id <span className="italic">"{productId}"</span> will be{" "}
-            <span className="text-[var(--Negative-color)] font-bold font-[var(--paraFont)] text-lg sm:text-xl lg:text-[1.3dvw]">
-              Removed
-            </span>{" "}
-            from the Inventory.
-          </p>
-          <div className="flex flex-col sm:flex-row justify-end items-center gap-4">
-            <button
-              onClick={() => {
-                setDeleteModel({
-                  state: false,
-                  productId: null,
-                });
-              }}
-              className="w-full sm:w-auto bg-[var(--button-color4)] text-white px-5 py-1.5 rounded-md flex justify-center items-center font-semibold text-base sm:text-lg lg:text-[1.1dvw] cursor-pointer"
-            >
-              Cancel
-            </button>
-            <button className="w-full sm:w-auto bg-[var(--Negative-color)] text-white px-5 py-1.5 rounded-md flex justify-center items-center font-semibold text-base sm:text-lg lg:text-[1.1dvw] cursor-pointer">
-              Delete
-            </button>
-          </div>
-        </div>
-      </div>
-    </>
-  );
-};
+// const DeleteModel = ({ setDeleteModel, productId }) => {
+//   const handleDelete = async () => {
+//     await deleteProduct(productId);
+//     setDeleteModel({
+//       state: false,
+//       productId: null,
+//     });
+//   };
+//   return (
+//     <>
+//       <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center p-4">
+//         <div className="w-full sm:w-[80%] md:w-[60%] lg:w-[50%] p-4 sm:p-5 bg-white rounded-xl shadow-md flex flex-col gap-4">
+//           <div className="flex justify-between items-center w-full p-1">
+//             <h3 className="text-lg sm:text-xl lg:text-[1.5dvw] font-semibold">
+//               Delete Item
+//             </h3>
+//             <button
+//               onClick={() => {
+//                 setDeleteModel({
+//                   state: false,
+//                   productId: null,
+//                 });
+//               }}
+//               className="hover:text-[var(--Negative-color)] transition-all duration-300 ease-linear cursor-pointer"
+//             >
+//               <CircleX size={24} className="sm:w-[30px] sm:h-[30px]" />
+//             </button>
+//           </div>
+//           <p className="text-base sm:text-lg lg:text-[1.2dvw] font-semibold font-[var(--paraFont)]">
+//             Product Id <span className="italic">"{productId}"</span> will be{" "}
+//             <span className="text-[var(--Negative-color)] font-bold font-[var(--paraFont)] text-lg sm:text-xl lg:text-[1.3dvw]">
+//               Removed
+//             </span>{" "}
+//             from the Inventory.
+//           </p>
+//           <div className="flex flex-col sm:flex-row justify-end items-center gap-4">
+//             <button
+//               onClick={() => {
+//                 setDeleteModel({
+//                   state: false,
+//                   productId: null,
+//                 });
+//               }}
+//               className="w-full sm:w-auto bg-[var(--button-color4)] text-white px-5 py-1.5 rounded-md flex justify-center items-center font-semibold text-base sm:text-lg lg:text-[1.1dvw] cursor-pointer"
+//             >
+//               Cancel
+//             </button>
+//             <button
+//               onClick={handleDelete}
+//               className="w-full sm:w-auto bg-[var(--Negative-color)] text-white px-5 py-1.5 rounded-md flex justify-center items-center font-semibold text-base sm:text-lg lg:text-[1.1dvw] cursor-pointer"
+//             >
+//               Delete
+//             </button>
+//           </div>
+//         </div>
+//       </div>
+//     </>
+//   );
+// };

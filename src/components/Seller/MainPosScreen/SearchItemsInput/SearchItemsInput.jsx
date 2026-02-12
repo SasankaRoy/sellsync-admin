@@ -94,8 +94,8 @@ export const SearchItemsInput = ({
                           {parseFloat(
                             product.sale_price ||
                               product.price ||
-                              product.product_avg_price ||
-                              0
+                              product.product_price ||
+                              0,
                           ).toFixed(2)}
                           {product.stock !== undefined && (
                             <span className="ml-2">

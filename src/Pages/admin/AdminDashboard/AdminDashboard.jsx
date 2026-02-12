@@ -9,6 +9,7 @@ import {
 import ProductImg1 from "../../../assets/images/ProductImg1.png";
 import { Linechart } from "../../../components/common/charts/Linechart";
 import { Doughtchart } from "../../../components/common/charts/Doughtchart";
+import { TopSellingItems } from "../../../components/common/TopSellingItems/TopSellingItems";
 
 const saleData = [
   {
@@ -175,8 +176,8 @@ export const AdminDashboard = () => {
 
         {/* Right Sidebar */}
         <div className="w-full lg:w-[27%] shrink-0 mt-6 lg:mt-0">
-          {/* Top Selling Items */}
-          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 mb-4 sm:mb-6 md:mb-5">
+        
+          {/* <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 mb-4 sm:mb-6 md:mb-5">
             <h3 className="text-lg sm:text-xl md:text-xl lg:text-[1.1dvw] font-semibold text-[var(--mainText-color)]">
               Top Selling Items
             </h3>
@@ -185,7 +186,7 @@ export const AdminDashboard = () => {
             </button>
           </div>
 
-          {/* Top Selling Items Table */}
+       
           <div className="w-full my-4 sm:my-6 md:my-5 rounded-lg overflow-hidden border border-[#D4D4D4] bg-white">
             <div className="bg-[var(--button-color2)] text-white flex justify-center">
               <div className="flex-1 p-2 sm:p-3 md:p-2.5 flex justify-start items-center">
@@ -221,7 +222,9 @@ export const AdminDashboard = () => {
                 </div>
               </div>
             ))}
-          </div>
+          </div> */}
+
+          <TopSellingItems />
 
           {/* Low Stocks */}
           <div className="border border-[#D4D4D4] rounded-md p-3 sm:p-4 md:p-3.5 bg-white">

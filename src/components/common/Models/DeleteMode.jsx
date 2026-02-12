@@ -4,7 +4,7 @@ import axiosInstance from "../../../utils/axios-interceptor";
 import { toast } from "react-toastify";
 import { useQueryClient } from "@tanstack/react-query";
 
-export const DeleteModel = ({ setDeleteModel, productId, path }) => {
+export const DeleteModel = ({ setDeleteModel, productId, path, querykey }) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const queryClient = useQueryClient();
   const handleDelete = async () => {
@@ -14,7 +14,7 @@ export const DeleteModel = ({ setDeleteModel, productId, path }) => {
 
       if (reqDelete.status === 200 && reqDelete.data) {
         toast.success(reqDelete.data.message || "Delete Successfully!");
-        queryClient.invalidateQueries(["employee_list"]);
+        queryClient.invalidateQueries([querykey || "employee_list"]);
       }
     } catch (error) {
       console.log(error.response.data);
