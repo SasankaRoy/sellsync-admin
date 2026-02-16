@@ -79,6 +79,7 @@ export const ViewSales = ({ setViewSale, billID }) => {
             tax_percentage: item.taxRate,
             product_price: item.price,
             product_image: item.product_image,
+            tax: item.taxAmount,
           }),
         );
       });

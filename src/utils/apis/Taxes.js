@@ -36,8 +36,7 @@ export const handleUpdateTax = async ({ taxValue }) => {
 export const handleGetTaxValue = async () => {
     try {
         const getTaxData = await axiosInstance.post('/api/v1/common/tax-get', {
-            date: (await getFormattedDate('GET')).toString()  // get latest date Tax value send input {}
-            // get latest date Tax value send input {}
+            // date: (await getFormattedDate('GET')).toString()  
         });
 
         if (getTaxData.data || getTaxData.status) {

@@ -17,11 +17,10 @@ import ProductImg1 from "../../../assets/images/ProductImg1.png";
 import { Doughtchart } from "../../../components/common/charts/Doughtchart";
 import { CircleX, Edit, Eye, Plus, Trash } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import {  
-  getAllProductList,
-} from "../../../utils/apis/handleProducts";
+import { getAllProductList } from "../../../utils/apis/handleProducts";
 import { Loading } from "../../../components/UI/Loading/Loading";
 import { DeleteModel } from "../../../components/common/Models/DeleteMode";
+import { getAllCategoryList } from "../../../utils/apis/handleCategory";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -105,6 +104,7 @@ const ActionBtns = (props) => {
 };
 
 export const Inventory = () => {
+  const [activeFilter, setActiveFilter] = useState("");
   const [showModel, setShowModel] = useState({
     state: false,
     productData: null,
@@ -113,8 +113,8 @@ export const Inventory = () => {
   const [deleteModel, setDeleteModel] = useState({
     state: false,
     productId: null,
-    path:'',
-    querykey:""
+    path: "",
+    querykey: "",
   });
 
   const onAddProduct = () => {
@@ -137,7 +137,6 @@ export const Inventory = () => {
   };
 
   const onEdit = (product) => {
-    console.log(product, "edit");
     if (product) {
       setShowModel({
         state: true,
@@ -147,7 +146,6 @@ export const Inventory = () => {
     }
   };
   const onView = (product) => {
-    console.log(product, "view");
     setShowModel({
       state: true,
       productData: product,
@@ -155,17 +153,16 @@ export const Inventory = () => {
     });
   };
   const onDelete = (product) => {
-    console.log(product.id, "delete");
     setDeleteModel({
       state: true,
       productId: product.id,
       path: `api/v1/product/delete/${product.id}`,
-      querykey:"get_all_products_list"
+      querykey: "get_all_products_list",
     });
   };
 
   // Column Definitions: Defines & controls grid columns.
-  const [colDefs, setColDefs] = useState([
+  const [colDefs] = useState([
     { field: "name", headerName: "Product Name" },
     { field: "category_name", headerName: "Category Name" },
     { field: "product_rank", headerName: "Rank" },
@@ -218,7 +215,6 @@ export const Inventory = () => {
       filter: true,
       editable: true,
       resizable: true,
-      editable: false,
     };
   }, []);
 
@@ -227,16 +223,19 @@ export const Inventory = () => {
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["get_all_products_list"],
-    queryFn: async () => await getAllProductList(),
+    queryKey: ["get_all_products_list", activeFilter],
+    queryFn: async () => await getAllProductList({ search_text: activeFilter }),
   });
 
-  console.log(rowData);
+  const { data: categoryList, isLoading: CategoryLoading } = useQuery({
+    queryKey: ["get_all_category_list"],
+    queryFn: async () => await getAllCategoryList(),
+  });
 
   return (
     <>
       <Layout onAddProduct={onAddProduct}>
-        {isLoading ? (
+        {isLoading || CategoryLoading ? (
           <Loading />
         ) : (
           <>
@@ -361,14 +360,6 @@ export const Inventory = () => {
                                   paginationPageSizeSelector={[10, 20, 50, 100]}
                                   rowSelection={rowSelection}
                                   suppressMenuHide={true}
-                                  onSelectionChanged={(event) =>
-                                    console.log("Row Selected!")
-                                  }
-                                  onCellValueChanged={(event) =>
-                                    console.log(
-                                      `New Cell Value: ${event.value}`,
-                                    )
-                                  }
                                   domLayout="normal"
                                 />
                               </div>
@@ -385,11 +376,19 @@ export const Inventory = () => {
                         {/* Grid Header Controls */}
                         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-1.5 shrink-0 gap-2 sm:gap-3">
                           <div className="flex justify-between sm:justify-center items-center gap-2 sm:gap-3">
-                            <select className="font-[500] mainFont px-2 sm:px-3 md:px-4 border-none outline-none text-xs sm:text-sm md:text-base lg:text-[0.9dvw] xl:text-base">
-                              <option>All Products</option>
-                              <option>Category 1</option>
-                              <option>Category 2</option>
-                              <option>Category 3</option>
+                            <select
+                              onChange={(e) => {
+                                setActiveFilter(e.target.value);
+                              }}
+                              value={activeFilter}
+                              className="font-[500] mainFont px-2 sm:px-3 md:px-4 border-none outline-none text-xs sm:text-sm md:text-base lg:text-[0.9dvw] xl:text-base"
+                            >
+                              <option value="">All</option>
+                              {categoryList?.map((cur, key) => (
+                                <option value={cur.category_name} key={key}>
+                                  {cur.category_name}
+                                </option>
+                              ))}
                             </select>
                             <div className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-[1.6dvw] xl:h-[1.8dvw] lg:w-[1.6dvw] xl:w-[1.8dvw] bg-[var(--counterBg-color)] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem] sm:min-w-[1.75rem] sm:min-h-[1.75rem] md:min-w-[2rem] md:min-h-[2rem]">
                               <p className="text-xs sm:text-xs md:text-sm lg:text-[0.9dvw] xl:text-[1dvw] font-[500] text-white">
@@ -422,12 +421,6 @@ export const Inventory = () => {
                               paginationPageSizeSelector={[10, 20, 50, 100]}
                               rowSelection={rowSelection}
                               suppressMenuHide={true}
-                              onSelectionChanged={(event) =>
-                                console.log("Row Selected!")
-                              }
-                              onCellValueChanged={(event) =>
-                                console.log(`New Cell Value: ${event.value}`)
-                              }
                               domLayout="normal"
                             />
                           </div>
@@ -1113,7 +1106,7 @@ const PromotionsTab = () => {
       Status: "Enable",
     },
   ]);
-  const [colDefs, setColDefs] = useState([
+  const [colDefs] = useState([
     { field: "ID", width: 80 },
     { field: "Name", width: 150 },
     { field: "Status", width: 120 },
@@ -1150,10 +1143,6 @@ const PromotionsTab = () => {
                 defaultColDef={defaultColDef}
                 pagination={true}
                 rowSelection={rowSelection}
-                onSelectionChanged={(event) => console.log("Row Selected!")}
-                onCellValueChanged={(event) =>
-                  console.log(`New Cell Value: ${event.value}`)
-                }
                 className="w-full h-full text-sm"
               />
             </div>

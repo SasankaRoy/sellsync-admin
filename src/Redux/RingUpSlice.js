@@ -28,7 +28,7 @@ export const RingUpSlice = createSlice({
     },
     increaseQyt: (state, action) => {
       const itemIdentifier = action.payload; // Can be id or name or the full item object
-      
+
       const itemIndex = state.findIndex((item) => {
         // Support multiple ways to identify the item
         if (typeof itemIdentifier === "object" && itemIdentifier.id && item.id) {
@@ -49,7 +49,7 @@ export const RingUpSlice = createSlice({
     },
     decreaseQyt: (state, action) => {
       const itemIdentifier = action.payload; // Can be id or name or the full item object
-      
+
       const itemIndex = state.findIndex((item) => {
         // Support multiple ways to identify the item
         if (typeof itemIdentifier === "object" && itemIdentifier.id && item.id) {
@@ -66,7 +66,7 @@ export const RingUpSlice = createSlice({
 
       if (itemIndex !== -1) {
         state[itemIndex].qty -= 1;
-        
+
         // Remove item if quantity reaches 0 or below
         if (state[itemIndex].qty <= 0) {
           state.splice(itemIndex, 1);
@@ -75,7 +75,7 @@ export const RingUpSlice = createSlice({
     },
     removeItem: (state, action) => {
       const itemIdentifier = action.payload; // Can be id or name or the full item object
-      
+
       const itemIndex = state.findIndex((item) => {
         // Support multiple ways to identify the item
         if (typeof itemIdentifier === "object" && itemIdentifier.id && item.id) {

@@ -34,26 +34,11 @@ const NewLogin = () => {
 
   const loginHandler = async () => {
     setIsLoading(true);
-    console.log(loginInfo);
+    // console.log(loginInfo);
     try {
-      // let loginPayload = {
-      //     password: loginDetails.password,
-      // };
+     
 
-      // If employee login, use either email or userId
-      // if (currentSelection === "EMPLOYEE") {
-      //     // Determine if identifier is email or userId
-      //     if (loginDetails.identifier.includes("@")) {
-      //         loginPayload.email = loginDetails.identifier;
-      //     } else {
-      //         loginPayload.log_userId = loginDetails.identifier;
-      //     }
-      // } else {
-      //     // Admin login - use email
-      //     loginPayload.email = loginDetails.identifier;
-      // }
-
-      console.log(loginInfo);
+      // console.log(loginInfo);
 
       // Use same endpoint for both admin and staff
       const reqLogin = await axiosInstance.post("/api/v1/auth/login", {
@@ -66,8 +51,8 @@ const NewLogin = () => {
 
         // Store all cookies
         const userType = reqLogin.data.user_type;
-        console.log("Login Response:", reqLogin.data);
-        console.log("User Type:", userType);
+        // console.log("Login Response:", reqLogin.data);
+        // console.log("User Type:", userType);
 
         Cookies.set("authToken", reqLogin.data.token, {
           expires: 1,
@@ -84,7 +69,7 @@ const NewLogin = () => {
 
         // Verify cookie was set
         const savedUserType = Cookies.get("u_type");
-        console.log("Saved u_type cookie:", savedUserType);
+        // console.log("Saved u_type cookie:", savedUserType);
 
         // Route to appropriate dashboard based on user_type from API response
         setIsLoading(false);
@@ -92,16 +77,16 @@ const NewLogin = () => {
         // Add a small delay to ensure cookies are set before navigation
         setTimeout(() => {
           if (userType === "staff" || userType === "employee") {
-            console.log("Routing to /seller/dashboard");
+            // console.log("Routing to /seller/dashboard");
             router("/seller/dashboard");
           } else {
-            console.log("Routing to /");
+            // console.log("Routing to /");
             router("/");
           }
         }, 100);
       }
     } catch (error) {
-      console.log(error.response);
+      console.error(error.response);
       toast.error(
         error?.response?.data?.error?.password ||
           error?.response?.data?.error?.email ||

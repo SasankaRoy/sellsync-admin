@@ -97,9 +97,19 @@ export const SearchItemsInput = ({
                               product.product_price ||
                               0,
                           ).toFixed(2)}
-                          {product.stock !== undefined && (
+                          {product.qty_on_hand !== undefined && (
                             <span className="ml-2">
-                              • Stock: {product.stock}
+                              • Stock: {product.qty_on_hand}
+                            </span>
+                          )}
+                          {product.category_name !== undefined && (
+                            <span className="ml-2">
+                              • Category: {product.category_name}
+                            </span>
+                          )}
+                          {product.tax_percentage !== undefined && (
+                            <span className="ml-2">
+                              • Tax: {product.tax_percentage}
                             </span>
                           )}
                         </p>

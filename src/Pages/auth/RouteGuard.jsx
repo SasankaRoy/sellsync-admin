@@ -17,10 +17,9 @@ const RouteGuard = () => {
     queryKey: ["login", userId, userType],
     queryFn: async () => {
       const res = await axiosInstance.get(
-        `/api/v1/user/details/${userId}/${userType}`
+        `/api/v1/user/details/${userId}/${userType}`,
       );
 
-      console.log(res.data);
       if (res.status !== 200 || !res.data) {
         throw new Error("Invalid response from server");
       }

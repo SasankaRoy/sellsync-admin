@@ -15,6 +15,7 @@ import { DeleteModel } from "../../../components/common/Models/DeleteMode";
 import { useQuery } from "@tanstack/react-query";
 import { Loading } from "../../../components/UI/Loading/Loading";
 import { getAllProductList } from "../../../utils/apis/handleProducts";
+import { getAllCategoryList } from "../../../utils/apis/handleCategory";
 ModuleRegistry.registerModules([AllCommunityModule]);
 const rowSelection = {
   mode: "multiRow",
@@ -22,9 +23,16 @@ const rowSelection = {
 };
 
 export const ItemsList = () => {
+  const [activeFilter, setActiveFilter] = useState("");
+
   const { data: rowData = [], isLoading } = useQuery({
-    queryKey: ["get_items_list"],
-    queryFn: async () => await getAllProductList(),
+    queryKey: ["get_all_products_list",activeFilter],
+    queryFn: async () => await getAllProductList({ search_text: activeFilter }),
+  });
+
+  const { data: categoryList, isLoading: CategoryLoading } = useQuery({
+    queryKey: ["get_all_category_list"],
+    queryFn: async () => await getAllCategoryList(),
   });
 
   const [showModel, setShowModel] = useState({
@@ -119,7 +127,7 @@ export const ItemsList = () => {
   return (
     <>
       <Layout>
-        {isLoading ? (
+        {isLoading || CategoryLoading ? (
           <Loading />
         ) : (
           <>
@@ -147,10 +155,19 @@ export const ItemsList = () => {
                 <div className="w-full flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-full">
                   <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center py-1.5 shrink-0 gap-3 sm:gap-0">
                     <div className="flex justify-between sm:justify-center items-center gap-3 w-full sm:w-auto">
-                      <select className="font-[500] mainFont px-4 border-none outline-none text-sm lg:text-base">
-                        <option>All Products</option>
-                        <option>All Products</option>
-                        <option>All Products</option>
+                      <select
+                        onChange={(e) => {
+                          setActiveFilter(e.target.value);
+                        }}
+                        value={activeFilter}
+                        className="font-[500] mainFont px-2 sm:px-3 md:px-4 border-none outline-none text-xs sm:text-sm md:text-base lg:text-[0.9dvw] xl:text-base"
+                      >
+                        <option value="">All</option>
+                        {categoryList?.map((cur, key) => (
+                          <option value={cur.category_name} key={key}>
+                            {cur.category_name}
+                          </option>
+                        ))}
                       </select>
                       <div className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-[1.8dvw] lg:w-[1.8dvw] bg-[var(--counterBg-color)] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem] sm:min-w-[1.75rem] sm:min-h-[1.75rem] md:min-w-[2rem] md:min-h-[2rem]">
                         <p className="text-xs sm:text-xs md:text-sm lg:text-[1dvw] font-[500] text-white">

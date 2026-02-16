@@ -7,6 +7,8 @@ import axiosInstance from "../../../utils/axios-interceptor";
 import { useDispatch, useSelector } from "react-redux";
 import { addNewItem, removeItem } from "../../../Redux/RingUpSlice";
 import { toast } from "react-toastify";
+import { calculateTax } from "../../../utils/CalculateTax";
+import { handleGetTaxValue } from "../../../utils/apis/Taxes";
 // import { AllCategoryListSlide } from "./AllCategoryListSlide";
 const AllCategoryListSlide = lazy(() => import("./AllCategoryListSlide"));
 
@@ -43,7 +45,7 @@ export const Shortcuts = ({
 }) => {
   const [limit, setLimit] = useState(10);
   const [currentSliderVarient, setCurrentSliderVarient] = useState(
-    categoriesSlideVarient.initial
+    categoriesSlideVarient.initial,
   );
   const [currentFilterItems, setCurrentFilterItems] = useState({
     title: "Shortcuts",
@@ -64,10 +66,10 @@ export const Shortcuts = ({
             limit: limit,
             // selected_category_id: "",
             // search_text: "",
-          }
+          },
         );
         if (reqList.status === 200) {
-          console.log(reqList.data.results, "shortcuts");
+          
           return reqList.data.results || [];
         }
         return reqList.data.results || [];
@@ -80,17 +82,16 @@ export const Shortcuts = ({
             selected_category_id: queryName,
             // selected_category_id: '68adb20884f3336f436a8769',
             // search_text: "",
-          }
+          },
         );
-        if (reqList.status === 200) {
-          console.log(reqList.data.results, "category", queryName);
+        if (reqList.status === 200) {         
           return reqList.data.results || [];
         }
         return reqList.data.results || [];
       }
       return [];
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return error?.response?.data.message || "Faild to fetch product list";
     }
   };
@@ -104,7 +105,7 @@ export const Shortcuts = ({
     queryFn: async () =>
       await handleGetLists(
         currentFilterItems.title,
-        currentFilterItems.queryName
+        currentFilterItems.queryName,
       ),
     queryKey: [
       "get_shortcuts_list",
@@ -114,7 +115,13 @@ export const Shortcuts = ({
     ],
   });
 
-  // console.log(data, "lists data");
+  const { data: CurrentTaxVal } = useQuery({
+    queryKey: ["get_current_tax_value", currentBillId],
+    queryFn: async () => {
+      const res = handleGetTaxValue();
+      return res;
+    },
+  });
 
   const handleAddItem = async (curData) => {
     const { id, name, product_image, product_price, tax_percentage } = curData;
@@ -126,7 +133,7 @@ export const Shortcuts = ({
           {
             productId: id,
             qty: 1,
-          }
+          },
         );
 
         if (billDetails.status === 200) {
@@ -134,7 +141,7 @@ export const Shortcuts = ({
         }
       } catch (error) {
         toast.error(
-          error.response.data.message || "Failed to add item to bill"
+          error.response.data.message || "Failed to add item to bill",
         );
       }
     }
@@ -146,12 +153,16 @@ export const Shortcuts = ({
         product_price,
         tax_percentage,
         qty: 1,
-      })
+        tax: calculateTax(1, tax_percentage, CurrentTaxVal),
+      }),
     );
-    localStorage.setItem('processingPayment', JSON.stringify({
-      state: false,
-      message: ''
-    }))
+    localStorage.setItem(
+      "processingPayment",
+      JSON.stringify({
+        state: false,
+        message: "",
+      }),
+    );
   };
 
   const handleRemoveItem = (itemId) => {
@@ -244,7 +255,7 @@ export const Shortcuts = ({
                   type: "tween",
                   delay: 0.5,
                 }}
-                className=" p-2 grid bg-red-00 scrollCustom grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-4 w-full max-h-full overflow-y-auto"
+                className=" p-2 grid bg-red-00 scrollCustom grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-2 sm:gap-3 lg:gap-4 w-full max-h-full overflow-y-auto"
               >
                 {data.map((cur, id) => (
                   <div
@@ -267,8 +278,18 @@ export const Shortcuts = ({
                         <h3 className="text-xs sm:text-sm lg:text-[1dvw] font-semibold line-clamp-2 mainFont">
                           {cur.name}
                         </h3>
-                        <p className="paraFont text-xs sm:text-sm lg:text-[.9dvw] text-(--button-color4) line-clamp-1">
-                          {cur.product_size}
+                        <p className="paraFont text-xs sm:text-sm lg:text-[.9dvw] text-(--button-color4) line-clamp-1 my-2">
+                          Size {cur.product_size}
+                          {cur.qty_on_hand !== undefined && (
+                            <span className="ml-2">
+                              • Stock: {cur.qty_on_hand}
+                            </span>
+                          )}
+                          {cur.tax_percentage !== undefined && (
+                            <span className="ml-2">
+                              • Tax: {cur.tax_percentage}
+                            </span>
+                          )}
                         </p>
                       </div>
                       <div className="flex justify-between items-center">

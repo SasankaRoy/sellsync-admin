@@ -49,7 +49,7 @@ export const Login = () => {
       // Use same endpoint for both admin and staff
       const reqLogin = await axiosInstance.post(
         "/api/v1/auth/login",
-        loginPayload
+        loginPayload,
       );
 
       if (reqLogin.status === 200 && reqLogin.data) {
@@ -57,8 +57,8 @@ export const Login = () => {
 
         // Store all cookies
         const userType = reqLogin.data.user_type;
-        console.log("Login Response:", reqLogin.data);
-        console.log("User Type:", userType);
+        // console.log("Login Response:", reqLogin.data);
+        // console.log("User Type:", userType);
 
         Cookies.set("authToken", reqLogin.data.token, {
           expires: 1,
@@ -75,7 +75,7 @@ export const Login = () => {
 
         // Verify cookie was set
         const savedUserType = Cookies.get("u_type");
-        console.log("Saved u_type cookie:", savedUserType);
+        // console.log("Saved u_type cookie:", savedUserType);
 
         // Route to appropriate dashboard based on user_type from API response
         setIsLoading(false);
@@ -83,31 +83,38 @@ export const Login = () => {
         // Add a small delay to ensure cookies are set before navigation
         setTimeout(() => {
           if (userType === "staff" || userType === "employee") {
-            console.log("Routing to /seller/dashboard");
+            // console.log("Routing to /seller/dashboard");
             router("/seller/dashboard");
           } else {
-            console.log("Routing to /");
+            // console.log("Routing to /");
             router("/");
           }
         }, 100);
       }
     } catch (error) {
-      console.log(error.response);
+      console.error(error.response);
       toast.error(
         error?.response?.data?.error?.password ||
           error?.response?.data?.error?.email ||
           error?.response?.data?.error?.log_userId ||
           error?.response?.data?.message ||
-          "Login failed!"
+          "Login failed!",
       );
       setIsLoading(false);
     }
   };
 
-  // const { data, isLoading, error } = useQuery({
-  //   queryKey: ["login"],
-  //   queryFn: async () => {},
-  // });
+  const handleKeyDown = (e) => {
+    if (
+      e.key === "Enter" &&
+      !isLoading &&
+      loginDetails.identifier &&
+      loginDetails.password
+    ) {
+      loginHandler();
+    }
+  };
+
   return (
     <div className="h-screen flex justify-center items-center relative w-full customBg">
       {/* Background Image - Hidden on mobile/tablet, visible on desktop */}
@@ -214,6 +221,7 @@ export const Login = () => {
                     id="password"
                     name="password"
                     onChange={handleOnChange}
+                    onKeyDown={handleKeyDown}
                     value={loginDetails.password}
                     placeholder="Enter password"
                     className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-2 px-3"

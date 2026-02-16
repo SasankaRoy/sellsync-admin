@@ -15,7 +15,7 @@ const AdminRouteGuard = () => {
 
   // If user data is not yet loaded, show loading
   if (!userType) {
-    console.log("loading admin route guard", user);
+    // console.log("loading admin route guard", user);
     return <Loading />;
   }
 

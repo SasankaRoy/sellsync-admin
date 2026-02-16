@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Minus, Plus, Search, Logs } from "lucide-react";
 import { Switch, Tooltip } from "@mui/material";
-// import Keyboard from "react-simple-keyboard";
-// import "react-simple-keyboard/build/css/index.css";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence,  } from "framer-motion";
 import ProductImg1 from "../../assets/images/ProductImg1.png";
 import { styled } from "@mui/material/styles";
 import { Shortcuts } from "../../components/common/Models/Shortcuts";
@@ -11,8 +9,6 @@ import { CustomerDetailsModal } from "../../components/common/Models/CustomerDet
 import { CheckoutModal } from "../../components/common/Models/CheckoutModal";
 import { SellerNavbar } from "../../components/common/Navbars/SellerNavbar";
 import { useSelector } from "react-redux";
-
-import { buildReceiptRequest } from "../../utils/receiptHelpers";
 import { OnScreenKeyboard } from "../../components/UI/OnScreenKeyboard/OnScreenKeyboard";
 import { SearchItemsInput } from "../../components/Seller/MainPosScreen/SearchItemsInput/SearchItemsInput";
 import { ItemsListHeader } from "../../components/Seller/MainPosScreen/ItemsLists/ItemsListHeader";
@@ -26,7 +22,7 @@ import {
 } from "../../Redux/RingUpSlice";
 import { useDispatch } from "react-redux";
 import { PaymentOptions } from "../../components/common/Models/PaymentOptions";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "../../utils/axios-interceptor";
 import { toast } from "react-toastify";
 import { ViewSales } from "../../components/common/Models/ViewSales";
@@ -40,6 +36,8 @@ import { requestPrintBill } from "../../utils/apis/printBill";
 import { saveTranscation } from "../../utils/apis/saveTranscations";
 import { Loading } from "../../components/UI/Loading/Loading";
 import { PurchaseAndExpence } from "../../components/common/Models/PurchaseAndExpence";
+import { handleGetTaxValue } from "../../utils/apis/Taxes";
+import { calculateTax, tatalTaxAmount } from "../../utils/CalculateTax";
 
 const itemListVarient = {
   initial: {
@@ -82,10 +80,7 @@ export const SalePoint = () => {
     state: false,
     billId: null,
   });
-  const [isPayout, setIsPayout] = useState(false)
-
-
-
+  const [isPayout, setIsPayout] = useState(false);
 
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
@@ -108,7 +103,7 @@ export const SalePoint = () => {
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const hasItems = (currentRingUpData?.length || 0) > 0;
 
-  const [discount, setDiscount] = useState(2.5);
+  const [discount, setDiscount] = useState(0);
   const [isPercentage, setIsPercentage] = useState(false);
 
   // Calculate values from currentRingUpData
@@ -119,7 +114,7 @@ export const SalePoint = () => {
     ) || 0;
   const totalItems =
     currentRingUpData?.reduce((sum, item) => sum + item.qty, 0) || 0;
-  const tax = 2.5; // You can calculate this from tax_percentage if needed
+  const [tax, setTax] = useState(0);
   const discountAmount = isPercentage ? subtotal * (discount / 100) : discount;
   const total = subtotal + tax - discountAmount;
 
@@ -136,8 +131,10 @@ export const SalePoint = () => {
     localStorage.setItem("discountSnapshot", JSON.stringify(discountData));
   }, [discount, isPercentage, discountAmount, tax, subtotal, total]);
   useEffect(() => {
-
-    localStorage.setItem("customerDetails", JSON.stringify(currentCustomerDetails));
+    localStorage.setItem(
+      "customerDetails",
+      JSON.stringify(currentCustomerDetails),
+    );
   }, [currentCustomerDetails]);
 
   // const [layoutName, setLayoutName] = useState("default");
@@ -173,7 +170,13 @@ export const SalePoint = () => {
     }
   }, [isKeyboardOpen]);
 
-  console.log(keyboardInput, 'keyborderInput')
+  const { data: CurrentTaxVal } = useQuery({
+    queryKey: ["get_current_tax_value", currentBillId],
+    queryFn: async () => {
+      const res = handleGetTaxValue();
+      return res;
+    },
+  });
 
   // Sync keyboard input when active field changes
   useEffect(() => {
@@ -196,18 +199,9 @@ export const SalePoint = () => {
     } else if (activeInputField?.type === "discount") {
       setKeyboardInput(String(discount || ""));
     }
-    //  else if (activeInputField?.type === "customerName") {
-    //   setKeyboardInput(String(customerInfo.name || ""));
-    // } else if (activeInputField?.type === "customerPhone") {
-    //   setKeyboardInput(String(customerInfo.phone || ""));
-    // } else if (activeInputField?.type === "customerEmail") {
-    //   setKeyboardInput(String(customerInfo.email || ""));
-    // } else if (activeInputField?.type === "customerAddress") {
-    //   setKeyboardInput(String(customerInfo.address || ""));
-    // } else if (activeInputField?.type === "customerNotes") {
-    //   setKeyboardInput(String(customerInfo.notes || ""));
-    // }
-  }, [activeInputField, input, currentRingUpData, discount,]);
+
+    setTax(tatalTaxAmount(currentRingUpData));
+  }, [activeInputField, input, currentRingUpData, discount]);
 
   const onChange = (input) => {
     console.log("Input changed", input);
@@ -233,7 +227,7 @@ export const SalePoint = () => {
       if (input && input.trim().length > 0) {
         setIsSearching(true);
         setShowSearchResults(true);
-        debounceCallback(input, "api/v1/product/shortcut-product-list");
+        debounceCallback(input, "api/v1/product/list");
       } else {
         setSearchResults([]);
         setIsSearching(false);
@@ -308,12 +302,16 @@ export const SalePoint = () => {
         product_image: product.image || product.product_image || "",
         qty: 1,
         tax_percentage: product.tax_percentage || 0,
+        tax: calculateTax(1, product.tax_percentage, CurrentTaxVal),
       }),
     );
-    localStorage.setItem('processingPayment', JSON.stringify({
-      state: false,
-      message: ''
-    }))
+    localStorage.setItem(
+      "processingPayment",
+      JSON.stringify({
+        state: false,
+        message: "",
+      }),
+    );
     // Clear search and keyboard state
     setInput("");
     setKeyboardInput("");
@@ -356,9 +354,9 @@ export const SalePoint = () => {
         name: item.name,
         qty: item.qty,
         price: item.product_price.toFixed(2),
-        taxRate: 5,
-        taxAmount: 12,
-        total: item.qty * item.product_price,
+        taxRate: item.tax_percentage,
+        taxAmount: item.tax,
+        total: ((item.qty *item.tax) + (item.qty * item.product_price)).toFixed(2),
       });
     });
 
@@ -371,8 +369,12 @@ export const SalePoint = () => {
         ...payload,
       });
       if (holdOrder.data || holdOrder.status === 200) {
-        dispatch(setCurrentBill({ billId: holdOrder.data.bill._id || holdOrder.data.bill.id }));
-        if (payload.status === 'HOLD') {
+        dispatch(
+          setCurrentBill({
+            billId: holdOrder.data.bill._id || holdOrder.data.bill.id,
+          }),
+        );
+        if (payload.status === "HOLD") {
           localStorage.setItem(
             "pre_or_id",
             holdOrder.data.bill._id || holdOrder.data.bill.id,
@@ -409,10 +411,13 @@ export const SalePoint = () => {
 
   const handleCheckout = async (method, checkoutData) => {
     setIsLoading(true);
-    localStorage.setItem('processingPayment', JSON.stringify({
-      state: true,
-      message: 'Processing Payment'
-    }))
+    localStorage.setItem(
+      "processingPayment",
+      JSON.stringify({
+        state: true,
+        message: "Processing Payment",
+      }),
+    );
     const checkoutPayload = {
       billId: currentBillId,
       timestamp: new Date().toISOString(),
@@ -491,22 +496,28 @@ export const SalePoint = () => {
         handleCancelTransaction();
         queryClient.invalidateQueries(["get_bill_details"]);
         toast.success("Transaction Successfull and Receipt Printed !");
-        localStorage.setItem('processingPayment', JSON.stringify({
-          state: false,
-          message: 'Payment Done!'
-        }))
+        localStorage.setItem(
+          "processingPayment",
+          JSON.stringify({
+            state: false,
+            message: "Payment Done!",
+          }),
+        );
         handleCancelTransaction();
       } else {
         toast.success("Transaction Successfull !");
         toast.error("Receipt Printed failed !");
         setIsLoading(false);
-        localStorage.setItem('processingPayment', JSON.stringify({
-          state: false,
-          message: 'Payment Done!'
-        }))
+        localStorage.setItem(
+          "processingPayment",
+          JSON.stringify({
+            state: false,
+            message: "Payment Done!",
+          }),
+        );
         handleCancelTransaction();
-        queryClient.invalidateQueries({ queryKey: ['get_all_transactions'] })
-        queryClient.invalidateQueries({ queryKey: ['get_bill_details'] })
+        queryClient.invalidateQueries({ queryKey: ["get_all_transactions"] });
+        queryClient.invalidateQueries({ queryKey: ["get_bill_details"] });
       }
       // -------------- For Reciept print-------------
 
@@ -517,10 +528,13 @@ export const SalePoint = () => {
       // handleCancelTransaction()
     } else {
       setIsLoading(false);
-      localStorage.setItem('processingPayment', JSON.stringify({
-        state: false,
-        message: 'Payment Faild'
-      }))
+      localStorage.setItem(
+        "processingPayment",
+        JSON.stringify({
+          state: false,
+          message: "Payment Faild",
+        }),
+      );
       toast.error("Transaction Failed");
     }
   };
@@ -702,10 +716,11 @@ export const SalePoint = () => {
               <div className="flex flex-col gap-3">
                 <div className="flex justify-between items-center gap-3">
                   <button
-                    className={`w-1/2 py-4 text-[1.2dvw] mainFont font-semibold rounded-md ${hasItems
-                      ? "bg-(--button-color5) text-(--primary-color)"
-                      : "bg-(--button-color5)/40 text-(--primary-color)/60 cursor-not-allowed"
-                      }`}
+                    className={`w-1/2 py-4 text-[1.2dvw] mainFont font-semibold rounded-md ${
+                      hasItems
+                        ? "bg-(--button-color5) text-(--primary-color)"
+                        : "bg-(--button-color5)/40 text-(--primary-color)/60 cursor-not-allowed"
+                    }`}
                     disabled={!hasItems}
                     onClick={() => {
                       if (!hasItems) return;
@@ -746,7 +761,10 @@ export const SalePoint = () => {
                     Options
                   </h3>
                   <div className="my-2 grid grid-cols-3 gap-2">
-                    <button onClick={() => setIsPayout(true)} className="bg-(--button-color5) text-(--primary-color) py-3 mainFont font-semibold rounded-md">
+                    <button
+                      onClick={() => setIsPayout(true)}
+                      className="bg-(--button-color5) text-(--primary-color) py-3 mainFont font-semibold rounded-md"
+                    >
                       Payout
                     </button>
                     <button
@@ -809,8 +827,8 @@ export const SalePoint = () => {
                 inputValue={keyboardInput}
                 layoutName={
                   activeInputField?.type === "quantity" ||
-                    activeInputField?.type === "price" ||
-                    activeInputField?.type === "discount"
+                  activeInputField?.type === "price" ||
+                  activeInputField?.type === "discount"
                     ? "numeric"
                     : "default"
                 }
@@ -821,7 +839,6 @@ export const SalePoint = () => {
             open={showCustomerModal}
             onClose={() => setShowCustomerModal(false)}
             onSubmit={handleCustomerSubmit}
-
             setIsKeyboardOpen={setIsKeyboardOpen}
             setActiveInputField={setActiveInputField}
             keyboardInput={keyboardInput}
@@ -855,12 +872,7 @@ export const SalePoint = () => {
             />
           )}
 
-
-          {
-            isPayout && (
-              <PurchaseAndExpence setIsPayout={setIsPayout} />
-            )
-          }
+          {isPayout && <PurchaseAndExpence setIsPayout={setIsPayout} />}
         </>
       )}
     </>
