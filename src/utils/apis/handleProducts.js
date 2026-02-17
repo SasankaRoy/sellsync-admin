@@ -33,3 +33,17 @@ export const deleteProduct = async (productId) => {
         return error.message || error.response.data.message || "Something went wrong while deleting product"
     }
 }
+
+export const getProductDetails = async (productId) => {
+    try {
+        const productDetails = await axiosInstance.get(`/api/v1/product/details/${productId}`)
+        if (productDetails?.status === 200 || productDetails.data) {
+            return productDetails.data.product;
+        }
+        return productDetails.data.product;
+    } catch (error) {
+        console.error(error)
+        return error.message || error.response.data.message || 'Something went wrong'
+    }
+
+}

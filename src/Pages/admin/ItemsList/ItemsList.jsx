@@ -26,7 +26,7 @@ export const ItemsList = () => {
   const [activeFilter, setActiveFilter] = useState("");
 
   const { data: rowData = [], isLoading } = useQuery({
-    queryKey: ["get_all_products_list",activeFilter],
+    queryKey: ["get_all_products_list", activeFilter],
     queryFn: async () => await getAllProductList({ search_text: activeFilter }),
   });
 
@@ -49,19 +49,7 @@ export const ItemsList = () => {
   const onAddItem = () => {
     setShowModel({
       state: true,
-      productData: {
-        ID: "",
-        ProductName: "",
-        Rank: "",
-        Category: "",
-        Stock: "",
-        OfDaysSupply: "",
-        BuyPrice: "",
-        SellPrice: "",
-        StockCode: "",
-        SupplierID: "",
-        SupplierName: "",
-      },
+      productData: {},
       actionType: "Add",
     });
   };
@@ -95,7 +83,11 @@ export const ItemsList = () => {
     { field: "product_rank", headerName: "Rank", width: 150 },
     { field: "category_name", headerName: "Category", width: 150 },
     { field: "qty_on_hand", headerName: "Stock", width: 150 },
-    { field: "product_price", headerName: "Price", width: 100 },
+    {
+      field: "product_price", headerName: "Price", width: 100, cellRenderer: (amount) => {
+        return `$ ${amount.value.toFixed(2)}`;
+      },
+    },
 
     { field: "vendor_name", headerName: "Vendor Name", width: 150 },
     { field: "supplier_name", headerName: "Supplier Name", width: 150 },

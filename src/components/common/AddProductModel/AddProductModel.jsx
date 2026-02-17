@@ -4,9 +4,10 @@ import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 // Core CSS
 import { AgGridReact } from "ag-grid-react";
 import axiosInstance from "../../../utils/axios-interceptor";
-import { useDeboune } from "../../../hooks/useDebounce";
 import { toast } from "react-toastify";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getProductDetails } from "../../../utils/apis/handleProducts";
+import { Loading } from "../../UI/Loading/Loading";
 ModuleRegistry.registerModules([AllCommunityModule]);
 const rowSelection = {
   mode: "multiRow",
@@ -38,6 +39,18 @@ function useDebounce(callback, delay) {
 }
 
 export const AddProductModel = ({ productData, setShowModel, actionType }) => {
+
+
+
+  const {
+    data,
+    isLoading: ProductDetailLoading,
+    isError: ProductDetailError,
+  } = useQuery({
+    queryKey: ["get_item_details", productData],
+    queryFn: () => getProductDetails(productData.id),
+  });
+
   const [productInfo, setProductInfo] = useState({
     stockCode: "",
     quantityInHandItem: "",
@@ -106,7 +119,7 @@ export const AddProductModel = ({ productData, setShowModel, actionType }) => {
   };
   const queryClient = useQueryClient();
 
-  const handleRenderTab = (currentTab) => {
+  const handleRenderTab = (currentTab, data) => {
     switch (currentTab) {
       case "Details":
         return (
@@ -114,6 +127,7 @@ export const AddProductModel = ({ productData, setShowModel, actionType }) => {
             actionType={actionType}
             setProductInfo={setProductInfo}
             productInfo={productInfo}
+            data={data}
           />
         );
       case "Options":
@@ -138,74 +152,98 @@ export const AddProductModel = ({ productData, setShowModel, actionType }) => {
 
   const handleAddProduct = async () => {
     setIsLoading(true);
-    const productData = new FormData();
+    const productDataa = new FormData();
     productInfo.images.forEach((file) => {
-      productData.append("product_images", file);
+      productDataa.append("product_images", file);
     });
 
-    productData.append("stock_code", productInfo.stockCode);
-    productData.append("qty_on_hand", productInfo.quantityInHandItem);
-    productData.append("qty_cases", productInfo.quantityInHandCase);
-    productData.append("product_quantity", productInfo.quantity);
-    productData.append("product_name", productInfo.productName);
-    productData.append("product_size", productInfo.size);
-    productData.append("selected_vendor_id", productInfo.vendor.id);
-    productData.append("selected_category_id", productInfo.category.id);
-    productData.append("selected_supplier_id", productInfo.supplier.id);
-    productData.append("product_sku", productInfo.sku);
-    productData.append("product_price", productInfo.price);
-    productData.append("product_avg_price", productInfo.avgCost);
-    productData.append("product_latest_cost", productInfo.latestCost);
-    productData.append("product_margin", productInfo.margin);
-    productData.append("product_markup", productInfo.markup);
-    productData.append("tax_percentage", productInfo.tax);
-    productData.append("unit_per_case", productInfo.unitsPerCase);
-    productData.append("case_cost_total", productInfo.caseCostTotal);
-    productData.append("reorder_value", productInfo.reorderValue);
-    productData.append("reorder_point", productInfo.reorderPoints);
-    productData.append("product_rank", productInfo.rank);
-    productData.append("status", "active");
-    productData.append("don_not_auto_update", productInfo.autoUpdate);
-    productData.append("add_to_shortcut_key", productInfo.shortcutKey);
-    productData.append("shortcut_key_color", "#d4d4d4");
-    productData.append(
+    productDataa.append("stock_code", productInfo.stockCode);
+    productDataa.append("qty_on_hand", productInfo.quantityInHandItem);
+    productDataa.append("qty_cases", productInfo.quantityInHandCase);
+    productDataa.append("product_quantity", productInfo.quantity);
+    productDataa.append("product_name", productInfo.productName);
+    productDataa.append("product_size", productInfo.size);
+    productDataa.append("selected_vendor_id", productInfo.vendor.id);
+    productDataa.append("selected_category_id", productInfo.category.id);
+    productDataa.append("selected_supplier_id", productInfo.supplier.id);
+    productDataa.append("product_sku", productInfo.sku);
+    productDataa.append("product_price", productInfo.price);
+    productDataa.append("product_avg_price", productInfo.avgCost);
+    productDataa.append("product_latest_cost", productInfo.latestCost);
+    productDataa.append("product_margin", productInfo.margin);
+    productDataa.append("product_markup", productInfo.markup);
+    productDataa.append("tax_percentage", productInfo.tax);
+    productDataa.append("unit_per_case", productInfo.unitsPerCase);
+    productDataa.append("case_cost_total", productInfo.caseCostTotal);
+    productDataa.append("reorder_value", productInfo.reorderValue);
+    productDataa.append("reorder_point", productInfo.reorderPoints);
+    productDataa.append("product_rank", productInfo.rank);
+    productDataa.append("status", "active");
+    productDataa.append("don_not_auto_update", productInfo.autoUpdate);
+    productDataa.append("add_to_shortcut_key", productInfo.shortcutKey);
+    productDataa.append("shortcut_key_color", "#d4d4d4");
+    productDataa.append(
       "do_not_manual_discount",
       productInfo.applyManualDiscount,
     );
-    productData.append("do_not_show_to_webstore", productInfo.showToWebstore);
-    productData.append("ebt_eligible", productInfo.EBTEligible);
-    productData.append("do_not_track_inventory", productInfo.trackInventory);
-    productData.append("close_out_item", productInfo.closeOutItem);
-    productData.append(
+    productDataa.append("do_not_show_to_webstore", productInfo.showToWebstore);
+    productDataa.append("ebt_eligible", productInfo.EBTEligible);
+    productDataa.append("do_not_track_inventory", productInfo.trackInventory);
+    productDataa.append("close_out_item", productInfo.closeOutItem);
+    productDataa.append(
       "exclude_from_promotions_discount",
       productInfo.promotionsDiscount,
     );
-    productData.append("hide_inventory", productInfo.hideInventory);
-    productData.append("product_default_quantity", productInfo.defaultQut);
-    productData.append("product_min_price", productInfo.minPrice);
-    productData.append("remind_date", productInfo.remindDate);
-    productData.append("notes", productInfo.notes);
-    productData.append("tags", productInfo.tags);
-    productData.append("points_multiplier", productInfo.pointsMultiplier);
-    productData.append("points_required", productInfo.pointsRequired);
-    productData.append("item_type", productInfo.itemType);
+    productDataa.append("hide_inventory", productInfo.hideInventory);
+    productDataa.append("product_default_quantity", productInfo.defaultQut);
+    productDataa.append("product_min_price", productInfo.minPrice);
+    productDataa.append("remind_date", productInfo.remindDate);
+    productDataa.append("notes", productInfo.notes);
+    productDataa.append("tags", productInfo.tags);
+    productDataa.append("points_multiplier", productInfo.pointsMultiplier);
+    productDataa.append("points_required", productInfo.pointsRequired);
+    productDataa.append("item_type", productInfo.itemType);
+
 
     try {
-      const reqAddProduct = await axiosInstance.post(
-        "api/v1/product/add",
-        productData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
+      console.log(actionType, productData)
+      if (actionType === 'Edit' && productData.id) {
+        const reqUpdateProduct = await axiosInstance.post(
+          `/api/v1/product/update/${productData.id}`,
+          productDataa,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
           },
-        },
-      );
+        );
 
-      if (reqAddProduct.status === 200) {
-        toast.success("Product added successfully!");
-        queryClient.invalidateQueries(["get_items_list"]);
-        setIsLoading(false);
-        handleCloseModle();
+        if (reqUpdateProduct.status === 200) {
+          toast.success("Product Updated successfully!");
+          queryClient.invalidateQueries(["get_items_list"]);
+          setIsLoading(false);
+          handleCloseModle();
+        }
+        return;
+      }
+      else {
+        const reqAddProduct = await axiosInstance.post(
+          "api/v1/product/add",
+          productData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          },
+        );
+
+        if (reqAddProduct.status === 200) {
+          toast.success("Product added successfully!");
+          queryClient.invalidateQueries(["get_items_list"]);
+          setIsLoading(false);
+          handleCloseModle();
+        }
+
       }
     } catch (error) {
       console.error(error);
@@ -213,85 +251,145 @@ export const AddProductModel = ({ productData, setShowModel, actionType }) => {
     }
   };
 
+
+
+  useEffect(() => {
+    if (!data) return;
+    setProductInfo({
+      ...productInfo,
+      stockCode: data.stock_code,
+      productName: data.product_name,
+      quantityInHandItem: data.qty_on_hand,
+      price: data.product_price,
+      margin: data.product_margin,
+      markup: data.product_markup,
+      size: data.product_size,
+      sku: data.product_sku,
+      caseCostTotal: data.case_cost_total,
+      quantityInHandCase: data.qty_cases,
+      avgCost: data.product_avg_price,
+      latestCost: data.product_latest_cost,
+      itemType: data.item_type,
+      reorderPoints: data.reorder_point,
+      reorderValue: data.reorder_value,
+      tax: data.tax_percentage,
+      unitsPerCase: data.unit_per_case,
+      minPrice: data.product_min_price,
+      pointsRequired: data.points_required,
+      pointsMultiplier: data.points_multiplier,
+      EBTEligible: data.ebt_eligible,
+      applyManualDiscount: data.do_not_manual_discount,
+      showToWebstore: data.do_not_show_to_webstore,
+      shortcutKey: data.add_to_shortcut_key,
+      promotionsDiscount: data.exclude_from_promotions_discount,
+      tags: data.tags,
+      notes: data.notes,
+      remindDate: data.remind_date,
+      supplier: {
+        id: data.selected_supplier_id,
+        name: data.supplier_name
+      },
+      category: {
+        id: data.selected_category_id,
+        name: data.category_name
+      },
+      vendor: {
+        id: data.selected_vendor_id,
+        name: data.vendor_name
+      }
+    })
+  }, [
+    data
+  ])
+
+
+
+
+
+
+
   return (
     <>
-      <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center p-4">
-        <div className="bg-white rounded-md shadow p-4 sm:p-5 w-full sm:w-[90%] md:w-[80%] lg:w-[60%] max-h-[95%] overflow-auto">
-          <div className="w-full bg-[var(--sideMenu-color)] flex justify-between items-center px-3 py-1.5 text-white rounded-md">
-            <h3 className="font-semibold text-lg sm:text-xl lg:text-[1.8dvw]">
-              {actionType === "Add" ? "Add Items" : `${actionType} Product`}
-            </h3>
-            <button
-              onClick={handleCloseModle}
-              className="hover:text-[var(--Negative-color)] transition-all duration-300 ease-linear cursor-pointer"
-            >
-              <CircleX size={24} className="sm:w-[30px] sm:h-[30px]" />
-            </button>
-          </div>
-
-          <div className="bg-[#E6E6E6] p-2 rounded-full w-auto my-5 inline-flex flex-wrap gap-2 sm:gap-3">
-            <button
-              onClick={() => handleChangeTab("Details")}
-              className={` ${
-                currentActiveTab === "Details"
-                  ? "bg-[var(--sideMenu-color)] text-white"
-                  : "bg-transparent text-[#333333]/70"
-              } border-none outline-none px-4 sm:px-8 py-1 text-sm sm:text-base lg:text-[.9dvw] cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
-            >
-              Details
-            </button>
-            <button
-              onClick={() => handleChangeTab("Options")}
-              className={` ${
-                currentActiveTab === "Options"
-                  ? "bg-[var(--sideMenu-color)] text-white"
-                  : "bg-transparent text-[#333333]/70"
-              } border-none outline-none px-4 sm:px-8 py-1 text-sm sm:text-base lg:text-[.9dvw] cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
-            >
-              Options
-            </button>
-            {actionType !== "Add" && (
-              <>
+      {ProductDetailLoading ? (
+        <Loading />
+      ) : (
+        <>
+          <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center p-4 z-40">
+            <div className="bg-white rounded-md shadow p-4 sm:p-5 w-full sm:w-[90%] md:w-[80%] lg:w-[60%] max-h-[95%] overflow-auto">
+              <div className="w-full bg-[var(--sideMenu-color)] flex justify-between items-center px-3 py-1.5 text-white rounded-md">
+                <h3 className="font-semibold text-lg sm:text-xl lg:text-[1.8dvw]">
+                  {actionType === "Add" ? "Add Items" : `${actionType} Product`}
+                </h3>
                 <button
-                  onClick={() => handleChangeTab("Promotions")}
-                  className={` ${
-                    currentActiveTab === "Promotions"
-                      ? "bg-[var(--sideMenu-color)] text-white"
-                      : "bg-transparent text-[#333333]/70"
-                  } border-none outline-none px-4 sm:px-8 py-1 text-sm sm:text-base lg:text-[.9dvw] cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
+                  onClick={handleCloseModle}
+                  className="hover:text-[var(--Negative-color)] transition-all duration-300 ease-linear cursor-pointer"
                 >
-                  Promotions
+                  <CircleX size={24} className="sm:w-[30px] sm:h-[30px]" />
                 </button>
-              </>
-            )}
-          </div>
+              </div>
 
-          <div className="w-full p-2 border border-[var(--border-color)] rounded-md">
-            {handleRenderTab(currentActiveTab)}
-            <div className="flex flex-col sm:flex-row gap-4 justify-end items-center mt-6">
-              <button
-                onClick={handleAddProduct}
-                className="w-full sm:w-auto px-4 sm:px-6 py-1.5 sm:py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300"
-              >
-                {isLoading
-                  ? "Updating..."
-                  : actionType === "Add"
-                    ? "Add"
-                    : "Save Changes"}
-                {/* Update */}
-              </button>
-              <button className="w-full sm:w-auto px-4 sm:px-6 py-1.5 sm:py-2 bg-[var(--button-color4)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300">
-                Cancel
-              </button>
+              <div className="bg-[#E6E6E6] p-2 rounded-full w-auto my-5 inline-flex flex-wrap gap-2 sm:gap-3">
+                <button
+                  onClick={() => handleChangeTab("Details")}
+                  className={` ${currentActiveTab === "Details"
+                    ? "bg-[var(--sideMenu-color)] text-white"
+                    : "bg-transparent text-[#333333]/70"
+                    } border-none outline-none px-4 sm:px-8 py-1 text-sm sm:text-base lg:text-[.9dvw] cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
+                >
+                  Details
+                </button>
+                <button
+                  onClick={() => handleChangeTab("Options")}
+                  className={` ${currentActiveTab === "Options"
+                    ? "bg-[var(--sideMenu-color)] text-white"
+                    : "bg-transparent text-[#333333]/70"
+                    } border-none outline-none px-4 sm:px-8 py-1 text-sm sm:text-base lg:text-[.9dvw] cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
+                >
+                  Options
+                </button>
+                {actionType !== "Add" && (
+                  <>
+                    <button
+                      onClick={() => handleChangeTab("Promotions")}
+                      className={` ${currentActiveTab === "Promotions"
+                        ? "bg-[var(--sideMenu-color)] text-white"
+                        : "bg-transparent text-[#333333]/70"
+                        } border-none outline-none px-4 sm:px-8 py-1 text-sm sm:text-base lg:text-[.9dvw] cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
+                    >
+                      Promotions
+                    </button>
+                  </>
+                )}
+              </div>
+
+              <div className="w-full p-2 border border-[var(--border-color)] rounded-md">
+                {handleRenderTab(currentActiveTab, data)}
+                <div className="flex flex-col sm:flex-row gap-4 justify-end items-center mt-6">
+                  <button
+                    onClick={handleAddProduct}
+                    className="w-full sm:w-auto px-4 sm:px-6 py-1.5 sm:py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300"
+                  >
+                    {isLoading
+                      ? "Updating..."
+                      : actionType === "Add"
+                        ? "Add"
+                        : "Save Changes"}
+                    {/* Update */}
+                  </button>
+                  <button className="w-full sm:w-auto px-4 sm:px-6 py-1.5 sm:py-2 bg-[var(--button-color4)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300">
+                    Cancel
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        </>
+      )}
     </>
   );
 };
 
-const DetailsTab = ({ actionType, setProductInfo, productInfo }) => {
+const DetailsTab = ({ actionType, setProductInfo, productInfo, data }) => {
   const [addQuantityData, setQuantityData] = useState([1]);
   const [images, setImages] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
@@ -344,7 +442,13 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo }) => {
   const [categoryResults, setCategoryResults] = useState([]);
   const [showCategoryList, setShowCategoryList] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [categoryQuery, setCategoryQuery] = useState("");
+  const [categoryQuery, setCategoryQuery] = useState('');
+
+  const [newStockCount, setNewStockCount] = useState({
+    itemsCount: 0,
+    casesCount: 0,
+    newCaseCost: 0,
+  })
 
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -764,7 +868,7 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo }) => {
     }
   };
 
-  const calculateTotalItemsAndCntainer = (currentChangeField, value) => {
+  const calculateTotalItemsAndCntainer = (currentChangeField, value, flag) => {
     // main logic no. of items / no. of items in one container...
     const numValue = parseFloat(value) || 0;
     const qtyInHandItem = parseFloat(productInfo.quantityInHandItem) || 0;
@@ -808,6 +912,15 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo }) => {
 
     if (currentChangeField === "quantityInHandCase") {
       const getTotalItems = numValue * (unitsPerCase || 0);
+      if (flag === 'NEWSTOCK') {
+
+        setProductInfo({
+          ...productInfo,
+          quantityInHandItem: getTotalItems + parseFloat(productInfo.quantityInHandItem),
+          quantityInHandCase: value === "" ? "" : numValue + parseFloat(productInfo.quantityInHandCase),
+        });
+        return;
+      }
       setProductInfo({
         ...productInfo,
         quantityInHandItem: getTotalItems,
@@ -822,14 +935,26 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo }) => {
     });
   };
 
-  const calculateAvgCostAsperContainerCost = (currentChangeField, value) => {
+  const calculateAvgCostAsperContainerCost = (currentChangeField, value, flag) => {
     if (currentChangeField === "caseCostTotal" && value) {
       const avgCost = parseFloat(value) / parseFloat(productInfo.unitsPerCase);
 
       setProductInfo({
         ...productInfo,
         avgCost: avgCost,
+        latestCost: avgCost,
         caseCostTotal: parseFloat(value),
+      });
+      return;
+    }
+    else if (currentChangeField === 'AvgCost' || currentChangeField === "latestCost") {
+      const totalCostPerCase = parseFloat(value) * parseFloat(productInfo.unitsPerCase);
+
+      setProductInfo({
+        ...productInfo,
+        avgCost: value,
+        latestCost: value,
+        caseCostTotal: parseFloat(totalCostPerCase),
       });
       return;
     }
@@ -838,6 +963,13 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo }) => {
       [currentChangeField]: value ? parseFloat(value) : "",
     });
   };
+
+
+  useEffect(() => {
+    setCategoryQuery(productInfo?.category?.name),
+      setSupplierQuery(productInfo?.supplier?.name),
+      setVendorQuery(productInfo?.vendor?.name)
+  }, [productInfo])
 
   return (
     <>
@@ -887,20 +1019,50 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo }) => {
                 *
               </span>
             </label>
-            <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-              type="number"
-              placeholder="Number of items..."
-              name="quantityInHandItem"
-              value={productInfo.quantityInHandItem}
-              onChange={(e) => {
-                // handleonChange(e)
-                calculateTotalItemsAndCntainer(
-                  "quantityInHandItem",
-                  e.target.value,
-                );
-              }}
-            />
+            <div className="flex justify-center items-center gap-3">
+              <input
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                type="number"
+                placeholder="Number of items..."
+                name="quantityInHandItem"
+                value={productInfo.quantityInHandItem}
+                onChange={(e) => {
+                  // handleonChange(e)
+                  calculateTotalItemsAndCntainer(
+                    "quantityInHandItem",
+                    e.target.value,
+                  );
+                }}
+              />
+
+              {
+                actionType === 'Edit' && (
+                  <>
+                    <input
+                      value={newStockCount.itemsCount} onChange={(e) => {
+                        setNewStockCount({
+                          ...newStockCount,
+                          itemsCount: e.target.value
+                        })
+                        if (!e.target.value) return;
+                        setProductInfo({
+                          ...productInfo,
+                          quantityInHandItem: parseFloat(productInfo.quantityInHandItem) + parseFloat(e.target.value)
+                        })
+                        calculateTotalItemsAndCntainer(
+                          "quantityInHandItem",
+                          (parseFloat(productInfo.quantityInHandItem) + parseFloat(e.target.value))
+                        );
+                      }}
+                      className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                      type="number"
+                      placeholder="new items count..."
+                      name="quantityInHandItem"
+                    />
+                  </>
+                )
+              }
+            </div>
           </div>
           <div className="flex flex-col gap-2 w-full">
             <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
@@ -909,20 +1071,51 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo }) => {
                 *
               </span>
             </label>
-            <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-              type="number"
-              placeholder="Number of cases"
-              name="quantityInHandCase"
-              value={productInfo.quantityInHandCase}
-              onChange={(e) => {
-                handleonChange(e);
-                calculateTotalItemsAndCntainer(
-                  "quantityInHandCase",
-                  e.target.value,
-                );
-              }}
-            />
+            <div className="flex justify-center items-center gap-3">
+              <input
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                type="number"
+                placeholder="Number of cases"
+                name="quantityInHandCase"
+                value={productInfo.quantityInHandCase}
+                onChange={(e) => {
+                  handleonChange(e);
+                  calculateTotalItemsAndCntainer(
+                    "quantityInHandCase",
+                    e.target.value,
+                  );
+                }}
+              />
+              {
+                actionType === 'Edit' && (
+                  <>
+                    <input
+                      value={newStockCount.casesCount} onChange={(e) => {
+                        setNewStockCount({
+                          ...newStockCount,
+                          casesCount: e.target.value
+                        });
+                        if (!e.target.value) return;
+                        setProductInfo({
+                          ...productInfo,
+                          quantityInHandCase: parseFloat(productInfo.quantityInHandCase) + parseFloat(e.target.value)
+                        })
+                        calculateTotalItemsAndCntainer(
+                          "quantityInHandCase",
+                          (parseFloat(e.target.value)),
+                          'NEWSTOCK'
+                        );
+                      }}
+                      className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                      type="number"
+                      placeholder="new case count..."
+                      name="quantityInHandItem"
+                    />
+                  </>
+                )
+              }
+
+            </div>
           </div>
         </div>
 
@@ -944,9 +1137,8 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo }) => {
         </div>
 
         <div
-          className={`grid grid-cols-2 ${
-            actionType === "Edit" ? "sm:grid-cols-4" : "sm:grid-cols-3"
-          }  gap-2 my-4`}
+          className={`grid grid-cols-2 ${actionType === "Edit" ? "sm:grid-cols-3" : "sm:grid-cols-3"
+            }  gap-2 my-4`}
         >
           <div className="w-full flex flex-col gap-1.5">
             <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
@@ -965,7 +1157,7 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo }) => {
               onChange={handleonChange}
             />
           </div>
-          {actionType === "Edit" && (
+          {/* {actionType === "Edit" && (
             <div className="w-full flex flex-col gap-1.5">
               <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
                 Qty Extra
@@ -975,7 +1167,7 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo }) => {
                 type="number"
               />
             </div>
-          )}
+          )} */}
 
           <div className="w-full flex flex-col gap-1.5">
             <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
@@ -997,7 +1189,7 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo }) => {
             />
           </div>
 
-          {actionType === "Edit" && (
+          {/* {actionType === "Edit" && (
             <div className="w-full flex flex-col gap-1.5">
               <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
                 Price Extra
@@ -1007,7 +1199,7 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo }) => {
                 type="number"
               />
             </div>
-          )}
+          )} */}
 
           <div className="w-full flex flex-col gap-1.5">
             <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
@@ -1025,6 +1217,10 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo }) => {
               onChange={(e) => {
                 handleonChange(e);
                 priceCalculationMainHandler("AvgCost", e.target.value);
+                calculateAvgCostAsperContainerCost(
+                  "AvgCost",
+                  e.target.value,
+                );
               }}
             />
           </div>
@@ -1070,7 +1266,14 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo }) => {
               placeholder="Latest cost..."
               name="latestCost"
               value={productInfo.latestCost}
-              onChange={handleonChange}
+              onChange={(e) => {
+                handleonChange(e)
+                priceCalculationMainHandler("latestCost", e.target.value);
+                calculateAvgCostAsperContainerCost(
+                  "latestCost",
+                  e.target.value,
+                );
+              }}
             />
           </div>
         </div>
@@ -1213,9 +1416,9 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo }) => {
               value={
                 selectedVendor
                   ? selectedVendor.vendor_name ||
-                    selectedVendor.name ||
-                    selectedVendor.full_name ||
-                    ""
+                  selectedVendor.name ||
+                  selectedVendor.full_name ||
+                  ""
                   : vendorQuery
               }
               onChange={(e) => {
@@ -1425,9 +1628,9 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo }) => {
             value={
               selectedGroup
                 ? selectedGroup.group_name ||
-                  selectedGroup.name ||
-                  selectedGroup.title ||
-                  ""
+                selectedGroup.name ||
+                selectedGroup.title ||
+                ""
                 : groupQuery
             }
             onChange={(e) => {
@@ -1674,19 +1877,22 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo }) => {
             <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Cost of 1 Case
             </label>
-            <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-              type="text"
-              name="caseCostTotal"
-              value={productInfo.caseCostTotal}
-              onChange={(e) => {
-                handleonChange(e);
-                calculateAvgCostAsperContainerCost(
-                  "caseCostTotal",
-                  e.target.value,
-                );
-              }}
-            />
+            <div className="flex justify-center items-center gap-3">
+              <input
+                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                type="text"
+                name="caseCostTotal"
+                value={productInfo.caseCostTotal}
+                onChange={(e) => {
+                  handleonChange(e);
+                  calculateAvgCostAsperContainerCost(
+                    "caseCostTotal",
+                    e.target.value,
+                  );
+                }}
+              />
+
+            </div>
           </div>
           <div className="w-full flex flex-col gap-2">
             <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
@@ -1729,36 +1935,57 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo }) => {
               onChange={handleonChange}
             />
           </div>
-          <div className="w-full flex flex-col gap-2">
-            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-              Rank
-            </label>
+          {
+            actionType === 'Edit' ? '' : (
+              <div className="w-full flex flex-col gap-2">
+                <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+                  Rank
+                </label>
 
-            <select
-              name="rank"
-              value={productInfo.rank}
-              onChange={handleonChange}
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-            >
-              <option> -- Select Item Rank --</option>
-              <option> 1</option>
-              <option> 2</option>
-              <option> 3</option>
-              <option> 4</option>
-            </select>
-          </div>
+                <select
+                  name="rank"
+                  value={productInfo.rank}
+                  onChange={handleonChange}
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                >
+                  <option> -- Select Item Rank --</option>
+                  <option> 1</option>
+                  <option> 2</option>
+                  <option> 3</option>
+                  <option> 4</option>
+                </select>
+              </div>
+            )
+          }
         </div>
+        {
+          data?.images?.length > 0 && (
+            <div className="flex w-full flex flex-col gap-2">
+              <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Product Images</label>
+              <div className="w-full flex flex-wrap gap-5 p-3">
+                {
+                  data?.images?.map((cur, id) => (
+                    <div key={id + cur.id} className="h-[4dvw] w-[4dvw] rounded-md overflow-hidden">
+                      <img src={cur.url} alt={cur.id} className="w-full h-full object-cover " />
+                    </div>
+
+                  ))
+                }
+              </div>
+            </div>
+          )
+        }
+
 
         <div className="w-full flex flex-col gap-2 mt-4">
           <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
             Upload Images
           </label>
           <div
-            className={`w-full border-2 border-dashed rounded-lg p-4 transition-colors duration-300 cursor-pointer ${
-              isDragging
-                ? "border-blue-500 bg-blue-50"
-                : "border-gray-300 bg-gray-50 hover:bg-gray-100"
-            } ${actionType === "View" ? "opacity-50 pointer-events-none" : ""}`}
+            className={`w-full border-2 border-dashed rounded-lg p-4 transition-colors duration-300 cursor-pointer ${isDragging
+              ? "border-blue-500 bg-blue-50"
+              : "border-gray-300 bg-gray-50 hover:bg-gray-100"
+              } ${actionType === "View" ? "opacity-50 pointer-events-none" : ""}`}
             onDragEnter={actionType !== "View" ? handleDragOver : undefined}
             onDragLeave={actionType !== "View" ? handleDragLeave : undefined}
             onDragOver={actionType !== "View" ? handleDragOver : undefined}
@@ -1845,7 +2072,6 @@ const OptionsTab = ({ setProductInfo, productInfo }) => {
     <>
       <div className="w-full p-2">
         <div className="grid grid-cols-1 sm:grid-cols-2 w-full gap-2 sm:gap-4">
-
           {/* <div className="flex justify-start items-center gap-3">
             <input
               id="autoUpdate"
@@ -1887,13 +2113,13 @@ const OptionsTab = ({ setProductInfo, productInfo }) => {
             </label>
           </div> */}
 
-
           <div className="flex justify-start items-center gap-3">
             <input
               id="shortcutKeys"
               type="checkbox"
               className="h-4 w-4 sm:h-5 sm:w-5 lg:h-[1.2dvw] lg:w-[1.2dvw]"
               value={productInfo.shortcutKey}
+              checked={productInfo.shortcutKey}
               onChange={(e) => {
                 setProductInfo({
                   ...productInfo,
@@ -1934,6 +2160,7 @@ const OptionsTab = ({ setProductInfo, productInfo }) => {
               type="checkbox"
               className="h-4 w-4 sm:h-5 sm:w-5 lg:h-[1.2dvw] lg:w-[1.2dvw]"
               value={productInfo.applyManualDiscount}
+              checked={productInfo.applyManualDiscount}
               onChange={(e) => {
                 setProductInfo({
                   ...productInfo,
@@ -1954,6 +2181,7 @@ const OptionsTab = ({ setProductInfo, productInfo }) => {
               type="checkbox"
               className="h-4 w-4 sm:h-5 sm:w-5 lg:h-[1.2dvw] lg:w-[1.2dvw]"
               value={productInfo.promotionsDiscount}
+              checked={productInfo.promotionsDiscount}
               onChange={(e) => {
                 setProductInfo({
                   ...productInfo,
@@ -1974,6 +2202,7 @@ const OptionsTab = ({ setProductInfo, productInfo }) => {
               type="checkbox"
               className="h-4 w-4 sm:h-5 sm:w-5 lg:h-[1.2dvw] lg:w-[1.2dvw]"
               value={productInfo.showToWebstore}
+              checked={productInfo.showToWebstore}
               onChange={(e) => {
                 setProductInfo({
                   ...productInfo,
@@ -2014,6 +2243,7 @@ const OptionsTab = ({ setProductInfo, productInfo }) => {
               type="checkbox"
               className="h-4 w-4 sm:h-5 sm:w-5 lg:h-[1.2dvw] lg:w-[1.2dvw]"
               value={productInfo.EBTEligible}
+              checked={productInfo.EBTEligible}
               onChange={(e) => {
                 setProductInfo({
                   ...productInfo,
