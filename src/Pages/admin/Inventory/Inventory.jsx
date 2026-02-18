@@ -438,8 +438,6 @@ export const Inventory = () => {
 
       {showModel.state && showModel.productData && (
         <>
-
-
           <AddProductModel
             productData={showModel.productData}
             setShowModel={setShowModel}

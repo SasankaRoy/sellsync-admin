@@ -47,3 +47,16 @@ export const getProductDetails = async (productId) => {
     }
 
 }
+
+export const deleteProductImage = async (productId, imageId) => {
+    try {
+        const deleteImage = await axiosInstance.get(`/api/v1/product/image-delete/${productId}/${imageId}`);
+        if (deleteImage.data && deleteImage.status) {
+            return deleteImage.data
+        }
+        return deleteImage.data
+    } catch (error) {
+        console.error(error)
+        return error.message || error.response.data.message || 'Something went wrong while deleting the product image'
+    }
+}

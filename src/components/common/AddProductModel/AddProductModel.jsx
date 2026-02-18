@@ -6,8 +6,9 @@ import { AgGridReact } from "ag-grid-react";
 import axiosInstance from "../../../utils/axios-interceptor";
 import { toast } from "react-toastify";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getProductDetails } from "../../../utils/apis/handleProducts";
+import { deleteProductImage, getProductDetails } from "../../../utils/apis/handleProducts";
 import { Loading } from "../../UI/Loading/Loading";
+import { CircularProgress } from "@mui/material";
 ModuleRegistry.registerModules([AllCommunityModule]);
 const rowSelection = {
   mode: "multiRow",
@@ -48,7 +49,13 @@ export const AddProductModel = ({ productData, setShowModel, actionType }) => {
     isError: ProductDetailError,
   } = useQuery({
     queryKey: ["get_item_details", productData],
-    queryFn: () => getProductDetails(productData.id),
+    queryFn: async () => {
+      if (actionType === 'Edit') {
+        return await getProductDetails(productData.id)
+      } else {
+        return ''
+      }
+    },
   });
 
   const [productInfo, setProductInfo] = useState({
@@ -390,7 +397,8 @@ export const AddProductModel = ({ productData, setShowModel, actionType }) => {
 };
 
 const DetailsTab = ({ actionType, setProductInfo, productInfo, data }) => {
-  const [addQuantityData, setQuantityData] = useState([1]);
+
+  const [isDeleting, setIsDeleting] = useState(false)
   const [images, setImages] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
   // SKU state
@@ -448,7 +456,9 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo, data }) => {
     itemsCount: 0,
     casesCount: 0,
     newCaseCost: 0,
-  })
+  });
+
+  const queryClient = useQueryClient()
 
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -971,193 +981,220 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo, data }) => {
       setVendorQuery(productInfo?.vendor?.name)
   }, [productInfo])
 
+
+
+  // handleRemoveProductImage
+  const handleRemoveProductImage = async (productId, imageId) => {
+    setIsDeleting(true)
+    const reqDelete = await deleteProductImage(productId, imageId);
+    if (reqDelete) {
+      setIsDeleting(false);
+      toast.success('Product image removed');
+      queryClient.invalidateQueries({
+        queryKey: ['get_item_details']
+      })
+    }
+
+  }
+
   return (
     <>
-      <div
-        className="w-full p-2"
-        onClick={() => {
-          setShowSupplierList(false);
-          setShowVendorList(false);
-          setShowGroupList(false);
-          setShowCategoryList(false);
-        }}
-      >
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
-          <div className="flex flex-col gap-2 w-full">
-            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-              Stockcode
-              <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
-                *
-              </span>
-            </label>
-            <div className="flex justify-between items-center w-full gap-1.5">
-              <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                type="text"
-                placeholder="95632148"
-                name="stockCode"
-                value={productInfo.stockCode}
-                onChange={(e) =>
-                  setProductInfo({
-                    ...productInfo,
-                    stockCode: e.target.value,
-                  })
-                }
-              />
-              <button
-                onClick={handleGenerateStockCode}
-                className="bg-[var(--sideMenu-color)] cursor-pointer text-white px-2 rounded-md py-1"
-              >
-                <Barcode />
-              </button>
+      {
+        isDeleting ? (
+          <>
+            <div className="flex justify-center items-center fixed top-0 left-0 h-screen w-screen bg-white/20 backdrop-blur-xs flex-col gap-5">
+              <CircularProgress size={60}/>
+              <p className="text-[1.5dvw] mainFont animate-pulse text-gray-500 font-semibold">Deleting  image</p>
             </div>
-          </div>
-          <div className="flex flex-col gap-2 w-full">
-            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-              Qty on Hand (Items)
-              <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
-                *
-              </span>
-            </label>
-            <div className="flex justify-center items-center gap-3">
-              <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                type="number"
-                placeholder="Number of items..."
-                name="quantityInHandItem"
-                value={productInfo.quantityInHandItem}
-                onChange={(e) => {
-                  // handleonChange(e)
-                  calculateTotalItemsAndCntainer(
-                    "quantityInHandItem",
-                    e.target.value,
-                  );
-                }}
-              />
+          </>
+        ) : (
+          <>
 
-              {
-                actionType === 'Edit' && (
-                  <>
+            <div
+              className="w-full p-2"
+              onClick={() => {
+                setShowSupplierList(false);
+                setShowVendorList(false);
+                setShowGroupList(false);
+                setShowCategoryList(false);
+              }}
+            >
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+                <div className="flex flex-col gap-2 w-full">
+                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+                    Stockcode
+                    <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
+                      *
+                    </span>
+                  </label>
+                  <div className="flex justify-between items-center w-full gap-1.5">
                     <input
-                      value={newStockCount.itemsCount} onChange={(e) => {
-                        setNewStockCount({
-                          ...newStockCount,
-                          itemsCount: e.target.value
-                        })
-                        if (!e.target.value) return;
+                      className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                      type="text"
+                      placeholder="95632148"
+                      name="stockCode"
+                      value={productInfo.stockCode}
+                      onChange={(e) =>
                         setProductInfo({
                           ...productInfo,
-                          quantityInHandItem: parseFloat(productInfo.quantityInHandItem) + parseFloat(e.target.value)
+                          stockCode: e.target.value,
                         })
+                      }
+                    />
+                    <button
+                      onClick={handleGenerateStockCode}
+                      className="bg-[var(--sideMenu-color)] cursor-pointer text-white px-2 rounded-md py-1"
+                    >
+                      <Barcode />
+                    </button>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-2 w-full">
+                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+                    Qty on Hand (Items)
+                    <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
+                      *
+                    </span>
+                  </label>
+                  <div className="flex justify-center items-center gap-3">
+                    <input
+                      className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                      type="number"
+                      placeholder="Number of items..."
+                      name="quantityInHandItem"
+                      value={productInfo.quantityInHandItem}
+                      onChange={(e) => {
+                        // handleonChange(e)
                         calculateTotalItemsAndCntainer(
                           "quantityInHandItem",
-                          (parseFloat(productInfo.quantityInHandItem) + parseFloat(e.target.value))
+                          e.target.value,
                         );
                       }}
+                    />
+
+                    {
+                      actionType === 'Edit' && (
+                        <>
+                          <input
+                            value={newStockCount.itemsCount} onChange={(e) => {
+                              setNewStockCount({
+                                ...newStockCount,
+                                itemsCount: e.target.value
+                              })
+                              if (!e.target.value) return;
+                              setProductInfo({
+                                ...productInfo,
+                                quantityInHandItem: parseFloat(productInfo.quantityInHandItem) + parseFloat(e.target.value)
+                              })
+                              calculateTotalItemsAndCntainer(
+                                "quantityInHandItem",
+                                (parseFloat(productInfo.quantityInHandItem) + parseFloat(e.target.value))
+                              );
+                            }}
+                            className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                            type="number"
+                            placeholder="new items count..."
+                            name="quantityInHandItem"
+                          />
+                        </>
+                      )
+                    }
+                  </div>
+                </div>
+                <div className="flex flex-col gap-2 w-full">
+                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+                    Qty on Hand (Cases)
+                    <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
+                      *
+                    </span>
+                  </label>
+                  <div className="flex justify-center items-center gap-3">
+                    <input
                       className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                       type="number"
-                      placeholder="new items count..."
-                      name="quantityInHandItem"
-                    />
-                  </>
-                )
-              }
-            </div>
-          </div>
-          <div className="flex flex-col gap-2 w-full">
-            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-              Qty on Hand (Cases)
-              <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
-                *
-              </span>
-            </label>
-            <div className="flex justify-center items-center gap-3">
-              <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                type="number"
-                placeholder="Number of cases"
-                name="quantityInHandCase"
-                value={productInfo.quantityInHandCase}
-                onChange={(e) => {
-                  handleonChange(e);
-                  calculateTotalItemsAndCntainer(
-                    "quantityInHandCase",
-                    e.target.value,
-                  );
-                }}
-              />
-              {
-                actionType === 'Edit' && (
-                  <>
-                    <input
-                      value={newStockCount.casesCount} onChange={(e) => {
-                        setNewStockCount({
-                          ...newStockCount,
-                          casesCount: e.target.value
-                        });
-                        if (!e.target.value) return;
-                        setProductInfo({
-                          ...productInfo,
-                          quantityInHandCase: parseFloat(productInfo.quantityInHandCase) + parseFloat(e.target.value)
-                        })
+                      placeholder="Number of cases"
+                      name="quantityInHandCase"
+                      value={productInfo.quantityInHandCase}
+                      onChange={(e) => {
+                        handleonChange(e);
                         calculateTotalItemsAndCntainer(
                           "quantityInHandCase",
-                          (parseFloat(e.target.value)),
-                          'NEWSTOCK'
+                          e.target.value,
                         );
                       }}
-                      className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                      type="number"
-                      placeholder="new case count..."
-                      name="quantityInHandItem"
                     />
-                  </>
-                )
-              }
+                    {
+                      actionType === 'Edit' && (
+                        <>
+                          <input
+                            value={newStockCount.casesCount} onChange={(e) => {
+                              setNewStockCount({
+                                ...newStockCount,
+                                casesCount: e.target.value
+                              });
+                              if (!e.target.value) return;
+                              setProductInfo({
+                                ...productInfo,
+                                quantityInHandCase: parseFloat(productInfo.quantityInHandCase) + parseFloat(e.target.value)
+                              })
+                              calculateTotalItemsAndCntainer(
+                                "quantityInHandCase",
+                                (parseFloat(e.target.value)),
+                                'NEWSTOCK'
+                              );
+                            }}
+                            className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                            type="number"
+                            placeholder="new case count..."
+                            name="quantityInHandItem"
+                          />
+                        </>
+                      )
+                    }
 
-            </div>
-          </div>
-        </div>
+                  </div>
+                </div>
+              </div>
 
-        <div className="w-full my-4 flex flex-col gap-2">
-          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-            Name
-            <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
-              *
-            </span>
-          </label>
-          <input
-            className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-            type="text"
-            placeholder="Item name...."
-            name="productName"
-            value={productInfo.productName}
-            onChange={handleonChange}
-          />
-        </div>
+              <div className="w-full my-4 flex flex-col gap-2">
+                <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+                  Name
+                  <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
+                    *
+                  </span>
+                </label>
+                <input
+                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  type="text"
+                  placeholder="Item name...."
+                  name="productName"
+                  value={productInfo.productName}
+                  onChange={handleonChange}
+                />
+              </div>
 
-        <div
-          className={`grid grid-cols-2 ${actionType === "Edit" ? "sm:grid-cols-3" : "sm:grid-cols-3"
-            }  gap-2 my-4`}
-        >
-          <div className="w-full flex flex-col gap-1.5">
-            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-              Qty
-              <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
-                *
-              </span>
-            </label>
-            <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-              type="number"
-              name="quantity"
-              placeholder="Quantity.."
-              readOnly={true}
-              value={productInfo.quantity}
-              onChange={handleonChange}
-            />
-          </div>
-          {/* {actionType === "Edit" && (
+              <div
+                className={`grid grid-cols-2 ${actionType === "Edit" ? "sm:grid-cols-3" : "sm:grid-cols-3"
+                  }  gap-2 my-4`}
+              >
+                <div className="w-full flex flex-col gap-1.5">
+                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+                    Qty
+                    <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
+                      *
+                    </span>
+                  </label>
+                  <input
+                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                    type="number"
+                    name="quantity"
+                    placeholder="Quantity.."
+                    readOnly={true}
+                    value={productInfo.quantity}
+                    onChange={handleonChange}
+                  />
+                </div>
+                {/* {actionType === "Edit" && (
             <div className="w-full flex flex-col gap-1.5">
               <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
                 Qty Extra
@@ -1169,27 +1206,27 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo, data }) => {
             </div>
           )} */}
 
-          <div className="w-full flex flex-col gap-1.5">
-            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-              Price
-              <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
-                *
-              </span>
-            </label>
-            <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-              type="number"
-              placeholder="Price"
-              name="price"
-              value={productInfo.price}
-              onChange={(e) => {
-                handleonChange(e);
-                priceCalculationMainHandler("Price", e.target.value);
-              }}
-            />
-          </div>
+                <div className="w-full flex flex-col gap-1.5">
+                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+                    Price
+                    <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
+                      *
+                    </span>
+                  </label>
+                  <input
+                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                    type="number"
+                    placeholder="Price"
+                    name="price"
+                    value={productInfo.price}
+                    onChange={(e) => {
+                      handleonChange(e);
+                      priceCalculationMainHandler("Price", e.target.value);
+                    }}
+                  />
+                </div>
 
-          {/* {actionType === "Edit" && (
+                {/* {actionType === "Edit" && (
             <div className="w-full flex flex-col gap-1.5">
               <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
                 Price Extra
@@ -1201,84 +1238,84 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo, data }) => {
             </div>
           )} */}
 
-          <div className="w-full flex flex-col gap-1.5">
-            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-              Avg Cost
-              <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
-                *
-              </span>
-            </label>
-            <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-              type="number"
-              placeholder="Average Cost.."
-              name="avgCost"
-              value={productInfo.avgCost}
-              onChange={(e) => {
-                handleonChange(e);
-                priceCalculationMainHandler("AvgCost", e.target.value);
-                calculateAvgCostAsperContainerCost(
-                  "AvgCost",
-                  e.target.value,
-                );
-              }}
-            />
-          </div>
-          <div className="w-full flex flex-col gap-1.5">
-            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-              Margin
-            </label>
-            <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-              type="number"
-              placeholder="Enter margin %..."
-              name="margin"
-              value={productInfo.margin}
-              onChange={(e) => {
-                handleonChange(e);
-                priceCalculationMainHandler("Margin", e.target.value);
-              }}
-            />
-          </div>
-          <div className="w-full flex flex-col gap-1.5">
-            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-              Markup
-            </label>
-            <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-              type="number"
-              placeholder="Enter markup %..."
-              name="markup"
-              value={productInfo.markup > -1 ? productInfo.markup : 0}
-              onChange={(e) => {
-                handleonChange(e);
-                priceCalculationMainHandler("Markup", e.target.value);
-              }}
-            />
-          </div>
-          <div className="w-full flex flex-col gap-1.5">
-            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-              Latest Cost
-            </label>
-            <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-              type="number"
-              placeholder="Latest cost..."
-              name="latestCost"
-              value={productInfo.latestCost}
-              onChange={(e) => {
-                handleonChange(e)
-                priceCalculationMainHandler("latestCost", e.target.value);
-                calculateAvgCostAsperContainerCost(
-                  "latestCost",
-                  e.target.value,
-                );
-              }}
-            />
-          </div>
-        </div>
+                <div className="w-full flex flex-col gap-1.5">
+                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+                    Avg Cost
+                    <span className="text-xs sm:text-sm lg:text-[.9dvw] text-[var(--Negative-color)]">
+                      *
+                    </span>
+                  </label>
+                  <input
+                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                    type="number"
+                    placeholder="Average Cost.."
+                    name="avgCost"
+                    value={productInfo.avgCost}
+                    onChange={(e) => {
+                      handleonChange(e);
+                      priceCalculationMainHandler("AvgCost", e.target.value);
+                      calculateAvgCostAsperContainerCost(
+                        "AvgCost",
+                        e.target.value,
+                      );
+                    }}
+                  />
+                </div>
+                <div className="w-full flex flex-col gap-1.5">
+                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+                    Margin
+                  </label>
+                  <input
+                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                    type="number"
+                    placeholder="Enter margin %..."
+                    name="margin"
+                    value={productInfo.margin}
+                    onChange={(e) => {
+                      handleonChange(e);
+                      priceCalculationMainHandler("Margin", e.target.value);
+                    }}
+                  />
+                </div>
+                <div className="w-full flex flex-col gap-1.5">
+                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+                    Markup
+                  </label>
+                  <input
+                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                    type="number"
+                    placeholder="Enter markup %..."
+                    name="markup"
+                    value={productInfo.markup > -1 ? productInfo.markup : 0}
+                    onChange={(e) => {
+                      handleonChange(e);
+                      priceCalculationMainHandler("Markup", e.target.value);
+                    }}
+                  />
+                </div>
+                <div className="w-full flex flex-col gap-1.5">
+                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+                    Latest Cost
+                  </label>
+                  <input
+                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                    type="number"
+                    placeholder="Latest cost..."
+                    name="latestCost"
+                    value={productInfo.latestCost}
+                    onChange={(e) => {
+                      handleonChange(e)
+                      priceCalculationMainHandler("latestCost", e.target.value);
+                      calculateAvgCostAsperContainerCost(
+                        "latestCost",
+                        e.target.value,
+                      );
+                    }}
+                  />
+                </div>
+              </div>
 
-        {/* <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 my-4">
+              {/* <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 my-4">
           <div className="w-full flex flex-col gap-1.5">
             <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
               Avg Cost
@@ -1354,707 +1391,716 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo, data }) => {
           </div>
         </div> */}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
-          <div className="flex flex-col gap-2">
-            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-              Size
-            </label>
-            <select
-              name="size"
-              value={productInfo.size}
-              onChange={handleonChange}
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-            >
-              <option>-- Select Size--</option>
-              <option value="50ML">50ML</option>
-              <option value="100ML">100ML</option>
-              <option value="200ML">200ML</option>
-              <option value="375ML">375ML</option>
-              <option value="750ML">750ML</option>
-              <option value="1LT">1LT</option>
-              <option value="1.5LT">1.5LT</option>
-              <option value="1.75LT">1.75LT</option>
-              <option value="1.75LT">1.75LT</option>
-              <option value="2LT">2LT</option>
-              <option value="3LT">3LT</option>
-              <option value="4LT">4LT</option>
-              <option value="5LT">5LT</option>
-              <option value="8OZ">8OZ</option>
-              <option value="12OZ">12OZ</option>
-              <option value="16OZ">16OZ</option>
-              <option value="18OZ">18OZ</option>
-              <option value="22OZ">22OZ</option>
-              <option value="24OZ">24OZ</option>
-              <option value="28OZ">28OZ</option>
-              <option value="32OZ">32OZ</option>
-              <option value="1PK">1PK</option>
-              <option value="2PK">2PK</option>
-              <option value="4PK">4PK</option>
-              <option value="6PK">6PK</option>
-              <option value="8PK">8PK</option>
-              <option value="10PK">10PK</option>
-              <option value="12PK">12PK</option>
-              <option value="15PK">15PK</option>
-              <option value="16PK">16PK</option>
-              <option value="18PK">18PK</option>
-              <option value="20PK">20PK</option>
-              <option value="24PK">24PK</option>
-              <option value="30PK">30PK</option>
-              <option value="36PK">36PK</option>
-              <option value="Single">Single</option>
-              <option value="MISC">MISC</option>
-              <option value="19.2OZ">19.2OZ</option>
-            </select>
-          </div>
-          <div className="flex flex-col gap-2 relative">
-            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-              Vendor
-            </label>
-            <input
-              className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-              placeholder="Search vendor..."
-              value={
-                selectedVendor
-                  ? selectedVendor.vendor_name ||
-                  selectedVendor.name ||
-                  selectedVendor.full_name ||
-                  ""
-                  : vendorQuery
-              }
-              onChange={(e) => {
-                const value = e.target.value;
-                if (selectedVendor) {
-                  setSelectedVendor(null);
-                }
-                setVendorQuery(value);
-                if (value) {
-                  setIsSearchingVendor(true);
-                  setShowVendorList(true);
-                  vendorDebounceCallback(value);
-                } else {
-                  setIsSearchingVendor(false);
-                  setShowVendorList(false);
-                }
-              }}
-              onFocus={() => {
-                if (!selectedVendor) {
-                  setShowVendorList(true);
-                  if (!vendorQuery) {
-                    fetchInitialVendors();
-                  }
-                }
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
-                if (selectedVendor) {
-                  setSelectedVendor(null);
-                  setVendorQuery("");
-                  setShowVendorList(true);
-                }
-              }}
-              readOnly={selectedVendor ? true : false}
-            />
-
-            {showVendorList && !selectedVendor && (
-              <div className="absolute top-[105%] p-3 left-0 w-full min-h-[10vh] max-h-[30vh] overflow-auto flex flex-col gap-1 bg-white shadow-lg border border-[var(--border-color)] rounded-lg z-50 hideScrollbar">
-                {vendorError && (
-                  <p className="text-center mainFont text-gray-400 text-sm sm:text-base">
-                    {vendorError}
-                  </p>
-                )}
-
-                {isSearchingVendor ? (
-                  <div className="w-full">
-                    <p className="text-start mainFont text-gray-400 animate-pulse duration-200 ease-linear text-sm sm:text-base">
-                      Searching vendors...
-                    </p>
-                  </div>
-                ) : (
-                  <>
-                    {vendorResults.length === 0 ? (
-                      <>
-                        <p className="text-center mainFont text-gray-400 animate-pulse duration-200 ease-linear text-sm sm:text-base">
-                          No Vendor Found
-                        </p>
-                      </>
-                    ) : (
-                      <>
-                        {vendorResults.map((vendor, id) => (
-                          <button
-                            key={id}
-                            className="w-full py-2 sm:py-3 px-3 sm:px-5 cursor-pointer hover:bg-[#000]/15 transition-all duration-200 ease-linear bg-[#000]/5 border-b border-[var(--border-color)] mainFont font-semibold rounded text-start text-sm sm:text-base capitalize flex justify-start items-center gap-3"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleAddVendor(vendor);
-                              setProductInfo({
-                                ...productInfo,
-                                vendor: {
-                                  id: vendor.id,
-                                  name: vendor.name,
-                                },
-                              });
-                            }}
-                          >
-                            <div className="w-full">
-                              <p className="line-clamp-1">
-                                {vendor.vendor_name ||
-                                  vendor.name ||
-                                  vendor.full_name ||
-                                  "Unnamed Vendor"}
-                              </p>
-                            </div>
-                          </button>
-                        ))}
-                      </>
-                    )}
-                  </>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className="w-full flex flex-col gap-2 my-4 relative">
-          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-            Category
-          </label>
-          <input
-            className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-            placeholder="Search category..."
-            value={
-              selectedCategory
-                ? selectedCategory.category_name || selectedCategory.name || ""
-                : categoryQuery
-            }
-            onChange={(e) => {
-              const value = e.target.value;
-              if (selectedCategory) {
-                setSelectedCategory(null);
-              }
-              setCategoryQuery(value);
-              if (value) {
-                setIsSearchingCategory(true);
-                setShowCategoryList(true);
-                categoryDebounceCallback(value);
-              } else {
-                setIsSearchingCategory(false);
-                setShowCategoryList(false);
-              }
-            }}
-            onFocus={() => {
-              if (!selectedCategory) {
-                setShowCategoryList(true);
-                if (!categoryQuery) {
-                  // fetchInitialCategories();
-                }
-              }
-            }}
-            onClick={(e) => {
-              e.stopPropagation();
-              if (selectedCategory) {
-                setSelectedCategory(null);
-                setCategoryQuery("");
-                setShowCategoryList(true);
-              }
-            }}
-            readOnly={selectedCategory ? true : false}
-          />
-
-          {showCategoryList && !selectedCategory && (
-            <div className="absolute top-[105%] p-3 left-0 w-full min-h-[10vh] max-h-[30vh] overflow-auto flex flex-col gap-1 bg-white shadow-lg border border-[var(--border-color)] rounded-lg z-50 hideScrollbar">
-              {categoryError && (
-                <p className="text-center mainFont text-gray-400 text-sm sm:text-base">
-                  {categoryError}
-                </p>
-              )}
-
-              {isSearchingCategory ? (
-                <div className="w-full">
-                  <p className="text-start mainFont text-gray-400 animate-pulse duration-200 ease-linear text-sm sm:text-base">
-                    Searching categories...
-                  </p>
-                </div>
-              ) : (
-                <>
-                  {categoryResults.length === 0 ? (
-                    <>
-                      <p className="text-center mainFont text-gray-400 animate-pulse duration-200 ease-linear text-sm sm:text-base">
-                        No Category Found
-                      </p>
-                    </>
-                  ) : (
-                    <>
-                      {categoryResults.map((category, id) => (
-                        <button
-                          key={id}
-                          className="w-full py-2 sm:py-3 px-3 sm:px-5 cursor-pointer hover:bg-[#000]/15 transition-all duration-200 ease-linear bg-[#000]/5 border-b border-[var(--border-color)] mainFont font-semibold rounded text-start text-sm sm:text-base capitalize flex justify-start items-center gap-3"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleAddCategory(category);
-                            setProductInfo({
-                              ...productInfo,
-                              category: {
-                                id: category._id,
-                                name: category.category_name,
-                              },
-                            });
-                          }}
-                        >
-                          <div className="w-full">
-                            <p className="line-clamp-1">
-                              {category.category_name ||
-                                category.name ||
-                                "Unnamed Category"}
-                            </p>
-                          </div>
-                        </button>
-                      ))}
-                    </>
-                  )}
-                </>
-              )}
-            </div>
-          )}
-        </div>
-
-        <div className="w-full flex flex-col gap-2 my-4 relative">
-          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-            Add to Group (optional)
-          </label>
-
-          <input
-            className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-            placeholder="Search group..."
-            value={
-              selectedGroup
-                ? selectedGroup.group_name ||
-                selectedGroup.name ||
-                selectedGroup.title ||
-                ""
-                : groupQuery
-            }
-            onChange={(e) => {
-              const value = e.target.value;
-              if (selectedGroup) {
-                setSelectedGroup(null);
-              }
-              setGroupQuery(value);
-              if (value) {
-                setIsSearchingGroup(true);
-                setShowGroupList(true);
-                groupDebounceCallback(value);
-              } else {
-                setIsSearchingGroup(false);
-                setShowGroupList(false);
-              }
-            }}
-            onFocus={() => {
-              if (!selectedGroup) {
-                setShowGroupList(true);
-                if (!groupQuery) {
-                  fetchInitialGroups();
-                }
-              }
-            }}
-            onClick={(e) => {
-              e.stopPropagation();
-              if (selectedGroup) {
-                setSelectedGroup(null);
-                setGroupQuery("");
-                setShowGroupList(true);
-              }
-            }}
-            readOnly={selectedGroup ? true : false}
-          />
-
-          {showGroupList && !selectedGroup && (
-            <div className="absolute top-[105%] p-3 left-0 w-full min-h-[10vh] max-h-[30vh] overflow-auto flex flex-col gap-1 bg-white shadow-lg border border-[var(--border-color)] rounded-lg z-50 hideScrollbar">
-              {groupError && (
-                <p className="text-center mainFont text-gray-400 text-sm sm:text-base">
-                  {groupError}
-                </p>
-              )}
-
-              {isSearchingGroup ? (
-                <div className="w-full">
-                  <p className="text-start mainFont text-gray-400 animate-pulse duration-200 ease-linear text-sm sm:text-base">
-                    Searching groups...
-                  </p>
-                </div>
-              ) : (
-                <>
-                  {groupResults.length === 0 ? (
-                    <>
-                      <p className="text-center mainFont text-gray-400 animate-pulse duration-200 ease-linear text-sm sm:text-base">
-                        No Group Found
-                      </p>
-                    </>
-                  ) : (
-                    <>
-                      {groupResults.map((group, id) => (
-                        <button
-                          key={id}
-                          className="w-full py-2 sm:py-3 px-3 sm:px-5 cursor-pointer hover:bg-[#000]/15 transition-all duration-200 ease-linear bg-[#000]/5 border-b border-[var(--border-color)] mainFont font-semibold rounded text-start text-sm sm:text-base capitalize flex justify-start items-center gap-3"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleAddGroup(group);
-                            setProductInfo({
-                              ...productInfo,
-                              group: {
-                                id: group.id,
-                                name: group.group_name,
-                              },
-                            });
-                          }}
-                        >
-                          <div className="w-full">
-                            <p className="line-clamp-1">
-                              {group.group_name ||
-                                group.name ||
-                                group.title ||
-                                "Unnamed Group"}
-                            </p>
-                          </div>
-                        </button>
-                      ))}
-                    </>
-                  )}
-                </>
-              )}
-            </div>
-          )}
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full my-4">
-          <div className="w-full flex flex-col gap-2 relative">
-            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-              Supplier
-            </label>
-            <input
-              className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-              placeholder="Search supplier..."
-              value={
-                selectedSupplier
-                  ? selectedSupplier.name || selectedSupplier.full_name || ""
-                  : supplierQuery
-              }
-              onChange={(e) => {
-                const value = e.target.value;
-                // If a supplier was previously selected, clear it so user can type a new query
-                if (selectedSupplier) {
-                  setSelectedSupplier(null);
-                }
-                setSupplierQuery(value);
-                if (value) {
-                  setIsSearching(true);
-                  setShowSupplierList(true);
-                  debounceCallback(value);
-                } else {
-                  setIsSearching(false);
-                  setShowSupplierList(false);
-                }
-              }}
-              onFocus={() => {
-                if (!selectedSupplier) {
-                  setShowSupplierList(true);
-                  if (!supplierQuery) {
-                    fetchInitialSuppliers();
-                  }
-                }
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
-                if (selectedSupplier) {
-                  setSelectedSupplier(null);
-                  setSupplierQuery("");
-                  setShowSupplierList(true);
-                }
-              }}
-              readOnly={selectedSupplier ? true : false}
-            />
-
-            {/* Search list show up start */}
-            {showSupplierList && !selectedSupplier && (
-              <div className="absolute top-[105%] p-3 left-0 w-full min-h-[10vh] max-h-[30vh] overflow-auto flex flex-col gap-1 bg-white shadow-lg border border-[var(--border-color)] rounded-lg z-50 hideScrollbar">
-                {isError && (
-                  <p className="text-center mainFont text-gray-400 text-sm sm:text-base">
-                    {isError}
-                  </p>
-                )}
-
-                {isSearching ? (
-                  <div className="w-full">
-                    <p className="text-start mainFont text-gray-400 animate-pulse duration-200 ease-linear text-sm sm:text-base">
-                      Searching suppliers...
-                    </p>
-                  </div>
-                ) : (
-                  <>
-                    {searchResult.length === 0 ? (
-                      <>
-                        <p className="text-center mainFont text-gray-400 animate-pulse duration-200 ease-linear text-sm sm:text-base">
-                          No Supplier Found
-                        </p>
-                      </>
-                    ) : (
-                      <>
-                        {searchResult.map((supplier, id) => (
-                          <button
-                            key={id}
-                            className="w-full py-2 sm:py-3 px-3 sm:px-5 cursor-pointer hover:bg-[#000]/15 transition-all duration-200 ease-linear bg-[#000]/5 border-b border-[var(--border-color)] mainFont font-semibold rounded text-start text-sm sm:text-base capitalize flex justify-start items-center gap-3"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleAddSupplier(supplier);
-                              setProductInfo({
-                                ...productInfo,
-                                supplier: {
-                                  id: supplier.id,
-                                  name: supplier.name,
-                                },
-                              });
-                            }}
-                          >
-                            <div className="w-full">
-                              <p className="line-clamp-1">
-                                {supplier.name ||
-                                  supplier.full_name ||
-                                  "Unnamed Supplier"}
-                              </p>
-                            </div>
-                          </button>
-                        ))}
-                      </>
-                    )}
-                  </>
-                )}
-              </div>
-            )}
-            {/* Search list show up end */}
-          </div>
-          <div className="w-full flex flex-col gap-2 relative">
-            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-              SKU
-            </label>
-            <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 pr-24 pl-3"
-              type="text"
-              value={productInfo.sku}
-              onChange={(e) => setSku(e.target.value)}
-              placeholder="Enter or generate SKU"
-              name="sku"
-            />
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleGenerateSKU();
-              }}
-              className="absolute right-2 top-[32px] sm:top-[34px] lg:top-[2.5dvw] px-3 py-1 text-xs sm:text-sm bg-[var(--button-color1)] text-white rounded-md hover:opacity-90 transition-all duration-200 cursor-pointer"
-              title="Generate SKU"
-            >
-              Generate
-            </button>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 w-full my-6">
-          <div className="w-full flex flex-col gap-2">
-            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-              Units Per Case
-            </label>
-            <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-              type="text"
-              onChange={(e) => {
-                // handleonChange(e)
-                calculateTotalItemsAndCntainer("unitsPerCase", e.target.value);
-              }}
-              name="unitsPerCase"
-              value={productInfo.unitsPerCase}
-            />
-          </div>
-          <div className="w-full flex flex-col gap-2">
-            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-              Cost of 1 Case
-            </label>
-            <div className="flex justify-center items-center gap-3">
-              <input
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                type="text"
-                name="caseCostTotal"
-                value={productInfo.caseCostTotal}
-                onChange={(e) => {
-                  handleonChange(e);
-                  calculateAvgCostAsperContainerCost(
-                    "caseCostTotal",
-                    e.target.value,
-                  );
-                }}
-              />
-
-            </div>
-          </div>
-          <div className="w-full flex flex-col gap-2">
-            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-              Tax
-            </label>
-
-            <select
-              onChange={handleonChange}
-              name="tax"
-              value={productInfo.tax}
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-            >
-              <option value="No Tax">No Tax</option>
-              <option value="Low Tax">Low Tax</option>
-              <option value="High Tax">High Tax</option>
-            </select>
-          </div>
-
-          <div className="w-full flex flex-col gap-2">
-            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-              Reorder Point
-            </label>
-            <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-              type="number"
-              name="reorderPoints"
-              value={productInfo.reorderPoints}
-              onChange={handleonChange}
-            />
-          </div>
-          <div className="w-full flex flex-col gap-2">
-            <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-              Reorder Value
-            </label>
-            <input
-              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-              type="number"
-              name="reorderValue"
-              value={productInfo.reorderValue}
-              onChange={handleonChange}
-            />
-          </div>
-          {
-            actionType === 'Edit' ? '' : (
-              <div className="w-full flex flex-col gap-2">
-                <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-                  Rank
-                </label>
-
-                <select
-                  name="rank"
-                  value={productInfo.rank}
-                  onChange={handleonChange}
-                  className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                >
-                  <option> -- Select Item Rank --</option>
-                  <option> 1</option>
-                  <option> 2</option>
-                  <option> 3</option>
-                  <option> 4</option>
-                </select>
-              </div>
-            )
-          }
-        </div>
-        {
-          data?.images?.length > 0 && (
-            <div className="flex w-full flex flex-col gap-2">
-              <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Product Images</label>
-              <div className="w-full flex flex-wrap gap-5 p-3">
-                {
-                  data?.images?.map((cur, id) => (
-                    <div key={id + cur.id} className="h-[4dvw] w-[4dvw] rounded-md overflow-hidden">
-                      <img src={cur.url} alt={cur.id} className="w-full h-full object-cover " />
-                    </div>
-
-                  ))
-                }
-              </div>
-            </div>
-          )
-        }
-
-
-        <div className="w-full flex flex-col gap-2 mt-4">
-          <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
-            Upload Images
-          </label>
-          <div
-            className={`w-full border-2 border-dashed rounded-lg p-4 transition-colors duration-300 cursor-pointer ${isDragging
-              ? "border-blue-500 bg-blue-50"
-              : "border-gray-300 bg-gray-50 hover:bg-gray-100"
-              } ${actionType === "View" ? "opacity-50 pointer-events-none" : ""}`}
-            onDragEnter={actionType !== "View" ? handleDragOver : undefined}
-            onDragLeave={actionType !== "View" ? handleDragLeave : undefined}
-            onDragOver={actionType !== "View" ? handleDragOver : undefined}
-            onDrop={actionType !== "View" ? handleDrop : undefined}
-            onClick={
-              actionType !== "View"
-                ? () => document.getElementById("file-input").click()
-                : undefined
-            }
-          >
-            <div className="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-4">
-              <div className="flex flex-col items-center justify-center space-y-2">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                  <svg
-                    className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+                    Size
+                  </label>
+                  <select
+                    name="size"
+                    value={productInfo.size}
+                    onChange={handleonChange}
+                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                    />
-                  </svg>
+                    <option>-- Select Size--</option>
+                    <option value="50ML">50ML</option>
+                    <option value="100ML">100ML</option>
+                    <option value="200ML">200ML</option>
+                    <option value="375ML">375ML</option>
+                    <option value="750ML">750ML</option>
+                    <option value="1LT">1LT</option>
+                    <option value="1.5LT">1.5LT</option>
+                    <option value="1.75LT">1.75LT</option>
+                    <option value="1.75LT">1.75LT</option>
+                    <option value="2LT">2LT</option>
+                    <option value="3LT">3LT</option>
+                    <option value="4LT">4LT</option>
+                    <option value="5LT">5LT</option>
+                    <option value="8OZ">8OZ</option>
+                    <option value="12OZ">12OZ</option>
+                    <option value="16OZ">16OZ</option>
+                    <option value="18OZ">18OZ</option>
+                    <option value="22OZ">22OZ</option>
+                    <option value="24OZ">24OZ</option>
+                    <option value="28OZ">28OZ</option>
+                    <option value="32OZ">32OZ</option>
+                    <option value="1PK">1PK</option>
+                    <option value="2PK">2PK</option>
+                    <option value="4PK">4PK</option>
+                    <option value="6PK">6PK</option>
+                    <option value="8PK">8PK</option>
+                    <option value="10PK">10PK</option>
+                    <option value="12PK">12PK</option>
+                    <option value="15PK">15PK</option>
+                    <option value="16PK">16PK</option>
+                    <option value="18PK">18PK</option>
+                    <option value="20PK">20PK</option>
+                    <option value="24PK">24PK</option>
+                    <option value="30PK">30PK</option>
+                    <option value="36PK">36PK</option>
+                    <option value="Single">Single</option>
+                    <option value="MISC">MISC</option>
+                    <option value="19.2OZ">19.2OZ</option>
+                  </select>
                 </div>
-                <div>
-                  <p className="text-gray-600 text-sm sm:text-base">
-                    {isDragging ? "Drop files here" : "Upload images"}
-                  </p>
-                </div>
-              </div>
-              {images.length > 0 && (
-                <div className="relative flex items-center space-x-2">
-                  {images.map((image, index) => (
-                    <div key={index} className="relative">
-                      <img
-                        src={image.preview}
-                        alt={`Uploaded ${index}`}
-                        className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-md"
-                      />
-                      {actionType !== "View" && (
-                        <button
-                          onClick={() => handleRemoveImage(index)}
-                          className="absolute -top-2 -right-2 bg-[var(--Negative-color)] text-white rounded-full p-1 hover:bg-red-700 transition-all duration-300"
-                          title="Remove image"
-                        >
-                          <CircleX size={14} className="sm:w-4 sm:h-4" />
-                        </button>
+                <div className="flex flex-col gap-2 relative">
+                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+                    Vendor
+                  </label>
+                  <input
+                    className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                    placeholder="Search vendor..."
+                    value={
+                      selectedVendor
+                        ? selectedVendor.vendor_name ||
+                        selectedVendor.name ||
+                        selectedVendor.full_name ||
+                        ""
+                        : vendorQuery
+                    }
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (selectedVendor) {
+                        setSelectedVendor(null);
+                      }
+                      setVendorQuery(value);
+                      if (value) {
+                        setIsSearchingVendor(true);
+                        setShowVendorList(true);
+                        vendorDebounceCallback(value);
+                      } else {
+                        setIsSearchingVendor(false);
+                        setShowVendorList(false);
+                      }
+                    }}
+                    onFocus={() => {
+                      if (!selectedVendor) {
+                        setShowVendorList(true);
+                        if (!vendorQuery) {
+                          fetchInitialVendors();
+                        }
+                      }
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (selectedVendor) {
+                        setSelectedVendor(null);
+                        setVendorQuery("");
+                        setShowVendorList(true);
+                      }
+                    }}
+                    readOnly={selectedVendor ? true : false}
+                  />
+
+                  {showVendorList && !selectedVendor && (
+                    <div className="absolute top-[105%] p-3 left-0 w-full min-h-[10vh] max-h-[30vh] overflow-auto flex flex-col gap-1 bg-white shadow-lg border border-[var(--border-color)] rounded-lg z-50 hideScrollbar">
+                      {vendorError && (
+                        <p className="text-center mainFont text-gray-400 text-sm sm:text-base">
+                          {vendorError}
+                        </p>
+                      )}
+
+                      {isSearchingVendor ? (
+                        <div className="w-full">
+                          <p className="text-start mainFont text-gray-400 animate-pulse duration-200 ease-linear text-sm sm:text-base">
+                            Searching vendors...
+                          </p>
+                        </div>
+                      ) : (
+                        <>
+                          {vendorResults.length === 0 ? (
+                            <>
+                              <p className="text-center mainFont text-gray-400 animate-pulse duration-200 ease-linear text-sm sm:text-base">
+                                No Vendor Found
+                              </p>
+                            </>
+                          ) : (
+                            <>
+                              {vendorResults.map((vendor, id) => (
+                                <button
+                                  key={id}
+                                  className="w-full py-2 sm:py-3 px-3 sm:px-5 cursor-pointer hover:bg-[#000]/15 transition-all duration-200 ease-linear bg-[#000]/5 border-b border-[var(--border-color)] mainFont font-semibold rounded text-start text-sm sm:text-base capitalize flex justify-start items-center gap-3"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleAddVendor(vendor);
+                                    setProductInfo({
+                                      ...productInfo,
+                                      vendor: {
+                                        id: vendor.id,
+                                        name: vendor.name,
+                                      },
+                                    });
+                                  }}
+                                >
+                                  <div className="w-full">
+                                    <p className="line-clamp-1">
+                                      {vendor.vendor_name ||
+                                        vendor.name ||
+                                        vendor.full_name ||
+                                        "Unnamed Vendor"}
+                                    </p>
+                                  </div>
+                                </button>
+                              ))}
+                            </>
+                          )}
+                        </>
                       )}
                     </div>
-                  ))}
+                  )}
                 </div>
-              )}
+              </div>
+
+              <div className="w-full flex flex-col gap-2 my-4 relative">
+                <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+                  Category
+                </label>
+                <input
+                  className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  placeholder="Search category..."
+                  value={
+                    selectedCategory
+                      ? selectedCategory.category_name || selectedCategory.name || ""
+                      : categoryQuery
+                  }
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (selectedCategory) {
+                      setSelectedCategory(null);
+                    }
+                    setCategoryQuery(value);
+                    if (value) {
+                      setIsSearchingCategory(true);
+                      setShowCategoryList(true);
+                      categoryDebounceCallback(value);
+                    } else {
+                      setIsSearchingCategory(false);
+                      setShowCategoryList(false);
+                    }
+                  }}
+                  onFocus={() => {
+                    if (!selectedCategory) {
+                      setShowCategoryList(true);
+                      if (!categoryQuery) {
+                        // fetchInitialCategories();
+                      }
+                    }
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (selectedCategory) {
+                      setSelectedCategory(null);
+                      setCategoryQuery("");
+                      setShowCategoryList(true);
+                    }
+                  }}
+                  readOnly={selectedCategory ? true : false}
+                />
+
+                {showCategoryList && !selectedCategory && (
+                  <div className="absolute top-[105%] p-3 left-0 w-full min-h-[10vh] max-h-[30vh] overflow-auto flex flex-col gap-1 bg-white shadow-lg border border-[var(--border-color)] rounded-lg z-50 hideScrollbar">
+                    {categoryError && (
+                      <p className="text-center mainFont text-gray-400 text-sm sm:text-base">
+                        {categoryError}
+                      </p>
+                    )}
+
+                    {isSearchingCategory ? (
+                      <div className="w-full">
+                        <p className="text-start mainFont text-gray-400 animate-pulse duration-200 ease-linear text-sm sm:text-base">
+                          Searching categories...
+                        </p>
+                      </div>
+                    ) : (
+                      <>
+                        {categoryResults.length === 0 ? (
+                          <>
+                            <p className="text-center mainFont text-gray-400 animate-pulse duration-200 ease-linear text-sm sm:text-base">
+                              No Category Found
+                            </p>
+                          </>
+                        ) : (
+                          <>
+                            {categoryResults.map((category, id) => (
+                              <button
+                                key={id}
+                                className="w-full py-2 sm:py-3 px-3 sm:px-5 cursor-pointer hover:bg-[#000]/15 transition-all duration-200 ease-linear bg-[#000]/5 border-b border-[var(--border-color)] mainFont font-semibold rounded text-start text-sm sm:text-base capitalize flex justify-start items-center gap-3"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleAddCategory(category);
+                                  setProductInfo({
+                                    ...productInfo,
+                                    category: {
+                                      id: category._id,
+                                      name: category.category_name,
+                                    },
+                                  });
+                                }}
+                              >
+                                <div className="w-full">
+                                  <p className="line-clamp-1">
+                                    {category.category_name ||
+                                      category.name ||
+                                      "Unnamed Category"}
+                                  </p>
+                                </div>
+                              </button>
+                            ))}
+                          </>
+                        )}
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              <div className="w-full flex flex-col gap-2 my-4 relative">
+                <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+                  Add to Group (optional)
+                </label>
+
+                <input
+                  className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  placeholder="Search group..."
+                  value={
+                    selectedGroup
+                      ? selectedGroup.group_name ||
+                      selectedGroup.name ||
+                      selectedGroup.title ||
+                      ""
+                      : groupQuery
+                  }
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (selectedGroup) {
+                      setSelectedGroup(null);
+                    }
+                    setGroupQuery(value);
+                    if (value) {
+                      setIsSearchingGroup(true);
+                      setShowGroupList(true);
+                      groupDebounceCallback(value);
+                    } else {
+                      setIsSearchingGroup(false);
+                      setShowGroupList(false);
+                    }
+                  }}
+                  onFocus={() => {
+                    if (!selectedGroup) {
+                      setShowGroupList(true);
+                      if (!groupQuery) {
+                        fetchInitialGroups();
+                      }
+                    }
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (selectedGroup) {
+                      setSelectedGroup(null);
+                      setGroupQuery("");
+                      setShowGroupList(true);
+                    }
+                  }}
+                  readOnly={selectedGroup ? true : false}
+                />
+
+                {showGroupList && !selectedGroup && (
+                  <div className="absolute top-[105%] p-3 left-0 w-full min-h-[10vh] max-h-[30vh] overflow-auto flex flex-col gap-1 bg-white shadow-lg border border-[var(--border-color)] rounded-lg z-50 hideScrollbar">
+                    {groupError && (
+                      <p className="text-center mainFont text-gray-400 text-sm sm:text-base">
+                        {groupError}
+                      </p>
+                    )}
+
+                    {isSearchingGroup ? (
+                      <div className="w-full">
+                        <p className="text-start mainFont text-gray-400 animate-pulse duration-200 ease-linear text-sm sm:text-base">
+                          Searching groups...
+                        </p>
+                      </div>
+                    ) : (
+                      <>
+                        {groupResults.length === 0 ? (
+                          <>
+                            <p className="text-center mainFont text-gray-400 animate-pulse duration-200 ease-linear text-sm sm:text-base">
+                              No Group Found
+                            </p>
+                          </>
+                        ) : (
+                          <>
+                            {groupResults.map((group, id) => (
+                              <button
+                                key={id}
+                                className="w-full py-2 sm:py-3 px-3 sm:px-5 cursor-pointer hover:bg-[#000]/15 transition-all duration-200 ease-linear bg-[#000]/5 border-b border-[var(--border-color)] mainFont font-semibold rounded text-start text-sm sm:text-base capitalize flex justify-start items-center gap-3"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleAddGroup(group);
+                                  setProductInfo({
+                                    ...productInfo,
+                                    group: {
+                                      id: group.id,
+                                      name: group.group_name,
+                                    },
+                                  });
+                                }}
+                              >
+                                <div className="w-full">
+                                  <p className="line-clamp-1">
+                                    {group.group_name ||
+                                      group.name ||
+                                      group.title ||
+                                      "Unnamed Group"}
+                                  </p>
+                                </div>
+                              </button>
+                            ))}
+                          </>
+                        )}
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full my-4">
+                <div className="w-full flex flex-col gap-2 relative">
+                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+                    Supplier
+                  </label>
+                  <input
+                    className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                    placeholder="Search supplier..."
+                    value={
+                      selectedSupplier
+                        ? selectedSupplier.name || selectedSupplier.full_name || ""
+                        : supplierQuery
+                    }
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      // If a supplier was previously selected, clear it so user can type a new query
+                      if (selectedSupplier) {
+                        setSelectedSupplier(null);
+                      }
+                      setSupplierQuery(value);
+                      if (value) {
+                        setIsSearching(true);
+                        setShowSupplierList(true);
+                        debounceCallback(value);
+                      } else {
+                        setIsSearching(false);
+                        setShowSupplierList(false);
+                      }
+                    }}
+                    onFocus={() => {
+                      if (!selectedSupplier) {
+                        setShowSupplierList(true);
+                        if (!supplierQuery) {
+                          fetchInitialSuppliers();
+                        }
+                      }
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (selectedSupplier) {
+                        setSelectedSupplier(null);
+                        setSupplierQuery("");
+                        setShowSupplierList(true);
+                      }
+                    }}
+                    readOnly={selectedSupplier ? true : false}
+                  />
+
+                  {/* Search list show up start */}
+                  {showSupplierList && !selectedSupplier && (
+                    <div className="absolute top-[105%] p-3 left-0 w-full min-h-[10vh] max-h-[30vh] overflow-auto flex flex-col gap-1 bg-white shadow-lg border border-[var(--border-color)] rounded-lg z-50 hideScrollbar">
+                      {isError && (
+                        <p className="text-center mainFont text-gray-400 text-sm sm:text-base">
+                          {isError}
+                        </p>
+                      )}
+
+                      {isSearching ? (
+                        <div className="w-full">
+                          <p className="text-start mainFont text-gray-400 animate-pulse duration-200 ease-linear text-sm sm:text-base">
+                            Searching suppliers...
+                          </p>
+                        </div>
+                      ) : (
+                        <>
+                          {searchResult.length === 0 ? (
+                            <>
+                              <p className="text-center mainFont text-gray-400 animate-pulse duration-200 ease-linear text-sm sm:text-base">
+                                No Supplier Found
+                              </p>
+                            </>
+                          ) : (
+                            <>
+                              {searchResult.map((supplier, id) => (
+                                <button
+                                  key={id}
+                                  className="w-full py-2 sm:py-3 px-3 sm:px-5 cursor-pointer hover:bg-[#000]/15 transition-all duration-200 ease-linear bg-[#000]/5 border-b border-[var(--border-color)] mainFont font-semibold rounded text-start text-sm sm:text-base capitalize flex justify-start items-center gap-3"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleAddSupplier(supplier);
+                                    setProductInfo({
+                                      ...productInfo,
+                                      supplier: {
+                                        id: supplier.id,
+                                        name: supplier.name,
+                                      },
+                                    });
+                                  }}
+                                >
+                                  <div className="w-full">
+                                    <p className="line-clamp-1">
+                                      {supplier.name ||
+                                        supplier.full_name ||
+                                        "Unnamed Supplier"}
+                                    </p>
+                                  </div>
+                                </button>
+                              ))}
+                            </>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  )}
+                  {/* Search list show up end */}
+                </div>
+                <div className="w-full flex flex-col gap-2 relative">
+                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+                    SKU
+                  </label>
+                  <input
+                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 pr-24 pl-3"
+                    type="text"
+                    value={productInfo.sku}
+                    onChange={(e) => setSku(e.target.value)}
+                    placeholder="Enter or generate SKU"
+                    name="sku"
+                  />
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleGenerateSKU();
+                    }}
+                    className="absolute right-2 top-[32px] sm:top-[34px] lg:top-[2.5dvw] px-3 py-1 text-xs sm:text-sm bg-[var(--button-color1)] text-white rounded-md hover:opacity-90 transition-all duration-200 cursor-pointer"
+                    title="Generate SKU"
+                  >
+                    Generate
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 w-full my-6">
+                <div className="w-full flex flex-col gap-2">
+                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+                    Units Per Case
+                  </label>
+                  <input
+                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                    type="text"
+                    onChange={(e) => {
+                      // handleonChange(e)
+                      calculateTotalItemsAndCntainer("unitsPerCase", e.target.value);
+                    }}
+                    name="unitsPerCase"
+                    value={productInfo.unitsPerCase}
+                  />
+                </div>
+                <div className="w-full flex flex-col gap-2">
+                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+                    Cost of 1 Case
+                  </label>
+                  <div className="flex justify-center items-center gap-3">
+                    <input
+                      className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                      type="text"
+                      name="caseCostTotal"
+                      value={productInfo.caseCostTotal}
+                      onChange={(e) => {
+                        handleonChange(e);
+                        calculateAvgCostAsperContainerCost(
+                          "caseCostTotal",
+                          e.target.value,
+                        );
+                      }}
+                    />
+
+                  </div>
+                </div>
+                <div className="w-full flex flex-col gap-2">
+                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+                    Tax
+                  </label>
+
+                  <select
+                    onChange={handleonChange}
+                    name="tax"
+                    value={productInfo.tax}
+                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  >
+                    <option value="No Tax">No Tax</option>
+                    <option value="Low Tax">Low Tax</option>
+                    <option value="High Tax">High Tax</option>
+                  </select>
+                </div>
+
+                <div className="w-full flex flex-col gap-2">
+                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+                    Reorder Point
+                  </label>
+                  <input
+                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                    type="number"
+                    name="reorderPoints"
+                    value={productInfo.reorderPoints}
+                    onChange={handleonChange}
+                  />
+                </div>
+                <div className="w-full flex flex-col gap-2">
+                  <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+                    Reorder Value
+                  </label>
+                  <input
+                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                    type="number"
+                    name="reorderValue"
+                    value={productInfo.reorderValue}
+                    onChange={handleonChange}
+                  />
+                </div>
+                {
+                  actionType === 'Edit' ? '' : (
+                    <div className="w-full flex flex-col gap-2">
+                      <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+                        Rank
+                      </label>
+
+                      <select
+                        name="rank"
+                        value={productInfo.rank}
+                        onChange={handleonChange}
+                        className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                      >
+                        <option> -- Select Item Rank --</option>
+                        <option> 1</option>
+                        <option> 2</option>
+                        <option> 3</option>
+                        <option> 4</option>
+                      </select>
+                    </div>
+                  )
+                }
+              </div>
+              {
+                data?.images?.length > 0 && (
+                  <div className="flex w-full flex flex-col gap-2">
+                    <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">Product Images</label>
+                    <div className="w-full flex flex-wrap gap-5 p-3">
+                      {
+                        data?.images?.map((cur, id) => (
+                          <div className="relative">
+                            <div key={id + cur.id} className="h-[4dvw]  w-[4dvw] rounded-md overflow-hidden">
+                              <img src={cur.url} alt={cur.id} className="w-full h-full object-cover " />
+
+                            </div>
+                            <button onClick={() => handleRemoveProductImage(data.id, cur.id)} className="absolute -top-2 -right-2 rounded-full flex justify-center items-center w-[1.7dvw] h-[1.7dvw] bg-red-500 text-white cursor-pointer hover:scale-105 transition-all duration-300 ease-linear">
+                              <CircleX size={20} />
+                            </button>
+                          </div>
+
+                        ))
+                      }
+                    </div>
+                  </div>
+                )
+              }
+
+
+              <div className="w-full flex flex-col gap-2 mt-4">
+                <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont">
+                  Upload Images
+                </label>
+                <div
+                  className={`w-full border-2 border-dashed rounded-lg p-4 transition-colors duration-300 cursor-pointer ${isDragging
+                    ? "border-blue-500 bg-blue-50"
+                    : "border-gray-300 bg-gray-50 hover:bg-gray-100"
+                    } ${actionType === "View" ? "opacity-50 pointer-events-none" : ""}`}
+                  onDragEnter={actionType !== "View" ? handleDragOver : undefined}
+                  onDragLeave={actionType !== "View" ? handleDragLeave : undefined}
+                  onDragOver={actionType !== "View" ? handleDragOver : undefined}
+                  onDrop={actionType !== "View" ? handleDrop : undefined}
+                  onClick={
+                    actionType !== "View"
+                      ? () => document.getElementById("file-input").click()
+                      : undefined
+                  }
+                >
+                  <div className="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-4">
+                    <div className="flex flex-col items-center justify-center space-y-2">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                        <svg
+                          className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                          />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-gray-600 text-sm sm:text-base">
+                          {isDragging ? "Drop files here" : "Upload images"}
+                        </p>
+                      </div>
+                    </div>
+                    {images.length > 0 && (
+                      <div className="relative flex items-center space-x-2">
+                        {images.map((image, index) => (
+                          <div key={index} className="relative">
+                            <img
+                              src={image.preview}
+                              alt={`Uploaded ${index}`}
+                              className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-md"
+                            />
+                            {actionType !== "View" && (
+                              <button
+                                onClick={() => handleRemoveImage(index)}
+                                className="absolute -top-2 -right-2 bg-[var(--Negative-color)] text-white rounded-full p-1 hover:bg-red-700 transition-all duration-300"
+                                title="Remove image"
+                              >
+                                <CircleX size={14} className="sm:w-4 sm:h-4" />
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  {actionType !== "View" && (
+                    <input
+                      id="file-input"
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      className="hidden"
+                      onChange={handleFileInput}
+                    />
+                  )}
+                </div>
+              </div>
             </div>
-            {actionType !== "View" && (
-              <input
-                id="file-input"
-                type="file"
-                accept="image/*"
-                multiple
-                className="hidden"
-                onChange={handleFileInput}
-              />
-            )}
-          </div>
-        </div>
-      </div>
+          </>
+        )
+      }
     </>
   );
 };
