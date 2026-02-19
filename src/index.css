@@ -69,6 +69,14 @@ body {
   overflow-x: hidden;
 }
 
+@media print {
+  .print-scale {
+    transform: scale(0.5);
+    transform-origin: top left;
+    width: 200%; /* important to avoid content cut */
+  }
+}
+
 h1,
 h2,
 h3,
