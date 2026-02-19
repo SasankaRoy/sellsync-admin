@@ -31,7 +31,7 @@ import { useReactToPrint } from "react-to-print";
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 const rowSelection = {
-  mode: "multiRow",
+  mode: "none",
   headerCheckbox: false,
 };
 
@@ -236,7 +236,7 @@ export const Reports = () => {
           .map((item) => ({
             field: item,
             headerName: item.toUpperCase(),
-            width: 250,
+            width: 180,
           }));
 
         setColDefs(columns);
