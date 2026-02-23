@@ -55,7 +55,7 @@ export const ItemsList = () => {
   };
 
   const onEdit = (product) => {
-    console.log(product, "edit");
+    
     if (product) {
       setShowModel({
         state: true,
@@ -66,6 +66,13 @@ export const ItemsList = () => {
   };
   const onView = (product) => {
     console.log(product, "view");
+    if (product) {
+      setShowModel({
+        state: true,
+        productData: product,
+        actionType: "View",
+      });
+    }
   };
   const onDelete = (product) => {
     console.log(product, "delete 201");

@@ -232,7 +232,7 @@ export const Reports = () => {
       const keys = Object.keys(resData.expenselist[0])
       if (keys.length > 0) {
         const columns = keys
-          .filter((item) => item !== "vendor_details" && item !== "id") // 👈 skip this key
+          .filter((item) => item !== "vendor_details" && item !== "id") 
           .map((item) => ({
             field: item,
             headerName: item.toUpperCase(),

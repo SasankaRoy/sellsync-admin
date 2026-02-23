@@ -117,7 +117,6 @@ export const Category = () => {
 
   // Column Definitions: Defines & controls grid columns.
   const [colDefs, setColDefs] = useState([
-    { field: "_id", headerName: "Category Id" },
     { field: "category_name", headerName: "Category Name" },
     { field: "number_of_product", headerName: "Number of Items" },
     { field: "category_slug", headerName: "Slug" },
@@ -131,11 +130,10 @@ export const Category = () => {
               className={`capitalize font-semibold  flex justify-center items-center gap-3`}
             >
               <div
-                className={`h-2 w-2 ${
-                  data.value === "active"
-                    ? "bg-[var(--Positive-color)]"
-                    : "bg-[var(--Negative-color)]"
-                } rounded-full`}
+                className={`h-2 w-2 ${data.value === "active"
+                  ? "bg-[var(--Positive-color)]"
+                  : "bg-[var(--Negative-color)]"
+                  } rounded-full`}
               ></div>
               <p>{data.value}</p>
             </div>
@@ -256,8 +254,8 @@ export const Category = () => {
           setDeleteModel={setDeleteModel}
           productId={deleteModel.productId}
           path={deleteModel.path}
-          // setRowData={setRowData}
-          // rowData={rowData}
+        // setRowData={setRowData}
+        // rowData={rowData}
         />
       )}
     </Layout>
@@ -299,16 +297,18 @@ const ActionBtns = (props) => {
 
 const EditAndAddModel = ({ productData = {}, setShowModel, actionType }) => {
   const [categoryFields, setCategoryFields] = useState({
-    CategoryName: productData.CategoryName || "",
-    AgeVerification: productData.Stock || "", // Changed from Stock to AgeVerification
-    DefaultMargin: productData.DefaultMargin || "",
-    AllowEBT: productData.AllowEBT || false,
-    DoNotDiscount: productData.DoNotDiscount || false,
-    DoNotShowToWebstore: productData.DoNotShowToWebstore || false,
-    ExcludeDualPrice: productData.ExcludeDualPrice || false,
-    ExcludeLoyaltyReward: productData.ExcludeLoyaltyReward || false,
+    CategoryName: productData?.category_name || "",
+    AgeVerification: productData?.category_name || "", // Changed from Stock to AgeVerification
+    DefaultMargin: "",
+    AllowEBT: false,
+    DoNotDiscount: false,
+    DoNotShowToWebstore: false,
+    ExcludeDualPrice: false,
+    ExcludeLoyaltyReward: false,
   });
   const queryClient = useQueryClient();
+
+
 
   const handleCloseModel = () => {
     setShowModel({

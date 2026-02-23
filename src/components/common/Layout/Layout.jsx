@@ -472,10 +472,10 @@ export const Layout = ({ children }) => {
               setSubMenuStateDaily(!subMenuStateDaily);
             }}
             className={`flex py-2 px-5 rounded-full cursor-pointer font-[600] ${isTablet
-                ? "text-[30px]"
-                : isMobile
-                  ? "text-[20px]"
-                  : "text-sm lg:text-[1.2dvw]"
+              ? "text-[30px]"
+              : isMobile
+                ? "text-[20px]"
+                : "text-sm lg:text-[1.2dvw]"
               } paraFont justify-start items-center gap-4 deActiveLink ${isMobile ? "text-white" : ""
               }`}
           >
@@ -579,10 +579,10 @@ export const Layout = ({ children }) => {
               setSubMenuStateInventory(!subMenuStateInventory);
             }}
             className={`flex py-2 px-5 rounded-full cursor-pointer font-[600] ${isTablet
-                ? "text-[30px]"
-                : isMobile
-                  ? "text-[20px]"
-                  : "text-sm lg:text-[1.2dvw]"
+              ? "text-[30px]"
+              : isMobile
+                ? "text-[20px]"
+                : "text-sm lg:text-[1.2dvw]"
               } paraFont justify-start items-center gap-4 deActiveLink ${isMobile ? "text-white" : ""
               }`}
           >
@@ -804,10 +804,10 @@ export const Layout = ({ children }) => {
               setSubMenuStateUser(!subMenuStateUser);
             }}
             className={`flex py-2 px-5 rounded-full cursor-pointer font-[600] ${isTablet
-                ? "text-[30px]"
-                : isMobile
-                  ? "text-[20px]"
-                  : "text-sm lg:text-[1.2dvw]"
+              ? "text-[30px]"
+              : isMobile
+                ? "text-[20px]"
+                : "text-sm lg:text-[1.2dvw]"
               } paraFont justify-start items-center gap-4 deActiveLink ${isMobile ? "text-white" : ""
               }`}
           >
@@ -887,10 +887,10 @@ export const Layout = ({ children }) => {
               setSunMenuStatePos(!subMenuStatePos);
             }}
             className={`flex py-2 px-5 rounded-full cursor-pointer font-[600] ${isTablet
-                ? "text-[30px]"
-                : isMobile
-                  ? "text-[20px]"
-                  : "text-sm lg:text-[1.2dvw]"
+              ? "text-[30px]"
+              : isMobile
+                ? "text-[20px]"
+                : "text-sm lg:text-[1.2dvw]"
               } paraFont justify-start items-center gap-4 deActiveLink ${isMobile ? "text-white" : ""
               }`}
           >
@@ -1152,10 +1152,10 @@ export const Layout = ({ children }) => {
               setSubMenuStateLottery(!subMenuStateLottery);
             }}
             className={`flex py-2 px-5 rounded-full cursor-pointer font-[600] ${isTablet
-                ? "text-[30px]"
-                : isMobile
-                  ? "text-[20px]"
-                  : "text-sm lg:text-[1.2dvw]"
+              ? "text-[30px]"
+              : isMobile
+                ? "text-[20px]"
+                : "text-sm lg:text-[1.2dvw]"
               } paraFont justify-start items-center gap-4 deActiveLink ${isMobile ? "text-white" : ""
               }`}
           >
@@ -1259,10 +1259,10 @@ export const Layout = ({ children }) => {
               setSubMenuStateLoyalty(!subMenuStateLoyalty);
             }}
             className={`flex py-2 px-5 rounded-full cursor-pointer font-[600] ${isTablet
-                ? "text-[30px]"
-                : isMobile
-                  ? "text-[20px]"
-                  : "text-sm lg:text-[1.2dvw]"
+              ? "text-[30px]"
+              : isMobile
+                ? "text-[20px]"
+                : "text-sm lg:text-[1.2dvw]"
               } paraFont justify-start items-center gap-4 deActiveLink ${isMobile ? "text-white" : ""
               }`}
           >
@@ -1486,10 +1486,10 @@ export const Layout = ({ children }) => {
 
         <button
           className={`bg-[#E74C3C] py-3 px-6 gap-4 font-[var(--paraFont)] cursor-pointer text-[var(--primary-color)] rounded-full flex justify-start items-center mt-[10%] ${isTablet
-              ? "text-[30px]"
-              : isMobile
-                ? "text-[20px]"
-                : "text-sm lg:text-[1.1dvw]"
+            ? "text-[30px]"
+            : isMobile
+              ? "text-[20px]"
+              : "text-sm lg:text-[1.1dvw]"
             } ${isMobile ? "text-white" : ""}`}
           onClick={() => handleNavigation("/logout")}
         >
@@ -1605,10 +1605,11 @@ export const Layout = ({ children }) => {
                 </button>
                 <button
                   className="addProduct__BTN bg-[#F8A61B] text-[var(--primary-color)] flex justify-center items-center gap-1 sm:gap-[5px] px-3 py-2 sm:px-[25px] sm:py-[10px] font-[var(--mainFont)] font-medium text-xs sm:text-sm lg:text-[1dvw] border-none outline-none rounded-full cursor-pointer"
-                // onClick={handleAddProduct}
+                  onClick={() => {
+                    navigate('/seller/dashboard')
+                  }}
                 >
-                  Upload Invoice
-                  {/* <PluseIcon /> */}
+                  Seller Dashboard
                 </button>
                 <button className="p-1 sm:p-[5px] border border-[#7f7f7f] rounded-full">
                   <Avatar

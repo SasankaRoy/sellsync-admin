@@ -50,7 +50,7 @@ export const AddProductModel = ({ productData, setShowModel, actionType }) => {
   } = useQuery({
     queryKey: ["get_item_details", productData],
     queryFn: async () => {
-      if (actionType === 'Edit') {
+      if (actionType === 'Edit' || actionType === 'View') {
         return await getProductDetails(productData.id)
       } else {
         return ''
@@ -142,6 +142,7 @@ export const AddProductModel = ({ productData, setShowModel, actionType }) => {
           <OptionsTab
             setProductInfo={setProductInfo}
             productInfo={productInfo}
+            actionType={actionType}
           />
         );
       case "Promotions":
@@ -1003,7 +1004,7 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo, data }) => {
         isDeleting ? (
           <>
             <div className="flex justify-center items-center fixed top-0 left-0 h-screen w-screen bg-white/20 backdrop-blur-xs flex-col gap-5">
-              <CircularProgress size={60}/>
+              <CircularProgress size={60} />
               <p className="text-[1.5dvw] mainFont animate-pulse text-gray-500 font-semibold">Deleting  image</p>
             </div>
           </>
@@ -1033,6 +1034,7 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo, data }) => {
                       type="text"
                       placeholder="95632148"
                       name="stockCode"
+                      readOnly={actionType === 'View'}
                       value={productInfo.stockCode}
                       onChange={(e) =>
                         setProductInfo({
@@ -1062,6 +1064,7 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo, data }) => {
                       type="number"
                       placeholder="Number of items..."
                       name="quantityInHandItem"
+                      readOnly={actionType === 'View'}
                       value={productInfo.quantityInHandItem}
                       onChange={(e) => {
                         // handleonChange(e)
@@ -1115,6 +1118,7 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo, data }) => {
                       placeholder="Number of cases"
                       name="quantityInHandCase"
                       value={productInfo.quantityInHandCase}
+                      readOnly={actionType === 'View'}
                       onChange={(e) => {
                         handleonChange(e);
                         calculateTotalItemsAndCntainer(
@@ -1168,6 +1172,7 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo, data }) => {
                   type="text"
                   placeholder="Item name...."
                   name="productName"
+                  readOnly={actionType === 'View'}
                   value={productInfo.productName}
                   onChange={handleonChange}
                 />
@@ -1217,6 +1222,7 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo, data }) => {
                     className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                     type="number"
                     placeholder="Price"
+                    readOnly={actionType === 'View'}
                     name="price"
                     value={productInfo.price}
                     onChange={(e) => {
@@ -1250,6 +1256,7 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo, data }) => {
                     type="number"
                     placeholder="Average Cost.."
                     name="avgCost"
+                    readOnly={actionType === 'View'}
                     value={productInfo.avgCost}
                     onChange={(e) => {
                       handleonChange(e);
@@ -1270,6 +1277,7 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo, data }) => {
                     type="number"
                     placeholder="Enter margin %..."
                     name="margin"
+                    readOnly={actionType === 'View'}
                     value={productInfo.margin}
                     onChange={(e) => {
                       handleonChange(e);
@@ -1286,6 +1294,7 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo, data }) => {
                     type="number"
                     placeholder="Enter markup %..."
                     name="markup"
+                    readOnly={actionType === 'View'}
                     value={productInfo.markup > -1 ? productInfo.markup : 0}
                     onChange={(e) => {
                       handleonChange(e);
@@ -1302,6 +1311,7 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo, data }) => {
                     type="number"
                     placeholder="Latest cost..."
                     name="latestCost"
+                    readOnly={actionType === 'View'}
                     value={productInfo.latestCost}
                     onChange={(e) => {
                       handleonChange(e)
@@ -1398,6 +1408,7 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo, data }) => {
                   </label>
                   <select
                     name="size"
+                    readOnly={actionType === 'View'}
                     value={productInfo.size}
                     onChange={handleonChange}
                     className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
@@ -1630,6 +1641,7 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo, data }) => {
                                   handleAddCategory(category);
                                   setProductInfo({
                                     ...productInfo,
+                                    margin: category.default_margin,
                                     category: {
                                       id: category._id,
                                       name: category.category_name,
@@ -1902,6 +1914,7 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo, data }) => {
                   <input
                     className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                     type="text"
+                    readOnly={actionType === 'View'}
                     onChange={(e) => {
                       // handleonChange(e)
                       calculateTotalItemsAndCntainer("unitsPerCase", e.target.value);
@@ -2090,6 +2103,7 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo, data }) => {
                       id="file-input"
                       type="file"
                       accept="image/*"
+                      readOnly={actionType === 'View'}
                       multiple
                       className="hidden"
                       onChange={handleFileInput}
@@ -2105,7 +2119,7 @@ const DetailsTab = ({ actionType, setProductInfo, productInfo, data }) => {
   );
 };
 
-const OptionsTab = ({ setProductInfo, productInfo }) => {
+const OptionsTab = ({ setProductInfo, productInfo, actionType }) => {
   const handleOnChange = (e) => {
     const { name, value } = e.target;
 
@@ -2163,6 +2177,7 @@ const OptionsTab = ({ setProductInfo, productInfo }) => {
             <input
               id="shortcutKeys"
               type="checkbox"
+              readOnly={actionType === 'View'}
               className="h-4 w-4 sm:h-5 sm:w-5 lg:h-[1.2dvw] lg:w-[1.2dvw]"
               value={productInfo.shortcutKey}
               checked={productInfo.shortcutKey}
@@ -2204,6 +2219,7 @@ const OptionsTab = ({ setProductInfo, productInfo }) => {
             <input
               id="manualDiscount"
               type="checkbox"
+              readOnly={actionType === 'View'}
               className="h-4 w-4 sm:h-5 sm:w-5 lg:h-[1.2dvw] lg:w-[1.2dvw]"
               value={productInfo.applyManualDiscount}
               checked={productInfo.applyManualDiscount}
@@ -2225,6 +2241,7 @@ const OptionsTab = ({ setProductInfo, productInfo }) => {
             <input
               id="promotionsDiscount"
               type="checkbox"
+              readOnly={actionType === 'View'}
               className="h-4 w-4 sm:h-5 sm:w-5 lg:h-[1.2dvw] lg:w-[1.2dvw]"
               value={productInfo.promotionsDiscount}
               checked={productInfo.promotionsDiscount}
@@ -2246,6 +2263,7 @@ const OptionsTab = ({ setProductInfo, productInfo }) => {
             <input
               id="showWebstore"
               type="checkbox"
+              readOnly={actionType === 'View'}
               className="h-4 w-4 sm:h-5 sm:w-5 lg:h-[1.2dvw] lg:w-[1.2dvw]"
               value={productInfo.showToWebstore}
               checked={productInfo.showToWebstore}
@@ -2287,6 +2305,7 @@ const OptionsTab = ({ setProductInfo, productInfo }) => {
             <input
               id="EBTEligible"
               type="checkbox"
+              readOnly={actionType === 'View'}
               className="h-4 w-4 sm:h-5 sm:w-5 lg:h-[1.2dvw] lg:w-[1.2dvw]"
               value={productInfo.EBTEligible}
               checked={productInfo.EBTEligible}
@@ -2314,6 +2333,7 @@ const OptionsTab = ({ setProductInfo, productInfo }) => {
             <input
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
+              readOnly={actionType === 'View'}
               placeholder="Enter Quantity..."
               name="defaultQut"
               value={productInfo.defaultQut}
@@ -2327,6 +2347,7 @@ const OptionsTab = ({ setProductInfo, productInfo }) => {
             <input
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="number"
+              readOnly={actionType === 'View'}
               placeholder="Min Price..."
               name="minPrice"
               value={productInfo.minPrice}
@@ -2342,6 +2363,7 @@ const OptionsTab = ({ setProductInfo, productInfo }) => {
               className="bg-[#F3F3F3] w-full font-normal font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="date"
               name="remindDate"
+              readOnly={actionType === 'View'}
               value={productInfo.remindDate}
               onChange={handleOnChange}
             />
@@ -2357,6 +2379,7 @@ const OptionsTab = ({ setProductInfo, productInfo }) => {
             rows={5}
             placeholder="Enter Notes..."
             name="notes"
+            readOnly={actionType === 'View'}
             value={productInfo.notes}
             onChange={handleOnChange}
           ></textarea>
@@ -2369,6 +2392,7 @@ const OptionsTab = ({ setProductInfo, productInfo }) => {
           <input
             className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
             type="text"
+            readOnly={actionType === 'View'}
             placeholder="Tags"
             name="tags"
             value={productInfo.tags}
@@ -2384,6 +2408,7 @@ const OptionsTab = ({ setProductInfo, productInfo }) => {
             <select
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               placeholder="Tags"
+              readOnly={actionType === 'View'}
               name="pointsMultiplier"
               value={productInfo.pointsMultiplier}
               onChange={handleOnChange}
@@ -2416,6 +2441,7 @@ const OptionsTab = ({ setProductInfo, productInfo }) => {
             <select
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               name="itemType"
+              readOnly={actionType === 'View'}
               value={productInfo.itemType}
               onChange={handleOnChange}
             >

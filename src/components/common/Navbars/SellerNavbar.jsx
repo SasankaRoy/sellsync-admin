@@ -5,6 +5,7 @@ import {
   Logs,
   ShieldUser,
   Tags,
+  ShieldCheck
 } from "lucide-react";
 import React, { useMemo, useState, useEffect } from "react";
 import SellsyncLogo from "../../../assets/images/SellsyncLogo.png";
@@ -173,6 +174,7 @@ export const SellerNavbar = ({ showPunchInModal, setShowPunchInModal }) => {
     minutes: "0",
     seconds: "0",
   });
+  const userType = Cookies.get('u_type');
   const [showTaskListModel, setShowTaskListModel] = useState(false);
   const [punchInTime, setPunchInTime] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -262,6 +264,7 @@ export const SellerNavbar = ({ showPunchInModal, setShowPunchInModal }) => {
     }
   }, [punchInTime]);
 
+
   return (
     <>
       <header className="flex justify-center items-center py-2 sm:py-3 bg-[#f8f8f8]/70 shadow-sm w-full max-w-full overflow-x-hidden">
@@ -338,6 +341,23 @@ export const SellerNavbar = ({ showPunchInModal, setShowPunchInModal }) => {
                 Get labels
               </p>
             </button>
+            {
+              userType === 'admin' && (
+                <button onClick={() => {
+                  navigate('/')
+                }} className="flex justify-center items-center gap-3 border border-(--border-color) rounded-full px-2 py-1 sm:px-4 sm:py-2 cursor-pointer">
+                  <span className="bg-(--button-color1) text-(--primary-color) rounded-full p-2 flex justify-center items-center">
+                    <ShieldCheck size={20} />
+                  </span>
+                  <p className="text-[.9dvw] font-semibold mainFont hidden sm:block">
+                    Admin
+                  </p>
+                </button>
+              )
+            }
+
+
+
             <button
               onClick={handleLogout}
               className="flex justify-center items-center gap-3 border border-(--border-color) rounded-full px-2 py-1 sm:px-4 sm:py-2 cursor-pointer hover:bg-(--Negative-color) hover:text-white transition-all duration-300"
