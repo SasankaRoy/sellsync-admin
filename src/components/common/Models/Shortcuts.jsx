@@ -124,7 +124,7 @@ export const Shortcuts = ({
   });
 
   const handleAddItem = async (curData) => {
-    const { id, name, product_image, product_price, tax_percentage } = curData;
+    const { id, name, product_image, product_price, tax_percentage,category_age_verification } = curData;
     if (currentBillId) {
       try {
         // mean the bill is already created and we are adding items to it
@@ -154,6 +154,7 @@ export const Shortcuts = ({
         tax_percentage,
         qty: 1,
         tax: calculateTax(1, tax_percentage, CurrentTaxVal),
+        category_age_verification
       }),
     );
     localStorage.setItem(

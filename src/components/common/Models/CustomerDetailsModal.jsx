@@ -1,9 +1,12 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { CircleX, ScanFace } from "lucide-react";
-import { useSelector } from "react-redux";
-import { verifyAgeAndId } from "../../../utils/apis/AgeAndIDVeification";
+import { useDispatch, useSelector } from "react-redux";
+import { trackVerification, verifyAgeAndId } from "../../../utils/apis/AgeAndIDVeification";
 import { CircularProgress } from "@mui/material";
+import { toast } from "react-toastify";
+import { setCurrentCustomerDetails } from "../../../Redux/CurrentBillSlice";
+import { isVerified, setSessionURl, verificationRequired } from "../../../Redux/AgeVerification";
 
 const modalVariants = {
   initial: { opacity: 0, y: 20, scale: 0.98 },
@@ -39,10 +42,78 @@ export const CustomerDetailsModal = ({
   onchange,
 }) => {
   const fullNameRef = useRef(null);
-  const [isAgeVerifying, setIsAgeVerifying] = useState(false)
+  const [isAgeVerifying, setIsAgeVerifying] = useState({
+    status: false,
+    fetching: false,
+    sessionUrl: null
+  });
+  const dispath = useDispatch()
   const currentCustomerDetails = useSelector(
     (state) => state.currentBill.currentCustomerDetails,
   );
+  const currentRingUpData = useSelector(state => state.ringUps);
+  const verificationStateData = useSelector(state => state.verifyCustomerAge)
+
+
+
+
+  // useMemo(() => {
+  //   if (currentRingUpData.length > 0) {
+  //     const data = currentRingUpData.some(item => {
+  //       if (item.hasOwnProperty("category_age_verification") &&
+  //         item.category_age_verification !== null) {            
+  //         return {
+  //           state: true,
+  //           age: item.category_age_verification
+  //         }
+  //       }
+  //       return {
+  //         state: true,
+  //         age: item.category_age_verification
+  //       }
+  //     })
+  //     console.log(data)
+  //     return
+  //     dispath(verificationRequired({
+  //       ageRequired: state.age, isVerificationRequired: state.state
+  //     }))
+  //     return state.state
+
+  //   }
+  // }, [currentRingUpData]);
+
+
+
+  useMemo(() => {
+    if (currentRingUpData.length > 0) {
+      const data = currentRingUpData.find(
+        (item) =>
+          item.hasOwnProperty("category_age_verification") &&
+          item.category_age_verification !== null
+      );
+
+      if (data) {
+        const state = {
+          state: true,
+          age: data.category_age_verification,
+        };
+
+
+
+        dispath(
+          verificationRequired({
+            ageRequired: state.age,
+            isVerificationRequired: state.state,
+          })
+        );
+
+        return state.state;
+      }
+
+      return false;
+    }
+  }, [currentRingUpData]);
+
 
 
 
@@ -70,14 +141,32 @@ export const CustomerDetailsModal = ({
 
 
   const getVerified = async () => {
-    setIsAgeVerifying(true)
-    const resVerifyAge = await verifyAgeAndId()
-    if (resVerifyAge.session_id || resVerifyAge.session_token || resVerifyAge.url) {
-      localStorage.setItem('v_session_id', resVerifyAge.session_id)
-      localStorage.setItem('v_session_token', resVerifyAge.session_token)
-      localStorage.setItem('v_url', resVerifyAge.url)
+    if (!currentCustomerDetails.customerEmail || !currentCustomerDetails.customerPhone) {
+      toast.error('Email and Phone Number is required for customer ID verification.');
+      return;
+    }
+    setIsAgeVerifying({
+      status: true,
+      fetching: true
+    })
+    const resVerifyAge = await verifyAgeAndId({ email: currentCustomerDetails.customerEmail, phone: currentCustomerDetails.customerPhone, name: currentCustomerDetails.customerName })
+    if (resVerifyAge.session_url || resVerifyAge.tracking_token) {
+      setIsAgeVerifying({
+        status: true,
+        fetching: false,
+        sessionUrl: resVerifyAge.session_url
+      })
+      dispath(
+        setSessionURl(resVerifyAge.session_url)
+      )
+      localStorage.setItem('vid_ss_url', resVerifyAge.session_url)
+      localStorage.setItem('vid_ss_tk', resVerifyAge.tracking_token)
     } else {
-      // setIsAgeVerifying(false)
+      toast.error('Faild to create the verification session !')
+      setIsAgeVerifying({
+        status: false,
+        fetching: false
+      })
     }
 
   }
@@ -126,21 +215,24 @@ export const CustomerDetailsModal = ({
 
 
               {/* only for Age restricted product */}
+              {
+                verificationStateData.ageVerificationRequired && (
+                  <div className={`${verificationStateData.customerPresentAge >= verificationStateData.requiredAge ? 'text-green-500' : 'text-(--Negative-color)'} flex justify-between items-center gap-5`}>
+                    <div className="flex justify-start items-center gap-3">
+                      <ScanFace size={30} />
+                      <p className="text-[1.1dvw] mainFont  font-semibold">
+                        {
+                          verificationStateData.customerPresentAge >= verificationStateData.requiredAge ? 'Verification Completed' : 'Age Verification required for the products.'
+                        }
 
-              <div className="text-(--Negative-color) flex justify-between items-center gap-5">
-                <div className="flex justify-start items-center gap-3">
-                  <ScanFace size={30} />
-                  <p className="text-[1.1dvw] mainFont  font-semibold">
-                    Age Verification required for the products.
-                  </p>
-                </div>
-                <button onClick={getVerified} className="bg-(--button-color1) text-white px-4 py-1.5 rounded-md mainFont font-semibold cursor-pointer hover:text-(--button-color1) hover:bg-white hover:border-(--button-color1) border transition-all duration-200 ease-linear">
-                  Verify
-                </button>
-              </div>
-
-
-
+                      </p>
+                    </div>
+                    <button onClick={getVerified} className={`${verificationStateData.customerPresentAge >= verificationStateData.requiredAge ? 'hidden' : 'inline-flex'} bg-(--button-color1) text-white px-4 py-1.5 rounded-md mainFont font-semibold cursor-pointer hover:text-(--button-color1) hover:bg-white hover:border-(--button-color1) border transition-all duration-200 ease-linear`}>
+                      Verify
+                    </button>
+                  </div>
+                )
+              }
 
 
               <form onSubmit={handleSubmit} className="flex flex-col gap-5">
@@ -337,59 +429,97 @@ export const CustomerDetailsModal = ({
         )}
       </AnimatePresence>
       {
-        isAgeVerifying && (
-          <AgeVerification setIsAgeVerifying={setIsAgeVerifying} />
+        isAgeVerifying.status && (
+          <AgeVerification setIsAgeVerifying={setIsAgeVerifying} isAgeVerifying={isAgeVerifying} />
         )
       }
     </>
   );
 };
 
-const AgeVerification = ({ setIsAgeVerifying }) => {
+const AgeVerification = ({ setIsAgeVerifying, isAgeVerifying }) => {
+  const verificationUrl = useSelector(state => state.verifyCustomerAge);
+  const dispath = useDispatch()
   useEffect(() => {
 
+    const verificationurl = localStorage.getItem('vid_ss_url');
+    // setVerificationURL(verificationurl)
+
+
+
     const onStorage = (e) => {
-      console.log(e.key)
+      console.log(e)
+      if (e.key === 'vid_ss_url') {
+        console.log(e, 'onStorage event in side if')
+      }
     }
 
-
-
     window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
   }, [])
 
 
   const handleClose = () => {
     setIsAgeVerifying(false)
   }
+
+  const handleVerify = async () => {
+    const trackingToken = localStorage.getItem('vid_ss_tk');
+
+    if (trackingToken) {
+      const resVerify = await trackVerification(trackingToken);
+
+      if (resVerify) {
+        dispath(
+          isVerified({
+            age: resVerify.id_verification.age || '',
+            verifiedStatus: true,
+          })
+        )
+        handleClose()
+      }
+    }
+
+
+
+  }
   return (
     <>
       <div className="fixed h-screen w-screen bg-black/20 top-0 left-0 backdrop-blur-md z-[999] flex justify-center items-center">
         <div className="bg-white p-5 shadow rounded-lg ">
-          {/* <div className="flex justify-center items-center gap-6">
-            <CircularProgress />
-            <p className="mainFont font-semibold text-[1.5dvw]">Generating Verification URL .</p>
-          </div> */}
 
-          <p>
-            Dummy Scan data
-          </p>
+          {
+            isAgeVerifying.fetching && (
+              <div className="flex justify-center items-center gap-6">
+                <CircularProgress />
+                <p className="mainFont font-semibold text-[1.5dvw]">Generating Verification URL .</p>
+              </div>
+            )
+          }
 
-          <div className="h-[70vh] min-w-[50dvw]">
-            <iframe
-              src="https://verify.didit.me/session/SdzT2DBXTYtl"
-              title="Didit Verification"
-              className="w-full h-full border-0"
-              allow="camera; microphone; fullscreen"
-            />
-          </div>
-          <div className="w-full flex justify-end items-center gap-6 mt-5">
-            <button onClick={handleClose} className="bg-(--button-color3) cursor-pointer text-white text-[1.2dvw] mainFont px-5 py-1.5 rounded-lg">
-              Canlce
-            </button>
-            <button className="bg-(--button-color1) cursor-pointer text-white text-[1.2dvw] mainFont px-5 py-1.5 rounded-lg">
-              Check
-            </button>
-          </div>
+          {
+            verificationUrl.sessionUrl && (
+              <>
+                <div className="h-[70vh] min-w-[50dvw]">
+                  <iframe
+                    src={verificationUrl.sessionUrl}
+                    title="Didit Verification"
+                    className="w-full h-full border-0"
+                    allow="camera; microphone; fullscreen"
+                  />
+                </div>
+                <div className="w-full flex justify-end items-center gap-6 mt-5">
+                  <button onClick={handleClose} className="bg-(--button-color3) cursor-pointer text-white text-[1.2dvw] mainFont px-5 py-1.5 rounded-lg">
+                    Canlce
+                  </button>
+                  <button onClick={handleVerify} className="bg-(--button-color1) cursor-pointer text-white text-[1.2dvw] mainFont px-5 py-1.5 rounded-lg">
+                    Check
+                  </button>
+                </div>
+              </>
+            )
+          }
+
         </div>
       </div>
     </>

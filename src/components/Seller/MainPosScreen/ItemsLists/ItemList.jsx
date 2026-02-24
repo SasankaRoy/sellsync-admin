@@ -123,9 +123,8 @@ export const ItemList = ({
             <>
               <div
                 key={id}
-                className={`flex justify-center items-center w-full ${
-                  id % 2 === 0 ? "bg-(--secondary-color)/70" : "bg-transparent"
-                }`}
+                className={`flex justify-center items-center w-full ${id % 2 === 0 ? "bg-(--secondary-color)/70" : "bg-transparent"
+                  }`}
               >
                 <div className="border-r border-(--border-color) py-3 px-1  min-w-[5dvw] max-w-[5dvw] flex justify-center items-center">
                   <input
@@ -134,7 +133,7 @@ export const ItemList = ({
                       isCustomerScreen
                         ? cur.quantity
                         : activeInputField?.type === "quantity" &&
-                            activeInputField?.itemId === cur.id
+                          activeInputField?.itemId === cur.id
                           ? keyboardInput
                           : editingQty[cur.id] !== undefined
                             ? editingQty[cur.id]
@@ -218,9 +217,13 @@ export const ItemList = ({
                     </p>
                   </div>
                   <div className="shrink-0">
-                    <p className="text-[.9dvw] text-(--button-color2) paraFont font-medium">
-                      Add ons
-                    </p>
+                    {
+                      cur.category_age_verification && (
+                        <p className="text-[.9dvw] main text-(--Negative-color) paraFont font-medium">
+                          Above - {cur.category_age_verification} yrs
+                        </p>
+                      )
+                    }
                   </div>
                 </div>
                 <div className="border-r border-(--border-color) py-3  min-w-[8dvw] w-[8dvw] shrink-0 flex justify-center items-center px-2">
@@ -232,7 +235,7 @@ export const ItemList = ({
                       isCustomerScreen
                         ? `$ ${cur.price.toFixed(2)}`
                         : activeInputField?.type === "price" &&
-                            activeInputField?.itemId === cur.id
+                          activeInputField?.itemId === cur.id
                           ? keyboardInput
                           : (` $ ${cur.product_price}` ?? "")
                     }

@@ -24,7 +24,6 @@ const CustomerScreenPage = () => {
   React.useEffect(() => {
     try {
       const raw = localStorage.getItem("ringUpsSnapshot");
-      console.log(raw);
       if (raw) {
         setSnapshot(JSON.parse(raw));
       }
@@ -33,6 +32,7 @@ const CustomerScreenPage = () => {
       const discountRaw = localStorage.getItem("discountSnapshot");
       const customerData = localStorage.getItem("customerDetails");
       const payStatus = localStorage.getItem("processingPayment");
+      const verificationURL = localStorage.getItem("vid_ss_url");
       if (discountRaw) {
         setDiscountData(JSON.parse(discountRaw));
       }
@@ -42,6 +42,9 @@ const CustomerScreenPage = () => {
       if (payStatus) {
         console.log(payStatus, 'in the customer screen')
         setPaymentStatus({ ...JSON.parse(payStatus) });
+      }
+      if (verificationURL) {
+        console.log(verificationURL, 'customer secreen')
       }
 
       const onStorage = (e) => {
@@ -63,6 +66,12 @@ const CustomerScreenPage = () => {
         if (e.key === "processingPayment" && e.newValue) {
           try {
             setPaymentStatus({ ...JSON.parse(e.newValue) });
+          } catch { }
+        }
+        if (e.key === "vid_ss_url") {
+          try {
+            // setPaymentStatus({ ...JSON.parse(e.newValue) });
+            console.log(e)
           } catch { }
         }
       };

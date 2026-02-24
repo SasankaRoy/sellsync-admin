@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Minus, Plus, Search, Logs } from "lucide-react";
 import { Switch, Tooltip } from "@mui/material";
-import { AnimatePresence,  } from "framer-motion";
+import { AnimatePresence, } from "framer-motion";
 import ProductImg1 from "../../assets/images/ProductImg1.png";
 import { styled } from "@mui/material/styles";
 import { Shortcuts } from "../../components/common/Models/Shortcuts";
@@ -282,7 +282,7 @@ export const SalePoint = () => {
           },
         }),
       );
-      console.log(input, activeInputField.type);
+      // console.log(input, activeInputField.type);
       // Handle customer modal inputs - allow all characters
       // The actual form state is managed in CustomerDetailsModal
       // Keyboard just provides input display
@@ -303,6 +303,7 @@ export const SalePoint = () => {
         qty: 1,
         tax_percentage: product.tax_percentage || 0,
         tax: calculateTax(1, product.tax_percentage, CurrentTaxVal),
+        category_age_verification: product.category_age_verification
       }),
     );
     localStorage.setItem(
@@ -356,7 +357,8 @@ export const SalePoint = () => {
         price: item.product_price.toFixed(2),
         taxRate: item.tax_percentage,
         taxAmount: item.tax,
-        total: ((item.qty *item.tax) + (item.qty * item.product_price)).toFixed(2),
+        total: ((item.qty * item.tax) + (item.qty * item.product_price)).toFixed(2),
+        category_age_verification: item.category_age_verification
       });
     });
 
@@ -716,11 +718,10 @@ export const SalePoint = () => {
               <div className="flex flex-col gap-3">
                 <div className="flex justify-between items-center gap-3">
                   <button
-                    className={`w-1/2 py-4 text-[1.2dvw] mainFont font-semibold rounded-md ${
-                      hasItems
+                    className={`w-1/2 py-4 text-[1.2dvw] mainFont font-semibold rounded-md ${hasItems
                         ? "bg-(--button-color5) text-(--primary-color)"
                         : "bg-(--button-color5)/40 text-(--primary-color)/60 cursor-not-allowed"
-                    }`}
+                      }`}
                     disabled={!hasItems}
                     onClick={() => {
                       if (!hasItems) return;
@@ -827,8 +828,8 @@ export const SalePoint = () => {
                 inputValue={keyboardInput}
                 layoutName={
                   activeInputField?.type === "quantity" ||
-                  activeInputField?.type === "price" ||
-                  activeInputField?.type === "discount"
+                    activeInputField?.type === "price" ||
+                    activeInputField?.type === "discount"
                     ? "numeric"
                     : "default"
                 }

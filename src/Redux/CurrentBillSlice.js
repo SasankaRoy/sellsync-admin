@@ -29,7 +29,10 @@ export const CurrentBillSlice = createSlice({
         customerPhone: '',
         customerEmail: '',
         customerAddress: '',
-        customerNotes: ''
+        customerNotes: '',
+        ageVerificationRequired:false,
+        isVerified:false,
+        customerPresentAge:''
       };
     },
   },
