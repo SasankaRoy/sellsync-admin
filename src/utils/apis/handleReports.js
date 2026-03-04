@@ -87,3 +87,23 @@ export const getReportsData = async (filters) => {
         return error.message || error.response.data.message || 'Something went wrong while fetch the expense report'
     }
 }
+
+export const getLowSrockData = async () => {
+    try {
+        const resLowStockData = await axiosInstance.post('/api/v1/product/low-stock-product-list', {
+            "page": 1,
+            "limit": 50,
+            "selected_category_id": "",
+            "search_text": ""
+        })
+
+        console.log(resLowStockData.data)
+        if (resLowStockData.data || resLowStockData.status === 200) {
+            return resLowStockData.data || []
+        }
+        return resLowStockData.data || []
+    } catch (error) {
+        console.log(error);
+        return error.message || error.response.data.message || 'Something went wrong will fetching the low-stock data.'
+    }
+}

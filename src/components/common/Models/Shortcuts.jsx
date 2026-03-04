@@ -113,6 +113,7 @@ export const Shortcuts = ({
       currentFilterItems.title,
       currentFilterItems.queryName,
     ],
+    refetchInterval: 3000,
   });
 
   const { data: CurrentTaxVal } = useQuery({

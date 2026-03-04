@@ -7,6 +7,7 @@ export const TopSellingItems = () => {
   const { data: topSellingItems, isLoading } = useQuery({
     queryKey: ["get_top_selling_items"],
     queryFn: async () => await getTopSellingItems(),
+    refetchInterval: 6000,
   });
   return (
     <>

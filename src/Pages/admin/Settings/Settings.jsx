@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Layout } from "../../../components/common/Layout/Layout";
 import {
   DeleteIcon,
@@ -9,11 +9,15 @@ import {
 import { Avatar, Switch } from "@mui/material";
 import ProfileImg from "../../../assets/images/ProfileImg.png";
 import BLogo from "../../../assets/images/BLogo.png";
-import { Camera, LocateFixedIcon } from "lucide-react";
+import { Camera, LocateFixedIcon, SaveIcon } from "lucide-react";
 import { CountrySelect } from "react-country-state-city";
 import "react-country-state-city/dist/react-country-state-city.css";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getLowStockThreshold, updateLowStockThreshold } from "../../../utils/apis/handleSetting";
+import { Loading } from "../../../components/UI/Loading/Loading";
+import { toast } from "react-toastify";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -714,28 +718,28 @@ const ScanDataTab = () => {
     <>
       <div className="transition-all duration-300 ease-linear">
         <div className="w-full flex-col flex gap-2 my-4 sm:my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2 sm:px-2.5 py-2 h-[60dvh] sm:h-[70dvh] overflow-x-hidden sm:overflow-x-auto">
-        <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center py-1 sm:py-1.5 shrink-0 gap-2 sm:gap-0">
-  <div className="flex justify-between sm:justify-center items-center gap-3 w-full sm:w-auto">
-    <select className="font-[500] mainFont px-3 sm:px-4 border-none outline-none text-xs sm:text-sm md:text-sm lg:text-base">
-      <option>All Data</option>
-      <option>All Data</option>
-      <option>All Data</option>
-    </select>
-    <div className="h-6 w-6 sm:h-7 sm:w-7 bg-[var(--counterBg-color)] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem]">
-      <p className="text-xs font-medium text-white">
-        {rowData.length}
-      </p>
-    </div>
-  </div>
-  <div className="flex gap-2 sm:gap-4 justify-between items-center flex-wrap">
-    <button className="px-4 py-2 sm:px-4 sm:py-1 md:px-3 md:py-1 text-xs sm:text-sm md:text-sm border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC] mainFont font-[500] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
-      Add New Data +
-    </button>
-    
-      <DeleteIcon className="w-4 h-4 sm:w-5 sm:h-5" />
-    
-  </div>
-</div>
+          <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center py-1 sm:py-1.5 shrink-0 gap-2 sm:gap-0">
+            <div className="flex justify-between sm:justify-center items-center gap-3 w-full sm:w-auto">
+              <select className="font-[500] mainFont px-3 sm:px-4 border-none outline-none text-xs sm:text-sm md:text-sm lg:text-base">
+                <option>All Data</option>
+                <option>All Data</option>
+                <option>All Data</option>
+              </select>
+              <div className="h-6 w-6 sm:h-7 sm:w-7 bg-[var(--counterBg-color)] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem]">
+                <p className="text-xs font-medium text-white">
+                  {rowData.length}
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-2 sm:gap-4 justify-between items-center flex-wrap">
+              <button className="px-4 py-2 sm:px-4 sm:py-1 md:px-3 md:py-1 text-xs sm:text-sm md:text-sm border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC] mainFont font-[500] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
+                Add New Data +
+              </button>
+
+              <DeleteIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+
+            </div>
+          </div>
 
 
           <div className="h-full w-full overflow-x-hidden sm:overflow-x-auto">
@@ -986,6 +990,83 @@ const BusinessDocumentsTab = () => {
   );
 };
 
+const InventorySettingsTab = () => {
+
+  const [lowStockThreshold, setLowStockThreshold] = useState(0);
+  const queryClient = useQueryClient();
+
+
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ['get_low_stock_threshold'],
+    queryFn: async () => {
+      const prvData = await getLowStockThreshold()
+      if (prvData) {
+        setLowStockThreshold(prvData)
+        return prvData
+      } else {
+        return 0
+      }
+    }
+  });
+
+  const handleSaveLowStockThreshold = async (payload) => {
+    const res = await updateLowStockThreshold(payload);
+
+    if (res) {
+      toast.success('Updated successfully')
+      queryClient.invalidateQueries({
+        queryKey: ['get_low_stock_threshold','get_low_stock_data8'],
+      })
+    } else {
+      toast.error(res)
+    }
+  }
+
+  useEffect(() => { setLowStockThreshold(data) }, [data])
+
+
+
+
+
+
+
+
+  return (
+    <>
+
+      {
+        isLoading ? <Loading /> : (
+          <>
+            <div className="transition-all duration-300 ease-linear">
+              <div className="w-full flex-col flex gap-2 my-4 sm:my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2 sm:px-2.5 py-2 max-h-[60dvh] sm:max-h-[70dvh] overflow-x-hidden sm:overflow-x-auto">
+                <div className="w-[50%]">
+                  <div className="flex flex-col gap-2.5">
+                    <label className="text-sm sm:text-base secondaryFont md:text-sm font-[500]">
+                      Low Stock Threshold
+                    </label>
+                    <div className="flex  gap-2">
+                      <input
+                        type="number"
+                        placeholder="10"
+                        value={lowStockThreshold}
+                        onChange={(e) => setLowStockThreshold(e.target.value)}
+                        className="bg-[#F3F3F3] w-full font-medium paraFont placeholder:text-[#333333]/40 text-base sm:text-lg md:text-[1.4dvw] lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-2 sm:py-2.5 px-4 sm:px-5"
+                      />
+                      <button onClick={() => handleSaveLowStockThreshold(lowStockThreshold)} className="bg-[var(--button-color1)] text-white px-3 py-1 sm:px-5 sm:py-1.5 md:px-4 md:py-1 rounded-full cursor-pointer font-[500] text-sm sm:text-base md:text-sm">
+                        <SaveIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>
+        )
+      }
+    </>
+  )
+}
+
 export const Settings = () => {
   const [currentActiveTab, setCurrentActiveTab] = useState("General");
   const handleChangeTab = (tabName) => {
@@ -1002,6 +1083,8 @@ export const Settings = () => {
         return <ScanDataTab />;
       case "BusinessDocuments":
         return <BusinessDocumentsTab />;
+      case 'InventorySettings':
+        return <InventorySettingsTab />;
       default:
         return <GeneralTab />;
     }
@@ -1021,44 +1104,49 @@ export const Settings = () => {
         <div className="bg-[#E6E6E6] p-1.5 sm:p-2 rounded-full w-full sm:w-auto my-4 sm:my-5 flex overflow-x-hidden sm:overflow-x-auto flex-shrink-0 justify-start sm:justify-center sm:inline-flex gap-1.5 sm:gap-3">
           <button
             onClick={() => handleChangeTab("General")}
-            className={`${
-              currentActiveTab === "General"
-                ? "bg-white text-black"
-                : "bg-transparent text-[#333333]/70"
-            } border-none outline-none px-3 py-0.5 sm:px-8 sm:py-1 flex-shrink-0 md:px-6 md:py-1 text-xs sm:text-sm md:text-sm cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
+            className={`${currentActiveTab === "General"
+              ? "bg-white text-black"
+              : "bg-transparent text-[#333333]/70"
+              } border-none outline-none px-3 py-0.5 sm:px-8 sm:py-1 flex-shrink-0 md:px-6 md:py-1 text-xs sm:text-sm md:text-sm cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
           >
             General
           </button>
 
           <button
             onClick={() => handleChangeTab("BusinessInfo")}
-            className={`${
-              currentActiveTab === "BusinessInfo"
-                ? "bg-white text-black"
-                : "bg-transparent text-[#333333]/70"
-            } border-none outline-none px-3 py-0.5 sm:px-8 sm:py-1 flex-shrink-0 md:px-6 md:py-1 text-xs sm:text-sm md:text-sm cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
+            className={`${currentActiveTab === "BusinessInfo"
+              ? "bg-white text-black"
+              : "bg-transparent text-[#333333]/70"
+              } border-none outline-none px-3 py-0.5 sm:px-8 sm:py-1 flex-shrink-0 md:px-6 md:py-1 text-xs sm:text-sm md:text-sm cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
           >
             Business Info
           </button>
           <button
             onClick={() => handleChangeTab("ScanData")}
-            className={`${
-              currentActiveTab === "ScanData"
-                ? "bg-white text-black"
-                : "bg-transparent text-[#333333]/70"
-            } border-none outline-none px-3 py-0.5 sm:px-8 sm:py-1 flex-shrink-0 md:px-6 md:py-1 text-xs sm:text-sm md:text-sm cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
+            className={`${currentActiveTab === "ScanData"
+              ? "bg-white text-black"
+              : "bg-transparent text-[#333333]/70"
+              } border-none outline-none px-3 py-0.5 sm:px-8 sm:py-1 flex-shrink-0 md:px-6 md:py-1 text-xs sm:text-sm md:text-sm cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
           >
             Scan Data
           </button>
           <button
             onClick={() => handleChangeTab("BusinessDocuments")}
-            className={`${
-              currentActiveTab === "BusinessDocuments"
-                ? "bg-white text-black"
-                : "bg-transparent text-[#333333]/70"
-            } border-none outline-none px-3 py-0.5 sm:px-8 sm:py-1 flex-shrink-0 md:px-6 md:py-1 text-xs sm:text-sm md:text-sm cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
+            className={`${currentActiveTab === "BusinessDocuments"
+              ? "bg-white text-black"
+              : "bg-transparent text-[#333333]/70"
+              } border-none outline-none px-3 py-0.5 sm:px-8 sm:py-1 flex-shrink-0 md:px-6 md:py-1 text-xs sm:text-sm md:text-sm cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
           >
             Business Documents
+          </button>
+          <button
+            onClick={() => handleChangeTab("InventorySettings")}
+            className={`${currentActiveTab === "InventorySettings"
+              ? "bg-white text-black"
+              : "bg-transparent text-[#333333]/70"
+              } border-none outline-none px-3 py-0.5 sm:px-8 sm:py-1 flex-shrink-0 md:px-6 md:py-1 text-xs sm:text-sm md:text-sm cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
+          >
+            Inventory Settings
           </button>
         </div>
 

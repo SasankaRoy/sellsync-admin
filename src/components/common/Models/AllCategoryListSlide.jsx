@@ -33,7 +33,8 @@ const AllCategoryListSlide = ({
   const { data, isError, isLoading, isFetching } = useQuery({
     queryKey: ["get_categories"],
     queryFn: async () => await handleGetCategoryList(),
-    staleTime: 3 * 60 * 1000,
+    // staleTime: 3 * 60 * 1000,
+    refetchInterval: 3000
   });
   // console.log(data)
 
