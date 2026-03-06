@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 import { Layout } from "../../../components/common/Layout/Layout";
 import { Overviewcards } from "../../../components/common/Overviewcards/Overviewcards";
 import {
@@ -12,7 +12,7 @@ import { Doughtchart } from "../../../components/common/charts/Doughtchart";
 import { TopSellingItems } from "../../../components/common/TopSellingItems/TopSellingItems";
 import { useQuery } from "@tanstack/react-query";
 import { Loading } from "../../../components/UI/Loading/Loading";
-import { getLowSrockData } from "../../../utils/apis/handleReports";
+import { getDashboardSalesReport, getLowSrockData, getRevenueReport } from "../../../utils/apis/handleReports";
 
 const saleData = [
   {
@@ -48,6 +48,8 @@ const saleData = [
 ];
 
 export const AdminDashboard = () => {
+  const [dayFilter, setDayFilter] = useState('TODAY');
+  const [year, setYear] = useState(new Date().getFullYear());
 
   const { data: lowStock, isLoading: lowStockLoading, isError } = useQuery({
     queryKey: ['get_low_stock_data'],
@@ -61,14 +63,30 @@ export const AdminDashboard = () => {
     refetchInterval: 3000,
   });
 
+  const { data: salesData, isLoading: saleDataLoading, isError: saleDataError } = useQuery({
+    queryKey: ['get_sales_data', dayFilter],
+    queryFn: async () => await getDashboardSalesReport(dayFilter)
+  })
+  const { data: revenueData, isLoading: revenueLoading } = useQuery({
+    queryKey: ["get_revenue_data", year],
+    queryFn: async () => await getRevenueReport(year),
+  });
 
-  
+
+  const transformedRevenueData = useMemo(() => {
+    if (!revenueData || !Array.isArray(revenueData)) return null;
+    // Assuming revenueData is an array of objects with 'revenue' property in order of months
+    return revenueData.map((item) => item.revenue || 0);
+  }, [revenueData]);
+
+
+
 
 
   return (
     <Layout>
       {
-        lowStockLoading ? (<>
+        lowStockLoading && saleDataLoading && revenueLoading ? (<>
           <Loading />
         </>) : (
           <>
@@ -80,12 +98,14 @@ export const AdminDashboard = () => {
                     Overview
                   </h3>
                   <div className="relative w-full sm:w-auto">
-                    <select className="appearance-none pl-4 pr-8 py-2 sm:py-1 md:py-1.5 bg-[var(--button-color2)] text-[var(--primary-color)] rounded-full font-[var(--paraFont)] text-sm sm:text-base md:text-base w-full sm:w-auto cursor-pointer">
-                      <option>Weekly</option>
-                      <option>1 week</option>
-                      <option>2 week</option>
-                      <option>3 week</option>
-                      <option>4 week</option>
+                    <select value={dayFilter} onChange={(e) => {
+                      setDayFilter(e.target.value)
+                    }} className="appearance-none pl-4 pr-8 py-2 sm:py-1 md:py-1.5 bg-[var(--button-color2)] text-[var(--primary-color)] rounded-full font-[var(--paraFont)] text-sm sm:text-base md:text-base w-full sm:w-auto cursor-pointer">
+                      <option value='TODAY'>Today</option>
+                      <option value='LAST_DAY'>Last Day</option>
+                      <option value='LAST_3_DAY'>Last 3 Days</option>
+                      <option value='LAST_7_DAY'>Last 7 Days</option>
+                      <option value='LAST_30_DAY'>Last 30 Days</option>
                     </select>
                     <div className="pointer-events-none   absolute inset-y-0 right-0 flex items-center px-2 text-[var(--primary-color)]">
                       <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -99,29 +119,35 @@ export const AdminDashboard = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-3 lg:gap-2 w-full my-4 sm:my-6 md:my-5">
                   <Overviewcards
                     cardTitle="Sales"
-                    cardValue="32"
-                    percent="+14"
+                    cardValue={salesData?.sales.count}
+                    percent={salesData?.sales.percentage}
                     icon={<OverviewCardIcon1 />}
+                    periodText={dayFilter}
+                    isPositive={salesData?.sales.percentage > 0}
                   />
                   <Overviewcards
                     cardTitle="Refunds"
-                    cardValue="03"
-                    percent="-2"
+                    cardValue={salesData?.refunds.count}
+                    percent={salesData?.refunds.percent}
                     icon={<RefundIcon />}
+                    periodText={dayFilter}
+                    isPositive={salesData?.refunds.percent > 0}
                   />
                   <div className="sm:col-span-2 md:col-span-1 lg:col-span-1">
                     <Overviewcards
                       cardTitle="Net Sales Amount"
-                      cardValue="$5,456"
-                      percent="+4"
+                      cardValue={salesData?.net_sales_amount.amount.toFixed(0)}
+                      percent={salesData?.net_sales_amount.percentage.toFixed(2)}
                       icon={<NetsaleAmountIcon />}
+                      periodText={dayFilter}
+                      isPositive={salesData?.net_sales_amount.percentage > 0}
                     />
                   </div>
                 </div>
 
-                {/* Line Chart - Hidden on Mobile */}
-                <div className="hidden sm:block w-full h-[25vh] sm:h-[28vh] md:h-[28vh] lg:h-[30dvh] flex justify-center items-center overflow-x-hidden mb-4 sm:mb-6 md:mb-5">
-                  <Linechart aspectRatio={window.innerWidth < 640 ? 2 : window.innerWidth < 1024 ? 2.5 : 4} />
+
+                <div className="w-full bg-white p-2 h-[30dvh] flex justify-center items-center overflow-x-hidden">
+                  <Linechart aspectRatio={window.innerWidth < 640 ? 2 : window.innerWidth < 1024 ? 2.5 : 4} chartData={transformedRevenueData} />
                 </div>
 
                 {/* Sales Stats */}
@@ -217,7 +243,7 @@ export const AdminDashboard = () => {
 
                   <div className="flex flex-col gap-3 md:gap-2.5 my-3 md:my-2.5">
                     {
-                      lowStock.length === 0 ? (
+                      lowStock?.length === 0 ? (
                         <>
                           <p className="text-[1dvw] text-center my-3 font-semibold mainFont text-gray-500">
                             No Low stock items found

@@ -89,7 +89,7 @@ export const Reports = () => {
   const [year, setYear] = useState(new Date().getFullYear());
   const queryClient = useQueryClient();
   const containerRef = useRef(null);
-  const printReportFunc = useReactToPrint({ contentRef:containerRef })
+  const printReportFunc = useReactToPrint({ contentRef: containerRef })
 
 
   // Column Definitions: Defines & controls grid columns.
@@ -232,7 +232,7 @@ export const Reports = () => {
       const keys = Object.keys(resData.expenselist[0])
       if (keys.length > 0) {
         const columns = keys
-          .filter((item) => item !== "vendor_details" && item !== "id") 
+          .filter((item) => item !== "vendor_details" && item !== "id")
           .map((item) => ({
             field: item,
             headerName: item.toUpperCase(),
@@ -354,46 +354,7 @@ export const Reports = () => {
               </div>
 
               <div className="w-[26%] shrink-0">
-                <TopSellingItems />
-
-                {/* <div className="my-5 bg-white rounded-md p-3">
-                  <div className="flex justify-between items-center">
-                    <h3 className="text-[1dvw] font-[500]">Most Sold Category</h3>
-                    <button className="bg-[#333333] text-white px-3 text-[.9dvw] cursor-pointer py-1 rounded-full">
-                      See all
-                    </button>
-                  </div>
-                  <div className="p-3 my-3">
-                    <div>
-                      <Doughtchart aspectRatio={1.5} />
-                    </div>
-                    <div>
-                      <div className="flex-1 shrink-0 flex flex-col gap-3 justify-center items-start rounded-md bg-[var(--primary-color)] py-6 px-2">
-                        {saleData.map((cur, id) => (
-                          <div
-                            key={id}
-                            className="flex justify-between items-center w-[95%]"
-                          >
-                            <div className="flex justify-start gap-4 items-center">
-                              <div
-                                style={{
-                                  background: cur.color,
-                                }}
-                                className="w-[1dvw] h-[1dvw] rounded-full"
-                              />
-                              <p className="font-semibold font-[var(--paraFont)] text-[1dvw] text-[var(--paraText-color)]">
-                                {cur.name}
-                              </p>
-                            </div>
-                            <h5 className="text-black font-medium text-[1dvw]">
-                              ${cur.value}
-                            </h5>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div> */}
+                <TopSellingItems />                
               </div>
             </div>
             <div className="w-full">
@@ -413,12 +374,13 @@ export const Reports = () => {
                     >
                       <option value="Expense">Expense</option>
                       <option value="Purchase">Purchase</option>
+                      <option value="Sale">Sales</option>
                       {/* <option value="REFUND">Refund</option>
                       <option value="VOID">Void</option> */}
                     </select>
                     <div className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-[1.8dvw] lg:w-[1.8dvw] bg-[#F8A61B] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem] sm:min-w-[1.75rem] sm:min-h-[1.75rem] md:min-w-[2rem] md:min-h-[2rem]">
                       <p className="text-xs sm:text-xs md:text-sm lg:text-[1dvw] font-[500] text-white">
-                        {rowData?.expenselist?.length}
+                        {rowData?.expenselist?.length || 0}
                       </p>
                     </div>
                   </div>
@@ -479,7 +441,7 @@ export const Reports = () => {
                 </div>
                 <div className="h-full w-full">
                   <AgGridReact
-                    rowData={rowData?.expenselist}
+                    rowData={rowData?.expenselist || []}
                     columnDefs={colDefs}
                     defaultColDef={defaultColDef}
                     pagination={true}

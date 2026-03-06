@@ -61,6 +61,9 @@ export const getReportsData = async (filters) => {
             case 'Purchase':
                 getData = await axiosInstance.get(`/api/v1/report/purchase-report?page=1&limit=100&startDate=${customRang?.from}&endDate=${customRang?.to}&day=${dayFilter}`);
                 break;
+            case 'Sale':
+                getData = await axiosInstance.get(`/api/v1/bills/transaction/list?storeId=&userType=&method=&day=${dayFilter}&status=&search=&page=1&limit=100`);
+                break;
 
             default:
                 getData = await axiosInstance.get(`/api/v1/report/expense-report?page=1&limit=100&startDate=${customRang?.from}&endDate=${customRang?.to}&day=${dayFilter}`);
@@ -69,12 +72,27 @@ export const getReportsData = async (filters) => {
 
 
         if (getData.status === 200 && getData.data) {
-
-            return {
-                expenselist: currentReportCategory === 'Purchase' ? getData.data.purchases : getData.data.expenses || [],
-                totalExpenseAmount: getData.data.total_amount || '',
-                pagination: getData.data.pagination
+            if (currentReportCategory === 'Purchase') {
+                return {
+                    expenselist: getData.data.purchases || [],
+                    totalExpenseAmount: getData.data.total_amount || '',
+                    pagination: getData.data.pagination
+                }
+            } else if (currentReportCategory === 'Expense') {
+                return {
+                    expenselist: getData.data.expenses || [],
+                    totalExpenseAmount: getData.data.total_amount || '',
+                    pagination: getData.data.pagination
+                }
+            } else if (currentReportCategory === 'Sale') {
+                console.log(getData.data)
+                return {
+                    expenselist: getData.data.transactions || [],
+                    totalExpenseAmount: getData.data.total_amount || '',
+                    pagination: getData.data.pagination
+                }
             }
+
         }
         return {
             expenselist: currentReportCategory === 'Purchase' ? getData.data.purchases : getData.data.expenses || [],
@@ -105,5 +123,21 @@ export const getLowSrockData = async () => {
     } catch (error) {
         console.log(error);
         return error.message || error.response.data.message || 'Something went wrong will fetching the low-stock data.'
+    }
+}
+
+export const getDashboardSalesReport = async (filter) => {
+    try {
+        const reqSalesReport = await axiosInstance.post('/api/v1/report/admin-dashboard-card', {
+            filter: filter
+        })
+
+        if (reqSalesReport.status === 200 && reqSalesReport.data) {
+            return reqSalesReport.data
+        }
+        return reqSalesReport.data
+    } catch (error) {
+        console.log(error);
+        return error.message || error.response.data.message || 'Failed to fetch sales data'
     }
 }

@@ -12,6 +12,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { Overviewcards } from "../../components/common/Overviewcards/Overviewcards";
 import moment from "moment";
+import Cookies from 'js-cookie'
 
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 // Core CSS
@@ -68,7 +69,7 @@ export const AllSalesReports = () => {
     const dataSource = {
       rowCount: undefined,
       getRows: async (params) => {
-        const { startRow,  } = params;
+        const { startRow, } = params;
         const page = Math.floor(startRow / itemsPerPage) + 1;
 
         try {
@@ -83,6 +84,7 @@ export const AllSalesReports = () => {
                 limit: itemsPerPage,
                 search: "",
                 day: dayFilter,
+                userType: Cookies.get('u_type') === 'staff' && 'seller'
               }),
           });
 
@@ -127,7 +129,7 @@ export const AllSalesReports = () => {
   }, [transactions]);
 
   // Column Definitions: Defines & controls grid columns.
-  const [colDefs, ] = useState([
+  const [colDefs,] = useState([
     { field: "billId", headerName: "Bill Id" },
     { field: "method", headerName: "Payment Type" },
     { headerName: "Status", field: "status" },
@@ -449,7 +451,7 @@ export const AllSalesReports = () => {
             </div>
           </div>
 
-          {isKeyboardOpen && (
+          {/* {isKeyboardOpen && (
             <AnimatePresence mode="popLayout">
               <OnScreenKeyboard
                 Change={handleOnChange}
@@ -457,7 +459,7 @@ export const AllSalesReports = () => {
                 layoutName={"numeric"}
               />
             </AnimatePresence>
-          )}
+          )} */}
         </>
       )}
     </>
