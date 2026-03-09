@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Minus, Plus, Search, Logs } from "lucide-react";
+import { Minus, Plus, Search, Logs, UserRoundSearch } from "lucide-react";
 import { Switch, Tooltip } from "@mui/material";
 import { AnimatePresence, } from "framer-motion";
 import ProductImg1 from "../../assets/images/ProductImg1.png";
@@ -38,6 +38,7 @@ import { Loading } from "../../components/UI/Loading/Loading";
 import { PurchaseAndExpence } from "../../components/common/Models/PurchaseAndExpence";
 import { handleGetTaxValue } from "../../utils/apis/Taxes";
 import { calculateTax, tatalTaxAmount } from "../../utils/CalculateTax";
+import { ViewCustomerDetailsModel } from "../../components/common/Models/ViewCustomerDetailsModel";
 
 const itemListVarient = {
   initial: {
@@ -81,6 +82,7 @@ export const SalePoint = () => {
     billId: null,
   });
   const [isPayout, setIsPayout] = useState(false);
+  const [findCustomerModel, setFindCustomerModel] = useState(false)
 
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
@@ -573,11 +575,15 @@ export const SalePoint = () => {
                     setActiveInputField={setActiveInputField}
                   />
                   <div className="flex justify-center items-center gap-3">
-                    <button className="flex cursor-pointer  justify-center items-center gap-1.5 mainFont font-semibold border border-(--border-color) rounded-full px-5 py-1.5">
+                    <button
+                      onClick={() => {
+                        setFindCustomerModel(true)
+                      }}
+                      className="flex cursor-pointer  justify-center items-center gap-1.5 mainFont font-semibold border border-(--border-color) rounded-full px-5 py-1.5">
                       <span className="p-1 flex justify-center bg-(--button-color1) items-center text-(--primary-color) rounded-full">
-                        <Plus size={20} />
+                        <UserRoundSearch size={20} />
                       </span>
-                      Add Item
+                      Find Customer
                     </button>
                     <button
                       onClick={() => {
@@ -719,8 +725,8 @@ export const SalePoint = () => {
                 <div className="flex justify-between items-center gap-3">
                   <button
                     className={`w-1/2 py-4 text-[1.2dvw] mainFont font-semibold rounded-md ${hasItems
-                        ? "bg-(--button-color5) text-(--primary-color)"
-                        : "bg-(--button-color5)/40 text-(--primary-color)/60 cursor-not-allowed"
+                      ? "bg-(--button-color5) text-(--primary-color)"
+                      : "bg-(--button-color5)/40 text-(--primary-color)/60 cursor-not-allowed"
                       }`}
                     disabled={!hasItems}
                     onClick={() => {
@@ -874,6 +880,10 @@ export const SalePoint = () => {
           )}
 
           {isPayout && <PurchaseAndExpence setIsPayout={setIsPayout} />}
+
+          {
+            findCustomerModel && <ViewCustomerDetailsModel setFindCustomerModel={setFindCustomerModel} />
+          }
         </>
       )}
     </>

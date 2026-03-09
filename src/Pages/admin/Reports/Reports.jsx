@@ -87,9 +87,14 @@ export const Reports = () => {
     to: ''
   })
   const [year, setYear] = useState(new Date().getFullYear());
+  const gridRef = useRef();
   const queryClient = useQueryClient();
   const containerRef = useRef(null);
-  const printReportFunc = useReactToPrint({ contentRef: containerRef })
+  const printReportFunc = useReactToPrint({
+    contentRef: containerRef,
+  })
+
+
 
 
   // Column Definitions: Defines & controls grid columns.
@@ -232,7 +237,7 @@ export const Reports = () => {
       const keys = Object.keys(resData.expenselist[0])
       if (keys.length > 0) {
         const columns = keys
-          .filter((item) => item !== "vendor_details" && item !== "id")
+          .filter((item) => item !== "vendor_details" && item !== "id" && item !== "_id")
           .map((item) => ({
             field: item,
             headerName: item.toUpperCase(),
@@ -354,7 +359,7 @@ export const Reports = () => {
               </div>
 
               <div className="w-[26%] shrink-0">
-                <TopSellingItems />                
+                <TopSellingItems />
               </div>
             </div>
             <div className="w-full">
@@ -362,7 +367,7 @@ export const Reports = () => {
                 <button onClick={printReportFunc} className="px-5 py-2 bg-(--button-color1) flex justify-center items-center gap-4 cursor-pointer text-white mainFont font-semibold rounded-md">Print <Printer /></button>
               </div>
 
-              <div ref={containerRef} id='print-section' className="w-full print-section flex-col flex gap-2  bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-[75dvh]">
+              <div ref={containerRef} id='print-section print-container' className="w-full print-section flex-col flex gap-2  bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-[75dvh]">
                 <div className="flex justify-between items-center py-1.5 shrink-0">
                   <div className="flex justify-center items-center gap-3">
                     <select
@@ -441,6 +446,7 @@ export const Reports = () => {
                 </div>
                 <div className="h-full w-full">
                   <AgGridReact
+                    ref={gridRef}
                     rowData={rowData?.expenselist || []}
                     columnDefs={colDefs}
                     defaultColDef={defaultColDef}

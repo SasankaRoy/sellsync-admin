@@ -33,6 +33,7 @@ import {
 import { useSelector } from "react-redux";
 import { AddProductModel } from "../../common/AddProductModel/AddProductModel";
 import Notifications from "../Notification/Notifications";
+import Cookies from 'js-cookie'
 
 export const Layout = ({ children }) => {
   const clientData = useSelector((state) => state.loggedUser);
@@ -1491,7 +1492,12 @@ export const Layout = ({ children }) => {
               ? "text-[20px]"
               : "text-sm lg:text-[1.1dvw]"
             } ${isMobile ? "text-white" : ""}`}
-          onClick={() => handleNavigation("/logout")}
+          onClick={() => {
+            Cookies.remove("authToken", { path: "/" });
+            Cookies.remove("u_id", { path: "/" });
+            Cookies.remove("u_type", { path: "/" });
+            navigate('/auth/login')
+          }}
         >
           <div style={isMobile ? { filter: "brightness(0) invert(1)" } : {}}>
             <LogooutIcon />

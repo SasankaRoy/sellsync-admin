@@ -86,9 +86,12 @@ export const getReportsData = async (filters) => {
                 }
             } else if (currentReportCategory === 'Sale') {
                 console.log(getData.data)
+                const totalsaleAmount = getData.data.transactions.reduce((acc, cur) => {
+                    return acc + Number(cur.grandTotal)
+                }, 0);
                 return {
                     expenselist: getData.data.transactions || [],
-                    totalExpenseAmount: getData.data.total_amount || '',
+                    totalExpenseAmount: totalsaleAmount.toFixed(2) || '',
                     pagination: getData.data.pagination
                 }
             }

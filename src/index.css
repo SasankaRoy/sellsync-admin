@@ -167,3 +167,51 @@ h6,
 .buttonOutterWrapper:hover.buttonOutterWrapper::before {
   width: 100%;
 }
+
+@media print {
+
+  .ag-root-wrapper {
+    overflow: visible !important;
+  }
+
+  .ag-body-viewport {
+    overflow: visible !important;
+    height: auto !important;
+  }
+
+  .ag-center-cols-viewport {
+    overflow: visible !important;
+  }
+
+  .ag-body-horizontal-scroll {
+    display: none !important;
+  }
+
+}
+
+
+@media print {
+
+  .print-container {
+    overflow: visible !important;
+    width: 100% !important;
+  }
+
+  .print-container table {
+    width: 100% !important;
+    table-layout: auto !important;
+  }
+
+  .table-wrapper {
+    overflow: visible !important;
+  }
+
+  body {
+    zoom: 0.8; /* optional to fit large tables */
+  }
+
+  @page {
+    size: landscape;
+  }
+
+}
