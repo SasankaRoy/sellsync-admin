@@ -15,13 +15,16 @@ import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import ProductImg1 from "../../../assets/images/ProductImg1.png";
 import { Doughtchart } from "../../../components/common/charts/Doughtchart";
-import { CircleX, Edit, Eye, Plus, Trash } from "lucide-react";
+import { CircleX, Edit, Eye, Plus, Trash, Upload } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getAllProductList } from "../../../utils/apis/handleProducts";
 import { Loading } from "../../../components/UI/Loading/Loading";
 import { DeleteModel } from "../../../components/common/Models/DeleteMode";
 import { getAllCategoryList } from "../../../utils/apis/handleCategory";
 import { AddProductModel } from "../../../components/common/AddProductModel/AddProductModel";
+import { InventoryUploadModel } from "../../../components/common/InventoryUploadModel/InventoryUploadModel";
+import { toast } from "react-toastify";
+import axiosInstance from "../../../utils/axios-interceptor";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -106,6 +109,7 @@ const ActionBtns = (props) => {
 
 export const Inventory = () => {
   const [activeFilter, setActiveFilter] = useState("");
+  const [inventoryUpload, setInventoryUpload] = useState(false)
   const [showModel, setShowModel] = useState({
     state: false,
     productData: null,
@@ -233,6 +237,11 @@ export const Inventory = () => {
     queryFn: async () => await getAllCategoryList(),
   });
 
+
+
+
+
+
   return (
     <>
       <Layout onAddProduct={onAddProduct}>
@@ -254,6 +263,12 @@ export const Inventory = () => {
                     <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
                       Inventory
                     </h3>
+                    <button 
+                      onClick={() => setInventoryUpload(true)}
+                      className="addProduct__BTN bg-[#F8A61B] text-[var(--primary-color)] flex justify-center items-center gap-1 sm:gap-[5px] px-3 py-2 sm:px-[25px] sm:py-[10px] font-[var(--mainFont)] font-medium text-xs sm:text-sm lg:text-[1dvw] border-none outline-none rounded-full cursor-pointer"
+                    >
+                      <Upload /> Upload CSV
+                    </button>
                   </div>
 
                   {/* Main Layout Container */}
@@ -435,6 +450,12 @@ export const Inventory = () => {
           </>
         )}
       </Layout>
+
+      {
+        inventoryUpload && (
+          <InventoryUploadModel setInventoryUpload={setInventoryUpload} />
+        )
+      }
 
       {showModel.state && showModel.productData && (
         <>
