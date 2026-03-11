@@ -30,6 +30,22 @@ export const ViewCustomerDetailsModel = ({ setFindCustomerModel }) => {
         if (resData.product) {
             setIsFetching(false);
             setCustomerInfo(resData.product)
+            dispatch(
+                setCurrentCustomerDetails({
+                    currentCustomerDetails:{
+                        name:'customerPoint',
+                        value:resData.product?.customer_points
+                    }
+                })
+            )
+            dispatch(
+                setCurrentCustomerDetails({
+                    currentCustomerDetails:{
+                        name:'offAmount',
+                        value:'2.00'
+                    }
+                })
+            )
         } {
             setIsFetching(false)
         }
@@ -119,17 +135,30 @@ export const ViewCustomerDetailsModel = ({ setFindCustomerModel }) => {
                                     </div>
                                     <div className="flex flex-col gap-2">
                                         <lable className="text-base sm:text-lg md:text-xl lg:text-[1dvw] font-normal paraFont">
-                                        Customer Points
+                                            Customer Points - <span className="text-[1.1dvw] mainFont font-semibold text-green-500">
+                                                ( off $ 2.00 )
+                                            </span>
                                         </lable>
                                         <input className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-base sm:text-lg md:text-xl lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3" readOnly value={customerInfo?.customer_points} />
+                                        <p className="text-[.8dvw] paraFont font-semibold text-gray-600">
+                                            * Redeem over 100 points.
+                                        </p>
                                     </div>
                                     <div className="flex flex-col gap-2">
                                         <lable className="text-base sm:text-lg md:text-xl lg:text-[1dvw] font-normal paraFont">
-                                        Customer DOB
+                                            Customer DOB
                                         </lable>
                                         <input className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-base sm:text-lg md:text-xl lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3" readOnly value={moment(customerInfo?.date_of_birth).format('YYYY-MM-DD')} />
                                     </div>
 
+                                </div>
+                                <div className="mt-5 flex justify-end gap-5 items-center">
+                                    <button className="w-full sm:w-auto px-6 py-2 bg-(--button-color4) cursor-pointer text-white rounded-md font-semibold hover:opacity-80 transition-all duration-300">
+                                        Cancel
+                                    </button>
+                                    <button className="w-full sm:w-auto px-6 py-2 bg-(--button-color1) cursor-pointer text-white rounded-md font-semibold hover:opacity-80 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
+                                        Continue
+                                    </button>
                                 </div>
                             </div>
                         </>) : (

@@ -15,7 +15,10 @@ import "react-country-state-city/dist/react-country-state-city.css";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getLowStockThreshold, updateLowStockThreshold } from "../../../utils/apis/handleSetting";
+import {
+  getLowStockThreshold,
+  updateLowStockThreshold,
+} from "../../../utils/apis/handleSetting";
 import { Loading } from "../../../components/UI/Loading/Loading";
 import { toast } from "react-toastify";
 
@@ -33,7 +36,9 @@ const GeneralTab = () => {
       <div className="bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] p-4 sm:p-5 transition-all duration-300 ease-linear">
         <div className="w-full flex justify-between items-center border-b-2 border-[#d4d4d4]/50 px-2 sm:px-2.5 py-2 sm:py-3">
           <div>
-            <h3 className="text-base sm:text-lg md:text-[1.1dvw] font-[600]">General</h3>
+            <h3 className="text-base sm:text-lg md:text-[1.1dvw] font-[600]">
+              General
+            </h3>
           </div>
           <button className="flex items-center gap-2 sm:gap-3 bg-[var(--button-color1)] text-white px-3 py-1 sm:px-5 sm:py-1.5 md:px-4 md:py-1 rounded-full cursor-pointer font-[500] text-sm sm:text-base md:text-sm">
             <EditIcon />
@@ -50,12 +55,17 @@ const GeneralTab = () => {
               height: "80px",
               "@media (min-width: 640px)": { width: "100px", height: "100px" },
               "@media (min-width: 768px)": { width: "8dvw", height: "8dvw" },
-              "@media (min-width: 768px) and (max-width: 991px)": { width: "100px", height: "100px" },
+              "@media (min-width: 768px) and (max-width: 991px)": {
+                width: "100px",
+                height: "100px",
+              },
             }}
             className="border-2 p-1 border-[var(--button-color2)]/70"
           />
           <div className="flex flex-col gap-2 text-center sm:text-left">
-            <h4 className="text-base sm:text-lg md:text-[1.2dvw] font-semibold">Profile Picture</h4>
+            <h4 className="text-base sm:text-lg md:text-[1.2dvw] font-semibold">
+              Profile Picture
+            </h4>
             <p className="text-xs sm:text-sm md:text-[.9dvw] font-[var(--paraFont)] text-[#333333]/80">
               Change or remove Your profile Picture
             </p>
@@ -68,7 +78,9 @@ const GeneralTab = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 my-3 py-4 sm:py-5 px-1 border-b-2 border-[#d4d4d4]/50">
           <div className="flex flex-col gap-2 w-full">
-            <label className="text-sm sm:text-base md:text-sm font-[700]">Username</label>
+            <label className="text-sm sm:text-base md:text-sm font-[700]">
+              Username
+            </label>
             <input
               type="text"
               placeholder="Eve Lopez"
@@ -77,7 +89,9 @@ const GeneralTab = () => {
           </div>
 
           <div className="flex flex-col gap-2 w-full">
-            <label className="text-sm sm:text-base md:text-sm font-[700]">Phone Number</label>
+            <label className="text-sm sm:text-base md:text-sm font-[700]">
+              Phone Number
+            </label>
             <input
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base md:text-sm border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-1.5 sm:py-2 px-3"
               type="text"
@@ -85,7 +99,9 @@ const GeneralTab = () => {
             />
           </div>
           <div className="flex flex-col gap-2 w-full">
-            <label className="text-sm sm:text-base md:text-sm font-[700]">Email ID</label>
+            <label className="text-sm sm:text-base md:text-sm font-[700]">
+              Email ID
+            </label>
             <input
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base md:text-sm border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-1.5 sm:py-2 px-3"
               type="email"
@@ -96,7 +112,9 @@ const GeneralTab = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 my-3 py-4 sm:py-5 px-1 border-b-2 border-[#d4d4d4]/50">
           <div className="flex flex-col gap-2 w-full">
-            <label className="text-sm sm:text-base md:text-sm font-[700]">Password</label>
+            <label className="text-sm sm:text-base md:text-sm font-[700]">
+              Password
+            </label>
             <input
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base md:text-sm border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-1.5 sm:py-2 px-3"
               type="password"
@@ -136,7 +154,9 @@ const GeneralTab = () => {
                     {...label}
                     defaultChecked
                     className="toggleSwitch"
-                    sx={{ "& .MuiSwitch-thumb": { backgroundColor: "#00C7E6" } }}
+                    sx={{
+                      "& .MuiSwitch-thumb": { backgroundColor: "#00C7E6" },
+                    }}
                   />
                 </div>
               </div>
@@ -204,7 +224,9 @@ const BusinessInfoTab = () => {
       <div className="bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] p-4 sm:p-5 transition-all duration-300 ease-linear">
         <div className="w-full flex justify-between items-center border-b-2 border-[#d4d4d4]/50 px-2 sm:px-2.5 py-2 sm:py-3">
           <div>
-            <h3 className="text-base sm:text-lg md:text-[1.1dvw] font-[600]">Business Info</h3>
+            <h3 className="text-base sm:text-lg md:text-[1.1dvw] font-[600]">
+              Business Info
+            </h3>
           </div>
           <button className="flex items-center gap-2 sm:gap-3 bg-[var(--button-color1)] text-white px-3 py-1 sm:px-5 sm:py-1.5 md:px-4 md:py-1 rounded-full cursor-pointer font-[500] text-sm sm:text-base md:text-sm">
             <EditIcon />
@@ -221,12 +243,17 @@ const BusinessInfoTab = () => {
               height: "80px",
               "@media (min-width: 640px)": { width: "100px", height: "100px" },
               "@media (min-width: 768px)": { width: "8dvw", height: "8dvw" },
-              "@media (min-width: 768px) and (max-width: 991px)": { width: "100px", height: "100px" },
+              "@media (min-width: 768px) and (max-width: 991px)": {
+                width: "100px",
+                height: "100px",
+              },
             }}
             className="border-2 p-1 border-[var(--button-color2)]/70"
           />
           <div className="flex flex-col gap-2 text-center sm:text-left">
-            <h4 className="text-base sm:text-lg md:text-[1.2dvw] font-semibold">Business Logo</h4>
+            <h4 className="text-base sm:text-lg md:text-[1.2dvw] font-semibold">
+              Business Logo
+            </h4>
             <p className="text-xs sm:text-sm md:text-[.9dvw] font-[var(--paraFont)] text-[#333333]/80">
               Change or remove Your Business Logo
             </p>
@@ -239,7 +266,9 @@ const BusinessInfoTab = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 my-3 py-4 sm:py-5 px-1 border-b-2 border-[#d4d4d4]/50">
           <div className="flex flex-col gap-2 w-full">
-            <label className="text-sm sm:text-base md:text-sm font-[700]">Business Name</label>
+            <label className="text-sm sm:text-base md:text-sm font-[700]">
+              Business Name
+            </label>
             <input
               type="text"
               placeholder="Pheonix pvt"
@@ -248,7 +277,9 @@ const BusinessInfoTab = () => {
           </div>
 
           <div className="flex flex-col gap-2 w-full">
-            <label className="text-sm sm:text-base md:text-sm font-[700]">Contact Number</label>
+            <label className="text-sm sm:text-base md:text-sm font-[700]">
+              Contact Number
+            </label>
             <input
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base md:text-sm border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-1.5 sm:py-2 px-3"
               type="text"
@@ -256,7 +287,9 @@ const BusinessInfoTab = () => {
             />
           </div>
           <div className="flex flex-col gap-2 w-full">
-            <label className="text-sm sm:text-base md:text-sm font-[700]">Email ID</label>
+            <label className="text-sm sm:text-base md:text-sm font-[700]">
+              Email ID
+            </label>
             <input
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base md:text-sm border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-1.5 sm:py-2 px-3"
               type="email"
@@ -310,7 +343,9 @@ const BusinessInfoTab = () => {
                     {...label}
                     defaultChecked
                     className="toggleSwitch"
-                    sx={{ "& .MuiSwitch-thumb": { backgroundColor: "#00C7E6" } }}
+                    sx={{
+                      "& .MuiSwitch-thumb": { backgroundColor: "#00C7E6" },
+                    }}
                   />
                 </div>
               </div>
@@ -737,10 +772,8 @@ const ScanDataTab = () => {
               </button>
 
               <DeleteIcon className="w-4 h-4 sm:w-5 sm:h-5" />
-
             </div>
           </div>
-
 
           <div className="h-full w-full overflow-x-hidden sm:overflow-x-auto">
             <div className="min-w-[800px] h-full">
@@ -991,81 +1024,179 @@ const BusinessDocumentsTab = () => {
 };
 
 const InventorySettingsTab = () => {
-
   const [lowStockThreshold, setLowStockThreshold] = useState(0);
+  const [pointsRequired, setPointsRequired] = useState(0);
+  const [ratePoint, setRatePoint] = useState(0);
+  const [rateAmount, setRateAmount] = useState(0);
   const queryClient = useQueryClient();
 
-
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['get_low_stock_threshold'],
+    queryKey: ["get_low_stock_threshold"],
     queryFn: async () => {
-      const prvData = await getLowStockThreshold()
+      const prvData = await getLowStockThreshold();
       if (prvData) {
-        setLowStockThreshold(prvData)
-        return prvData
+        setLowStockThreshold(prvData.low_stock_quantity);
+        setPointsRequired(prvData.minimum_points_required_for_redeem);
+        setRatePoint(prvData.redeem_point);
+        setRateAmount(prvData.redeem_point_cost);
+        return prvData;
       } else {
-        return 0
+        return 0;
       }
-    }
+    },
   });
 
-  const handleSaveLowStockThreshold = async (payload) => {
+  const handleSaveLowStockThreshold = async () => {
+    const payload = {
+      low_stock_threshold: lowStockThreshold,
+      minimum_points_required_for_redeem: pointsRequired,
+      redeem_point: ratePoint,
+      redeem_point_cost: rateAmount,
+    };
     const res = await updateLowStockThreshold(payload);
 
     if (res) {
-      toast.success('Updated successfully')
+      toast.success("Updated successfully");
       queryClient.invalidateQueries({
-        queryKey: ['get_low_stock_threshold','get_low_stock_data8'],
-      })
+        queryKey: ["get_low_stock_threshold", "get_low_stock_data8"],
+      });
     } else {
-      toast.error(res)
+      toast.error(res);
     }
-  }
+  };
 
-  useEffect(() => { setLowStockThreshold(data) }, [data])
-
-
-
-
-
-
-
+  useEffect(() => {
+    setLowStockThreshold(data?.low_stock_quantity);
+    setPointsRequired(data?.minimum_points_required_for_redeem);
+    setRatePoint(data?.redeem_point);
+    setRateAmount(data?.redeem_point_cost);
+  }, [data]);
 
   return (
     <>
-
-      {
-        isLoading ? <Loading /> : (
-          <>
-            <div className="transition-all duration-300 ease-linear">
-              <div className="w-full flex-col flex gap-2 my-4 sm:my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2 sm:px-2.5 py-2 max-h-[60dvh] sm:max-h-[70dvh] overflow-x-hidden sm:overflow-x-auto">
-                <div className="w-[50%]">
-                  <div className="flex flex-col gap-2.5">
-                    <label className="text-sm sm:text-base secondaryFont md:text-sm font-[500]">
-                      Low Stock Threshold
-                    </label>
-                    <div className="flex  gap-2">
-                      <input
-                        type="number"
-                        placeholder="10"
-                        value={lowStockThreshold}
-                        onChange={(e) => setLowStockThreshold(e.target.value)}
-                        className="bg-[#F3F3F3] w-full font-medium paraFont placeholder:text-[#333333]/40 text-base sm:text-lg md:text-[1.4dvw] lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-2 sm:py-2.5 px-4 sm:px-5"
-                      />
-                      <button onClick={() => handleSaveLowStockThreshold(lowStockThreshold)} className="bg-[var(--button-color1)] text-white px-3 py-1 sm:px-5 sm:py-1.5 md:px-4 md:py-1 rounded-full cursor-pointer font-[500] text-sm sm:text-base md:text-sm">
-                        <SaveIcon className="w-4 h-4 sm:w-5 sm:h-5" />
-                      </button>
-                    </div>
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <>
+          <div className="transition-all duration-300 ease-linear">
+            <div className="w-full flex-col flex gap-2 my-4 sm:my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-3 py-4 max-h-[60dvh] sm:max-h-[70dvh] overflow-x-hidden sm:overflow-x-auto">
+              <div className="w-[50%]">
+                <div className="flex flex-col gap-2.5">
+                  <label className="text-sm sm:text-base secondaryFont md:text-sm font-[500]">
+                    Low Stock Threshold
+                  </label>
+                  <div className="flex  gap-2">
+                    <input
+                      type="number"
+                      placeholder="10"
+                      value={lowStockThreshold}
+                      onChange={(e) => setLowStockThreshold(e.target.value)}
+                      className="bg-[#F3F3F3] w-full font-medium paraFont placeholder:text-[#333333]/40 text-base sm:text-lg md:text-[1.4dvw] lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-2 sm:py-2.5 px-4 sm:px-5"
+                    />
+                    <button
+                      onClick={() =>
+                        handleSaveLowStockThreshold(lowStockThreshold)
+                      }
+                      className="bg-[var(--button-color1)] text-white px-3 py-1 sm:px-5 sm:py-1.5 md:px-4 md:py-1 rounded-full cursor-pointer font-[500] text-sm sm:text-base md:text-sm"
+                    >
+                      <SaveIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+                    </button>
                   </div>
                 </div>
               </div>
+
+              <div className="w-[50%] my-5">
+                <div className="flex flex-col gap-2.5">
+                  <label className="text-sm sm:text-base secondaryFont md:text-sm font-[500]">
+                    Set Minimum Points required for redeem
+                  </label>
+                  <div className="flex  gap-2">
+                    <input
+                      type="number"
+                      placeholder="10"
+                      value={pointsRequired}
+                      onChange={(e) => setPointsRequired(e.target.value)}
+                      className="bg-[#F3F3F3] w-full font-medium paraFont placeholder:text-[#333333]/40 text-base sm:text-lg md:text-[1.4dvw] lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-2 sm:py-2.5 px-4 sm:px-5"
+                    />
+                    <button
+                      onClick={() =>
+                        handleSaveLowStockThreshold(pointsRequired)
+                      }
+                      className="bg-[var(--button-color1)] text-white px-3 py-1 sm:px-5 sm:py-1.5 md:px-4 md:py-1 rounded-full cursor-pointer font-[500] text-sm sm:text-base md:text-sm"
+                    >
+                      <SaveIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div className="w-full">
+                <label className="text-sm sm:text-base secondaryFont md:text-sm font-[500]">
+                  Set Redeem Point calculation Rate
+                </label>
+                <div className="flex justify-between w-full items-center gap-5">
+                  <div className="w-[50%] my-5">
+                    <div className="flex flex-col gap-2.5">
+                      <label className="text-sm sm:text-base secondaryFont md:text-sm font-[500]">
+                        Set Points
+                      </label>
+                      <div className="flex  gap-2">
+                        <input
+                          type="number"
+                          placeholder="10"
+                          value={ratePoint}
+                          onChange={(e) => setRatePoint(e.target.value)}
+                          className="bg-[#F3F3F3] w-full font-medium paraFont placeholder:text-[#333333]/40 text-base sm:text-lg md:text-[1.4dvw] lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-2 sm:py-2.5 px-4 sm:px-5"
+                        />
+                        {/* <button
+                        onClick={() =>
+                          handleSaveLowStockThreshold(lowStockThreshold)
+                        }
+                        className="bg-[var(--button-color1)] text-white px-3 py-1 sm:px-5 sm:py-1.5 md:px-4 md:py-1 rounded-full cursor-pointer font-[500] text-sm sm:text-base md:text-sm"
+                      >
+                        <SaveIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+                      </button> */}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="w-[50%] my-5">
+                    <div className="flex flex-col gap-2.5">
+                      <label className="text-sm sm:text-base secondaryFont md:text-sm font-[500]">
+                        Set Amount ($)
+                      </label>
+                      <div className="flex  gap-2">
+                        <input
+                          type="number"
+                          placeholder="10"
+                          value={rateAmount}
+                          onChange={(e) => setRateAmount(e.target.value)}
+                          className="bg-[#F3F3F3] w-full font-medium paraFont placeholder:text-[#333333]/40 text-base sm:text-lg md:text-[1.4dvw] lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-2 sm:py-2.5 px-4 sm:px-5"
+                        />
+                        {/* <button
+                        onClick={() =>
+                          handleSaveLowStockThreshold(lowStockThreshold)
+                        }
+                        className="bg-[var(--button-color1)] text-white px-3 py-1 sm:px-5 sm:py-1.5 md:px-4 md:py-1 rounded-full cursor-pointer font-[500] text-sm sm:text-base md:text-sm"
+                      >
+                        <SaveIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+                      </button> */}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => handleSaveLowStockThreshold(ratePoint, rateAmount)}
+                  className="bg-[var(--button-color1)]  w-full text-white px-3 py-3  rounded-full cursor-pointer font-[500] text-[1.2dvw] mainFont"
+                >
+                  Update
+                </button>
+              </div>
             </div>
-          </>
-        )
-      }
+          </div>
+        </>
+      )}
     </>
-  )
-}
+  );
+};
 
 export const Settings = () => {
   const [currentActiveTab, setCurrentActiveTab] = useState("General");
@@ -1083,7 +1214,7 @@ export const Settings = () => {
         return <ScanDataTab />;
       case "BusinessDocuments":
         return <BusinessDocumentsTab />;
-      case 'InventorySettings':
+      case "InventorySettings":
         return <InventorySettingsTab />;
       default:
         return <GeneralTab />;
@@ -1104,47 +1235,52 @@ export const Settings = () => {
         <div className="bg-[#E6E6E6] p-1.5 sm:p-2 rounded-full w-full sm:w-auto my-4 sm:my-5 flex overflow-x-hidden sm:overflow-x-auto flex-shrink-0 justify-start sm:justify-center sm:inline-flex gap-1.5 sm:gap-3">
           <button
             onClick={() => handleChangeTab("General")}
-            className={`${currentActiveTab === "General"
-              ? "bg-white text-black"
-              : "bg-transparent text-[#333333]/70"
-              } border-none outline-none px-3 py-0.5 sm:px-8 sm:py-1 flex-shrink-0 md:px-6 md:py-1 text-xs sm:text-sm md:text-sm cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
+            className={`${
+              currentActiveTab === "General"
+                ? "bg-white text-black"
+                : "bg-transparent text-[#333333]/70"
+            } border-none outline-none px-3 py-0.5 sm:px-8 sm:py-1 flex-shrink-0 md:px-6 md:py-1 text-xs sm:text-sm md:text-sm cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
           >
             General
           </button>
 
           <button
             onClick={() => handleChangeTab("BusinessInfo")}
-            className={`${currentActiveTab === "BusinessInfo"
-              ? "bg-white text-black"
-              : "bg-transparent text-[#333333]/70"
-              } border-none outline-none px-3 py-0.5 sm:px-8 sm:py-1 flex-shrink-0 md:px-6 md:py-1 text-xs sm:text-sm md:text-sm cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
+            className={`${
+              currentActiveTab === "BusinessInfo"
+                ? "bg-white text-black"
+                : "bg-transparent text-[#333333]/70"
+            } border-none outline-none px-3 py-0.5 sm:px-8 sm:py-1 flex-shrink-0 md:px-6 md:py-1 text-xs sm:text-sm md:text-sm cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
           >
             Business Info
           </button>
           <button
             onClick={() => handleChangeTab("ScanData")}
-            className={`${currentActiveTab === "ScanData"
-              ? "bg-white text-black"
-              : "bg-transparent text-[#333333]/70"
-              } border-none outline-none px-3 py-0.5 sm:px-8 sm:py-1 flex-shrink-0 md:px-6 md:py-1 text-xs sm:text-sm md:text-sm cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
+            className={`${
+              currentActiveTab === "ScanData"
+                ? "bg-white text-black"
+                : "bg-transparent text-[#333333]/70"
+            } border-none outline-none px-3 py-0.5 sm:px-8 sm:py-1 flex-shrink-0 md:px-6 md:py-1 text-xs sm:text-sm md:text-sm cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
           >
             Scan Data
           </button>
           <button
             onClick={() => handleChangeTab("BusinessDocuments")}
-            className={`${currentActiveTab === "BusinessDocuments"
-              ? "bg-white text-black"
-              : "bg-transparent text-[#333333]/70"
-              } border-none outline-none px-3 py-0.5 sm:px-8 sm:py-1 flex-shrink-0 md:px-6 md:py-1 text-xs sm:text-sm md:text-sm cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
+            className={`${
+              currentActiveTab === "BusinessDocuments"
+                ? "bg-white text-black"
+                : "bg-transparent text-[#333333]/70"
+            } border-none outline-none px-3 py-0.5 sm:px-8 sm:py-1 flex-shrink-0 md:px-6 md:py-1 text-xs sm:text-sm md:text-sm cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
           >
             Business Documents
           </button>
           <button
             onClick={() => handleChangeTab("InventorySettings")}
-            className={`${currentActiveTab === "InventorySettings"
-              ? "bg-white text-black"
-              : "bg-transparent text-[#333333]/70"
-              } border-none outline-none px-3 py-0.5 sm:px-8 sm:py-1 flex-shrink-0 md:px-6 md:py-1 text-xs sm:text-sm md:text-sm cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
+            className={`${
+              currentActiveTab === "InventorySettings"
+                ? "bg-white text-black"
+                : "bg-transparent text-[#333333]/70"
+            } border-none outline-none px-3 py-0.5 sm:px-8 sm:py-1 flex-shrink-0 md:px-6 md:py-1 text-xs sm:text-sm md:text-sm cursor-pointer rounded-full font-semibold transition-all duration-300 ease-linear`}
           >
             Inventory Settings
           </button>

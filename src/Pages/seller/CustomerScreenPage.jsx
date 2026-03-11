@@ -80,6 +80,8 @@ const CustomerScreenPage = () => {
     } catch (e) { }
   }, []);
 
+  console.log(customerDetails)
+
 
 
 
@@ -166,7 +168,7 @@ const CustomerScreenPage = () => {
                 </div>
 
                 {/* Desktop Logo */}
-                <div className={`hidden md:flex ${products.length > 0 ? 'w-2/5' : 'w-full'} transition-all duration-300 ease-linear   flex-col items-center justify-center p-6 relative`}>
+                <div className={`hidden md:flex ${products.length > 0 || customerDetails.customerPhone ? 'w-2/5' : 'w-full'} transition-all duration-300 ease-linear   flex-col items-center justify-center p-6 relative`}>
                   <div className="absolute  top-0 left-0 w-full h-full">
                     <img src={WelcomeBg} className="w-full brightness-90 object-cover object-right h-full" alt="sell-sync" />
                   </div>
@@ -181,7 +183,7 @@ const CustomerScreenPage = () => {
                 </div>
 
                 {/* Right Side - Customer Details & Products */}
-                <div className={`${products.length > 0 ? 'w-full md:w-3/5' : 'w-0'} flex flex-col overflow-hidden`}>
+                <div className={`${products.length > 0 || customerDetails.customerPhone  ? 'w-full md:w-3/5' : 'w-0'} flex flex-col overflow-hidden`}>
                   {/* Customer Info */}
                   <div className="bg-white border-b border-gray-200 p-4 sm:p-5">
                     <h3 className="text-[2dvw] mainFont font-extrabold text-[var(--mainText-color)] mb-2">
@@ -201,9 +203,9 @@ const CustomerScreenPage = () => {
                         </p>
                       </div>
                       <div>
-                        <p className="text-gray-500 text-[1dvw] font-semibold mainFont decoration-1 underline underline-offset-4">Address</p>
+                        <p className="text-gray-500 text-[1dvw] font-semibold mainFont decoration-1 underline underline-offset-4">Points & Off Amount</p>
                         <p className="text-[var(--mainText-color)] text-[1.3dvw] font-bold mainFont">
-                          {customerDetails.customerAddress}
+                          {customerDetails.customerPoint} = <span className="text-green-500">$ {customerDetails.offAmount}</span>
                         </p>
                       </div>
                     </div>

@@ -6,13 +6,15 @@ export const getAllProductList = async (filters) => {
         const { search_text } = filters
         const productList = await axiosInstance.post('/api/v1/product/list', {
             "page": filters?.page || 1,
-            "limit": filters?.limit || 100,
+            "limit": filters?.limit || 7000,
             "search_text": search_text || ""
         })
         if (productList?.status === 200 || productList.data) {
-            return productList?.data.results;
+            return productList?.data;
+            // return productList?.data.results;
         }
-        return productList.data.results;
+        return productList.data;
+        // return productList.data.results;
     } catch (error) {
         console.error("Error fetching products:", error);
         throw error;

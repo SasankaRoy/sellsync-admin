@@ -9,7 +9,9 @@ export const CurrentBillSlice = createSlice({
       customerPhone: '',
       customerEmail: '',
       customerAddress: '',
-      customerNotes: ''
+      customerNotes: '',
+      customerPoint: '',
+      offAmount: ''
     }
   },
   reducers: {
@@ -30,9 +32,11 @@ export const CurrentBillSlice = createSlice({
         customerEmail: '',
         customerAddress: '',
         customerNotes: '',
-        ageVerificationRequired:false,
-        isVerified:false,
-        customerPresentAge:''
+        ageVerificationRequired: false,
+        isVerified: false,
+        customerPresentAge: '',
+        customerPoint: '',
+        offAmount: ''
       };
     },
   },

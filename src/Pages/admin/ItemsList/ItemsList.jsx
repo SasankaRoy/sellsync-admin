@@ -55,7 +55,6 @@ export const ItemsList = () => {
   };
 
   const onEdit = (product) => {
-    
     if (product) {
       setShowModel({
         state: true,
@@ -91,7 +90,10 @@ export const ItemsList = () => {
     { field: "category_name", headerName: "Category", width: 150 },
     { field: "qty_on_hand", headerName: "Stock", width: 150 },
     {
-      field: "product_price", headerName: "Price", width: 100, cellRenderer: (amount) => {
+      field: "product_price",
+      headerName: "Price",
+      width: 100,
+      cellRenderer: (amount) => {
         return `$ ${amount.value.toFixed(2)}`;
       },
     },
@@ -186,7 +188,7 @@ export const ItemsList = () => {
                   <div className="h-full w-full overflow-x-scroll overflow-y-auto">
                     <div className="min-w-[1200px] h-full">
                       <AgGridReact
-                        rowData={rowData}
+                        rowData={rowData.results || []}
                         columnDefs={colDefs}
                         defaultColDef={defaultColDef}
                         pagination={true}

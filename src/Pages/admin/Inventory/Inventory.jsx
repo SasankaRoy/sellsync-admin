@@ -23,6 +23,7 @@ import { DeleteModel } from "../../../components/common/Models/DeleteMode";
 import { getAllCategoryList } from "../../../utils/apis/handleCategory";
 import { AddProductModel } from "../../../components/common/AddProductModel/AddProductModel";
 import { InventoryUploadModel } from "../../../components/common/InventoryUploadModel/InventoryUploadModel";
+import { Pagination } from "../../../components/common/Pagination/Pagination";
 import { toast } from "react-toastify";
 import axiosInstance from "../../../utils/axios-interceptor";
 
@@ -109,7 +110,7 @@ const ActionBtns = (props) => {
 
 export const Inventory = () => {
   const [activeFilter, setActiveFilter] = useState("");
-  const [inventoryUpload, setInventoryUpload] = useState(false)
+  const [inventoryUpload, setInventoryUpload] = useState(false);
   const [showModel, setShowModel] = useState({
     state: false,
     productData: null,
@@ -121,6 +122,17 @@ export const Inventory = () => {
     path: "",
     querykey: "",
   });
+
+  const [mainGridApi, setMainGridApi] = useState(null);
+  const [lowStockGridApi, setLowStockGridApi] = useState(null);
+
+  const onMainGridReady = (params) => {
+    setMainGridApi(params.api);
+  };
+
+  const onLowStockGridReady = (params) => {
+    setLowStockGridApi(params.api);
+  };
 
   const onAddProduct = () => {
     setShowModel({
@@ -237,10 +249,7 @@ export const Inventory = () => {
     queryFn: async () => await getAllCategoryList(),
   });
 
-
-
-
-
+  console.log(rowData)
 
   return (
     <>
@@ -263,7 +272,7 @@ export const Inventory = () => {
                     <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
                       Inventory
                     </h3>
-                    <button 
+                    <button
                       onClick={() => setInventoryUpload(true)}
                       className="addProduct__BTN bg-[#F8A61B] text-[var(--primary-color)] flex justify-center items-center gap-1 sm:gap-[5px] px-3 py-2 sm:px-[25px] sm:py-[10px] font-[var(--mainFont)] font-medium text-xs sm:text-sm lg:text-[1dvw] border-none outline-none rounded-full cursor-pointer"
                     >
@@ -368,18 +377,20 @@ export const Inventory = () => {
                             <div className="h-[85%] w-full overflow-auto min-h-0">
                               <div className="ag-theme-alpine h-full w-full min-w-[800px] xl:min-w-0">
                                 <AgGridReact
-                                  rowData={rowData}
+                                  rowData={rowData.results || [ ]}
                                   columnDefs={colDefs}
                                   defaultColDef={defaultColDef}
                                   pagination={true}
+                                  suppressPaginationPanel={true}
                                   paginationPageSize={10}
-                                  paginationPageSizeSelector={[10, 20, 50, 100]}
+                                  onGridReady={onLowStockGridReady}
                                   rowSelection={rowSelection}
                                   suppressMenuHide={true}
                                   domLayout="normal"
                                 />
                               </div>
                             </div>
+                            <Pagination gridApi={lowStockGridApi} />
                           </div>
                         </div>
                       </div>
@@ -408,7 +419,7 @@ export const Inventory = () => {
                             </select>
                             <div className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-[1.6dvw] xl:h-[1.8dvw] lg:w-[1.6dvw] xl:w-[1.8dvw] bg-[var(--counterBg-color)] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem] sm:min-w-[1.75rem] sm:min-h-[1.75rem] md:min-w-[2rem] md:min-h-[2rem]">
                               <p className="text-xs sm:text-xs md:text-sm lg:text-[0.9dvw] xl:text-[1dvw] font-[500] text-white">
-                                {rowData.length}
+                                {rowData.results.length}
                               </p>
                             </div>
                           </div>
@@ -425,21 +436,22 @@ export const Inventory = () => {
                           </div>
                         </div>
 
-                        {/* AG Grid */}
-                        <div className="h-full w-full overflow-auto min-h-0">
-                          <div className="ag-theme-alpine h-full w-full min-w-[800px] xl:min-w-0">
+                        <div className="h-full w-full overflow-auto min-h-0 flex flex-col">
+                          <div className="ag-theme-alpine flex-1 w-full min-w-[800px] xl:min-w-0">
                             <AgGridReact
-                              rowData={rowData}
+                              rowData={rowData?.results || []}
                               columnDefs={colDefs}
                               defaultColDef={defaultColDef}
                               pagination={true}
+                              suppressPaginationPanel={true}
                               paginationPageSize={10}
-                              paginationPageSizeSelector={[10, 20, 50, 100]}
+                              onGridReady={onMainGridReady}
                               rowSelection={rowSelection}
                               suppressMenuHide={true}
                               domLayout="normal"
                             />
                           </div>
+                          <Pagination gridApi={mainGridApi} />
                         </div>
                       </div>
                     </div>
@@ -451,11 +463,9 @@ export const Inventory = () => {
         )}
       </Layout>
 
-      {
-        inventoryUpload && (
-          <InventoryUploadModel setInventoryUpload={setInventoryUpload} />
-        )
-      }
+      {inventoryUpload && (
+        <InventoryUploadModel setInventoryUpload={setInventoryUpload} />
+      )}
 
       {showModel.state && showModel.productData && (
         <>
