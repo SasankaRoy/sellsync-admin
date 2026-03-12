@@ -2,11 +2,21 @@ import { useQuery } from "@tanstack/react-query";
 import { getTopSellingItems } from "../../../utils/apis/handleReports";
 import { Doughtchart } from "../charts/Doughtchart";
 import { Loading } from "../../UI/Loading/Loading";
+import { Link } from "react-router-dom";
 
 export const TopSellingItems = () => {
   const { data: topSellingItems, isLoading } = useQuery({
     queryKey: ["get_top_selling_items"],
-    queryFn: async () => await getTopSellingItems(),
+    queryFn: async () => {
+      const { products } = await getTopSellingItems({
+        page: 1,
+        limit: 10
+      })
+      if (products) {
+        return products || []
+      }
+      return products || []
+    },
     refetchInterval: 6000,
   });
   return (
@@ -19,9 +29,9 @@ export const TopSellingItems = () => {
             <h3 className="text-[1.1dvw] font-semibold text-[var(--mainText-color)]">
               Top Selling Items
             </h3>
-            <button className="cursor-pointer bg-[var(--button-color2)] text-white px-4 py-1 rounded-full text-[1dvw] font-[var(--paraFont)] font-medium">
+            <Link to='/admin/top-selling-products' className="cursor-pointer bg-[var(--button-color2)] text-white px-4 py-1 rounded-full text-[1dvw] font-[var(--paraFont)] font-medium">
               See all
-            </button>
+            </Link>
           </div>
 
           <div className="w-full my-6 rounded-lg overflow-hidden border border-[#D4D4D4] bg-white">

@@ -13,6 +13,7 @@ import { TopSellingItems } from "../../../components/common/TopSellingItems/TopS
 import { useQuery } from "@tanstack/react-query";
 import { Loading } from "../../../components/UI/Loading/Loading";
 import { getDashboardSalesReport, getLowSrockData, getRevenueReport } from "../../../utils/apis/handleReports";
+import { Link } from "react-router-dom";
 
 const saleData = [
   {
@@ -54,7 +55,10 @@ export const AdminDashboard = () => {
   const { data: lowStock, isLoading: lowStockLoading, isError } = useQuery({
     queryKey: ['get_low_stock_data'],
     queryFn: async () => {
-      const { page, limit, total_records, total_pages, results } = await getLowSrockData();
+      const { results } = await getLowSrockData({
+        page: 1,
+        limit: 5
+      });
       if (results) {
         return results
       }
@@ -236,9 +240,9 @@ export const AdminDashboard = () => {
                 <div className="border border-[#D4D4D4] rounded-md p-3 sm:p-4 md:p-3.5 bg-white">
                   <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 mb-3 sm:mb-4 md:mb-3.5">
                     <h3 className="font-semibold text-lg sm:text-xl md:text-xl lg:text-[1.1dvw]">Low Stocks</h3>
-                    <button className="cursor-pointer bg-[var(--button-color2)] text-white px-3 sm:px-4 md:px-3.5 py-2 sm:py-1 md:py-1.5 rounded-full text-sm sm:text-base md:text-base lg:text-[1dvw] font-[var(--paraFont)] font-medium w-full sm:w-auto">
+                    <Link to='/admin/low-stock' className="cursor-pointer bg-[var(--button-color2)] text-white px-3 sm:px-4 md:px-3.5 py-2 sm:py-1 md:py-1.5 rounded-full text-sm sm:text-base md:text-base lg:text-[1dvw] font-[var(--paraFont)] font-medium w-full sm:w-auto">
                       See all
-                    </button>
+                    </Link>
                   </div>
 
                   <div className="flex flex-col gap-3 md:gap-2.5 my-3 md:my-2.5">
@@ -252,7 +256,7 @@ export const AdminDashboard = () => {
                       ) : (
                         <>
 
-                          {lowStock?.map((cur, id) => (
+                          {lowStock?.slice(0, 5).map((cur, id) => (
                             <div
                               key={id}
                               className="w-full flex justify-start items-center gap-3 md:gap-2.5"

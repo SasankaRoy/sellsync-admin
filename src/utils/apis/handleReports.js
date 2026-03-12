@@ -31,16 +31,20 @@ export const getRevenueReport = async (year) => {
 }
 
 
-export const getTopSellingItems = async () => {
+export const getTopSellingItems = async (filter) => {
     try {
+        const { page, limit } = filter;
         const getData = await axiosInstance.post('/api/v1/report/top-selling-products', {
-            "limit": 10
+            "limit": limit || 10,
+            // page: page || 1
         })
 
+        console.log(getData.data)
+
         if (getData.data || getData.status === 200) {
-            return getData.data.products
+            return getData.data
         }
-        return getData.data.products
+        return getData.data
     } catch (error) {
         return error.response.data.message || error.message || 'Something went wrong';
     }
@@ -109,11 +113,12 @@ export const getReportsData = async (filters) => {
     }
 }
 
-export const getLowSrockData = async () => {
+export const getLowSrockData = async (pagination) => {
     try {
+        const { page, limit } = pagination;
         const resLowStockData = await axiosInstance.post('/api/v1/product/low-stock-product-list', {
-            "page": 1,
-            "limit": 50,
+            "page": page || 1,
+            "limit": limit || 500,
             "selected_category_id": "",
             "search_text": ""
         })

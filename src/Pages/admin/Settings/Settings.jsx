@@ -1058,7 +1058,10 @@ const InventorySettingsTab = () => {
     if (res) {
       toast.success("Updated successfully");
       queryClient.invalidateQueries({
-        queryKey: ["get_low_stock_threshold", "get_low_stock_data8"],
+        queryKey: ["get_low_stock_threshold"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["get_low_stock"],
       });
     } else {
       toast.error(res);

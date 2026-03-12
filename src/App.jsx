@@ -52,6 +52,8 @@ import { AllSalesReports } from "./Pages/seller/AllSalesReports";
 import CustomerScreenPage from "./Pages/seller/CustomerScreenPage";
 import NewLogin from "./Pages/auth/NewLogin";
 import Taxes from "./Pages/admin/Daily/GlobalTax";
+import { Lowstock } from "./Pages/admin/Lowstock/Lowstock";
+import { TopSellinglist } from "./Pages/admin/TopSellinglist/TopSellinglist";
 
 function App() {
   // Mirror ringUps into localStorage for customer screen tab to consume
@@ -147,6 +149,8 @@ function App() {
               <Route path="/admin/rewards" element={<Rewards />} />
               <Route path="/admin/payroll" element={<Payroll />} />
               <Route path="/admin/item-report/:id" element={<ItemReport />} />
+              <Route path="/admin/low-stock" element={<Lowstock />} />
+              <Route path="/admin/top-selling-products" element={<TopSellinglist />} />
             </Route>
 
             {/* Seller Routes - Protected by RouteGuard */}
