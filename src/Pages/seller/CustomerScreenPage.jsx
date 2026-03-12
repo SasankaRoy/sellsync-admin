@@ -205,7 +205,9 @@ const CustomerScreenPage = () => {
                       <div>
                         <p className="text-gray-500 text-[1dvw] font-semibold mainFont decoration-1 underline underline-offset-4">Points & Off Amount</p>
                         <p className="text-[var(--mainText-color)] text-[1.3dvw] font-bold mainFont">
-                          {customerDetails.customerPoint} = <span className="text-green-500">$ {customerDetails.offAmount}</span>
+                          {customerDetails.customerPoint} 
+                          {customerDetails.redeemedPoints > 0 && <span className="text-sm font-normal text-gray-400"> (Redeemed: {customerDetails.redeemedPoints})</span>}
+                          = <span className="text-green-500">$ {customerDetails.offAmount || 0}</span>
                         </p>
                       </div>
                     </div>
@@ -262,6 +264,16 @@ const CustomerScreenPage = () => {
                           </span>
                         </div>
                       )}
+                      {discountData.redemptionAmount > 0 && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-700 text-[1.2dvw] mainFont font-bold">
+                            Points Redemption:
+                          </span>
+                          <span className="font-semibold text-[var(--Positive-color)] text-[1.2dvw] font-semibold mainFont">
+                            - $ {parseFloat(discountData.redemptionAmount).toFixed(2)}
+                          </span>
+                        </div>
+                      )}
                       <div className="flex justify-between border-t pt-2 mt-2">
                         <span className="font-bold text-[var(--mainText-color)] text-[1.8dvw] font-semibold mainFont">
                           Total:
@@ -270,7 +282,7 @@ const CustomerScreenPage = () => {
                           $
                           {(
                             discountData.total ||
-                            parseFloat(calculateSubtotal()) + parseFloat(calculateTax())
+                            (parseFloat(calculateSubtotal()) + parseFloat(calculateTax()) - (parseFloat(discountData.redemptionAmount) || 0))
                           ).toFixed(2)}
                         </span>
                       </div>

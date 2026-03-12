@@ -118,7 +118,7 @@ export const SalePoint = () => {
     currentRingUpData?.reduce((sum, item) => sum + item.qty, 0) || 0;
   const [tax, setTax] = useState(0);
   const discountAmount = isPercentage ? subtotal * (discount / 100) : discount;
-  const total = subtotal + tax - discountAmount;
+  const total = subtotal + tax - discountAmount - (parseFloat(currentCustomerDetails?.offAmount) || 0);
 
   // Sync discount and tax data to localStorage for customer screen
   useEffect(() => {
@@ -129,6 +129,8 @@ export const SalePoint = () => {
       tax,
       subtotal,
       total,
+      redemptionAmount: currentCustomerDetails?.offAmount || 0,
+      redeemedPoints: currentCustomerDetails?.redeemedPoints || 0
     };
     localStorage.setItem("discountSnapshot", JSON.stringify(discountData));
   }, [discount, isPercentage, discountAmount, tax, subtotal, total]);
@@ -445,7 +447,6 @@ export const SalePoint = () => {
         totalItems: totalItems,
         subTotal: subtotal,
         taxTotal: tax,
-        discount: discountAmount,
         grandTotal: total,
         discount: {
           type: isPercentage ? "PERCENT" : "FLAT",
@@ -460,6 +461,10 @@ export const SalePoint = () => {
         cardBrand: method === "card" ? checkoutData.cardBrand : "",
         transactionReference:
           method === "card" ? checkoutData.transactionReference : undefined,
+      },
+      redeem: {
+        points: currentCustomerDetails.redeemedPoints || 0,
+        amount: currentCustomerDetails.offAmount || 0
       },
       receipt: {
         emailReceipt: checkoutData.emailReceipt,
@@ -487,6 +492,10 @@ export const SalePoint = () => {
       employeeId: employeeDetails?.id,
       employeeName: employeeDetails?.name,
       business_id: employeeDetails?.business_id,
+      redeem: {
+        points: currentCustomerDetails.redeemedPoints || 0,
+        amount: currentCustomerDetails.offAmount || 0
+      },
       isEmailRepciet: checkoutPayload.receipt.emailReceipt,
     };
 
@@ -711,6 +720,16 @@ export const SalePoint = () => {
                       className="w-[20%] text-center outline-none text-[1.5dvw] mainFont font-semibold border-(--border-color) py-2 bg-transparent paraFont appearance-none border-b "
                     />
                   </div>
+                  {currentCustomerDetails?.offAmount > 0 && (
+                    <div className="flex justify-between items-center">
+                      <p className="text-[1.2dvw] mainFont font-semibold text-(--paraText-color)">
+                        Points Redemption :
+                      </p>
+                      <strong className="text-[1.5dvw] paraFont font-semibold text-(--Positive-color)">
+                        - $ {parseFloat(currentCustomerDetails.offAmount).toFixed(2)}
+                      </strong>
+                    </div>
+                  )}
                   <div className="flex justify-between items-center">
                     <p className="text-[1.6dvw] mainFont font-semibold text-(--paraText-color)">
                       Total :

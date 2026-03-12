@@ -5,12 +5,33 @@ import { getCustomerDetails } from "../../../utils/apis/handleCustomer";
 import { useState } from "react";
 import { CircularProgress } from "@mui/material";
 import moment from "moment";
+import { useQuery } from "@tanstack/react-query";
+import { getLowStockThreshold } from "../../../utils/apis/handleSetting";
 
 export const ViewCustomerDetailsModel = ({ setFindCustomerModel }) => {
     const customerDetails = useSelector(state => state.currentBill.currentCustomerDetails)
     const dispatch = useDispatch();
     const [isFetching, setIsFetching] = useState(false);
-    const [customerInfo, setCustomerInfo] = useState()
+    const [customerInfo, setCustomerInfo] = useState();
+    const [showRedeemModel, setShowRedeemModel] = useState(false);
+    const [pointsToRedeem, setPointsToRedeem] = useState(0);
+
+
+    const { data, isLoading, isError } = useQuery({
+        queryKey: ["get_low_stock_threshold"],
+        queryFn: async () => {
+            const prvData = await getLowStockThreshold();
+            if (prvData) {
+                return prvData;
+            } else {
+                return {
+                    redeem_point_cost: 0,
+                    redeem_point: 1,
+                    minimum_points_required_for_redeem: 0
+                };
+            }
+        },
+    });
 
 
     const handleOnchange = (e) => {
@@ -32,36 +53,87 @@ export const ViewCustomerDetailsModel = ({ setFindCustomerModel }) => {
             setCustomerInfo(resData.product)
             dispatch(
                 setCurrentCustomerDetails({
-                    currentCustomerDetails:{
-                        name:'customerPoint',
-                        value:resData.product?.customer_points
+                    currentCustomerDetails: {
+                        name: 'customerName',
+                        value: resData.product?.customer_name
                     }
                 })
             )
             dispatch(
                 setCurrentCustomerDetails({
-                    currentCustomerDetails:{
-                        name:'offAmount',
-                        value:'2.00'
+                    currentCustomerDetails: {
+                        name: 'customerEmail',
+                        value: resData.product?.customer_email
                     }
                 })
             )
-        } {
+            dispatch(
+                setCurrentCustomerDetails({
+                    currentCustomerDetails: {
+                        name: 'customerAddress',
+                        value: resData.product?.customer_address
+                    }
+                })
+            )
+            dispatch(
+                setCurrentCustomerDetails({
+                    currentCustomerDetails: {
+                        name: 'customerPoint',
+                        value: resData.product?.customer_points
+                    }
+                })
+            )
+            dispatch(
+                setCurrentCustomerDetails({
+                    currentCustomerDetails: {
+                        name: 'redeemedPoints',
+                        value: 0
+                    }
+                })
+            )
+            dispatch(
+                setCurrentCustomerDetails({
+                    currentCustomerDetails: {
+                        name: 'offAmount',
+                        value: 0
+                    }
+                })
+            )
+        } else {
             setIsFetching(false)
         }
 
         console.log(resData.product)
     }
 
-
-
-
+    const handleRedeemPoints = () => {
+        const rate = (data?.redeem_point_cost || 0) / (data?.redeem_point || 1);
+        const offAmount = rate * pointsToRedeem;
+        
+        dispatch(
+            setCurrentCustomerDetails({
+                currentCustomerDetails: {
+                    name: 'redeemedPoints',
+                    value: pointsToRedeem
+                }
+            })
+        );
+        dispatch(
+            setCurrentCustomerDetails({
+                currentCustomerDetails: {
+                    name: 'offAmount',
+                    value: offAmount.toFixed(2)
+                }
+            })
+        );
+        setShowRedeemModel(false);
+    }
 
 
     return (
         <>
             <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center">
-                <div className="bg-white w-[95%] sm:w-[80%] md:w-[70%] lg:w-[50%] p-4 sm:p-5 rounded-lg shadow-md max-h-[90vh] overflow-y-auto">
+                <div className="bg-white w-[95%] sm:w-[80%] md:w-[70%] lg:w-[50%] p-4 sm:p-5 rounded-lg shadow-md max-h-[90vh] overflow-y-auto relative">
                     <div className="flex justify-between items-center w-full p-2.5 rounded-md bg-[var(--sideMenu-color)] text-white">
                         <h3 className="text-lg sm:text-xl md:text-2xl lg:text-[1.5dvw] font-semibold">
                             View Customer Details
@@ -87,7 +159,7 @@ export const ViewCustomerDetailsModel = ({ setFindCustomerModel }) => {
                         </div>
                     </div>
                     {
-                        isFetching && (
+                        isFetching || isLoading && (
                             <div className="w-full flex justify-center items-center my-3">
                                 <CircularProgress />
                             </div>
@@ -135,13 +207,13 @@ export const ViewCustomerDetailsModel = ({ setFindCustomerModel }) => {
                                     </div>
                                     <div className="flex flex-col gap-2">
                                         <lable className="text-base sm:text-lg md:text-xl lg:text-[1dvw] font-normal paraFont">
-                                            Customer Points - <span className="text-[1.1dvw] mainFont font-semibold text-green-500">
-                                                ( off $ 2.00 )
-                                            </span>
+                                            Customer Points {customerDetails?.offAmount > 0 && <span className="text-[1dvw] mainFont font-semibold text-green-500">
+                                                ( Applied: $ {customerDetails.offAmount} )
+                                            </span>}
                                         </lable>
                                         <input className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-base sm:text-lg md:text-xl lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3" readOnly value={customerInfo?.customer_points} />
                                         <p className="text-[.8dvw] paraFont font-semibold text-gray-600">
-                                            * Redeem over 100 points.
+                                            * Redeem over {data?.minimum_points_required_for_redeem} points.
                                         </p>
                                     </div>
                                     <div className="flex flex-col gap-2">
@@ -153,10 +225,27 @@ export const ViewCustomerDetailsModel = ({ setFindCustomerModel }) => {
 
                                 </div>
                                 <div className="mt-5 flex justify-end gap-5 items-center">
-                                    <button className="w-full sm:w-auto px-6 py-2 bg-(--button-color4) cursor-pointer text-white rounded-md font-semibold hover:opacity-80 transition-all duration-300">
+                                    <button 
+                                        onClick={() => {
+                                            setFindCustomerModel(false);
+                                        }}
+                                        className="w-full sm:w-auto px-6 py-2 bg-(--button-color4) cursor-pointer text-white rounded-md font-semibold hover:opacity-80 transition-all duration-300">
                                         Cancel
                                     </button>
-                                    <button className="w-full sm:w-auto px-6 py-2 bg-(--button-color1) cursor-pointer text-white rounded-md font-semibold hover:opacity-80 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    {
+                                        customerInfo?.customer_points >= (data?.minimum_points_required_for_redeem || 0) && (
+                                            <button 
+                                                onClick={() => setShowRedeemModel(true)}
+                                                className="w-full sm:w-auto px-6 py-2 bg-(--button-color5) cursor-pointer text-white rounded-md font-semibold hover:opacity-80 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
+                                                Reedem
+                                            </button>
+                                        )
+                                    }
+                                    <button 
+                                        onClick={() => {
+                                            setFindCustomerModel(false);
+                                        }}
+                                        className="w-full sm:w-auto px-6 py-2 bg-(--button-color1) cursor-pointer text-white rounded-md font-semibold hover:opacity-80 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
                                         Continue
                                     </button>
                                 </div>
@@ -172,10 +261,61 @@ export const ViewCustomerDetailsModel = ({ setFindCustomerModel }) => {
                         )
                     }
 
+                    {/* Redeem Points Sub-Modal */}
+                    {showRedeemModel && (
+                        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm rounded-lg p-5">
+                            <div className="bg-white w-[90%] max-w-md p-6 rounded-xl shadow-2xl border border-gray-200">
+                                <div className="flex justify-between items-center mb-6">
+                                    <h4 className="text-xl font-bold mainFont text-gray-800">Redeem Points</h4>
+                                    <button onClick={() => setShowRedeemModel(false)} className="text-gray-400 hover:text-red-500 transition-colors">
+                                        <CircleX size={24} />
+                                    </button>
+                                </div>
+                                
+                                <div className="space-y-4">
+                                    <div className="flex flex-col gap-2">
+                                        <label className="text-sm font-semibold text-gray-600 paraFont">
+                                            Points to Redeem (Max: {customerInfo?.customer_points})
+                                        </label>
+                                        <input 
+                                            type="number" 
+                                            value={pointsToRedeem}
+                                            onChange={(e) => {
+                                                const val = Math.min(Number(e.target.value), customerInfo?.customer_points || 0);
+                                                setPointsToRedeem(Math.max(0, val));
+                                            }}
+                                            className="w-full bg-gray-50 border border-gray-300 rounded-lg py-2.5 px-4 text-lg font-bold mainFont focus:ring-2 focus:ring-[var(--button-color1)] focus:border-transparent outline-none transition-all"
+                                            placeholder="Enter points..."
+                                        />
+                                    </div>
 
+                                    <div className="bg-green-50 p-4 rounded-lg border border-green-100 flex justify-between items-center">
+                                        <span className="text-green-700 font-medium paraFont">You get off:</span>
+                                        <span className="text-2xl font-black text-green-600 mainFont">
+                                            $ {((data?.redeem_point_cost || 0) / (data?.redeem_point || 1) * pointsToRedeem).toFixed(2)}
+                                        </span>
+                                    </div>
+
+                                    <div className="flex gap-4 pt-4">
+                                        <button 
+                                            onClick={() => setShowRedeemModel(false)}
+                                            className="flex-1 py-2.5 rounded-lg border border-gray-300 font-semibold text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button 
+                                            onClick={handleRedeemPoints}
+                                            className="flex-1 py-2.5 rounded-lg bg-[var(--button-color1)] font-semibold text-white hover:opacity-90 transition-opacity shadow-md cursor-pointer"
+                                        >
+                                            Continue
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
-
             </div>
         </>
     )
-}
+}
