@@ -8,14 +8,14 @@ export const TopSellingItems = () => {
   const { data: topSellingItems, isLoading } = useQuery({
     queryKey: ["get_top_selling_items"],
     queryFn: async () => {
-      const { products } = await getTopSellingItems({
+      const { results } = await getTopSellingItems({
         page: 1,
         limit: 10
       })
-      if (products) {
-        return products || []
+      if (results) {
+        return results || []
       }
-      return products || []
+      return results || []
     },
     refetchInterval: 6000,
   });
@@ -47,14 +47,14 @@ export const TopSellingItems = () => {
               </div>
             </div>
 
-            {topSellingItems?.map((cur, id) => (
+            {topSellingItems.slice(0,10)?.map((cur, id) => (
               <div
                 key={id}
                 className="w-full flex justify-center border-b border-[#D4D4D4]"
               >
                 <div className="flex-1 p-2 flex justify-start items-center ">
                   <p className="text-[1.05dvw] line-clamp-2 text-[#7F7F7F] font-[var(--paraFont)]">
-                    {cur?.product_name}
+                    {cur?.name}
                   </p>
                 </div>
                 <div className="min-w-[25%] flex justify-center items-center border-r border-l border-[#D4D4D4]">

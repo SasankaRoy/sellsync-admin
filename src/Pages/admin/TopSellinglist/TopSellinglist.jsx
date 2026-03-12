@@ -30,7 +30,7 @@ export const TopSellinglist = () => {
     const { data: rowData, isLoading: lowStockLoading, isError, } = useQuery({
         queryKey: ['get_top_selling_items'],
         queryFn: async () => {
-            const { page, limit, total_records, total_pages, products } = await getTopSellingItems({
+            const { page, limit, total_records, total_pages, results } = await getTopSellingItems({
                 page: currentPage,
                 limit: pageLimit
             });
@@ -39,7 +39,7 @@ export const TopSellinglist = () => {
                 setPageLimit(limit);
                 setTotalData(total_records)
                 setTotalPages(total_pages)
-                return products
+                return results
             }
             return []
         },
@@ -54,7 +54,7 @@ export const TopSellinglist = () => {
         // Prefetch the page after the one we're going to
         setRefetching(true)
         queryClient.prefetchQuery({
-            queryKey: ["get_top_selling_items", newPage + 1],
+            queryKey: ["get_top_selling_list", newPage + 1],
             queryFn: async () => await getTopSellingItems({ page: newPage + 1, limit: pageLimit }),
         });
         setCurrentPage(newPage);
@@ -126,26 +126,26 @@ export const TopSellinglist = () => {
         { field: "qty_on_hand", headerName: "In Stock" },
         { field: "tax_percentage", headerName: "Tax" },
         { field: "supplier_name", headerName: "Supplier Name" },
-        {
-            field: "status",
-            headerName: "Status",
-            cellRenderer: (status) => {
-                return (
-                    <>
-                        <div className=" px-3 flex justify-center items-center w-auto gap-3">
-                            <div
-                                className={`h-[.8dvw] w-[.8dvw] rounded-full ${checkStatus(status.value).forDot}`}
-                            ></div>
-                            <p
-                                className={`font-medium ${checkStatus(status.value).forText} text-[1.2dvw]`}
-                            >
-                                {status.value}
-                            </p>
-                        </div>
-                    </>
-                );
-            },
-        },
+        // {
+        //     field: "status",
+        //     headerName: "Status",
+        //     cellRenderer: (status) => {
+        //         return (
+        //             <>
+        //                 <div className=" px-3 flex justify-center items-center w-auto gap-3">
+        //                     <div
+        //                         className={`h-[.8dvw] w-[.8dvw] rounded-full ${checkStatus(status.value).forDot}`}
+        //                     ></div>
+        //                     <p
+        //                         className={`font-medium ${checkStatus(status.value).forText} text-[1.2dvw]`}
+        //                     >
+        //                         {status.value}
+        //                     </p>
+        //                 </div>
+        //             </>
+        //         );
+        //     },
+        // },
 
     ]);
 

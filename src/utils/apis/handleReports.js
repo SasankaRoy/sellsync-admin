@@ -35,8 +35,8 @@ export const getTopSellingItems = async (filter) => {
     try {
         const { page, limit } = filter;
         const getData = await axiosInstance.post('/api/v1/report/top-selling-products', {
-            "limit": limit || 10,
-            // page: page || 1
+            limit: limit || 10,
+            page: page || 1
         })
 
         console.log(getData.data)
@@ -123,7 +123,28 @@ export const getLowSrockData = async (pagination) => {
             "search_text": ""
         })
 
-        console.log(resLowStockData.data)
+        // console.log(resLowStockData.data)
+        if (resLowStockData.data || resLowStockData.status === 200) {
+            return resLowStockData.data || []
+        }
+        return resLowStockData.data || []
+    } catch (error) {
+        console.log(error);
+        return error.message || error.response.data.message || 'Something went wrong will fetching the low-stock data.'
+    }
+}
+
+export const getOutOfStockData = async (pagination) => {
+    try {
+        const { page, limit } = pagination;
+        const resLowStockData = await axiosInstance.post('/api/v1/product/out-of-stock-product-list', {
+            "page": page || 1,
+            "limit": limit || 500,
+            "selected_category_id": "",
+            "search_text": ""
+        })
+
+      
         if (resLowStockData.data || resLowStockData.status === 200) {
             return resLowStockData.data || []
         }

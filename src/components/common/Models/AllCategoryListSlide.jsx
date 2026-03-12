@@ -8,6 +8,7 @@ const AllCategoryListSlide = ({
   currentSliderVarient,
   setCurrentSliderVarient,
   setCurrentFilterItems,
+  setAllData
 }) => {
   const handleGetCategoryList = async () => {
     try {
@@ -79,7 +80,7 @@ const AllCategoryListSlide = ({
             />
           </button>
         </motion.div>
-        {isLoading || isFetching ? (
+        {isLoading  ? (
           <>
             <p className="text-center mainFont text-[1.5dvw] text-(--mainText-color)">
               Loading All categories List....
@@ -114,6 +115,7 @@ const AllCategoryListSlide = ({
                     totalItems: "12",
                   });
                   setCurrentSliderVarient(variants.exit);
+                  setAllData([])
                 }}
                 className="w-full flex gap-2 sm:gap-3 bg-(--button-color2) text-(--primary-color) rounded justify-between items-center px-3 sm:px-4 border shadow cursor-pointer border-(--border-color) py-3 sm:py-4 lg:py-5 mainFont font-semibold text-xs sm:text-sm lg:text-[1dvw]"
               >
@@ -130,6 +132,7 @@ const AllCategoryListSlide = ({
                       totalItems: cur.number_of_product,
                     });
                     setCurrentSliderVarient(variants.exit);
+                    setAllData([])
                   }}
                   initial={{
                     scale: 1,

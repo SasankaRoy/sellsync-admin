@@ -3,12 +3,13 @@ import axiosInstance from "../axios-interceptor";
 
 export const getAllProductList = async (filters) => {
     try {
-        const { search_text } = filters
+        const { search_text, page, limit } = filters
         const productList = await axiosInstance.post('/api/v1/product/list', {
-            "page": filters?.page || 1,
-            "limit": filters?.limit || 7000,
-            "search_text": search_text || ""
+            page: page || 1,
+            limit: limit || 10,
+            search_text: search_text || ""
         })
+        console.log(productList?.data)
         if (productList?.status === 200 || productList.data) {
             return productList?.data;
             // return productList?.data.results;
