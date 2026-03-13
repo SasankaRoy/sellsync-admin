@@ -5,6 +5,7 @@ import {
   BanknoteArrowDown,
   Calendar,
   CircleX,
+  CreditCard,
   Users,
 } from "lucide-react";
 import React, { useState } from "react";
@@ -30,6 +31,7 @@ const tabPrefix = {
 
 export const ViewSales = ({ setViewSale, billID }) => {
   const [currentActiveTab, setCurrentActiveTab] = useState(tabPrefix.amount);
+  const [isOpenRefundModal, setIsOpenRefundModal] = useState(false);
   const dispatch = useDispatch();
   const currentBillId = useSelector((state) => state.currentBill.billId);
   const loggedUser = useSelector((state) => state.loggedUser);
@@ -131,7 +133,9 @@ export const ViewSales = ({ setViewSale, billID }) => {
     }
   };
 
-  console.log(navigate.pathname);
+  const handleRefundClick = () => {
+    setIsOpenRefundModal(true);
+  };
 
   return (
     <>
@@ -312,6 +316,7 @@ export const ViewSales = ({ setViewSale, billID }) => {
                 <button className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color2)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300">
                   {data.status === "PAID" ? "Reprint Bill" : "Print Bill"}
                 </button>
+
                 <button
                   disabled={
                     data.status === "PAID" ||
@@ -322,17 +327,36 @@ export const ViewSales = ({ setViewSale, billID }) => {
                 >
                   Complete Transcation
                 </button>
-                <button
-                  disabled={data.status === "PAID"}
-                  onClick={handleCancelTranscation}
-                  className="w-full sm:w-auto px-6 py-2 bg-[var(--Negative-color)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Cancel Transcation
-                </button>
+
+                {data.status === "PAID" ? (
+                  <button
+                    onClick={handleRefundClick}
+                    className="w-full sm:w-auto px-6 py-2 bg-[var(--Negative-color)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Refund
+                  </button>
+                ) : (
+                  <button
+                    disabled={data.status === "PAID"}
+                    onClick={handleCancelTranscation}
+                    className="w-full sm:w-auto px-6 py-2 bg-[var(--Negative-color)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Cancel Transcation
+                  </button>
+                )}
               </div>
             </div>
           </div>
         </>
+      )}
+      {isOpenRefundModal && (
+        <RefundModal
+          setIsOpenRefundModal={setIsOpenRefundModal}
+          onSelect={(mode) => {
+            console.log("Selected Refund Mode:", mode);
+            setIsOpenRefundModal(false);
+          }}
+        />
       )}
     </>
   );
@@ -490,5 +514,64 @@ const CustomerTab = ({ billData }) => {
         </div>
       </div>
     </>
+  );
+};
+
+const RefundModal = ({ setIsOpenRefundModal, onSelect }) => {
+  const refundOptions = [
+    {
+      id: 1,
+      name: "Cash",
+      icon: <BanknoteArrowDown size={50} />,
+    },
+    {
+      id: 2,
+      name: "Online or Bank Transfer",
+      icon: <CreditCard size={50} />,
+    },
+  ];
+
+  return (
+    <div className="fixed top-0 left-0 z-50 w-full h-screen flex justify-center items-center bg-(--mainText-color)/40 backdrop-blur-md">
+      <div className="w-full sm:max-w-xl bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div className="flex justify-between items-center bg-(--sideMenu-color) text-white p-4">
+          <h3 className="text-xl font-semibold text-white">
+            Select Refund Option
+          </h3>
+          <button
+            onClick={() => setIsOpenRefundModal(false)}
+            className="hover:text-(--Negative-color) transition-colors cursor-pointer text-white"
+          >
+            <CircleX size={28} />
+          </button>
+        </div>
+
+        <div className="p-6 grid grid-cols-2 gap-4">
+          {refundOptions.map((option) => (
+            <button
+              key={option.id}
+              onClick={() => onSelect(option.name)}
+              className="group flex flex-col items-center justify-center gap-3 p-6 bg-(--border-color)/10 hover:bg-(--button-color1) rounded-xl hover:border-(--button-color1) transition-all duration-300 cursor-pointer border border-(--button-color3)"
+            >
+              <div className="text-(--button-color1) group-hover:text-white transition-colors">
+                {option.icon}
+              </div>
+              <span className="text-[1.1dvw] mainFont font-bold text-(--mainText-color) group-hover:text-white transition-colors">
+                {option.name}
+              </span>
+            </button>
+          ))}
+        </div>
+
+        <div className="flex justify-end p-4 bg-gray-50 border-t">
+          <button
+            onClick={() => setIsOpenRefundModal(false)}
+            className="px-6 py-2 bg-(--button-color4) text-white rounded-md font-semibold hover:opacity-90 transition-opacity cursor-pointer"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
   );
 };

@@ -295,7 +295,7 @@ export const Shortcuts = ({
                       <div className="h-[15vh] sm:h-[18vh] lg:h-[20vh] rounded-md w-full bg-(--secondary-color) py-2 sm:py-3 lg:py-4">
                         <img
                           className="w-full h-full object-contain"
-                          src={cur.product_image}
+                          src={cur.product_image || ProductImg1}
                           alt="product-image"
                         />
                       </div>
