@@ -23,7 +23,7 @@ import { ViewSales } from "../../../components/common/Models/ViewSales";
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 const rowSelection = {
-  mode: "multiRow",
+  mode: "none",
   headerCheckbox: false,
 };
 
@@ -55,7 +55,7 @@ const ActionBtns = (props) => {
 
         <button
           className="font-semibold font-[var(--paraFont)] bg-[var(--Negative-color)] text-white p-1.5 rounded-full border-none cursor-pointer"
-          // onClick={handleDelete}
+        // onClick={handleDelete}
         >
           <Trash size={18} />
         </button>
@@ -90,42 +90,56 @@ export const Sale = () => {
           forDot: "bg-blue-500",
           forText: "text-blue-500",
         };
-       
+        break;
+
       case "PAID":
         return {
           forDot: "bg-green-500",
           forText: "text-green-500",
         };
-      
+        break;
+
       case "HOLD":
         return {
           forDot: "bg-yellow-500",
           forText: "text-yellow-500",
         };
-     
+        break;
+
+      case "REFUND":
+        return {
+          forDot: "bg-red-500",
+          forText: "text-red-500",
+        };
+        break;
+
       case "CANCELLED":
         return {
           forDot: "bg-red-500",
           forText: "text-red-500",
         };
-   
+        break;
 
       default:
+        return {
+          forDot: "bg-red-500",
+          forText: "text-red-500",
+        };
         break;
     }
   };
 
   // Column Definitions: Defines & controls grid columns.
   const [colDefs,] = useState([
-    { field: "_id", headerName: "ID" },
+    { field: "_id", headerName: "ID", flex: 1 },
     {
       field: "MobileNumber",
       headerName: "Mobile Number",
       cellRenderer: (name) => {
         return name.value ? name.value : "Unknown Customer";
-      },
+      }, flex: 1
     },
-    { field: "device_location", headerName: "Device/Location" },
+    { field: "device_location", headerName: "Device/Location", flex: 1 },
     {
       field: "status",
       headerName: "Status",
@@ -134,10 +148,10 @@ export const Sale = () => {
           <>
             <div className=" px-3 flex justify-center items-center w-auto gap-3">
               <div
-                className={`h-[.8dvw] w-[.8dvw] rounded-full ${checkStatus(status.value).forDot}`}
+                className={`h-[.8dvw] w-[.8dvw] shrink-0 rounded-full ${checkStatus(status.value)?.forDot}`}
               ></div>
               <p
-                className={`font-medium ${checkStatus(status.value).forText} text-[1.2dvw]`}
+                className={`font-medium ${checkStatus(status.value)?.forText} text-[1dvw]`}
               >
                 {status.value}
               </p>
@@ -145,21 +159,22 @@ export const Sale = () => {
           </>
         );
       },
+       flex: 1
     },
     {
       field: "total_amount",
       headerName: "Total Amount",
       cellRenderer: (amount) => {
         return `$ ${amount.value.toFixed(2)}`;
-      },
+      }, flex: 1
     },
-    { field: "total_items", headerName: "Total Items" },
+    { field: "total_items", headerName: "Total Items", flex: 1 },
     {
       field: "created_at",
       headerName: "Date and Time",
       cellRenderer: (time) => {
         return moment(time.value).format("lll");
-      },
+      }, flex: 1
     },
     {
       headerName: "Actions",
@@ -169,7 +184,7 @@ export const Sale = () => {
         onEdit,
         // onDelete,
         skinSafe: true,
-      },
+      }, flex: 1
     },
   ]);
 
@@ -314,6 +329,7 @@ export const Sale = () => {
                     <option value="HOLD">Order</option>
                     <option value="PAID">Completed</option>
                     <option value="CANCELLED">Canceled</option>
+                    <option value="REFUND">Refund</option>
                   </select>
                   <div className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-[1.8dvw] lg:w-[1.8dvw] bg-[#F8A61B] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem] sm:min-w-[1.75rem] sm:min-h-[1.75rem] md:min-w-[2rem] md:min-h-[2rem]">
                     <p className="text-xs sm:text-xs md:text-sm lg:text-[1dvw] font-[500] text-white">

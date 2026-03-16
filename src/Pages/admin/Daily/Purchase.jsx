@@ -21,7 +21,7 @@ import { PurchaseAndExpence } from "../../../components/common/Models/PurchaseAn
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 const rowSelection = {
-  mode: "multiRow",
+  mode: "none",
   headerCheckbox: false,
 };
 
@@ -153,17 +153,17 @@ export const Purchase = () => {
 
   // Column Definitions
   const [colDefs, setColDefs] = useState([
-    { field: "id", headerName: "Purchase ID" },
-    { field: "purchase_name", headerName: "Purchase Name" },
-    { field: "purchase_type", headerName: "Purchase Type" },
-    { field: "vendor_name", headerName: "Vendor Name" },
-    { field: "due_date", headerName: "Date" },
-    { field: "payment_mode", headerName: "Payment Mode" },
-    { field: "purchase_pay_amount", headerName: "Amount" },
+    { field: "id", headerName: "Purchase ID",flex:1 },
+    { field: "purchase_name", headerName: "Purchase Name",flex:1 },
+    { field: "purchase_type", headerName: "Purchase Type",flex:1 },
+    { field: "vendor_name", headerName: "Vendor Name",flex:1 },
+    { field: "due_date", headerName: "Date",flex:1 },
+    { field: "payment_mode", headerName: "Payment Mode",flex:1 },
+    { field: "purchase_pay_amount", headerName: "Amount",flex:1 },
     {
       field: "purchase_invoice_image",
       headerName: "Download Invoice Image",
-      cellRenderer: InvoiceDownloadBtn,
+      cellRenderer: InvoiceDownloadBtn,flex:1
     },
     {
       headerName: "Actions",

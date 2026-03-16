@@ -17,7 +17,7 @@ import { Loading } from "../../../components/UI/Loading/Loading";
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 const rowSelection = {
-  mode: "multiRow",
+  mode: "none",
   headerCheckbox: false,
 };
 
@@ -117,11 +117,11 @@ export const Category = () => {
 
   // Column Definitions: Defines & controls grid columns.
   const [colDefs, setColDefs] = useState([
-    { field: "category_name", headerName: "Category Name" },
-    { field: "number_of_product", headerName: "Number of Items" },
-    { field: "category_slug", headerName: "Slug" },
+    { field: "category_name", headerName: "Category Name", flex: 1 },
+    { field: "number_of_product", headerName: "Number of Items", flex: 1 },
+    { field: "category_slug", headerName: "Slug", flex: 1 },
     {
-      field: "status",
+      field: "status", flex: 1,
       headerName: "Status",
       cellRenderer: (data) => {
         return (

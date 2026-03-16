@@ -21,7 +21,7 @@ import ProductImg from "../.././../assets/images/ProductImg1.png";
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 const rowSelection = {
-  mode: "multiRow",
+  mode: "none",
   headerCheckbox: false,
 };
 
@@ -133,18 +133,20 @@ export const Groups = () => {
 
   // Column Definitions: Defines & controls grid columns.
   const [colDefs, setColDefs] = useState([
-    { field: "group_name", headerName: "Group Name" },
-    { field: "number_of_product", headerName: "Items" },
+    { field: "group_name", headerName: "Group Name",flex:1 },
+    { field: "number_of_product", headerName: "Items",flex:1 },
+    { field: "number_of_product", headerName: "Price",flex:1 },
+    { field: "number_of_product", headerName: "Cost",flex:1 },
     {
       headerName: "CreatedAt",
       field: "createdAt",
       cellRenderer: (time) => {
         return moment(time.value).format("lll");
-      },
+      },flex:1
     },
     {
       field: "status",
-      headerName: "Status",
+      headerName: "Status",flex:1,
       cellRenderer: (data) => {
         return (
           <>
@@ -152,11 +154,10 @@ export const Groups = () => {
               className={`capitalize font-semibold  flex justify-center items-center gap-3`}
             >
               <div
-                className={`h-2 w-2 ${
-                  data.value === "active"
+                className={`h-2 w-2 ${data.value === "active"
                     ? "bg-[var(--Positive-color)]"
                     : "bg-[var(--Negative-color)]"
-                } rounded-full`}
+                  } rounded-full`}
               ></div>
               <p>{data.value}</p>
             </div>
@@ -267,6 +268,7 @@ export const Groups = () => {
                       onSelectionChanged={(event) =>
                         console.log("Row Selected!")
                       }
+                      s
                       onCellValueChanged={(event) =>
                         console.log(`New Cell Value: ${event.value}`)
                       }
@@ -406,7 +408,7 @@ const EditAndAddModel = ({ productData, setShowModel, actionType }) => {
     },
   });
 
-  
+
 
   const handleSubmit = () => {
     if (actionType === "Add") {
@@ -650,7 +652,7 @@ const EditAndAddModel = ({ productData, setShowModel, actionType }) => {
                     >
                       Add Items to Group
                     </label>
-                    <button 
+                    <button
                       className="bg-[var(--button-color1)] text-white font-[500] mainFont py-1.5 px-4 rounded-full flex items-center justify-center space-x-1 transition-colors shadow-sm text-sm"
                       onClick={() => {
                         // Add scan functionality here
@@ -747,8 +749,8 @@ const EditAndAddModel = ({ productData, setShowModel, actionType }) => {
                   {isSaving
                     ? "Saving..."
                     : actionType === "Add"
-                    ? "Create"
-                    : "Update"}
+                      ? "Create"
+                      : "Update"}
                 </button>
               </div>
             </>

@@ -101,6 +101,12 @@ const Sales = () => {
           forText: 'text-red-500'
         }
         break;
+      case 'REFUND':
+        return {
+          forDot: 'bg-red-500',
+          forText: 'text-red-500'
+        }
+        break;
 
       default:
         break;

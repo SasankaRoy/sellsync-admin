@@ -22,6 +22,7 @@ import {
 
 import { handleBillStatusUpdate } from "../../../utils/apis/billStatusUpdate";
 import { handleGetBillDetails } from "../../../utils/apis/getBillDetails";
+import { getRefund } from "../../../utils/apis/getAllTransaction";
 
 const tabPrefix = {
   amount: "AMOUNT",
@@ -126,6 +127,8 @@ export const ViewSales = ({ setViewSale, billID }) => {
         return "bg-(--button-color5)/20 text-(--button-color5)/90";
       case "HOLD":
         return "bg-(--button-color2)/20 text-(--button-color2)/90";
+      case "REFUND":
+        return "bg-(--Negative-color)/20 text-(--Negative-color)/90";
       case "CANCELLED":
         return "bg-(--Negative-color)/20 text-(--Negative-color)/90";
       default:
@@ -135,6 +138,12 @@ export const ViewSales = ({ setViewSale, billID }) => {
 
   const handleRefundClick = () => {
     setIsOpenRefundModal(true);
+  };
+
+  const handleRefund = async (billId, refundMode) => {
+    const reqRefund = await getRefund(billId);
+
+    console.log(reqRefund)
   };
 
   return (
@@ -169,10 +178,9 @@ export const ViewSales = ({ setViewSale, billID }) => {
                     onClick={() => {
                       handleTabSwitch(tabPrefix.amount);
                     }}
-                    className={` p-3 font-semibold mainFont text-(--mainText-color)/70 cursor-pointer hover:bg-(--button-color1) hover:text-white   flex justify-center items-center ${
-                      currentActiveTab === tabPrefix.amount &&
+                    className={` p-3 font-semibold mainFont text-(--mainText-color)/70 cursor-pointer hover:bg-(--button-color1) hover:text-white   flex justify-center items-center ${currentActiveTab === tabPrefix.amount &&
                       "bg-(--button-color1) text-white "
-                    } gap-3 transition-all duration-300 ease-linear`}
+                      } gap-3 transition-all duration-300 ease-linear`}
                   >
                     <BanknoteArrowDown />
                     Amount and Payments
@@ -181,10 +189,9 @@ export const ViewSales = ({ setViewSale, billID }) => {
                     onClick={() => {
                       handleTabSwitch(tabPrefix.items);
                     }}
-                    className={` p-3 font-semibold mainFont text-(--mainText-color)/70 cursor-pointer hover:bg-(--button-color1) hover:text-white   flex justify-center ${
-                      currentActiveTab === tabPrefix.items &&
+                    className={` p-3 font-semibold mainFont text-(--mainText-color)/70 cursor-pointer hover:bg-(--button-color1) hover:text-white   flex justify-center ${currentActiveTab === tabPrefix.items &&
                       "bg-(--button-color1) text-white "
-                    } items-center gap-3 transition-all duration-300 ease-linear`}
+                      } items-center gap-3 transition-all duration-300 ease-linear`}
                   >
                     <BaggageClaim />
                     Items/Products
@@ -193,10 +200,9 @@ export const ViewSales = ({ setViewSale, billID }) => {
                     onClick={() => {
                       handleTabSwitch(tabPrefix.customer);
                     }}
-                    className={` p-3 font-semibold mainFont text-(--mainText-color)/70 cursor-pointer hover:bg-(--button-color1) hover:text-white   flex justify-center ${
-                      currentActiveTab === tabPrefix.customer &&
+                    className={` p-3 font-semibold mainFont text-(--mainText-color)/70 cursor-pointer hover:bg-(--button-color1) hover:text-white   flex justify-center ${currentActiveTab === tabPrefix.customer &&
                       "bg-(--button-color1) text-white "
-                    } items-center gap-3 transition-all duration-200 ease-linear`}
+                      } items-center gap-3 transition-all duration-200 ease-linear`}
                   >
                     <Users />
                     Customer Info
@@ -316,17 +322,21 @@ export const ViewSales = ({ setViewSale, billID }) => {
                 <button className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color2)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300">
                   {data.status === "PAID" ? "Reprint Bill" : "Print Bill"}
                 </button>
+                {
+                  data.status === 'OPEN' && (
+                    <button
+                      disabled={
+                        data.status === "PAID" ||
+                        loggedUser?.id !== data?.created_by
+                      }
+                      onClick={handleCompleteTranscation}
+                      className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Complete Transcation
+                    </button>
+                  )
+                }
 
-                <button
-                  disabled={
-                    data.status === "PAID" ||
-                    loggedUser?.id !== data?.created_by
-                  }
-                  onClick={handleCompleteTranscation}
-                  className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Complete Transcation
-                </button>
 
                 {data.status === "PAID" ? (
                   <button
@@ -336,13 +346,19 @@ export const ViewSales = ({ setViewSale, billID }) => {
                     Refund
                   </button>
                 ) : (
-                  <button
-                    disabled={data.status === "PAID"}
-                    onClick={handleCancelTranscation}
-                    className="w-full sm:w-auto px-6 py-2 bg-[var(--Negative-color)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Cancel Transcation
-                  </button>
+                  <>
+                    {
+                      data.status === 'OPEN' || data.status === 'HOLD' && (
+                        <button
+                          disabled={data.status === "PAID"}
+                          onClick={handleCancelTranscation}
+                          className="w-full sm:w-auto px-6 py-2 bg-[var(--Negative-color)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          Cancel Transcation
+                        </button>
+                      )
+                    }
+                  </>
                 )}
               </div>
             </div>
@@ -354,6 +370,7 @@ export const ViewSales = ({ setViewSale, billID }) => {
           setIsOpenRefundModal={setIsOpenRefundModal}
           onSelect={(mode) => {
             console.log("Selected Refund Mode:", mode);
+            handleRefund(billID, mode);
             setIsOpenRefundModal(false);
           }}
         />

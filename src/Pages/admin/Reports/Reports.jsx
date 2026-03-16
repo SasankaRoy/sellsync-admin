@@ -252,6 +252,10 @@ export const Reports = () => {
     }
   });
 
+  const onGridReady = (params) => {
+    params.api.sizeColumnsToFit();
+  };
+
 
 
 
@@ -352,15 +356,15 @@ export const Reports = () => {
                 </div>
 
                 <div className="w-full bg-white p-2 h-[30dvh] flex justify-center items-center overflow-x-hidden">
-                  <Linechart aspectRatio={4} chartData={transformedRevenueData} />
+                  <Linechart aspectRatio={5} chartData={transformedRevenueData} />
                 </div>
 
 
               </div>
 
-              <div className="w-[26%] shrink-0">
+              {/* <div className="w-[26%] shrink-0">
                 <TopSellingItems />
-              </div>
+              </div> */}
             </div>
             <div className="w-full">
               <div className="flex justify-end items-center mb-2.5">
@@ -456,6 +460,7 @@ export const Reports = () => {
                     onCellValueChanged={(event) =>
                       console.log(`New Cell Value: ${event.value}`)
                     }
+                    onGridReady={onGridReady}
                   />
                 </div>
               </div>

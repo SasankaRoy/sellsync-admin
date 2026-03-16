@@ -20,7 +20,7 @@ import { useBulkDelete } from "../../../utils/apis/BulkDelete";
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 const rowSelection = {
-  mode: "multiRow",
+  mode: "none",
   headerCheckbox: false,
 };
 
@@ -115,13 +115,13 @@ export const Supplier = () => {
   // Column Definitions: Defines & controls grid columns.
   const [colDefs, setColDefs] = useState([
     // { field: "ID" },
-    { field: "name", headerName: "Supplier Name" },
-    { field: "email", headerName: "Email" },
-    { field: "mobile", headerName: "Mobile" },
+    { field: "name", headerName: "Supplier Name",flex:1 },
+    { field: "email", headerName: "Email",flex:1 },
+    { field: "mobile", headerName: "Mobile",flex:1 },
     // { field: "Date" },
     {
       field: "address",
-      headerName: "Address",
+      headerName: "Address",flex:1,
       valueGetter: (params) => {
         const data = params.data;
         if (data?.address) {
@@ -137,7 +137,7 @@ export const Supplier = () => {
       },
     },
     {
-      field: "createdAt",
+      field: "createdAt",flex:1,
       headerName: "Created Date",
       cellRenderer: (time) => {
         return moment(time.value).format("lll");
@@ -145,7 +145,7 @@ export const Supplier = () => {
     },
     {
       field: "status",
-      headerName: "Status",
+      headerName: "Status",flex:1,
       cellRenderer: (data) => {
         return (
           <>

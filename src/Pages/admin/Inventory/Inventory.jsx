@@ -190,37 +190,37 @@ export const Inventory = () => {
 
   // Column Definitions: Defines & controls grid columns.
   const [colDefs] = useState([
-    { field: "name", headerName: "Product Name" },
-    { field: "category_name", headerName: "Category Name" },
-    { field: "product_rank", headerName: "Rank" },
-    { field: "qty_on_hand", headerName: "Stock" },
+    { field: "name", headerName: "Product Name",flex:1 },
+    { field: "category_name", headerName: "Category Name",flex:1 },
+    { field: "product_rank", headerName: "Rank",flex:1 },
+    { field: "qty_on_hand", headerName: "Stock",flex:1 },
     {
       field: "product_avg_price",
-      headerName: "Avrage Cost",
+      headerName: "Avrage Cost",flex:1,
       cellRenderer: (amount) => {
         return `$  ${amount.value ? amount.value.toFixed(2) : '00'}`;
       },
     },
     {
       field: "product_latest_cost",
-      headerName: "Latest Cost",
+      headerName: "Latest Cost",flex:1,
       cellRenderer: (amount) => {
         return `$  ${amount.value ? amount.value.toFixed(2) : '00'}`;
       },
     },
     {
       field: "product_price",
-      headerName: "Price",
+      headerName: "Price",flex:1,
       cellRenderer: (amount) => {
         return `$  ${amount.value ? amount.value.toFixed(2) : '00'}`;
       },
     },
     {
       field: "product_size",
-      headerName: "Size",
+      headerName: "Size",flex:1,
     },
-    { field: "product_sku", headerName: "Code" },
-    { field: "tax_percentage", headerName: "Tax" },
+    { field: "product_sku", headerName: "Code",flex:1 },
+    { field: "tax_percentage", headerName: "Tax",flex:1 },
     {
       headerName: "Actions",
       field: "actions",

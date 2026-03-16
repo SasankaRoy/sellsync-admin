@@ -7,7 +7,7 @@ export const getAllTransactions = async ({
   page,
   limit,
   search,
-  day,userType
+  day, userType
 }) => {
   try {
     const getTransaction = await axiosInstance.get(
@@ -26,3 +26,19 @@ export const getAllTransactions = async ({
     );
   }
 };
+
+export const getRefund = async (billId) => {
+  try {
+    const reqRefund = await axiosInstance.post('/api/v1/bills/transaction/refund', {
+      billId
+    });
+
+    if (reqRefund.status === 200 && reqRefund.data) {
+      return reqRefund.data || ''
+    }
+    return reqRefund.data || ''
+  } catch (error) {
+    console.error(error);
+    return error.message || error.response.data.message || 'Failed to request for refund'
+  }
+}

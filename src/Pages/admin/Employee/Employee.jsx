@@ -32,7 +32,7 @@ import { useBulkDelete } from "../../../utils/apis/BulkDelete";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 const rowSelection = {
-  mode: "multiRow",
+  mode: "none",
   headerCheckbox: false,
 };
 
@@ -105,28 +105,28 @@ export const Employee = () => {
   // Column Definitions: Defines & controls grid columns.
   const [colDefs, setColDefs] = useState([
     //{ field: "id" },
-    { field: "name" },
-    { field: "email" },
+    { field: "name",flex:1 },
+    { field: "email",flex:1 },
     {
       field: "log_userId",
       headerName: "User ID",
-      valueGetter: (params) => params.data.log_userId || "N/A",
+      valueGetter: (params) => params.data.log_userId || "N/A",flex:1
     },
-    { field: "dob" },
-    { field: "mobile" },
+    { field: "dob",flex:1 },
+    { field: "mobile",flex:1 },
     {
       field: "address",
       headerName: "Address",
       valueGetter: (params) => {
         const { street, city, state, zip } = params.data.address || {};
         return [street, city, state, zip].filter(Boolean).join(", ");
-      },
+      },flex:1
     },
-    { field: "staff_position", headerName: "Position" },
-    { field: "pay_rate", headerName: "Pay Rate" },
-    { field: "pay_type", headerName: "Pay Type" },
-    { field: "social_security_number", headerName: "SSN" },
-    { field: "status" },
+    { field: "staff_position", headerName: "Position",flex:1 },
+    { field: "pay_rate", headerName: "Pay Rate",flex:1 },
+    { field: "pay_type", headerName: "Pay Type",flex:1 },
+    { field: "social_security_number", headerName: "SSN",flex:1 },
+    { field: "status",flex:1 },
     {
       headerName: "Actions",
       field: "actions",

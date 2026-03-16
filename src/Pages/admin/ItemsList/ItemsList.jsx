@@ -18,7 +18,7 @@ import { getAllProductList } from "../../../utils/apis/handleProducts";
 import { getAllCategoryList } from "../../../utils/apis/handleCategory";
 ModuleRegistry.registerModules([AllCommunityModule]);
 const rowSelection = {
-  mode: "multiRow",
+  mode: "none",
   headerCheckbox: false,
 };
 
@@ -84,23 +84,23 @@ export const ItemsList = () => {
 
   // Column Definitions: Defines & controls grid columns.
   const [colDefs] = useState([
-    { field: "stock_code", headerName: "Stock Code", width: 200 },
-    { field: "name", headerName: "Product Name", width: 200 },
-    { field: "product_rank", headerName: "Rank", width: 150 },
-    { field: "category_name", headerName: "Category", width: 150 },
-    { field: "qty_on_hand", headerName: "Stock", width: 150 },
+    { field: "stock_code", headerName: "Stock Code", flex:1 },
+    { field: "name", headerName: "Product Name", flex:1 },
+    { field: "product_rank", headerName: "Rank", flex:1 },
+    { field: "category_name", headerName: "Category", flex:1 },
+    { field: "qty_on_hand", headerName: "Stock", flex:1 },
     {
       field: "product_price",
       headerName: "Price",
-      width: 100,
+      flex:1,
       cellRenderer: (amount) => {
         return `$ ${amount.value.toFixed(2)}`;
       },
     },
 
-    { field: "vendor_name", headerName: "Vendor Name", width: 150 },
-    { field: "supplier_name", headerName: "Supplier Name", width: 150 },
-    { field: "status", headerName: "Status", width: 150 },
+    { field: "vendor_name", headerName: "Vendor Name", flex:1 },
+    { field: "supplier_name", headerName: "Supplier Name", flex:1 },
+    { field: "status", headerName: "Status", flex:1 },
     {
       headerName: "Actions",
       field: "actions",
@@ -111,7 +111,7 @@ export const ItemsList = () => {
         onDelete,
         skinSafe: true,
       },
-      width: 200,
+      width: 150,
       sortable: false,
       filter: false,
     },

@@ -28,7 +28,7 @@ import { useBulkDelete } from "../../../utils/apis/BulkDelete";
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 const rowSelection = {
-  mode: "multiRow",
+  mode: "none",
   headerCheckbox: false,
 };
 
@@ -147,14 +147,14 @@ export const Customer = () => {
   // Column Definitions: Defines & controls grid columns.
   const [colDefs, setColDefs] = useState([
     //{ field: "id" },
-    { field: "name" },
-    { field: "email" },
-    { field: "mobile" },
-    { field: "dob" },
-    { field: "zipcode" },
-    { field: "points" },
-    { field: "address" },
-    { field: "sms_email_promotions" },
+    { field: "name",flex:1 },
+    { field: "email",flex:1 },
+    { field: "mobile",flex:1 },
+    { field: "dob",flex:1 },
+    { field: "zipcode",flex:1 },
+    { field: "points",flex:1 },
+    { field: "address",flex:1 },
+    { field: "sms_email_promotions",flex:1 },
     {
       headerName: "Actions",
       field: "actions",

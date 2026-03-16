@@ -168,7 +168,7 @@ h6,
   width: 100%;
 }
 
-@media print {
+/* @media print {
 
   .ag-root-wrapper {
     overflow: visible !important;
@@ -187,10 +187,10 @@ h6,
     display: none !important;
   }
 
-}
+} */
 
 
-@media print {
+/* @media print {
 
   .print-container {
     overflow: visible !important;
@@ -207,11 +207,11 @@ h6,
   }
 
   body {
-    zoom: 0.8; /* optional to fit large tables */
+    zoom: 0.8; 
   }
 
   @page {
     size: landscape;
   }
 
-}
+} */

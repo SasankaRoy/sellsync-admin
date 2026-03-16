@@ -32,10 +32,10 @@ const Taxes = () => {
 
     // Column Definitions: Defines & controls grid columns.
     const [colDefs, setColDefs] = useState([
-        { field: "id", headerName: 'Update Id' },
-        { field: "date", headerName: 'Date and Time' },
-        { field: "high_tax_amt", headerName: 'High Tax' },
-        { field: "low_tax_amt", headerName: 'Low Tax' },
+        { field: "id", headerName: 'Update Id',flex:1 },
+        { field: "date", headerName: 'Date and Time',flex:1 },
+        { field: "high_tax_amt", headerName: 'High Tax',flex:1 },
+        { field: "low_tax_amt", headerName: 'Low Tax',flex:1 },
     ]);
 
     // Apply settings across all columns
@@ -118,6 +118,12 @@ const Taxes = () => {
                                             <div className='flex justify-center items-center gap-5 w-full'>
                                                 <label className='text-[1.2dvw] shrink-0 text-(--button-color2) font-medium mainFont'>
                                                     Low Tax  :-
+                                                </label>
+                                                <input className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-2 px-3 appearance-none" type='number' placeholder='5' onChange={handleOnchange} name='low_tax' value={taxValue.low_tax} />
+                                            </div>
+                                            <div className='flex justify-center items-center gap-5 w-full'>
+                                                <label className='text-[1.2dvw] shrink-0 text-(--button-color2) font-medium mainFont'>
+                                                    No Tax  :-
                                                 </label>
                                                 <input className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-2 px-3 appearance-none" type='number' placeholder='5' onChange={handleOnchange} name='low_tax' value={taxValue.low_tax} />
                                             </div>

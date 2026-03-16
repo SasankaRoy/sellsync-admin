@@ -21,7 +21,7 @@ import { PurchaseAndExpence } from "../../../components/common/Models/PurchaseAn
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 const rowSelection = {
-  mode: "multiRow",
+  mode: "none",
   headerCheckbox: false,
 };
 
@@ -163,17 +163,17 @@ export const ExpenseList = () => {
   };
 
   const [colDefs, setColDefs] = useState([
-    { field: "id", headerName: "ID" },
-    { field: "expense_name", headerName: "Expense Name" },
-    { field: "vendor_name", headerName: "Vendor Name" },
-    { field: "expense_type", headerName: "Expense Type" },
-    { field: "due_date", headerName: "Date" },
-    { field: "payment_mode", headerName: "Payment Mode" },
-    { field: "expense_amount", headerName: "Expense Amount" },
+    { field: "id", headerName: "ID",flex:1 },
+    { field: "expense_name", headerName: "Expense Name",flex:1 },
+    { field: "vendor_name", headerName: "Vendor Name",flex:1 },
+    { field: "expense_type", headerName: "Expense Type",flex:1 },
+    { field: "due_date", headerName: "Date",flex:1 },
+    { field: "payment_mode", headerName: "Payment Mode",flex:1 },
+    { field: "expense_amount", headerName: "Expense Amount",flex:1 },
     {
       field: "expense_invoice_image",
       headerName: "Download Invoice file",
-      cellRenderer: InvoiceDownloadBtn,
+      cellRenderer: InvoiceDownloadBtn,flex:1
     },
     {
       headerName: "Actions",

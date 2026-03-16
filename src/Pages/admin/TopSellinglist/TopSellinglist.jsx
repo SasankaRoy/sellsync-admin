@@ -100,32 +100,32 @@ export const TopSellinglist = () => {
     const [colDefs,] = useState([
         {
             field: 'product_sku',
-            headerName: 'Product SKU'
+            headerName: 'Product SKU',flex:1
         },
         {
             field: 'name',
-            headerName: 'Product Name'
+            headerName: 'Product Name',flex:1
         },
         {
             field: "category_name",
-            headerName: "Category Name",
+            headerName: "Category Name",flex:1
 
         },
-        { field: "product_size", headerName: "Product Size" },
-        { field: "product_rank", headerName: "Product Rank" },
+        { field: "product_size", headerName: "Product Size",flex:1 },
+        { field: "product_rank", headerName: "Product Rank",flex:1 },
         {
             field: "product_price", headerName: "Product Price", cellRenderer: (amount) => {
                 return `$ ${amount.value.toFixed(2)}`;
-            },
+            },flex:1
         },
         {
             field: "product_latest_cost", headerName: "Product Cost", cellRenderer: (amount) => {
                 return amount.value ? `$ ${amount.value.toFixed(2)}` : '$ 00';
-            },
+            },flex:1
         },
-        { field: "qty_on_hand", headerName: "In Stock" },
-        { field: "tax_percentage", headerName: "Tax" },
-        { field: "supplier_name", headerName: "Supplier Name" },
+        { field: "qty_on_hand", headerName: "In Stock",flex:1 },
+        { field: "tax_percentage", headerName: "Tax",flex:1 },
+        { field: "supplier_name", headerName: "Supplier Name",flex:1 },
         // {
         //     field: "status",
         //     headerName: "Status",
