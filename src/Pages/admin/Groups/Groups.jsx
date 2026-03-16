@@ -508,6 +508,8 @@ const EditAndAddModel = ({ productData, setShowModel, actionType }) => {
           groupName: reqGroupData?.data?.groupDetails?.group_name,
           groupStatus: reqGroupData?.data?.groupDetails?.status,
           deals: reqGroupData?.data?.groupDetails?.deals,
+          price: reqGroupData?.data?.groupDetails?.price,
+          cost: reqGroupData?.data?.groupDetails?.cost,
           productList: [...reqGroupData?.data?.groupDetails?.products],
         });
       }

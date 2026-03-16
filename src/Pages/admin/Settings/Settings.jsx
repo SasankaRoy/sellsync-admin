@@ -16,8 +16,12 @@ import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  getLowStockThreshold,
   updateLowStockThreshold,
+  getRedeemRateList,
+  updateRedeemRate,
+  deleteRedeemRate,
+  addRedeemRates,
+  getLowStockThreshold,
 } from "../../../utils/apis/handleSetting";
 import { Loading } from "../../../components/UI/Loading/Loading";
 import { toast } from "react-toastify";
@@ -1041,6 +1045,100 @@ const InventorySettingsTab = () => {
     },
   });
 
+  const { data: redeemRateList, isLoading: isRedeemListLoading } = useQuery({
+    queryKey: ["get_redeem_rate_list"],
+    queryFn: async () => {
+      const res = await getRedeemRateList();
+      return Array.isArray(res) ? res : [];
+    },
+  });
+
+  const [editableRates, setEditableRates] = useState([]);
+
+  useEffect(() => {
+    if (redeemRateList && Array.isArray(redeemRateList)) {
+      setEditableRates(redeemRateList);
+    }
+  }, [redeemRateList]);
+
+  const handleAddRedeemRates = async () => {
+    let successCount = 0;
+
+    // addRedeemRates only accepts an individual point and point_cost as numbers parameter
+    for (const offer of redeemOffers) {
+      const p = isNaN(Number(offer.point)) ? 0 : Number(offer.point);
+      const a = isNaN(Number(offer.amount)) ? 0 : Number(offer.amount);
+
+      const reqUpdate = await addRedeemRates(p, a);
+
+      if (
+        (reqUpdate &&
+          typeof reqUpdate === "string" &&
+          !reqUpdate.includes("Failed")) ||
+        (reqUpdate && typeof reqUpdate === "object")
+      ) {
+        successCount++;
+      }
+    }
+
+    if (successCount === redeemOffers.length) {
+      toast.success("Redeem rates updated successfully");
+      setRedeemOffers([{ point: 0, amount: 0 }]);
+    } else if (successCount > 0) {
+      toast.success(
+        `Successfully updated ${successCount} out of ${redeemOffers.length} redeem rates`,
+      );
+      setRedeemOffers([{ point: 0, amount: 0 }]);
+    } else {
+      toast.error("Failed to update redeem rates");
+    }
+
+    queryClient.invalidateQueries({
+      queryKey: ["get_low_stock_threshold"],
+    });
+    queryClient.invalidateQueries({
+      queryKey: ["get_redeem_rate_list"],
+    });
+  };
+
+  const handleUpdateExistingRate = async (id, index) => {
+    const rateToUpdate = editableRates[index];
+    const payload = {
+      point: rateToUpdate.point,
+      point_cost: rateToUpdate.point_cost,
+    };
+
+    const res = await updateRedeemRate(id, payload);
+    if (res && typeof res === "string" && !res.includes("Failed")) {
+      toast.success(res);
+      queryClient.invalidateQueries({ queryKey: ["get_redeem_rate_list"] });
+    } else if (res && typeof res === "object") {
+      toast.success("Redeem rate updated successfully");
+      queryClient.invalidateQueries({ queryKey: ["get_redeem_rate_list"] });
+    } else {
+      toast.error(String(res) || "Failed to update redeem rate");
+    }
+  };
+
+  const handleDeleteExistingRate = async (id) => {
+    const res = await deleteRedeemRate(id);
+    if (res && typeof res === "string" && !res.includes("Failed")) {
+      toast.success(res);
+      queryClient.invalidateQueries({ queryKey: ["get_redeem_rate_list"] });
+    } else if (res && typeof res === "object") {
+      toast.success("Redeem rate deleted successfully");
+      queryClient.invalidateQueries({ queryKey: ["get_redeem_rate_list"] });
+    } else {
+      toast.error(String(res) || "Failed to delete redeem rate");
+    }
+  };
+
+  const handleEditChange = (index, field, value) => {
+    const updated = [...editableRates];
+    updated[index][field] = value;
+    setEditableRates(updated);
+  };
+
   const handleSaveLowStockThreshold = async () => {
     const payload = {
       low_stock_threshold: lowStockThreshold,
@@ -1066,16 +1164,16 @@ const InventorySettingsTab = () => {
   useEffect(() => {
     setLowStockThreshold(data?.low_stock_quantity ?? 0);
     setPointsRequired(data?.minimum_points_required_for_redeem ?? 0);
-    
-    if (data?.redeem_point && Array.isArray(data.redeem_point)) {
-      const offers = data.redeem_point.map((pt, i) => ({
-        point: pt,
-        amount: Array.isArray(data.redeem_point_cost) ? data.redeem_point_cost[i] : 0,
-      }));
-      setRedeemOffers(offers.length > 0 ? offers : [{ point: 0, amount: 0 }]);
-    } else if (data?.redeem_point !== undefined) {
-      setRedeemOffers([{ point: data.redeem_point, amount: data.redeem_point_cost ?? 0 }]);
-    }
+
+    // if (data?.redeem_point && Array.isArray(data.redeem_point)) {
+    //   const offers = data.redeem_point.map((pt, i) => ({
+    //     point: pt,
+    //     amount: Array.isArray(data.redeem_point_cost) ? data.redeem_point_cost[i] : 0,
+    //   }));
+    //   setRedeemOffers(offers.length > 0 ? offers : [{ point: 0, amount: 0 }]);
+    // } else if (data?.redeem_point !== undefined) {
+    //   setRedeemOffers([{ point: data.redeem_point, amount: data.redeem_point_cost ?? 0 }]);
+    // }
   }, [data]);
 
   const handleAddOffer = () => {
@@ -1167,7 +1265,10 @@ const InventorySettingsTab = () => {
                 </div>
 
                 {redeemOffers.map((offer, index) => (
-                  <div key={index} className="flex justify-between w-full items-center gap-5 relative">
+                  <div
+                    key={index}
+                    className="flex justify-between w-full items-center gap-5 relative"
+                  >
                     <div className="w-[50%] my-2">
                       <div className="flex flex-col gap-2.5">
                         <label className="text-sm sm:text-base secondaryFont md:text-xs font-[500]">
@@ -1178,7 +1279,9 @@ const InventorySettingsTab = () => {
                             type="number"
                             placeholder="10"
                             value={offer.point}
-                            onChange={(e) => handleChangeOffer(index, "point", e.target.value)}
+                            onChange={(e) =>
+                              handleChangeOffer(index, "point", e.target.value)
+                            }
                             className="bg-[#F3F3F3] w-full font-medium paraFont placeholder:text-[#333333]/40 text-base sm:text-lg md:text-[1.4dvw] lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-2 sm:py-2.5 px-4 sm:px-5"
                           />
                         </div>
@@ -1194,7 +1297,9 @@ const InventorySettingsTab = () => {
                             type="number"
                             placeholder="10"
                             value={offer.amount}
-                            onChange={(e) => handleChangeOffer(index, "amount", e.target.value)}
+                            onChange={(e) =>
+                              handleChangeOffer(index, "amount", e.target.value)
+                            }
                             className="bg-[#F3F3F3] w-full font-medium paraFont placeholder:text-[#333333]/40 text-base sm:text-lg md:text-[1.4dvw] lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-2 sm:py-2.5 px-4 sm:px-5"
                           />
                           {redeemOffers.length > 1 && (
@@ -1213,11 +1318,100 @@ const InventorySettingsTab = () => {
                 ))}
 
                 <button
-                  onClick={handleSaveLowStockThreshold}
+                  onClick={handleAddRedeemRates}
                   className="bg-[var(--button-color1)] w-full text-white px-3 py-3 mt-4 rounded-full cursor-pointer font-[500] text-[1.2dvw] mainFont"
                 >
-                  Update
+                  Add Redeem Rates
                 </button>
+
+                <div className="mt-8 border-t border-[#d4d4d4] pt-5">
+                  <h4 className="text-sm sm:text-base secondaryFont md:text-md font-[600] mb-3">
+                    Existing Redeem Rates
+                  </h4>
+                  {isRedeemListLoading ? (
+                    <div className="flex justify-center my-4">
+                      <p className="text-sm font-medium">Loading...</p>
+                    </div>
+                  ) : editableRates && editableRates.length > 0 ? (
+                    <div className="flex flex-col gap-4">
+                      {editableRates.map((rate, idx) => (
+                        <div
+                          key={rate._id || idx}
+                          className="flex justify-between w-full items-center gap-5 relative bg-[var(--primary-color)]"
+                        >
+                          <div className="w-[50%] my-2">
+                            <div className="flex flex-col gap-2.5">
+                              <label className="text-sm sm:text-base secondaryFont md:text-xs font-[500]">
+                                Set Points
+                              </label>
+                              <div className="flex gap-2">
+                                <input
+                                  type="number"
+                                  value={rate.point}
+                                  onChange={(e) =>
+                                    handleEditChange(
+                                      idx,
+                                      "point",
+                                      e.target.value,
+                                    )
+                                  }
+                                  className="bg-[#F3F3F3] w-full font-medium paraFont placeholder:text-[#333333]/40 text-base sm:text-lg md:text-[1.4dvw] lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-2 sm:py-2.5 px-4 sm:px-5"
+                                />
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="w-[50%] my-2">
+                            <div className="flex flex-col gap-2.5">
+                              <label className="text-sm sm:text-base secondaryFont md:text-xs font-[500]">
+                                Set Amount ($)
+                              </label>
+                              <div className="flex gap-2 items-center">
+                                <input
+                                  type="number"
+                                  value={rate.point_cost}
+                                  onChange={(e) =>
+                                    handleEditChange(
+                                      idx,
+                                      "point_cost",
+                                      e.target.value,
+                                    )
+                                  }
+                                  className="bg-[#F3F3F3] w-full font-medium paraFont placeholder:text-[#333333]/40 text-base sm:text-lg md:text-[1.4dvw] lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-2 sm:py-2.5 px-4 sm:px-5"
+                                />
+
+                                <div className="flex gap-2 ml-2">
+                                  <button
+                                    onClick={() =>
+                                      handleUpdateExistingRate(rate._id, idx)
+                                    }
+                                    className="bg-[var(--button-color1)] text-white w-8 h-8 rounded-full flex cursor-pointer justify-center items-center font-bold shrink-0 hover:bg-opacity-80 transition-all"
+                                    title="Update Offer"
+                                  >
+                                    <SaveIcon className="w-4 h-4" />
+                                  </button>
+                                  <button
+                                    onClick={() =>
+                                      handleDeleteExistingRate(rate._id)
+                                    }
+                                    className="bg-red-500 text-white w-8 h-8 rounded-full flex cursor-pointer justify-center items-center font-bold shrink-0 hover:bg-red-600 transition-all"
+                                    title="Remove Offer"
+                                  >
+                                    <DeleteIcon className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500">
+                      No redeem rates found.
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
           </div>
