@@ -6,7 +6,7 @@ import { useState } from "react";
 import { CircularProgress } from "@mui/material";
 import moment from "moment";
 import { useQuery } from "@tanstack/react-query";
-import { getLowStockThreshold } from "../../../utils/apis/handleSetting";
+import { getLowStockThreshold, getRedeemRateList } from "../../../utils/apis/handleSetting";
 
 export const ViewCustomerDetailsModel = ({ setFindCustomerModel }) => {
     const customerDetails = useSelector(state => state.currentBill.currentCustomerDetails)
@@ -14,7 +14,7 @@ export const ViewCustomerDetailsModel = ({ setFindCustomerModel }) => {
     const [isFetching, setIsFetching] = useState(false);
     const [customerInfo, setCustomerInfo] = useState();
     const [showRedeemModel, setShowRedeemModel] = useState(false);
-    const [pointsToRedeem, setPointsToRedeem] = useState(0);
+    const [selectedRate, setSelectedRate] = useState(null);
 
 
     const { data, isLoading, isError } = useQuery({
@@ -30,6 +30,14 @@ export const ViewCustomerDetailsModel = ({ setFindCustomerModel }) => {
                     minimum_points_required_for_redeem: 0
                 };
             }
+        },
+    });
+
+    const { data: redeemRateList, isLoading: isRedeemListLoading } = useQuery({
+        queryKey: ["get_redeem_rate_list"],
+        queryFn: async () => {
+            const res = await getRedeemRateList();
+            return Array.isArray(res) ? res : [];
         },
     });
 
@@ -107,14 +115,13 @@ export const ViewCustomerDetailsModel = ({ setFindCustomerModel }) => {
     }
 
     const handleRedeemPoints = () => {
-        const rate = (data?.redeem_point_cost || 0) / (data?.redeem_point || 1);
-        const offAmount = rate * pointsToRedeem;
+        if (!selectedRate) return;
         
         dispatch(
             setCurrentCustomerDetails({
                 currentCustomerDetails: {
                     name: 'redeemedPoints',
-                    value: pointsToRedeem
+                    value: selectedRate.point
                 }
             })
         );
@@ -122,7 +129,7 @@ export const ViewCustomerDetailsModel = ({ setFindCustomerModel }) => {
             setCurrentCustomerDetails({
                 currentCustomerDetails: {
                     name: 'offAmount',
-                    value: offAmount.toFixed(2)
+                    value: Number(selectedRate.point_cost).toFixed(2)
                 }
             })
         );
@@ -275,26 +282,41 @@ export const ViewCustomerDetailsModel = ({ setFindCustomerModel }) => {
                                 <div className="space-y-4">
                                     <div className="flex flex-col gap-2">
                                         <label className="text-sm font-semibold text-gray-600 paraFont">
-                                            Points to Redeem (Max: {customerInfo?.customer_points})
+                                            Select an offer (Your Points: {customerInfo?.customer_points})
                                         </label>
-                                        <input 
-                                            type="number" 
-                                            value={pointsToRedeem}
-                                            onChange={(e) => {
-                                                const val = Math.min(Number(e.target.value), customerInfo?.customer_points || 0);
-                                                setPointsToRedeem(Math.max(0, val));
-                                            }}
-                                            className="w-full bg-gray-50 border border-gray-300 rounded-lg py-2.5 px-4 text-lg font-bold mainFont focus:ring-2 focus:ring-[var(--button-color1)] focus:border-transparent outline-none transition-all"
-                                            placeholder="Enter points..."
-                                        />
+                                        <div className="flex flex-col gap-3 max-h-[40vh] overflow-y-auto pr-1">
+                                            {isRedeemListLoading ? (
+                                                <p className="text-sm font-medium">Loading offers...</p>
+                                            ) : redeemRateList && redeemRateList.filter(r => Number(r.point) <= Number(customerInfo?.customer_points)).length > 0 ? (
+                                                redeemRateList
+                                                    .filter(r => Number(r.point) <= Number(customerInfo?.customer_points))
+                                                    .sort((a,b) => Number(a.point) - Number(b.point))
+                                                    .map((rate, idx) => (
+                                                    <div 
+                                                        key={rate._id || idx}
+                                                        onClick={() => setSelectedRate(rate)}
+                                                        className={`border-2 p-3 rounded-lg cursor-pointer transition-all ${selectedRate?._id === rate._id ? 'border-[var(--button-color1)] bg-[var(--button-color1)]/10' : 'border-gray-200 hover:border-gray-300'}`}
+                                                    >
+                                                        <div className="flex justify-between items-center">
+                                                            <span className="font-semibold mainFont">{rate.point} Points</span>
+                                                            <span className="font-bold mainFont text-green-600">Get $ {rate.point_cost} Off</span>
+                                                        </div>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <p className="text-sm text-gray-500 paraFont">No applicable offers for your current points.</p>
+                                            )}
+                                        </div>
                                     </div>
 
+                                    {selectedRate && (
                                     <div className="bg-green-50 p-4 rounded-lg border border-green-100 flex justify-between items-center">
                                         <span className="text-green-700 font-medium paraFont">You get off:</span>
                                         <span className="text-2xl font-black text-green-600 mainFont">
-                                            $ {((data?.redeem_point_cost || 0) / (data?.redeem_point || 1) * pointsToRedeem).toFixed(2)}
+                                            $ {Number(selectedRate.point_cost).toFixed(2)}
                                         </span>
                                     </div>
+                                    )}
 
                                     <div className="flex gap-4 pt-4">
                                         <button 
@@ -305,7 +327,8 @@ export const ViewCustomerDetailsModel = ({ setFindCustomerModel }) => {
                                         </button>
                                         <button 
                                             onClick={handleRedeemPoints}
-                                            className="flex-1 py-2.5 rounded-lg bg-[var(--button-color1)] font-semibold text-white hover:opacity-90 transition-opacity shadow-md cursor-pointer"
+                                            disabled={!selectedRate}
+                                            className="flex-1 py-2.5 rounded-lg bg-[var(--button-color1)] font-semibold text-white hover:opacity-90 transition-opacity shadow-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
                                             Continue
                                         </button>
