@@ -9,7 +9,7 @@ import {
 import { Avatar, Switch } from "@mui/material";
 import ProfileImg from "../../../assets/images/ProfileImg.png";
 import BLogo from "../../../assets/images/BLogo.png";
-import { Camera, LocateFixedIcon, SaveIcon } from "lucide-react";
+import { Camera, LocateFixedIcon, Minus, Plus, SaveIcon } from "lucide-react";
 import { CountrySelect } from "react-country-state-city";
 import "react-country-state-city/dist/react-country-state-city.css";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
@@ -1026,8 +1026,7 @@ const BusinessDocumentsTab = () => {
 const InventorySettingsTab = () => {
   const [lowStockThreshold, setLowStockThreshold] = useState(0);
   const [pointsRequired, setPointsRequired] = useState(0);
-  const [ratePoint, setRatePoint] = useState(0);
-  const [rateAmount, setRateAmount] = useState(0);
+  const [redeemOffers, setRedeemOffers] = useState([{ point: 0, amount: 0 }]);
   const queryClient = useQueryClient();
 
   const { data, isLoading, isError } = useQuery({
@@ -1035,13 +1034,9 @@ const InventorySettingsTab = () => {
     queryFn: async () => {
       const prvData = await getLowStockThreshold();
       if (prvData) {
-        setLowStockThreshold(prvData.low_stock_quantity);
-        setPointsRequired(prvData.minimum_points_required_for_redeem);
-        setRatePoint(prvData.redeem_point);
-        setRateAmount(prvData.redeem_point_cost);
         return prvData;
       } else {
-        return 0;
+        return null;
       }
     },
   });
@@ -1050,8 +1045,8 @@ const InventorySettingsTab = () => {
     const payload = {
       low_stock_threshold: lowStockThreshold,
       minimum_points_required_for_redeem: pointsRequired,
-      redeem_point: ratePoint,
-      redeem_point_cost: rateAmount,
+      redeem_point: redeemOffers.map((o) => o.point),
+      redeem_point_cost: redeemOffers.map((o) => o.amount),
     };
     const res = await updateLowStockThreshold(payload);
 
@@ -1069,11 +1064,37 @@ const InventorySettingsTab = () => {
   };
 
   useEffect(() => {
-    setLowStockThreshold(data?.low_stock_quantity);
-    setPointsRequired(data?.minimum_points_required_for_redeem);
-    setRatePoint(data?.redeem_point);
-    setRateAmount(data?.redeem_point_cost);
+    setLowStockThreshold(data?.low_stock_quantity ?? 0);
+    setPointsRequired(data?.minimum_points_required_for_redeem ?? 0);
+    
+    if (data?.redeem_point && Array.isArray(data.redeem_point)) {
+      const offers = data.redeem_point.map((pt, i) => ({
+        point: pt,
+        amount: Array.isArray(data.redeem_point_cost) ? data.redeem_point_cost[i] : 0,
+      }));
+      setRedeemOffers(offers.length > 0 ? offers : [{ point: 0, amount: 0 }]);
+    } else if (data?.redeem_point !== undefined) {
+      setRedeemOffers([{ point: data.redeem_point, amount: data.redeem_point_cost ?? 0 }]);
+    }
   }, [data]);
+
+  const handleAddOffer = () => {
+    setRedeemOffers([...redeemOffers, { point: 0, amount: 0 }]);
+  };
+
+  const handleRemoveOffer = (index) => {
+    if (redeemOffers.length > 1) {
+      const newOffers = [...redeemOffers];
+      newOffers.splice(index, 1);
+      setRedeemOffers(newOffers);
+    }
+  };
+
+  const handleChangeOffer = (index, field, value) => {
+    const newOffers = [...redeemOffers];
+    newOffers[index][field] = value;
+    setRedeemOffers(newOffers);
+  };
 
   return (
     <>
@@ -1133,62 +1154,67 @@ const InventorySettingsTab = () => {
                 </div>
               </div>
               <div className="w-full">
-                <label className="text-sm sm:text-base secondaryFont md:text-sm font-[500]">
-                  Set Redeem Point calculation Rate
-                </label>
-                <div className="flex justify-between w-full items-center gap-5">
-                  <div className="w-[50%] my-5">
-                    <div className="flex flex-col gap-2.5">
-                      <label className="text-sm sm:text-base secondaryFont md:text-sm font-[500]">
-                        Set Points
-                      </label>
-                      <div className="flex  gap-2">
-                        <input
-                          type="number"
-                          placeholder="10"
-                          value={ratePoint}
-                          onChange={(e) => setRatePoint(e.target.value)}
-                          className="bg-[#F3F3F3] w-full font-medium paraFont placeholder:text-[#333333]/40 text-base sm:text-lg md:text-[1.4dvw] lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-2 sm:py-2.5 px-4 sm:px-5"
-                        />
-                        {/* <button
-                        onClick={() =>
-                          handleSaveLowStockThreshold(lowStockThreshold)
-                        }
-                        className="bg-[var(--button-color1)] text-white px-3 py-1 sm:px-5 sm:py-1.5 md:px-4 md:py-1 rounded-full cursor-pointer font-[500] text-sm sm:text-base md:text-sm"
-                      >
-                        <SaveIcon className="w-4 h-4 sm:w-5 sm:h-5" />
-                      </button> */}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="w-[50%] my-5">
-                    <div className="flex flex-col gap-2.5">
-                      <label className="text-sm sm:text-base secondaryFont md:text-sm font-[500]">
-                        Set Amount ($)
-                      </label>
-                      <div className="flex  gap-2">
-                        <input
-                          type="number"
-                          placeholder="10"
-                          value={rateAmount}
-                          onChange={(e) => setRateAmount(e.target.value)}
-                          className="bg-[#F3F3F3] w-full font-medium paraFont placeholder:text-[#333333]/40 text-base sm:text-lg md:text-[1.4dvw] lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-2 sm:py-2.5 px-4 sm:px-5"
-                        />
-                        {/* <button
-                        onClick={() =>
-                          handleSaveLowStockThreshold(lowStockThreshold)
-                        }
-                        className="bg-[var(--button-color1)] text-white px-3 py-1 sm:px-5 sm:py-1.5 md:px-4 md:py-1 rounded-full cursor-pointer font-[500] text-sm sm:text-base md:text-sm"
-                      >
-                        <SaveIcon className="w-4 h-4 sm:w-5 sm:h-5" />
-                      </button> */}
-                      </div>
-                    </div>
-                  </div>
+                <div className="flex items-center gap-3">
+                  <label className="text-sm sm:text-base secondaryFont md:text-sm font-[500]">
+                    Set Redeem Point calculation Rate
+                  </label>
+                  <button
+                    onClick={handleAddOffer}
+                    className="bg-[var(--button-color1)] text-white w-6 h-6 rounded-full flex justify-center items-center font-bold text-lg  cursor-pointer hover:bg-opacity-80 transition-all"
+                  >
+                    <Plus />
+                  </button>
                 </div>
+
+                {redeemOffers.map((offer, index) => (
+                  <div key={index} className="flex justify-between w-full items-center gap-5 relative">
+                    <div className="w-[50%] my-2">
+                      <div className="flex flex-col gap-2.5">
+                        <label className="text-sm sm:text-base secondaryFont md:text-xs font-[500]">
+                          Set Points
+                        </label>
+                        <div className="flex gap-2">
+                          <input
+                            type="number"
+                            placeholder="10"
+                            value={offer.point}
+                            onChange={(e) => handleChangeOffer(index, "point", e.target.value)}
+                            className="bg-[#F3F3F3] w-full font-medium paraFont placeholder:text-[#333333]/40 text-base sm:text-lg md:text-[1.4dvw] lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-2 sm:py-2.5 px-4 sm:px-5"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="w-[50%] my-2">
+                      <div className="flex flex-col gap-2.5">
+                        <label className="text-sm sm:text-base secondaryFont md:text-xs font-[500]">
+                          Set Amount ($)
+                        </label>
+                        <div className="flex gap-2 items-center">
+                          <input
+                            type="number"
+                            placeholder="10"
+                            value={offer.amount}
+                            onChange={(e) => handleChangeOffer(index, "amount", e.target.value)}
+                            className="bg-[#F3F3F3] w-full font-medium paraFont placeholder:text-[#333333]/40 text-base sm:text-lg md:text-[1.4dvw] lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-2 sm:py-2.5 px-4 sm:px-5"
+                          />
+                          {redeemOffers.length > 1 && (
+                            <button
+                              onClick={() => handleRemoveOffer(index)}
+                              className="bg-red-500 text-white w-8 h-8 rounded-full flex justify-center items-center font-bold shrink-0 hover:bg-red-600 transition-all"
+                              title="Remove Offer"
+                            >
+                              <Minus />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
                 <button
-                  onClick={() => handleSaveLowStockThreshold(ratePoint, rateAmount)}
-                  className="bg-[var(--button-color1)]  w-full text-white px-3 py-3  rounded-full cursor-pointer font-[500] text-[1.2dvw] mainFont"
+                  onClick={handleSaveLowStockThreshold}
+                  className="bg-[var(--button-color1)] w-full text-white px-3 py-3 mt-4 rounded-full cursor-pointer font-[500] text-[1.2dvw] mainFont"
                 >
                   Update
                 </button>

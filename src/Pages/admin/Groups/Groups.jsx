@@ -133,20 +133,20 @@ export const Groups = () => {
 
   // Column Definitions: Defines & controls grid columns.
   const [colDefs, setColDefs] = useState([
-    { field: "group_name", headerName: "Group Name",flex:1 },
-    { field: "number_of_product", headerName: "Items",flex:1 },
-    { field: "number_of_product", headerName: "Price",flex:1 },
-    { field: "number_of_product", headerName: "Cost",flex:1 },
+    { field: "group_name", headerName: "Group Name", flex: 1 },
+    { field: "number_of_product", headerName: "Items", flex: 1 },
+    { field: "price", headerName: "Price", flex: 1 },
+    { field: "cost", headerName: "Cost", flex: 1 },
     {
       headerName: "CreatedAt",
       field: "createdAt",
       cellRenderer: (time) => {
         return moment(time.value).format("lll");
-      },flex:1
+      }, flex: 1
     },
     {
       field: "status",
-      headerName: "Status",flex:1,
+      headerName: "Status", flex: 1,
       cellRenderer: (data) => {
         return (
           <>
@@ -155,8 +155,8 @@ export const Groups = () => {
             >
               <div
                 className={`h-2 w-2 ${data.value === "active"
-                    ? "bg-[var(--Positive-color)]"
-                    : "bg-[var(--Negative-color)]"
+                  ? "bg-[var(--Positive-color)]"
+                  : "bg-[var(--Negative-color)]"
                   } rounded-full`}
               ></div>
               <p>{data.value}</p>
@@ -341,6 +341,8 @@ const EditAndAddModel = ({ productData, setShowModel, actionType }) => {
     groupName: "",
     groupStatus: "active",
     deals: "",
+    price: '',
+    cost: '',
     productList: [],
   });
   const [isSaving, setIsSaving] = useState(false);
@@ -418,6 +420,8 @@ const EditAndAddModel = ({ productData, setShowModel, actionType }) => {
         group_name: groupInfo.groupName,
         status: groupInfo.groupStatus,
         deals: groupInfo.deals,
+        price: groupInfo.price,
+        cost: groupInfo.cost,
         productIds: [...itemsIds],
       };
       // console.log(bodyObj);
@@ -429,6 +433,8 @@ const EditAndAddModel = ({ productData, setShowModel, actionType }) => {
         group_name: groupInfo.groupName,
         status: groupInfo.groupStatus,
         deals: groupInfo.deals,
+        price: groupInfo.price,
+        cost: groupInfo.cost,
         productIds: [...itemsIds],
       };
       // console.log(bodyObj);
@@ -603,6 +609,45 @@ const EditAndAddModel = ({ productData, setShowModel, actionType }) => {
                     onChange={handleOnchnage}
                   />
                 </div>
+
+                <div className="flex justify-between items-center gap-5 w-full">
+                  <div className="w-full flex flex-col gap-2">
+                    <label
+                      className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
+                      htmlFor="deals"
+                    >
+                      Price
+                    </label>
+                    <input
+                      type="number"
+                      className="bg-[#F3F3F3] w-full font-normal paraFont text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                      placeholder="Enter price"
+                      id="price"
+                      value={groupInfo.price || ''}
+                      name="price"
+                      onChange={handleOnchnage}
+                    />
+                  </div>
+
+                  <div className="w-full flex flex-col gap-2">
+                    <label
+                      className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
+                      htmlFor="deals"
+                    >
+                      Cost
+                    </label>
+                    <input
+                      type="number"
+                      className="bg-[#F3F3F3] w-full font-normal paraFont text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                      placeholder="Enter cost"
+                      id="cost"
+                      value={groupInfo.cost || ''}
+                      name="cost"
+                      onChange={handleOnchnage}
+                    />
+                  </div>
+                </div>
+
 
                 {/* shows the selected items/products list start */}
                 {groupInfo.productList.length > 0 && (

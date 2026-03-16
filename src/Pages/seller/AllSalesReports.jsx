@@ -84,7 +84,7 @@ export const AllSalesReports = () => {
                 limit: itemsPerPage,
                 search: "",
                 day: dayFilter,
-                userType: Cookies.get('u_type') === 'staff' && 'seller'
+                userType: Cookies.get('u_type') === 'staff' ? 'seller':''
               }),
           });
 
