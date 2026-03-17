@@ -17,13 +17,21 @@ import {
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 // Core CSS
 import { AgGridReact } from "ag-grid-react";
-import { CircleX, Edit, Trash, Download, PlusIcon } from "lucide-react";
+import {
+  CircleX,
+  Edit,
+  Trash,
+  Download,
+  PlusIcon,
+  SearchIcon,
+} from "lucide-react";
 import { DeleteModel } from "../../../components/common/Models/DeleteMode";
 import { toast } from "react-toastify";
 import axiosInstance from "../../../utils/axios-interceptor";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loading } from "../../../components/UI/Loading/Loading";
 import { useBulkDelete } from "../../../utils/apis/BulkDelete";
+import { getAllCustomerList } from "../../../utils/apis/handleCustomer";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -76,12 +84,15 @@ export const Customer = () => {
     userData: null,
     forState: null,
   });
+  const [searchValue, setSearchValue] = useState("");
+
   const [deleteModel, setDeleteModel] = useState({
     state: false,
     userData: null,
     path: null,
   });
   const bulkDelete = useBulkDelete();
+  const queryClient = useQueryClient();
 
   // get all customer list...
   const {
@@ -90,24 +101,36 @@ export const Customer = () => {
     error,
   } = useQuery({
     queryKey: ["customer_list"],
-    queryFn: async () => {
-      try {
-        const getAllCustomerList = await axiosInstance.post(
-          "/api/v1/customer/list",
-          {
-            page: 1,
-            limit: 20,
-          }
-        );
-        if (getAllCustomerList.status === 200 && getAllCustomerList.data) {
-          return getAllCustomerList?.data?.results;
-        }
-      } catch (error) {
-        console.error(error);
-        throw new error(error.response.data.error);
-      }
-    },
+    // queryFn: async () => {
+    //   try {
+    //     const getAllCustomerList = await axiosInstance.post(
+    //       "/api/v1/customer/list",
+    //       {
+    //         page: 1,
+    //         limit: 20,
+    //         searchText: searchValue,
+    //       },
+    //     );
+    //     if (getAllCustomerList.status === 200 && getAllCustomerList.data) {
+    //       return getAllCustomerList?.data?.results;
+    //     }
+    //   } catch (error) {
+    //     console.error(error);
+    //     throw new error(error.response.data.error);
+    //   }
+    // },
+    queryFn: async () => await getAllCustomerList(),
+    placeholderData: (prev) => prev,
+    refetchInterval: 3000,
   });
+
+  const handleSearch = () => {
+    console.log(searchValue);
+    queryClient.prefetchQuery({
+      queryKey: ["customer_list", searchValue],
+      queryFn: async () => await getAllCustomerList(searchValue),
+    });
+  };
 
   // error if error occurs
   useEffect(() => {
@@ -130,7 +153,7 @@ export const Customer = () => {
     setDeleteModel({
       state: true,
       userData: user.id,
-      path: `api/v1/customer/delete/${user.id}`
+      path: `api/v1/customer/delete/${user.id}`,
     });
   };
 
@@ -139,22 +162,21 @@ export const Customer = () => {
     // Add your import CSV logic here
   };
 
-  const handleExportCSV = () => {
-    console.log("Export CSV clicked");
-    // Add your export CSV logic here
-  };
+  // const handleExportCSV = () => {
+  //   console.log("Export CSV clicked");    
+  // };
 
   // Column Definitions: Defines & controls grid columns.
-  const [colDefs, setColDefs] = useState([
+  const [colDefs] = useState([
     //{ field: "id" },
-    { field: "name",flex:1 },
-    { field: "email",flex:1 },
-    { field: "mobile",flex:1 },
-    { field: "dob",flex:1 },
-    { field: "zipcode",flex:1 },
-    { field: "points",flex:1 },
-    { field: "address",flex:1 },
-    { field: "sms_email_promotions",flex:1 },
+    { field: "name", flex: 1 },
+    { field: "email", flex: 1 },
+    { field: "mobile", flex: 1 },
+    { field: "dob", flex: 1 },
+    { field: "zipcode", flex: 1 },
+    { field: "points", flex: 1 },
+    { field: "address", flex: 1 },
+    { field: "sms_email_promotions", flex: 1 },
     {
       headerName: "Actions",
       field: "actions",
@@ -203,13 +225,12 @@ export const Customer = () => {
                   >
                     Add Customer <PluseIcon />
                   </button>
-                  <button 
+                  <button
                     onClick={handleImportCSV}
                     className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
                   >
                     Import CSV <PluseIcon />
                   </button>
-                  
                 </div>
               </div>
             </div>
@@ -268,6 +289,16 @@ export const Customer = () => {
                   </div>
                 </div>
                 <div className="flex gap-2 sm:gap-4 justify-between items-center">
+                  <input
+                    type="text"
+                    placeholder="Search by name, phone, email..."
+                    className="border border-[#d4d4d4] rounded-full px-4 py-2 text-sm lg:text-base"
+                    value={searchValue}
+                    onChange={(e) => setSearchValue(e.target.value)}
+                  />
+                  <button onClick={handleSearch} className="flex justify-between items-center gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full bg-[#0052CC] text-white cursor-pointer font-[600]">
+                    <SearchIcon />
+                  </button>
                   {/*<button className="flex justify-between items-center gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-[600]">
                     Sort <SortIcon />
                   </button>
@@ -275,7 +306,7 @@ export const Customer = () => {
                     Filter <FilterIcon />
                   </button>*/}
                   <button className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-1.5 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
-                  Export CSV <Download size={16} />
+                    Export CSV <Download size={16} />
                   </button>
 
                   <button
@@ -287,7 +318,7 @@ export const Customer = () => {
                           customerIds: bulkDeleteIds,
                         },
                         queryKey: "customer_list",
-                        isDeleting: setIsDeleting
+                        isDeleting: setIsDeleting,
                       });
                     }}
                     className="disabled:cursor-not-allowed disabled:opacity-30 cursor-pointer disabled:pointer-events-none"
@@ -386,7 +417,7 @@ const EditUserModel = ({ setEditUserModel, userData, forState }) => {
           forState: null,
         });
         toast.success(
-          reqSaveCustomer.data.message || "Customer Added Successfully!"
+          reqSaveCustomer.data.message || "Customer Added Successfully!",
         );
       }
     } catch (error) {

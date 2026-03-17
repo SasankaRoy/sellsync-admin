@@ -15,7 +15,28 @@ export const getCustomerDetails = async (number) => {
 
     } catch (error) {
         console.log(error)
-        toast.error(error.message || error.response.data.message || 'Failed to fetch customer details.')
+        toast.error(error.response.data.message || error.message || 'Failed to fetch customer details.')
         return error.message || error.response.data.message || 'Failed to fetch customer details.'
+    }
+}
+
+
+export const getAllCustomerList = async (searchValue) => {
+    try {
+        const getAllCustomerList = await axiosInstance.post(
+            "/api/v1/customer/list",
+            {
+                page: 1,
+                limit: 20,
+                searchText: searchValue,
+            },
+        );
+        if (getAllCustomerList.status === 200 && getAllCustomerList.data) {
+            return getAllCustomerList?.data?.results;
+        }
+        return getAllCustomerList?.data?.results;
+    } catch (error) {
+        console.error(error);
+        throw new error(error.response.data.error);
     }
 }

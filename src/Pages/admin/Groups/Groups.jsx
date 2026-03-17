@@ -17,6 +17,7 @@ import moment from "moment/moment";
 import { Loading } from "../../../components/UI/Loading/Loading";
 import { useDeboune } from "../../../hooks/useDebounce";
 import ProductImg from "../.././../assets/images/ProductImg1.png";
+import { Link } from "react-router-dom";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -116,9 +117,10 @@ export const Groups = () => {
   const onDelete = (product) => {
     setDeleteModel({
       state: true,
-      productId: product.id,
-      path: `api/v1/group/delete/${product.id}`,
+      productId: product,
+      path: `/api/v1/group/delete/${product}`,
     });
+    console.log(product, "delete");
   };
 
   const handleImportCSV = () => {
@@ -132,21 +134,37 @@ export const Groups = () => {
   };
 
   // Column Definitions: Defines & controls grid columns.
-  const [colDefs, setColDefs] = useState([
+  const [colDefs, ] = useState([
     { field: "group_name", headerName: "Group Name", flex: 1 },
     { field: "number_of_product", headerName: "Items", flex: 1 },
-    { field: "price", headerName: "Price", flex: 1 },
-    { field: "cost", headerName: "Cost", flex: 1 },
+    {
+      field: "price",
+      headerName: "Price",
+      flex: 1,
+      cellRenderer: (amount) => {
+        return `$ ${amount?.value?.toFixed(2)}`;
+      },
+    },
+    {
+      field: "cost",
+      headerName: "Cost",
+      flex: 1,
+      cellRenderer: (amount) => {
+        return `$ ${amount?.value?.toFixed(2)}`;
+      },
+    },
     {
       headerName: "CreatedAt",
       field: "createdAt",
       cellRenderer: (time) => {
         return moment(time.value).format("lll");
-      }, flex: 1
+      },
+      flex: 1,
     },
     {
       field: "status",
-      headerName: "Status", flex: 1,
+      headerName: "Status",
+      flex: 1,
       cellRenderer: (data) => {
         return (
           <>
@@ -154,10 +172,11 @@ export const Groups = () => {
               className={`capitalize font-semibold  flex justify-center items-center gap-3`}
             >
               <div
-                className={`h-2 w-2 ${data.value === "active"
-                  ? "bg-[var(--Positive-color)]"
-                  : "bg-[var(--Negative-color)]"
-                  } rounded-full`}
+                className={`h-2 w-2 ${
+                  data.value === "active"
+                    ? "bg-[var(--Positive-color)]"
+                    : "bg-[var(--Negative-color)]"
+                } rounded-full`}
               ></div>
               <p>{data.value}</p>
             </div>
@@ -170,6 +189,7 @@ export const Groups = () => {
       field: "actions",
       cellRenderer: ActionBtns,
       cellRendererParams: {
+        groupDetails: true,
         onEdit,
         onDelete,
         skinSafe: true,
@@ -291,7 +311,7 @@ export const Groups = () => {
           actionType={showModel.actionType}
         />
       )}
-      {deleteModel.state && deleteModel.productId && deleteModel.path && (
+      {deleteModel.state && deleteModel.path && (
         <DeleteModel
           setDeleteModel={setDeleteModel}
           productId={deleteModel.productId}
@@ -303,7 +323,7 @@ export const Groups = () => {
 };
 
 const ActionBtns = (props) => {
-  const { onEdit, onDelete } = props;
+  const { onEdit, onDelete, groupDetails } = props;
   const { data } = props;
 
   const handleEdit = () => {
@@ -311,18 +331,26 @@ const ActionBtns = (props) => {
   };
 
   const handleDelete = () => {
-    onDelete(data);
+    onDelete(data.id);
   };
 
   return (
     <>
       <div className="w-full flex gap-2 sm:gap-4 py-2 justify-center items-center">
-        <button
+        {groupDetails && (
+          <button
+            className="font-semibold font-[var(--paraFont)] bg-[var(--button-color1)] text-white p-1 sm:p-1.5 rounded-full border-none cursor-pointer"
+            onClick={handleEdit}
+          >
+            <Edit size={16} className="sm:w-[18px] sm:h-[18px]" />
+          </button>
+        )}
+        {/* <button
           className="font-semibold font-[var(--paraFont)] bg-[var(--button-color1)] text-white p-1 sm:p-1.5 rounded-full border-none cursor-pointer"
           onClick={handleEdit}
         >
           <Edit size={16} className="sm:w-[18px] sm:h-[18px]" />
-        </button>
+        </button> */}
 
         <button
           className="font-semibold font-[var(--paraFont)] bg-[var(--Negative-color)] text-white p-1 sm:p-1.5 rounded-full border-none cursor-pointer"
@@ -341,9 +369,11 @@ const EditAndAddModel = ({ productData, setShowModel, actionType }) => {
     groupName: "",
     groupStatus: "active",
     deals: "",
-    price: '',
-    cost: '',
+    price: "",
+    cost: "",
     productList: [],
+    total_products:'',
+    id:''
   });
   const [isSaving, setIsSaving] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
@@ -351,6 +381,14 @@ const EditAndAddModel = ({ productData, setShowModel, actionType }) => {
   const [searchResult, setSearchResult] = useState([]);
   const [showItemList, setShowItemList] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
+
+  // Apply settings across all columns
+  const defaultColDef = useMemo(() => {
+    return {
+      filter: true,
+      editable: false,
+    };
+  }, []);
 
   const handleCloseModel = () => {
     setShowModel({
@@ -410,8 +448,6 @@ const EditAndAddModel = ({ productData, setShowModel, actionType }) => {
     },
   });
 
-
-
   const handleSubmit = () => {
     if (actionType === "Add") {
       const itemsIds = groupInfo.productList.map((item) => item.id) || [];
@@ -444,9 +480,6 @@ const EditAndAddModel = ({ productData, setShowModel, actionType }) => {
       });
     }
   };
-
-
-
 
   // Handle adding a selected item
   const handleAddItem = (product) => {
@@ -499,7 +532,7 @@ const EditAndAddModel = ({ productData, setShowModel, actionType }) => {
   const getGroupDetails = async () => {
     try {
       const reqGroupData = await axiosInstance.get(
-        `api/v1/group/details/${productData.id}`
+        `api/v1/group/details/${productData.id}`,
       );
       if (reqGroupData.status === 200 && reqGroupData.data) {
         setIsFetching(false);
@@ -508,16 +541,18 @@ const EditAndAddModel = ({ productData, setShowModel, actionType }) => {
           groupName: reqGroupData?.data?.groupDetails?.group_name,
           groupStatus: reqGroupData?.data?.groupDetails?.status,
           deals: reqGroupData?.data?.groupDetails?.deals,
-          price: reqGroupData?.data?.groupDetails?.price,
-          cost: reqGroupData?.data?.groupDetails?.cost,
+          price: reqGroupData?.data?.groupDetails?.group_price,
+          cost: reqGroupData?.data?.groupDetails?.group_cost,
           productList: [...reqGroupData?.data?.groupDetails?.products],
+          total_products: reqGroupData?.data?.groupDetails?.total_products,
+          id: reqGroupData?.data?.groupDetails?.id,
         });
       }
     } catch (error) {
       console.log(error?.response?.data);
       setIsFetching(false);
       toast.error(
-        error?.response?.data?.message || "Failed to Fetch Group details!"
+        error?.response?.data?.message || "Failed to Fetch Group details!",
       );
     }
   };
@@ -528,6 +563,8 @@ const EditAndAddModel = ({ productData, setShowModel, actionType }) => {
       getGroupDetails();
     }
   }, [actionType, productData]);
+
+  
 
   return (
     <>
@@ -606,7 +643,7 @@ const EditAndAddModel = ({ productData, setShowModel, actionType }) => {
                     className="bg-[#F3F3F3] w-full font-normal paraFont text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                     placeholder="Enter deals"
                     id="deals"
-                    value={groupInfo.deals || ''}
+                    value={groupInfo.deals || ""}
                     name="deals"
                     onChange={handleOnchnage}
                   />
@@ -625,7 +662,7 @@ const EditAndAddModel = ({ productData, setShowModel, actionType }) => {
                       className="bg-[#F3F3F3] w-full font-normal paraFont text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                       placeholder="Enter price"
                       id="price"
-                      value={groupInfo.price || ''}
+                      value={groupInfo.price || ""}
                       name="price"
                       onChange={handleOnchnage}
                     />
@@ -643,13 +680,12 @@ const EditAndAddModel = ({ productData, setShowModel, actionType }) => {
                       className="bg-[#F3F3F3] w-full font-normal paraFont text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
                       placeholder="Enter cost"
                       id="cost"
-                      value={groupInfo.cost || ''}
+                      value={groupInfo.cost || ""}
                       name="cost"
                       onChange={handleOnchnage}
                     />
                   </div>
                 </div>
-
 
                 {/* shows the selected items/products list start */}
                 {groupInfo.productList.length > 0 && (
@@ -657,11 +693,14 @@ const EditAndAddModel = ({ productData, setShowModel, actionType }) => {
                     <label className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont flex justify-start items-center gap-2">
                       Selected Items lists{" "}
                       <div className="mainFont font-medium text-[1.1dvw] bg-[var(--counterBg-color)] shrink-0 h-[2dvw] w-[2dvw] flex justify-center items-center text-white rounded-full">
-                        {groupInfo.productList.length}
+                        {groupInfo?.total_products}
                       </div>
+                      <Link to={`/admin/group/details/${groupInfo?.id}`} className="text-[var(--button-color1)] font-medium paraFont cursor-pointer" >
+                        See all
+                      </Link>
                     </label>
                     <div className="flex flex-wrap justify-start items-center gap-2 my-4">
-                      {groupInfo.productList.map((sItem, id) => (
+                      {groupInfo.productList.slice(0, 2).map((sItem, id) => (
                         <div
                           key={id}
                           className="bg-[var(--border-color)]/20 shrink-0 px-3 py-1.5 rounded border border-[var(--border-color)]  shadow-inner flex justify-between items-center gap-3"
@@ -703,7 +742,7 @@ const EditAndAddModel = ({ productData, setShowModel, actionType }) => {
                       className="bg-[var(--button-color1)] text-white font-[500] mainFont py-1.5 px-4 rounded-full flex items-center justify-center space-x-1 transition-colors shadow-sm text-sm"
                       onClick={() => {
                         // Add scan functionality here
-                        console.log('Scan button clicked');
+                        console.log("Scan button clicked");
                       }}
                     >
                       <Camera className="h-6 w-8" />

@@ -129,10 +129,10 @@ export const AllSalesReports = () => {
   }, [transactions]);
 
   // Column Definitions: Defines & controls grid columns.
-  const [colDefs,] = useState([
-    { field: "billId", headerName: "Bill Id" },
-    { field: "method", headerName: "Payment Type" },
-    { headerName: "Status", field: "status" },
+  const [colDefs] = useState([
+    { field: "billId", headerName: "Bill Id", flex: 1 },
+    { field: "method", headerName: "Payment Type", flex: 1 },
+    { headerName: "Status", field: "status", flex: 1 },
     {
       field: "grandTotal",
       headerName: "Grand Total",
@@ -146,6 +146,7 @@ export const AllSalesReports = () => {
       cellRenderer: (amount) => {
         return Math.round(Number(amount.value) * 100) / 100;
       },
+      flex: 1,
     },
     {
       headerName: "Transaction Date",
@@ -153,6 +154,7 @@ export const AllSalesReports = () => {
       cellRenderer: (time) => {
         return moment(time.value).format("lll");
       },
+      flex: 1,
     },
     {
       field: "tendered",
@@ -160,6 +162,7 @@ export const AllSalesReports = () => {
       cellRenderer: (amount) => {
         return Math.round(Number(amount.value) * 100) / 100;
       },
+      flex: 1,
     },
     {
       headerName: "Change",
@@ -167,6 +170,7 @@ export const AllSalesReports = () => {
       cellRenderer: (amount) => {
         return Math.round(Number(amount.value) * 100) / 100;
       },
+      flex: 1,
     },
     {
       field: "change",
@@ -174,15 +178,17 @@ export const AllSalesReports = () => {
       cellRenderer: (amount) => {
         return Math.round(Number(amount.value) * 100) / 100;
       },
+      flex: 1,
     },
     {
       headerName: "Total Sale",
       field: "Sale",
       cellRenderer: (item) => {
-        const { grandTotal, } = item.data;
+        // const { grandTotal } = item?.data;
         // console.log(amount.data.grandTotal amount.data.tendered)
-        return Math.round(Number(grandTotal) * 100) / 100;
+        return Math.round(Number(item?.data?.grandTotal) * 100) / 100;
       },
+      flex: 1,
     },
   ]);
 

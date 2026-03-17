@@ -55,6 +55,7 @@ import Taxes from "./Pages/admin/Daily/GlobalTax";
 import { Lowstock } from "./Pages/admin/Lowstock/Lowstock";
 import { TopSellinglist } from "./Pages/admin/TopSellinglist/TopSellinglist";
 import { OutOfStock } from "./Pages/admin/OutOfStock/OutOfStock";
+import { GroupDetails } from "./Pages/admin/Groups/GroupDetails";
 
 function App() {
   // Mirror ringUps into localStorage for customer screen tab to consume
@@ -153,6 +154,7 @@ function App() {
               <Route path="/admin/low-stock" element={<Lowstock />} />
               <Route path="/admin/top-selling-products" element={<TopSellinglist />} />
               <Route path="/admin/out-of-stock-products" element={<OutOfStock />} />
+              <Route path="/admin/group/details/:id" element={<GroupDetails />} />
             </Route>
 
             {/* Seller Routes - Protected by RouteGuard */}

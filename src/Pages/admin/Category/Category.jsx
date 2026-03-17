@@ -27,6 +27,7 @@ export const Category = () => {
     productData: null,
     actionType: "",
   });
+  const [search_text, setSearchText] = useState("");
 
   const [deleteModel, setDeleteModel] = useState({
     state: false,
@@ -39,8 +40,9 @@ export const Category = () => {
         "api/v1/common/category-list",
         {
           page: 1,
-          limit: 10,
-        }
+          limit: 100,
+          search_text: search_text,
+        },
       );
 
       if (getCategoryList.data && getCategoryList.status === 200) {
@@ -58,7 +60,7 @@ export const Category = () => {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["get_category_list"],
+    queryKey: ["get_category_list",search_text],
     queryFn: handleGetCategoryList,
   });
 
@@ -116,12 +118,13 @@ export const Category = () => {
   };
 
   // Column Definitions: Defines & controls grid columns.
-  const [colDefs, setColDefs] = useState([
+  const [colDefs,] = useState([
     { field: "category_name", headerName: "Category Name", flex: 1 },
     { field: "number_of_product", headerName: "Number of Items", flex: 1 },
     { field: "category_slug", headerName: "Slug", flex: 1 },
     {
-      field: "status", flex: 1,
+      field: "status",
+      flex: 1,
       headerName: "Status",
       cellRenderer: (data) => {
         return (
@@ -130,10 +133,11 @@ export const Category = () => {
               className={`capitalize font-semibold  flex justify-center items-center gap-3`}
             >
               <div
-                className={`h-2 w-2 ${data.value === "active"
-                  ? "bg-[var(--Positive-color)]"
-                  : "bg-[var(--Negative-color)]"
-                  } rounded-full`}
+                className={`h-2 w-2 ${
+                  data.value === "active"
+                    ? "bg-[var(--Positive-color)]"
+                    : "bg-[var(--Negative-color)]"
+                } rounded-full`}
               ></div>
               <p>{data.value}</p>
             </div>
@@ -191,11 +195,16 @@ export const Category = () => {
               <div className="w-full flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-full">
                 <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center py-1.5 shrink-0 gap-3 sm:gap-0 lg:flex-row lg:items-center lg:gap-0">
                   <div className="flex justify-between sm:justify-center items-center gap-3 w-full sm:w-auto lg:justify-center lg:w-auto">
-                    <select className="font-[500] mainFont px-4 justify-between border-none outline-none text-sm lg:text-base">
-                      <option>All Category</option>
-                      <option>Beer</option>
-                      <option>Wine</option>
-                      <option>Spirits</option>
+                    <select
+                      onChange={(e) => setSearchText(e.target.value)}
+                      className="font-[500] mainFont px-4 justify-between border-none outline-none text-sm lg:text-base"
+                    >
+                      <option value=" ">All Category</option>
+                      {rowData.map((item) => (
+                        <option key={item.category_name}>
+                          {item.category_name}
+                        </option>
+                      ))}                     
                     </select>
                     <div className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-[1.8dvw] lg:w-[1.8dvw] bg-[var(--counterBg-color)] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem] sm:min-w-[1.75rem] sm:min-h-[1.75rem] md:min-w-[2rem] md:min-h-[2rem]">
                       <p className="text-xs sm:text-xs md:text-sm lg:text-[1dvw] font-[500] text-white">
@@ -254,8 +263,8 @@ export const Category = () => {
           setDeleteModel={setDeleteModel}
           productId={deleteModel.productId}
           path={deleteModel.path}
-        // setRowData={setRowData}
-        // rowData={rowData}
+          // setRowData={setRowData}
+          // rowData={rowData}
         />
       )}
     </Layout>
@@ -307,8 +316,6 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType }) => {
     ExcludeLoyaltyReward: false,
   });
   const queryClient = useQueryClient();
-
-
 
   const handleCloseModel = () => {
     setShowModel({
