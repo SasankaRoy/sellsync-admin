@@ -24,6 +24,7 @@ import {
   Download,
   PlusIcon,
   SearchIcon,
+  Eye,
 } from "lucide-react";
 import { DeleteModel } from "../../../components/common/Models/DeleteMode";
 import { toast } from "react-toastify";
@@ -31,7 +32,11 @@ import axiosInstance from "../../../utils/axios-interceptor";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loading } from "../../../components/UI/Loading/Loading";
 import { useBulkDelete } from "../../../utils/apis/BulkDelete";
-import { getAllCustomerList } from "../../../utils/apis/handleCustomer";
+import {
+  customersOverviewData,
+  getAllCustomerList,
+} from "../../../utils/apis/handleCustomer";
+import { Link } from "react-router-dom";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -44,13 +49,11 @@ const ActionBtns = (props) => {
   const { onEdit, onDelete } = props;
   const { data } = props;
 
+
   const handleEdit = () => {
     onEdit(data);
   };
 
-  const handleView = () => {
-    onView(data);
-  };
   const handleDelete = () => {
     onDelete(data);
   };
@@ -64,6 +67,13 @@ const ActionBtns = (props) => {
         >
           <Edit size={18} />
         </button>
+        <Link
+          to={`/admin/customer/details/${data.id}`}
+          className="font-semibold font-[var(--paraFont)] bg-[var(--button-color1)] text-white p-1.5 rounded-full border-none cursor-pointer"
+          
+        >
+          <Eye size={18} />
+        </Link>
 
         <button
           className="font-semibold font-[var(--paraFont)] bg-[var(--Negative-color)] text-white p-1.5 rounded-full border-none cursor-pointer"
@@ -92,7 +102,7 @@ export const Customer = () => {
     path: null,
   });
   const bulkDelete = useBulkDelete();
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
 
   // get all customer list...
   const {
@@ -100,37 +110,23 @@ export const Customer = () => {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["customer_list"],
-    // queryFn: async () => {
-    //   try {
-    //     const getAllCustomerList = await axiosInstance.post(
-    //       "/api/v1/customer/list",
-    //       {
-    //         page: 1,
-    //         limit: 20,
-    //         searchText: searchValue,
-    //       },
-    //     );
-    //     if (getAllCustomerList.status === 200 && getAllCustomerList.data) {
-    //       return getAllCustomerList?.data?.results;
-    //     }
-    //   } catch (error) {
-    //     console.error(error);
-    //     throw new error(error.response.data.error);
-    //   }
-    // },
-    queryFn: async () => await getAllCustomerList(),
+    queryKey: ["customer_list", searchValue],
+    queryFn: async () => await getAllCustomerList(searchValue),
     placeholderData: (prev) => prev,
-    refetchInterval: 3000,
+    // refetchInterval: 800,
   });
 
-  const handleSearch = () => {
-    console.log(searchValue);
-    queryClient.prefetchQuery({
-      queryKey: ["customer_list", searchValue],
-      queryFn: async () => await getAllCustomerList(searchValue),
-    });
-  };
+  // get customer over-view data ....
+  const {
+    data: customerOverviewdata,
+    isLoading: customerOverviewLoading,
+    isError: customerOverviewError,
+  } = useQuery({
+    queryKey: ["customer_overview"],
+    queryFn: async () => await customersOverviewData(),
+    placeholderData: (prev) => prev,
+    // refetchInterval: 800,
+  });
 
   // error if error occurs
   useEffect(() => {
@@ -163,7 +159,7 @@ export const Customer = () => {
   };
 
   // const handleExportCSV = () => {
-  //   console.log("Export CSV clicked");    
+  //   console.log("Export CSV clicked");
   // };
 
   // Column Definitions: Defines & controls grid columns.
@@ -213,6 +209,26 @@ export const Customer = () => {
                   Customers
                 </h3>
                 <div className="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-3 sm:gap-5 w-full sm:w-auto lg:flex-row lg:w-auto lg:gap-5">
+                  <div className="relative w-full sm:w-auto">
+                    <select className="appearance-none pl-4 pr-8 py-2 sm:py-1 md:py-1.5 bg-[var(--button-color2)] text-[var(--primary-color)] rounded-full font-[var(--paraFont)] text-sm sm:text-base md:text-base w-full sm:w-auto cursor-pointer">
+                      <option value="TODAY">Today</option>
+                      <option value="LAST_DAY">Last Day</option>
+                      <option value="LAST_3_DAY">Last 3 Days</option>
+                      <option value="LAST_7_DAY">Last 7 Days</option>
+                      <option value="LAST_30_DAY">Last 30 Days</option>
+                      <option value="CUSTOM">Custom Range</option>
+                    </select>
+                    <div className="pointer-events-none   absolute inset-y-0 right-0 flex items-center px-2 text-[var(--primary-color)]">
+                      <svg
+                        className="fill-current h-4 w-4"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                      </svg>
+                    </div>
+                  </div>
+
                   <button
                     onClick={() => {
                       setEditUserModel({
@@ -238,7 +254,7 @@ export const Customer = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 w-full my-4 lg:my-3">
               <Overviewcards
                 cardTitle="Active Customers"
-                cardValue="2"
+                cardValue={customerOverviewdata?.activeCustomers}
                 percent="View"
                 className="lg:scale-95 lg:hover:scale-100 transition-transform duration-200"
                 icon={
@@ -247,7 +263,7 @@ export const Customer = () => {
               />
               <Overviewcards
                 cardTitle="Inactive Customers"
-                cardValue="8"
+                cardValue={customerOverviewdata?.inactiveCustomers}
                 percent="View"
                 className="lg:scale-95 lg:hover:scale-100 transition-transform duration-200"
                 icon={
@@ -256,7 +272,7 @@ export const Customer = () => {
               />
               <Overviewcards
                 cardTitle="Customers with Promotions"
-                cardValue="4"
+                cardValue={customerOverviewdata?.customersWithPromotions}
                 percent="View"
                 className="lg:scale-95 lg:hover:scale-100 transition-transform duration-200"
                 icon={
@@ -265,7 +281,7 @@ export const Customer = () => {
               />
               <Overviewcards
                 cardTitle="Total Customers"
-                cardValue="8,593"
+                cardValue={customerOverviewdata?.totalCustomers}
                 percent="View"
                 className="lg:scale-95 lg:hover:scale-100 transition-transform duration-200"
                 icon={
@@ -296,9 +312,7 @@ export const Customer = () => {
                     value={searchValue}
                     onChange={(e) => setSearchValue(e.target.value)}
                   />
-                  <button onClick={handleSearch} className="flex justify-between items-center gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full bg-[#0052CC] text-white cursor-pointer font-[600]">
-                    <SearchIcon />
-                  </button>
+
                   {/*<button className="flex justify-between items-center gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-[600]">
                     Sort <SortIcon />
                   </button>

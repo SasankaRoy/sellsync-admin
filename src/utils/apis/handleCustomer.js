@@ -20,6 +20,20 @@ export const getCustomerDetails = async (number) => {
     }
 }
 
+export const getCustomerDetailsById = async (customerId) => {
+    try {
+        const getCustomerData = await axiosInstance.get(`/api/v1/customer/details/${customerId}`);
+        if (getCustomerData.status === 200 && getCustomerData.data) {
+            return getCustomerData.data?.product || {};
+        }
+        return getCustomerData.data?.product || {};
+    } catch (error) {
+        console.error(error);
+        toast.error(error.response.data.message || error.message || 'Failed to fetch customer details.')
+        return error.message || error.response.data.message || 'Failed to fetch customer details.'
+    }
+}
+
 
 export const getAllCustomerList = async (searchValue) => {
     try {
@@ -27,7 +41,7 @@ export const getAllCustomerList = async (searchValue) => {
             "/api/v1/customer/list",
             {
                 page: 1,
-                limit: 20,
+                limit: 100,
                 searchText: searchValue,
             },
         );
@@ -38,5 +52,34 @@ export const getAllCustomerList = async (searchValue) => {
     } catch (error) {
         console.error(error);
         throw new error(error.response.data.error);
+    }
+}
+
+export const customersOverviewData = async () => {
+    try {
+        const customersOverviewData = await axiosInstance.get(
+            "/api/v1/customer/dashboard",
+        );
+        if (customersOverviewData.status === 200 && customersOverviewData.data) {
+            return customersOverviewData?.data;
+        }
+        return customersOverviewData?.data;
+    } catch (error) {
+        console.error(error);
+        throw new error(error.response.data.error);
+    }
+}
+
+export const getCustomerPurchaseHistory = async (customerId) => {
+    try {
+        const getCustomerPurchaseHistory = await axiosInstance.get(`/api/v1/customer/transaction-details/${customerId}`);
+        if (getCustomerPurchaseHistory.status === 200 && getCustomerPurchaseHistory.data) {
+            return getCustomerPurchaseHistory.data?.product || {};
+        }
+        return getCustomerPurchaseHistory.data?.product || {};
+    } catch (error) {
+        console.error(error);
+        toast.error(error.response.data.message || error.message || 'Failed to fetch customer purchase history.')
+        return error.message || error.response.data.message || 'Failed to fetch customer purchase history.'
     }
 }

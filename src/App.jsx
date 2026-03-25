@@ -56,6 +56,7 @@ import { Lowstock } from "./Pages/admin/Lowstock/Lowstock";
 import { TopSellinglist } from "./Pages/admin/TopSellinglist/TopSellinglist";
 import { OutOfStock } from "./Pages/admin/OutOfStock/OutOfStock";
 import { GroupDetails } from "./Pages/admin/Groups/GroupDetails";
+import { CustomerDetails } from "./Pages/admin/Customer/CustomerDetails";
 
 function App() {
   // Mirror ringUps into localStorage for customer screen tab to consume
@@ -152,9 +153,22 @@ function App() {
               <Route path="/admin/payroll" element={<Payroll />} />
               <Route path="/admin/item-report/:id" element={<ItemReport />} />
               <Route path="/admin/low-stock" element={<Lowstock />} />
-              <Route path="/admin/top-selling-products" element={<TopSellinglist />} />
-              <Route path="/admin/out-of-stock-products" element={<OutOfStock />} />
-              <Route path="/admin/group/details/:id" element={<GroupDetails />} />
+              <Route
+                path="/admin/top-selling-products"
+                element={<TopSellinglist />}
+              />
+              <Route
+                path="/admin/out-of-stock-products"
+                element={<OutOfStock />}
+              />
+              <Route
+                path="/admin/group/details/:id"
+                element={<GroupDetails />}
+              />
+              <Route
+                path="/admin/customer/details/:id"
+                element={<CustomerDetails />}
+              />
             </Route>
 
             {/* Seller Routes - Protected by RouteGuard */}

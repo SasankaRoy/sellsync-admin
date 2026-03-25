@@ -206,6 +206,8 @@ export const Category = () => {
                         </option>
                       ))}                     
                     </select>
+
+                    
                     <div className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-[1.8dvw] lg:w-[1.8dvw] bg-[var(--counterBg-color)] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem] sm:min-w-[1.75rem] sm:min-h-[1.75rem] md:min-w-[2rem] md:min-h-[2rem]">
                       <p className="text-xs sm:text-xs md:text-sm lg:text-[1dvw] font-[500] text-white">
                         {rowData.length}
