@@ -23,6 +23,7 @@ import {
 import { handleBillStatusUpdate } from "../../../utils/apis/billStatusUpdate";
 import { handleGetBillDetails } from "../../../utils/apis/getBillDetails";
 import { getRefund } from "../../../utils/apis/getAllTransaction";
+import { toast } from "react-toastify";
 
 const tabPrefix = {
   amount: "AMOUNT",
@@ -143,7 +144,13 @@ export const ViewSales = ({ setViewSale, billID }) => {
   const handleRefund = async (billId, refundMode) => {
     const reqRefund = await getRefund(billId);
 
-    console.log(reqRefund)
+    setIsOpenRefundModal(false);
+    queryClient.invalidateQueries(["get_bill_details"]);
+    queryClient.invalidateQueries(["get_all_transaction"]);
+
+    toast.success("Refund request sent successfully");
+
+    console.log(reqRefund);
   };
 
   return (
@@ -178,9 +185,10 @@ export const ViewSales = ({ setViewSale, billID }) => {
                     onClick={() => {
                       handleTabSwitch(tabPrefix.amount);
                     }}
-                    className={` p-3 font-semibold mainFont text-(--mainText-color)/70 cursor-pointer hover:bg-(--button-color1) hover:text-white   flex justify-center items-center ${currentActiveTab === tabPrefix.amount &&
+                    className={` p-3 font-semibold mainFont text-(--mainText-color)/70 cursor-pointer hover:bg-(--button-color1) hover:text-white   flex justify-center items-center ${
+                      currentActiveTab === tabPrefix.amount &&
                       "bg-(--button-color1) text-white "
-                      } gap-3 transition-all duration-300 ease-linear`}
+                    } gap-3 transition-all duration-300 ease-linear`}
                   >
                     <BanknoteArrowDown />
                     Amount and Payments
@@ -189,9 +197,10 @@ export const ViewSales = ({ setViewSale, billID }) => {
                     onClick={() => {
                       handleTabSwitch(tabPrefix.items);
                     }}
-                    className={` p-3 font-semibold mainFont text-(--mainText-color)/70 cursor-pointer hover:bg-(--button-color1) hover:text-white   flex justify-center ${currentActiveTab === tabPrefix.items &&
+                    className={` p-3 font-semibold mainFont text-(--mainText-color)/70 cursor-pointer hover:bg-(--button-color1) hover:text-white   flex justify-center ${
+                      currentActiveTab === tabPrefix.items &&
                       "bg-(--button-color1) text-white "
-                      } items-center gap-3 transition-all duration-300 ease-linear`}
+                    } items-center gap-3 transition-all duration-300 ease-linear`}
                   >
                     <BaggageClaim />
                     Items/Products
@@ -200,9 +209,10 @@ export const ViewSales = ({ setViewSale, billID }) => {
                     onClick={() => {
                       handleTabSwitch(tabPrefix.customer);
                     }}
-                    className={` p-3 font-semibold mainFont text-(--mainText-color)/70 cursor-pointer hover:bg-(--button-color1) hover:text-white   flex justify-center ${currentActiveTab === tabPrefix.customer &&
+                    className={` p-3 font-semibold mainFont text-(--mainText-color)/70 cursor-pointer hover:bg-(--button-color1) hover:text-white   flex justify-center ${
+                      currentActiveTab === tabPrefix.customer &&
                       "bg-(--button-color1) text-white "
-                      } items-center gap-3 transition-all duration-200 ease-linear`}
+                    } items-center gap-3 transition-all duration-200 ease-linear`}
                   >
                     <Users />
                     Customer Info
@@ -322,21 +332,18 @@ export const ViewSales = ({ setViewSale, billID }) => {
                 <button className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color2)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300">
                   {data.status === "PAID" ? "Reprint Bill" : "Print Bill"}
                 </button>
-                {
-                  data.status === 'OPEN' && (
-                    <button
-                      disabled={
-                        data.status === "PAID" ||
-                        loggedUser?.id !== data?.created_by
-                      }
-                      onClick={handleCompleteTranscation}
-                      className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      Complete Transcation
-                    </button>
-                  )
-                }
-
+                {data.status === "OPEN" && (
+                  <button
+                    disabled={
+                      data.status === "PAID" ||
+                      loggedUser?.id !== data?.created_by
+                    }
+                    onClick={handleCompleteTranscation}
+                    className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Complete Transcation
+                  </button>
+                )}
 
                 {data.status === "PAID" ? (
                   <button
@@ -347,8 +354,8 @@ export const ViewSales = ({ setViewSale, billID }) => {
                   </button>
                 ) : (
                   <>
-                    {
-                      data.status === 'OPEN' || data.status === 'HOLD' && (
+                    {data.status === "OPEN" ||
+                      (data.status === "HOLD" && (
                         <button
                           disabled={data.status === "PAID"}
                           onClick={handleCancelTranscation}
@@ -356,8 +363,7 @@ export const ViewSales = ({ setViewSale, billID }) => {
                         >
                           Cancel Transcation
                         </button>
-                      )
-                    }
+                      ))}
                   </>
                 )}
               </div>
