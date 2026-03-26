@@ -14,6 +14,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "../../../utils/axios-interceptor";
 import { toast } from "react-toastify";
 import { Loading } from "../../../components/UI/Loading/Loading";
+import { getCategoryDetails } from "../../../utils/apis/handleCategory";
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 const rowSelection = {
@@ -60,7 +61,7 @@ export const Category = () => {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["get_category_list",search_text],
+    queryKey: ["get_category_list", search_text],
     queryFn: handleGetCategoryList,
   });
 
@@ -98,7 +99,6 @@ export const Category = () => {
   };
 
   const onEdit = (product) => {
-    console.log(product, "edit");
     if (product) {
       setShowModel({
         state: true,
@@ -118,7 +118,7 @@ export const Category = () => {
   };
 
   // Column Definitions: Defines & controls grid columns.
-  const [colDefs,] = useState([
+  const [colDefs] = useState([
     { field: "category_name", headerName: "Category Name", flex: 1 },
     { field: "number_of_product", headerName: "Number of Items", flex: 1 },
     { field: "category_slug", headerName: "Slug", flex: 1 },
@@ -204,10 +204,9 @@ export const Category = () => {
                         <option key={item.category_name}>
                           {item.category_name}
                         </option>
-                      ))}                     
+                      ))}
                     </select>
 
-                    
                     <div className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-[1.8dvw] lg:w-[1.8dvw] bg-[var(--counterBg-color)] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem] sm:min-w-[1.75rem] sm:min-h-[1.75rem] md:min-w-[2rem] md:min-h-[2rem]">
                       <p className="text-xs sm:text-xs md:text-sm lg:text-[1dvw] font-[500] text-white">
                         {rowData.length}
@@ -308,8 +307,8 @@ const ActionBtns = (props) => {
 
 const EditAndAddModel = ({ productData = {}, setShowModel, actionType }) => {
   const [categoryFields, setCategoryFields] = useState({
-    CategoryName: productData?.category_name || "",
-    AgeVerification: productData?.category_name || "", // Changed from Stock to AgeVerification
+    CategoryName: "",
+    AgeVerification: "", // Changed from Stock to AgeVerification
     DefaultMargin: "",
     AllowEBT: false,
     DoNotDiscount: false,
@@ -318,6 +317,27 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType }) => {
     ExcludeLoyaltyReward: false,
   });
   const queryClient = useQueryClient();
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["get_category_details", productData?.id || productData?._id],
+    queryFn: () => getCategoryDetails(productData?.id || productData?._id),
+    // enabled: !!productData?.id || productData?._id,
+  });
+
+  useEffect(() => {
+    if (data) {
+      setCategoryFields({
+        CategoryName: data?.category_name || "",
+        AgeVerification: data?.age_verification || "",
+        DefaultMargin: data?.default_margin || "",
+        AllowEBT: data?.allow_ebt,
+        DoNotDiscount: data?.do_not_discount,
+        DoNotShowToWebstore: data?.do_not_show_to_webstore,
+        ExcludeDualPrice: data?.exclude_dial_price,
+        ExcludeLoyaltyReward: data?.exclude_loyalty_reward,
+      });
+    }
+  }, [data]);
 
   const handleCloseModel = () => {
     setShowModel({
@@ -352,7 +372,7 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType }) => {
         });
         return reqSaveCategory.data;
       }
-      throw new Error(response.data?.message || "Failed to add group");
+      throw new Error(reqSaveCategory.data?.message || "Failed to add group");
     },
     onError: (error) => {
       toast.error(error?.message || "Failed to save the category !");
@@ -378,186 +398,209 @@ const EditAndAddModel = ({ productData = {}, setShowModel, actionType }) => {
         exclude_loyalty_reward: categoryFields.ExcludeLoyaltyReward,
       };
       mutationFn.mutate({ bodyObj, path: "api/v1/common/category-add" });
+    } else if (actionType === "Edit") {
+      const bodyObj = {
+        category_name: categoryFields.CategoryName,
+        age_verification: categoryFields.AgeVerification,
+        default_margin: categoryFields.DefaultMargin,
+        allow_ebt: categoryFields.AllowEBT,
+        do_not_discount: categoryFields.DoNotDiscount,
+        do_not_show_to_webstore: categoryFields.DoNotShowToWebstore,
+        exclude_dial_price: categoryFields.ExcludeDualPrice,
+        exclude_loyalty_reward: categoryFields.ExcludeLoyaltyReward,
+      };
+      mutationFn.mutate({
+        bodyObj,
+        path: `api/v1/common/category-update/${productData.id || productData._id}`,
+      });
     }
   };
 
   return (
     <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center p-4">
-      <div className="bg-white w-full sm:w-[90%] md:w-[80%] lg:w-[70%] max-h-[90vh] overflow-y-auto p-4 sm:p-5 rounded-lg shadow-md">
-        <div className="flex justify-between items-center w-full p-2.5 rounded-md bg-[var(--sideMenu-color)] text-white">
-          <h3 className="text-lg sm:text-xl lg:text-[1.5dvw] font-semibold">
-            {actionType === "Add" ? "Add Category" : `${actionType} Category`}
-          </h3>
-          <button
-            onClick={handleCloseModel}
-            className="hover:text-[var(--Negative-color)] transition-all duration-300 ease-linear cursor-pointer"
-          >
-            <CircleX size={24} className="sm:w-[30px] sm:h-[30px]" />
-          </button>
-        </div>
-
-        <div className="w-full p-2 sm:p-3 space-y-4 sm:space-y-6">
-          <div className="border border-gray-200 rounded-lg p-3 sm:p-4 relative grid grid-cols-2 gap-4 w-full">
-            <div className="w-full flex flex-col gap-2 col-span-2">
-              <label
-                htmlFor="categoryName"
-                className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <>
+          <div className="bg-white w-full sm:w-[90%] md:w-[80%] lg:w-[70%] max-h-[90vh] overflow-y-auto p-4 sm:p-5 rounded-lg shadow-md">
+            <div className="flex justify-between items-center w-full p-2.5 rounded-md bg-[var(--sideMenu-color)] text-white">
+              <h3 className="text-lg sm:text-xl lg:text-[1.5dvw] font-semibold">
+                {actionType === "Add"
+                  ? "Add Category"
+                  : `${actionType} Category`}
+              </h3>
+              <button
+                onClick={handleCloseModel}
+                className="hover:text-[var(--Negative-color)] transition-all duration-300 ease-linear cursor-pointer"
               >
-                Category Name
-              </label>
-              <input
-                placeholder="Enter category name...
+                <CircleX size={24} className="sm:w-[30px] sm:h-[30px]" />
+              </button>
+            </div>
+
+            <div className="w-full p-2 sm:p-3 space-y-4 sm:space-y-6">
+              <div className="border border-gray-200 rounded-lg p-3 sm:p-4 relative grid grid-cols-2 gap-4 w-full">
+                <div className="w-full flex flex-col gap-2 col-span-2">
+                  <label
+                    htmlFor="categoryName"
+                    className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
+                  >
+                    Category Name
+                  </label>
+                  <input
+                    placeholder="Enter category name...
               "
-                type="text"
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                onChange={handleOnchange}
-                value={categoryFields.CategoryName}
-                name="CategoryName"
-                id="categoryName"
-              />
-            </div>
+                    type="text"
+                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                    onChange={handleOnchange}
+                    value={categoryFields.CategoryName}
+                    name="CategoryName"
+                    id="categoryName"
+                  />
+                </div>
 
-            <div className="w-full flex flex-col gap-2">
-              <label
-                htmlFor="ageLimit"
-                className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
-              >
-                Age Verification (age limit)
-              </label>
-              <input
-                placeholder="Enter age limit...
+                <div className="w-full flex flex-col gap-2">
+                  <label
+                    htmlFor="ageLimit"
+                    className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
+                  >
+                    Age Verification (age limit)
+                  </label>
+                  <input
+                    placeholder="Enter age limit...
               "
-                type="number"
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                onChange={handleOnchange}
-                value={categoryFields.AgeVerification}
-                name="AgeVerification"
-                id="ageLimit"
-              />
-            </div>
+                    type="number"
+                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                    onChange={handleOnchange}
+                    value={categoryFields.AgeVerification}
+                    name="AgeVerification"
+                    id="ageLimit"
+                  />
+                </div>
 
-            <div className="w-full flex flex-col gap-2">
-              <label
-                htmlFor="defaultMargin"
-                className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
-              >
-                Default Margin
-              </label>
-              <input
-                placeholder="Enter margin...
+                <div className="w-full flex flex-col gap-2">
+                  <label
+                    htmlFor="defaultMargin"
+                    className="text-sm sm:text-base lg:text-[1dvw] font-normal paraFont"
+                  >
+                    Default Margin
+                  </label>
+                  <input
+                    placeholder="Enter margin...
               "
-                type="number"
-                onChange={handleOnchange}
-                value={categoryFields.DefaultMargin}
-                name="DefaultMargin"
-                id="defaultMargin"
-                className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-              />
+                    type="number"
+                    onChange={handleOnchange}
+                    value={categoryFields.DefaultMargin}
+                    name="DefaultMargin"
+                    id="defaultMargin"
+                    className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                  />
+                </div>
+
+                <div className="w-full flex flex-row justify-start items-center gap-4">
+                  <label
+                    htmlFor="allowEBT"
+                    className="text-sm sm:text-base lg:text-[1.2dvw] font-medium paraFont"
+                  >
+                    Allow EBT -
+                  </label>
+                  <input
+                    type="checkbox"
+                    checked={categoryFields.AllowEBT}
+                    id="allowEBT"
+                    onChange={handleOnchange}
+                    name="AllowEBT"
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                </div>
+
+                <div className="w-full flex flex-row justify-start items-center gap-4">
+                  <label
+                    htmlFor="discount"
+                    className="text-sm sm:text-base lg:text-[1.2dvw] font-medium paraFont"
+                  >
+                    Do Not Discount -
+                  </label>
+                  <input
+                    type="checkbox"
+                    checked={categoryFields.DoNotDiscount}
+                    onChange={handleOnchange}
+                    name="DoNotDiscount"
+                    id="discount"
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                </div>
+
+                <div className="w-full flex flex-row justify-start items-center gap-4">
+                  <label
+                    htmlFor="Webstore"
+                    className="text-sm sm:text-base lg:text-[1.2dvw] font-medium paraFont"
+                  >
+                    Do Not Show to Webstore -
+                  </label>
+                  <input
+                    type="checkbox"
+                    checked={categoryFields.DoNotShowToWebstore}
+                    onChange={handleOnchange}
+                    name="DoNotShowToWebstore"
+                    id="Webstore"
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                </div>
+
+                <div className="w-full flex flex-row justify-start items-center gap-4">
+                  <label
+                    htmlFor="dualPrice"
+                    className="text-sm sm:text-base lg:text-[1.2dvw] font-medium paraFont"
+                  >
+                    Exclude Dual Price -
+                  </label>
+                  <input
+                    type="checkbox"
+                    checked={categoryFields.ExcludeDualPrice}
+                    onChange={handleOnchange}
+                    name="ExcludeDualPrice"
+                    id="dualPrice"
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                </div>
+
+                <div className="w-full flex flex-row justify-start items-center gap-4">
+                  <label
+                    htmlFor="loyaltyReward"
+                    className="text-sm sm:text-base lg:text-[1.2dvw] font-medium paraFont"
+                  >
+                    Exclude Loyalty Reward -
+                  </label>
+                  <input
+                    type="checkbox"
+                    checked={categoryFields.ExcludeLoyaltyReward}
+                    onChange={handleOnchange}
+                    name="ExcludeLoyaltyReward"
+                    id="loyaltyReward"
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                </div>
+              </div>
             </div>
 
-            <div className="w-full flex flex-row justify-start items-center gap-4">
-              <label
-                htmlFor="allowEBT"
-                className="text-sm sm:text-base lg:text-[1.2dvw] font-medium paraFont"
+            <div className="flex flex-col sm:flex-row justify-end items-center gap-4 my-4">
+              <button
+                className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color4)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300"
+                onClick={handleCloseModel}
               >
-                Allow EBT -
-              </label>
-              <input
-                type="checkbox"
-                checked={categoryFields.AllowEBT}
-                id="allowEBT"
-                onChange={handleOnchange}
-                name="AllowEBT"
-                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-              />
-            </div>
-
-            <div className="w-full flex flex-row justify-start items-center gap-4">
-              <label
-                htmlFor="discount"
-                className="text-sm sm:text-base lg:text-[1.2dvw] font-medium paraFont"
+                Cancel
+              </button>
+              <button
+                onClick={handleSubmit}
+                disabled={!categoryFields.CategoryName}
+                className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300 disabled:pointer-events-none disabled:opacity-75 disabled:cursor-not-allowed"
               >
-                Do Not Discount -
-              </label>
-              <input
-                type="checkbox"
-                checked={categoryFields.DoNotDiscount}
-                onChange={handleOnchange}
-                name="DoNotDiscount"
-                id="discount"
-                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-              />
-            </div>
-
-            <div className="w-full flex flex-row justify-start items-center gap-4">
-              <label
-                htmlFor="Webstore"
-                className="text-sm sm:text-base lg:text-[1.2dvw] font-medium paraFont"
-              >
-                Do Not Show to Webstore -
-              </label>
-              <input
-                type="checkbox"
-                checked={categoryFields.DoNotShowToWebstore}
-                onChange={handleOnchange}
-                name="DoNotShowToWebstore"
-                id="Webstore"
-                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-              />
-            </div>
-
-            <div className="w-full flex flex-row justify-start items-center gap-4">
-              <label
-                htmlFor="dualPrice"
-                className="text-sm sm:text-base lg:text-[1.2dvw] font-medium paraFont"
-              >
-                Exclude Dual Price -
-              </label>
-              <input
-                type="checkbox"
-                checked={categoryFields.ExcludeDualPrice}
-                onChange={handleOnchange}
-                name="ExcludeDualPrice"
-                id="dualPrice"
-                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-              />
-            </div>
-
-            <div className="w-full flex flex-row justify-start items-center gap-4">
-              <label
-                htmlFor="loyaltyReward"
-                className="text-sm sm:text-base lg:text-[1.2dvw] font-medium paraFont"
-              >
-                Exclude Loyalty Reward -
-              </label>
-              <input
-                type="checkbox"
-                checked={categoryFields.ExcludeLoyaltyReward}
-                onChange={handleOnchange}
-                name="ExcludeLoyaltyReward"
-                id="loyaltyReward"
-                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-              />
+                {actionType === "Add" ? "Create" : "Update"}
+              </button>
             </div>
           </div>
-        </div>
-
-        <div className="flex flex-col sm:flex-row justify-end items-center gap-4 my-4">
-          <button
-            className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color4)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300"
-            onClick={handleCloseModel}
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSubmit}
-            disabled={!categoryFields.CategoryName}
-            className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300 disabled:pointer-events-none disabled:opacity-75 disabled:cursor-not-allowed"
-          >
-            {actionType === "Add" ? "Create" : "Update"}
-          </button>
-        </div>
-      </div>
+        </>
+      )}
     </div>
   );
 };

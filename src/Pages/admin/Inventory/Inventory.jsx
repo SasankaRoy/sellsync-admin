@@ -24,7 +24,10 @@ import { getAllCategoryList } from "../../../utils/apis/handleCategory";
 import { AddProductModel } from "../../../components/common/AddProductModel/AddProductModel";
 import { InventoryUploadModel } from "../../../components/common/InventoryUploadModel/InventoryUploadModel";
 
-import { getLowSrockData, getOutOfStockData } from "../../../utils/apis/handleReports";
+import {
+  getLowSrockData,
+  getOutOfStockData,
+} from "../../../utils/apis/handleReports";
 import PaginationTest from "../../../components/common/PaginationTest/PaginationTest";
 import { Link } from "react-router-dom";
 
@@ -110,24 +113,23 @@ const ActionBtns = (props) => {
 };
 
 export const Inventory = () => {
-  const [currentActiveTab, setCurrentActiveTab] = useState('OUT_OF_STOCK')
-  const [lowStockCurrentPage, setlowStockCurrentPage] = useState(1)
-  const [lowStockPageLimit, setLowstockPageLimit] = useState(50)
-  const [lowStockTotalData, setLowstockTotalData] = useState(0)
-  const [lowstockTotalPages, setLowstockTotalPages] = useState(0)
+  const [currentActiveTab, setCurrentActiveTab] = useState("OUT_OF_STOCK");
+  const [lowStockCurrentPage, setlowStockCurrentPage] = useState(1);
+  const [lowStockPageLimit, setLowstockPageLimit] = useState(50);
+  const [lowStockTotalData, setLowstockTotalData] = useState(0);
+  const [lowstockTotalPages, setLowstockTotalPages] = useState(0);
 
-
-  const [outOfStockCurrentPage, setOutOfStockCurrentPage] = useState(1)
-  const [outOfStockPageLimit, setoutOfStockPageLimit] = useState(50)
-  const [outOfStockTotalData, setOutOfStockTotalData] = useState(0)
-  const [outOfStockTotalPages, setOutOfStockTotalPages] = useState(0)
+  const [outOfStockCurrentPage, setOutOfStockCurrentPage] = useState(1);
+  const [outOfStockPageLimit, setoutOfStockPageLimit] = useState(50);
+  const [outOfStockTotalData, setOutOfStockTotalData] = useState(0);
+  const [outOfStockTotalPages, setOutOfStockTotalPages] = useState(0);
 
   const [productListCurrentPage, setProductListCurrentPage] = useState(1);
-  const [productListPageLimit, setProductListPageLimit] = useState(100)
-  const [productListTotalData, setProductListTotalData] = useState(0)
-  const [productListTotalPages, setProductListTotalPages] = useState(0)
+  const [productListPageLimit, setProductListPageLimit] = useState(100);
+  const [productListTotalData, setProductListTotalData] = useState(0);
+  const [productListTotalPages, setProductListTotalPages] = useState(0);
 
-  const [refetching, setRefetching] = useState(false)
+  const [refetching, setRefetching] = useState(false);
   const queryClient = useQueryClient();
   const [activeFilter, setActiveFilter] = useState("");
   const [inventoryUpload, setInventoryUpload] = useState(false);
@@ -142,7 +144,6 @@ export const Inventory = () => {
     path: "",
     querykey: "",
   });
-
 
   const onAddProduct = () => {
     setShowModel({
@@ -190,37 +191,41 @@ export const Inventory = () => {
 
   // Column Definitions: Defines & controls grid columns.
   const [colDefs] = useState([
-    { field: "name", headerName: "Product Name",flex:1 },
-    { field: "category_name", headerName: "Category Name",flex:1 },
-    { field: "product_rank", headerName: "Rank",flex:1 },
-    { field: "qty_on_hand", headerName: "Stock",flex:1 },
+    { field: "name", headerName: "Product Name", flex: 1 },
+    { field: "category_name", headerName: "Category Name", flex: 1 },
+    { field: "product_rank", headerName: "Rank", flex: 1 },
+    { field: "qty_on_hand", headerName: "Stock", flex: 1 },
     {
       field: "product_avg_price",
-      headerName: "Avrage Cost",flex:1,
+      headerName: "Avrage Cost",
+      flex: 1,
       cellRenderer: (amount) => {
-        return `$  ${amount.value ? amount.value.toFixed(2) : '00'}`;
+        return `$  ${amount.value ? amount.value.toFixed(2) : "00"}`;
       },
     },
     {
       field: "product_latest_cost",
-      headerName: "Latest Cost",flex:1,
+      headerName: "Latest Cost",
+      flex: 1,
       cellRenderer: (amount) => {
-        return `$  ${amount.value ? amount.value.toFixed(2) : '00'}`;
+        return `$  ${amount.value ? amount.value.toFixed(2) : "00"}`;
       },
     },
     {
       field: "product_price",
-      headerName: "Price",flex:1,
+      headerName: "Price",
+      flex: 1,
       cellRenderer: (amount) => {
-        return `$  ${amount.value ? amount.value.toFixed(2) : '00'}`;
+        return `$  ${amount.value ? amount.value.toFixed(2) : "00"}`;
       },
     },
     {
       field: "product_size",
-      headerName: "Size",flex:1,
+      headerName: "Size",
+      flex: 1,
     },
-    { field: "product_sku", headerName: "Code",flex:1 },
-    { field: "tax_percentage", headerName: "Tax",flex:1 },
+    { field: "product_sku", headerName: "Code", flex: 1 },
+    { field: "tax_percentage", headerName: "Tax", flex: 1 },
     {
       headerName: "Actions",
       field: "actions",
@@ -252,32 +257,40 @@ export const Inventory = () => {
   } = useQuery({
     queryKey: ["get_all_products_lis", activeFilter],
     queryFn: async () => {
-      const { page, limit, total_records, total_pages, results } = await getAllProductList({ search_text: activeFilter, page: productListCurrentPage, limit: productListPageLimit })
+      const { page, limit, total_records, total_pages, results } =
+        await getAllProductList({
+          search_text: activeFilter,
+          page: productListCurrentPage,
+          limit: productListPageLimit,
+        });
       if (results) {
         setProductListCurrentPage(page);
         setProductListPageLimit(limit);
         setProductListTotalData(total_records);
-        setProductListTotalPages(total_pages)
-        return results || []
+        setProductListTotalPages(total_pages);
+        return results || [];
       }
-      return results || []
+      return results || [];
     },
-    refetchInterval: 10000,
-    // placeholderData: (prv) => prv
+    refetchInterval: 800,
+    placeholderData: (prv) => prv
   });
 
   const handlePageChangeProductList = (newPage) => {
     // Prefetch the page after the one we're going to
-    setRefetching(true)
+    setRefetching(true);
     queryClient.prefetchQuery({
       queryKey: ["get_all_products_list", newPage + 1],
-      queryFn: async () => await getAllProductList({ page: newPage + 1, limit: productListPageLimit,search_text:'' }),
+      queryFn: async () =>
+        await getAllProductList({
+          page: newPage + 1,
+          limit: productListPageLimit,
+          search_text: "",
+        }),
     });
     setProductListCurrentPage(newPage);
-    setRefetching(false)
-
+    setRefetching(false);
   };
-
 
   const { data: categoryList, isLoading: CategoryLoading } = useQuery({
     queryKey: ["get_all_category_list"],
@@ -286,21 +299,26 @@ export const Inventory = () => {
 
   // low-stock list....
 
-  const { data: lowStock, isLoading: lowStockLoading, isError: lowStockError, } = useQuery({
-    queryKey: ['get_low_stock'],
+  const {
+    data: lowStock,
+    isLoading: lowStockLoading,
+    isError: lowStockError,
+  } = useQuery({
+    queryKey: ["get_low_stock"],
     queryFn: async () => {
-      const { page, limit, total_records, total_pages, results } = await getLowSrockData({
-        page: lowStockCurrentPage,
-        limit: lowStockPageLimit
-      });
+      const { page, limit, total_records, total_pages, results } =
+        await getLowSrockData({
+          page: lowStockCurrentPage,
+          limit: lowStockPageLimit,
+        });
       if (results) {
         setlowStockCurrentPage(page);
         setLowstockPageLimit(limit);
-        setLowstockTotalData(total_records)
-        setLowstockTotalPages(total_pages)
-        return results || []
+        setLowstockTotalData(total_records);
+        setLowstockTotalPages(total_pages);
+        return results || [];
       }
-      return results || []
+      return results || [];
     },
     refetchInterval: 3000,
     placeholderData: (prev) => prev,
@@ -332,7 +350,6 @@ export const Inventory = () => {
           forText: "text-red-500",
         };
 
-
       default:
         break;
     }
@@ -340,40 +357,43 @@ export const Inventory = () => {
 
   const handlePageChange = (newPage) => {
     // Prefetch the page after the one we're going to
-    setRefetching(true)
+    setRefetching(true);
     queryClient.prefetchQuery({
       queryKey: ["get_low_stock", newPage + 1],
-      queryFn: async () => await getLowSrockData({ page: newPage + 1, limit: lowStockPageLimit }),
+      queryFn: async () =>
+        await getLowSrockData({ page: newPage + 1, limit: lowStockPageLimit }),
     });
     setlowStockCurrentPage(newPage);
-    setRefetching(false)
-
+    setRefetching(false);
   };
 
-  const [lowstockColDefs,] = useState([
+  const [lowstockColDefs] = useState([
     {
-      field: 'product_sku',
-      headerName: 'Product SKU'
+      field: "product_sku",
+      headerName: "Product SKU",
     },
     {
-      field: 'name',
-      headerName: 'Product Name'
+      field: "name",
+      headerName: "Product Name",
     },
     {
       field: "category_name",
       headerName: "Category Name",
-
     },
     { field: "product_size", headerName: "Product Size" },
     { field: "product_rank", headerName: "Product Rank" },
     {
-      field: "product_price", headerName: "Product Price", cellRenderer: (amount) => {
+      field: "product_price",
+      headerName: "Product Price",
+      cellRenderer: (amount) => {
         return `$ ${amount.value.toFixed(2)}`;
       },
     },
     {
-      field: "product_latest_cost", headerName: "Product Cost", cellRenderer: (amount) => {
-        return amount.value ? `$ ${amount.value.toFixed(2)}` : '$ 00';
+      field: "product_latest_cost",
+      headerName: "Product Cost",
+      cellRenderer: (amount) => {
+        return amount.value ? `$ ${amount.value.toFixed(2)}` : "$ 00";
       },
     },
     { field: "qty_on_hand", headerName: "In Stock" },
@@ -399,77 +419,89 @@ export const Inventory = () => {
         );
       },
     },
-
   ]);
 
-
-
   // out of stock...
-  const { data: outOfStock, isLoading: outOfStockLoading, isError: outOfStockError, } = useQuery({
-    queryKey: ['get_outOfStock_stock'],
+  const {
+    data: outOfStock,
+    isLoading: outOfStockLoading,
+    isError: outOfStockError,
+  } = useQuery({
+    queryKey: ["get_outOfStock_stock"],
     queryFn: async () => {
-      const { page, limit, total_records, total_pages, results } = await getOutOfStockData({
-        page: outOfStockCurrentPage,
-        limit: outOfStockPageLimit
-      });
+      const { page, limit, total_records, total_pages, results } =
+        await getOutOfStockData({
+          page: outOfStockCurrentPage,
+          limit: outOfStockPageLimit,
+        });
       if (results) {
         setOutOfStockCurrentPage(page);
         setoutOfStockPageLimit(limit);
-        setOutOfStockTotalData(total_records)
-        setOutOfStockTotalPages(total_pages)
-        return results || []
+        setOutOfStockTotalData(total_records);
+        setOutOfStockTotalPages(total_pages);
+        return results || [];
       }
-      return results || []
+      return results || [];
     },
     refetchInterval: 3000,
     placeholderData: (prev) => prev,
   });
 
-
-
   const handlePageChangeOutOfStock = (newPage) => {
     // Prefetch the page after the one we're going to
-    setRefetching(true)
+    setRefetching(true);
     queryClient.prefetchQuery({
       queryKey: ["get_outOfStock_stock", newPage + 1],
-      queryFn: async () => await getOutOfStockData({ page: newPage + 1, limit: outOfStockPageLimit }),
+      queryFn: async () =>
+        await getOutOfStockData({
+          page: newPage + 1,
+          limit: outOfStockPageLimit,
+        }),
     });
     setOutOfStockCurrentPage(newPage);
-    setRefetching(false)
-
+    setRefetching(false);
   };
 
-  const [outOfStockColDefs,] = useState([
+  const [outOfStockColDefs] = useState([
     {
-      field: 'product_sku',
-      headerName: 'Product SKU',flex:1
+      field: "product_sku",
+      headerName: "Product SKU",
+      flex: 1,
     },
     {
-      field: 'name',
-      headerName: 'Product Name',flex:1
+      field: "name",
+      headerName: "Product Name",
+      flex: 1,
     },
     {
       field: "category_name",
-      headerName: "Category Name",flex:1
-
+      headerName: "Category Name",
+      flex: 1,
     },
-    { field: "product_size", headerName: "Product Size",flex:1 },
-    { field: "product_rank", headerName: "Product Rank",flex:1 },
+    { field: "product_size", headerName: "Product Size", flex: 1 },
+    { field: "product_rank", headerName: "Product Rank", flex: 1 },
     {
-      field: "product_price", headerName: "Product Price", cellRenderer: (amount) => {
+      field: "product_price",
+      headerName: "Product Price",
+      cellRenderer: (amount) => {
         return `$ ${amount.value.toFixed(2)}`;
-      },flex:1
+      },
+      flex: 1,
     },
     {
-      field: "product_latest_cost", headerName: "Product Cost", cellRenderer: (amount) => {
-        return amount.value ? `$ ${amount.value.toFixed(2)}` : '$ 00';
-      },flex:1
+      field: "product_latest_cost",
+      headerName: "Product Cost",
+      cellRenderer: (amount) => {
+        return amount.value ? `$ ${amount.value.toFixed(2)}` : "$ 00";
+      },
+      flex: 1,
     },
-    { field: "qty_on_hand", headerName: "In Stock",flex:1 },
-    { field: "tax_percentage", headerName: "Tax",flex:1 },
-    { field: "supplier_name", headerName: "Supplier Name",flex:1 },
+    { field: "qty_on_hand", headerName: "In Stock", flex: 1 },
+    { field: "tax_percentage", headerName: "Tax", flex: 1 },
+    { field: "supplier_name", headerName: "Supplier Name", flex: 1 },
     {
-      field: "status",flex:1,
+      field: "status",
+      flex: 1,
       headerName: "Status",
       cellRenderer: (status) => {
         return (
@@ -488,22 +520,15 @@ export const Inventory = () => {
         );
       },
     },
-
   ]);
-
-
-
-
-
-
-
-
-
 
   return (
     <>
       <Layout onAddProduct={onAddProduct}>
-        {isLoading || CategoryLoading || lowStockLoading || outOfStockLoading || refetching ? (
+        {isLoading ||
+        CategoryLoading ||
+        lowStockLoading ||
+        outOfStockLoading ? (
           <Loading />
         ) : (
           <>
@@ -583,9 +608,12 @@ export const Inventory = () => {
                         <div className="w-full">
                           {/* Stock Status Cards */}
                           <div className="flex  gap-2 sm:gap-3 xl:gap-4 w-full my-2 sm:my-3 xl:my-4 p-1">
-                            <div onClick={() => {
-                              setCurrentActiveTab('OUT_OF_STOCK')
-                            }} className={`flex cursor-pointer transition-all duration-300 ease-linear justify-between items-center ${currentActiveTab === 'OUT_OF_STOCK' ? "bg-[#E72C1B] text-white" : "bg-[#fff] text-black"} p-2 sm:p-3 rounded-md flex-1`}>
+                            <div
+                              onClick={() => {
+                                setCurrentActiveTab("OUT_OF_STOCK");
+                              }}
+                              className={`flex cursor-pointer transition-all duration-300 ease-linear justify-between items-center ${currentActiveTab === "OUT_OF_STOCK" ? "bg-[#E72C1B] text-white" : "bg-[#fff] text-black"} p-2 sm:p-3 rounded-md flex-1`}
+                            >
                               <div className="px-1.5">
                                 <p className=" font-semibold text-xs sm:text-sm md:text-base lg:text-[0.9dvw] xl:text-[1dvw]">
                                   Out Of Stock
@@ -595,13 +623,23 @@ export const Inventory = () => {
                                 </h3>
                               </div>
                               <div>
-                                <OutOfStockIcon color={currentActiveTab === 'OUT_OF_STOCK' ? '#fff' : "#000"} className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 xl:w-12 xl:h-12" />
+                                <OutOfStockIcon
+                                  color={
+                                    currentActiveTab === "OUT_OF_STOCK"
+                                      ? "#fff"
+                                      : "#000"
+                                  }
+                                  className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 xl:w-12 xl:h-12"
+                                />
                               </div>
                             </div>
 
-                            <div onClick={() => {
-                              setCurrentActiveTab('LOW_STOCK')
-                            }} className={`flex cursor-pointer transition-all duration-300 ease-linear justify-between items-center  p-2 sm:p-3 rounded-md flex-1 ${currentActiveTab === 'LOW_STOCK' ? "bg-[#E72C1B] text-white" : "bg-[#fff] text-black"}`}>
+                            <div
+                              onClick={() => {
+                                setCurrentActiveTab("LOW_STOCK");
+                              }}
+                              className={`flex cursor-pointer transition-all duration-300 ease-linear justify-between items-center  p-2 sm:p-3 rounded-md flex-1 ${currentActiveTab === "LOW_STOCK" ? "bg-[#E72C1B] text-white" : "bg-[#fff] text-black"}`}
+                            >
                               <div className="px-1.5">
                                 <p className=" font-semibold text-xs sm:text-sm md:text-base lg:text-[0.9dvw] xl:text-[1dvw]">
                                   Low Stock
@@ -611,7 +649,14 @@ export const Inventory = () => {
                                 </h3>
                               </div>
                               <div>
-                                <LowStockIcon color={currentActiveTab === 'LOW_STOCK' ? '#fff' : "#000"} className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 xl:w-12 xl:h-12" />
+                                <LowStockIcon
+                                  color={
+                                    currentActiveTab === "LOW_STOCK"
+                                      ? "#fff"
+                                      : "#000"
+                                  }
+                                  className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 xl:w-12 xl:h-12"
+                                />
                               </div>
                             </div>
                           </div>
@@ -620,70 +665,75 @@ export const Inventory = () => {
                           <div className="border border-[#D4D4D4] h-[60vh] rounded-md p-2 sm:p-3 bg-white">
                             <div className="flex justify-between items-center mb-3">
                               <h3 className="font-semibold text-sm sm:text-base md:text-lg lg:text-[1dvw] xl:text-[1.1dvw]">
-                                {currentActiveTab === 'LOW_STOCK' ? "Low Stocks" : 'Out of Stock'}
+                                {currentActiveTab === "LOW_STOCK"
+                                  ? "Low Stocks"
+                                  : "Out of Stock"}
                               </h3>
-                              <Link to={currentActiveTab === 'LOW_STOCK' ? '/admin/low-stock' : '/admin/out-of-stock-products'} className="cursor-pointer bg-[var(--button-color2)] text-white px-2 sm:px-3 md:px-4 py-1 rounded-full text-xs sm:text-sm md:text-base lg:text-[0.9dvw] xl:text-[1dvw] font-[var(--paraFont)] font-medium">
+                              <Link
+                                to={
+                                  currentActiveTab === "LOW_STOCK"
+                                    ? "/admin/low-stock"
+                                    : "/admin/out-of-stock-products"
+                                }
+                                className="cursor-pointer bg-[var(--button-color2)] text-white px-2 sm:px-3 md:px-4 py-1 rounded-full text-xs sm:text-sm md:text-base lg:text-[0.9dvw] xl:text-[1dvw] font-[var(--paraFont)] font-medium"
+                              >
                                 See all
                               </Link>
                             </div>
 
-                            {
-                              currentActiveTab === 'LOW_STOCK' ? (
-                                <>
-                                  <div className="h-[80%] w-full overflow-auto min-h-0">
-                                    <div className="ag-theme-alpine h-full w-full min-w-[800px] xl:min-w-0">
-                                      <AgGridReact
-                                        rowData={lowStock || []}
-                                        columnDefs={lowstockColDefs}
-                                        defaultColDef={defaultColDef}
-                                        pagination={false}
-                                        suppressPaginationPanel={true}
-                                        paginationPageSize={10}
-                                        // onGridReady={onLowStockGridReady}
-                                        rowSelection={rowSelection}
-                                        suppressMenuHide={true}
-                                        domLayout="normal"
-                                      />
-                                    </div>
+                            {currentActiveTab === "LOW_STOCK" ? (
+                              <>
+                                <div className="h-[80%] w-full overflow-auto min-h-0">
+                                  <div className="ag-theme-alpine h-full w-full min-w-[800px] xl:min-w-0">
+                                    <AgGridReact
+                                      rowData={lowStock || []}
+                                      columnDefs={lowstockColDefs}
+                                      defaultColDef={defaultColDef}
+                                      pagination={false}
+                                      suppressPaginationPanel={true}
+                                      paginationPageSize={10}
+                                      // onGridReady={onLowStockGridReady}
+                                      rowSelection={rowSelection}
+                                      suppressMenuHide={true}
+                                      domLayout="normal"
+                                    />
                                   </div>
-                                  <PaginationTest
-                                    page={lowStockCurrentPage}
-                                    limit={lowStockPageLimit}
-                                    total_records={lowStockTotalData}
-                                    total_pages={lowstockTotalPages}
-                                    onPageChange={handlePageChange}
-                                  />
-                                </>
-                              ) : (
-                                <>
-                                  <div className="h-[80%] w-full overflow-auto min-h-0">
-                                    <div className="ag-theme-alpine h-full w-full min-w-[800px] xl:min-w-0">
-                                      <AgGridReact
-                                        rowData={outOfStock || []}
-                                        columnDefs={outOfStockColDefs}
-                                        defaultColDef={defaultColDef}
-                                        pagination={false}
-                                        suppressPaginationPanel={true}
-                                        paginationPageSize={10}
-                                        // onGridReady={onLowStockGridReady}
-                                        rowSelection={rowSelection}
-                                        suppressMenuHide={true}
-                                        domLayout="normal"
-                                      />
-                                    </div>
+                                </div>
+                                <PaginationTest
+                                  page={lowStockCurrentPage}
+                                  limit={lowStockPageLimit}
+                                  total_records={lowStockTotalData}
+                                  total_pages={lowstockTotalPages}
+                                  onPageChange={handlePageChange}
+                                />
+                              </>
+                            ) : (
+                              <>
+                                <div className="h-[80%] w-full overflow-auto min-h-0">
+                                  <div className="ag-theme-alpine h-full w-full min-w-[800px] xl:min-w-0">
+                                    <AgGridReact
+                                      rowData={outOfStock || []}
+                                      columnDefs={outOfStockColDefs}
+                                      defaultColDef={defaultColDef}
+                                      pagination={false}
+                                      suppressPaginationPanel={true}
+                                      paginationPageSize={10}
+                                      // onGridReady={onLowStockGridReady}
+                                      rowSelection={rowSelection}
+                                      suppressMenuHide={true}
+                                      domLayout="normal"
+                                    />
                                   </div>
-                                  <PaginationTest
-                                    page={outOfStockCurrentPage}
-                                    limit={outOfStockPageLimit}
-                                    total_records={outOfStockTotalData}
-                                    total_pages={outOfStockTotalPages}
-                                    onPageChange={handlePageChangeOutOfStock}
-                                  />
-                                </>
-                              )
-                            }
-
-
+                                </div>
+                                <PaginationTest
+                                  page={outOfStockCurrentPage}
+                                  limit={outOfStockPageLimit}
+                                  total_records={outOfStockTotalData}
+                                  total_pages={outOfStockTotalPages}
+                                  onPageChange={handlePageChangeOutOfStock}
+                                />
+                              </>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -716,13 +766,18 @@ export const Inventory = () => {
                               </p>
                             </div>
                           </div>
-                          <div className="flex gap-1.5 sm:gap-2 md:gap-3 lg:gap-4 justify-end items-center flex-wrap">
-                            {/*<button className="flex justify-between items-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-1 text-xs sm:text-sm md:text-base lg:text-[0.9dvw] xl:text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-semibold">
-                          Sort <SortIcon className="w-3 h-3 sm:w-4 sm:h-4" />
-                        </button>
-                        <button className="flex justify-center items-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-1 text-xs sm:text-sm md:text-base lg:text-[0.9dvw] xl:text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-semibold bg-[#0052CC]">
-                          Filter <FilterIcon className="w-3 h-3 sm:w-4 sm:h-4" />
-                        </button>*/}
+                          <div className="flex gap-1.5 sm:gap-2 md:gap-3 lg:gap-4 justify-end items-center flex-wrap w-1/2">
+                            <div className="w-[80%]">
+                              <input
+                                onFocus={() => setActiveFilter("")}
+                                onChange={(e) =>
+                                  setActiveFilter(e.target.value)
+                                }
+                                type="text"
+                                placeholder="Search by product name, stock code..."
+                                className="border border-[#d4d4d4] rounded-full px-4 py-2 text-sm lg:text-base w-full mainFont"
+                              />
+                            </div>
                             <button>
                               <DeleteIcon className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
                             </button>
@@ -731,7 +786,6 @@ export const Inventory = () => {
 
                         <div className="h-full w-full overflow-auto min-h-0 flex flex-col">
                           <div className="ag-theme-alpine flex-1 w-full min-w-[800px] xl:min-w-0">
-                           
                             <AgGridReact
                               rowData={rowData || []}
                               columnDefs={colDefs}
@@ -745,7 +799,7 @@ export const Inventory = () => {
                               domLayout="normal"
                             />
                           </div>
-                          
+
                           <PaginationTest
                             page={productListCurrentPage}
                             limit={productListPageLimit}

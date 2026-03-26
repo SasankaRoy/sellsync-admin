@@ -16,3 +16,16 @@ export const getAllCategoryList = async () => {
         return error.message || error.response.data.message || 'Something went wrong while fetching the category list'
     }
 }
+
+export const getCategoryDetails = async (id) => {
+    try {
+        const categoryDetails = await axiosInstance.get(`/api/v1/common/category-details/${id}`)
+        if (categoryDetails.data && categoryDetails.status) {
+            return categoryDetails.data.categoryDetails || {}
+        }
+        return categoryDetails.data.categoryDetails || {}
+    } catch (error) {
+        console.error(error);
+        return error.message || error.response.data.message || 'Something went wrong while fetching the category details'
+    }
+}
