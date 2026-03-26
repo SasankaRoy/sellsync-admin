@@ -1,11 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Layout } from "../../../components/common/Layout/Layout";
-import {
-  DeleteIcon,
-  FilterIcon,
-  PluseIcon,
-  SortIcon,
-} from "../../../assets/Svgs/AllSvgs";
+import { DeleteIcon, PluseIcon } from "../../../assets/Svgs/AllSvgs";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import { CircleX, Edit, Trash, Plus, Download } from "lucide-react";
@@ -236,12 +231,6 @@ export const Category = () => {
                       defaultColDef={defaultColDef}
                       pagination={true}
                       rowSelection={rowSelection}
-                      onSelectionChanged={(event) =>
-                        console.log("Row Selected!")
-                      }
-                      onCellValueChanged={(event) =>
-                        console.log(`New Cell Value: ${event.value}`)
-                      }
                       className="w-full h-full text-sm"
                     />
                   </div>
