@@ -25,6 +25,7 @@ import {
   PlusIcon,
   SearchIcon,
   Eye,
+  ArrowRight,
 } from "lucide-react";
 import { DeleteModel } from "../../../components/common/Models/DeleteMode";
 import { toast } from "react-toastify";
@@ -37,18 +38,18 @@ import {
   getAllCustomerList,
 } from "../../../utils/apis/handleCustomer";
 import { Link } from "react-router-dom";
+import moment from "moment";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 const rowSelection = {
-  mode: "none",
-  headerCheckbox: false,
+  mode: "mult",
+  headerCheckbox: true,
 };
 
 const ActionBtns = (props) => {
   const { onEdit, onDelete } = props;
   const { data } = props;
-
 
   const handleEdit = () => {
     onEdit(data);
@@ -70,7 +71,6 @@ const ActionBtns = (props) => {
         <Link
           to={`/admin/customer/details/${data.id}`}
           className="font-semibold font-[var(--paraFont)] bg-[var(--button-color1)] text-white p-1.5 rounded-full border-none cursor-pointer"
-          
         >
           <Eye size={18} />
         </Link>
@@ -94,7 +94,13 @@ export const Customer = () => {
     userData: null,
     forState: null,
   });
+  const [overviewFilter, setOverviewFilter] = useState("ALL");
   const [searchValue, setSearchValue] = useState("");
+  const [statusFilter, setStatusFiler] = useState("");
+  const [customFilter, setCustomFilter] = useState({
+    from_date: "",
+    to_date: "",
+  });
 
   const [deleteModel, setDeleteModel] = useState({
     state: false,
@@ -110,10 +116,10 @@ export const Customer = () => {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["customer_list", searchValue],
-    queryFn: async () => await getAllCustomerList(searchValue),
+    queryKey: ["customer_list", searchValue, statusFilter],
+    queryFn: async () => await getAllCustomerList(searchValue, statusFilter),
     placeholderData: (prev) => prev,
-    // refetchInterval: 800,
+    refetchInterval: 800,
   });
 
   // get customer over-view data ....
@@ -122,8 +128,13 @@ export const Customer = () => {
     isLoading: customerOverviewLoading,
     isError: customerOverviewError,
   } = useQuery({
-    queryKey: ["customer_overview"],
-    queryFn: async () => await customersOverviewData(),
+    queryKey: ["customer_overview", overviewFilter,customFilter.from_date,customFilter.to_date],
+    queryFn: async () =>
+      await customersOverviewData({
+        default: overviewFilter,
+        from_date: customFilter.from_date,
+        to_date: customFilter.to_date,
+      }),
     placeholderData: (prev) => prev,
     // refetchInterval: 800,
   });
@@ -153,10 +164,10 @@ export const Customer = () => {
     });
   };
 
-  const handleImportCSV = () => {
-    console.log("Import CSV clicked");
-    // Add your import CSV logic here
-  };
+  // const handleImportCSV = () => {
+  //   console.log("Import CSV clicked");
+  //   // Add your import CSV logic here
+  // };
 
   // const handleExportCSV = () => {
   //   console.log("Export CSV clicked");
@@ -164,7 +175,6 @@ export const Customer = () => {
 
   // Column Definitions: Defines & controls grid columns.
   const [colDefs] = useState([
-    //{ field: "id" },
     { field: "name", flex: 1 },
     { field: "email", flex: 1 },
     { field: "mobile", flex: 1 },
@@ -173,6 +183,14 @@ export const Customer = () => {
     { field: "points", flex: 1 },
     { field: "address", flex: 1 },
     { field: "sms_email_promotions", flex: 1 },
+    {
+      field: "status",
+      headerName: "Status",
+      cellRenderer: (params) => {
+        return params?.value === "active" ? "Active" : "Inactive";
+      },
+      flex: 1,
+    },
     {
       headerName: "Actions",
       field: "actions",
@@ -195,7 +213,7 @@ export const Customer = () => {
 
   return (
     <>
-      {isLoading ? (
+      {isLoading || customerOverviewLoading ? (
         <Loading />
       ) : (
         <Layout>
@@ -209,14 +227,70 @@ export const Customer = () => {
                   Customers
                 </h3>
                 <div className="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-3 sm:gap-5 w-full sm:w-auto lg:flex-row lg:w-auto lg:gap-5">
+                    {overviewFilter === "CUSTOM" && (
+                      <div className="flex justify-center items-center gap-3 transition-all duration-300 ease-linear">
+                        <div className="flex gap-3 justify-start items-center">
+                          <label className="text-sm sm:text-base lg:text-[1dvw] shrink-0 font-normal paraFont">
+                            From :{" "}
+                          </label>
+                          <input
+                            type="date"
+                            value={customFilter.from_date}
+                            onChange={(e) => {
+                              setCustomFilter({
+                                ...customFilter,
+                                from_date: moment(e.target.value).format(
+                                  "YYYY-MM-DD",
+                                ),
+                              });
+                            }}
+                            className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                          />
+                        </div>
+                        <div className="flex gap-3 justify-start items-center">
+                          <label className="text-sm sm:text-base lg:text-[1dvw] shrink-0 font-normal paraFont">
+                            To :{" "}
+                          </label>
+                          <input
+                            type="date"
+                            value={customFilter.to_date}
+                            onChange={(e) => {
+                              setCustomFilter({
+                                ...customFilter,
+                                to_date: moment(e.target.value).format(
+                                  "YYYY-MM-DD",
+                                ),
+                              });
+                            }}
+                            className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                          />
+                        </div>
+                        {/* <button
+                          onClick={() => {
+                            queryClient.invalidateQueries({
+                              queryKey: ["get_report_data"],
+                            });
+                          }}
+                          className="bg-(--button-color1) text-white h-[2dvw] w-[2dvw] rounded-full flex justify-center items-center cursor-pointer"
+                        >
+                          <ArrowRight size={20} />
+                        </button> */}
+                      </div>
+                    )}
                   <div className="relative w-full sm:w-auto">
-                    <select className="appearance-none pl-4 pr-8 py-2 sm:py-1 md:py-1.5 bg-[var(--button-color2)] text-[var(--primary-color)] rounded-full font-[var(--paraFont)] text-sm sm:text-base md:text-base w-full sm:w-auto cursor-pointer">
+
+                    <select
+                      value={overviewFilter}
+                      onChange={(e) => setOverviewFilter(e.target.value)}
+                      className="appearance-none pl-4 pr-8 py-2 sm:py-1 md:py-1.5 bg-[var(--button-color2)] text-[var(--primary-color)] rounded-full font-[var(--paraFont)] text-sm sm:text-base md:text-base w-full sm:w-auto cursor-pointer"
+                    >
+                      <option value="ALL">All</option>
                       <option value="TODAY">Today</option>
                       <option value="LAST_DAY">Last Day</option>
                       <option value="LAST_3_DAY">Last 3 Days</option>
                       <option value="LAST_7_DAY">Last 7 Days</option>
                       <option value="LAST_30_DAY">Last 30 Days</option>
-                      <option value="CUSTOM">Custom Range</option>
+                      <option value="CUSTOM">Custom</option>
                     </select>
                     <div className="pointer-events-none   absolute inset-y-0 right-0 flex items-center px-2 text-[var(--primary-color)]">
                       <svg
@@ -241,12 +315,12 @@ export const Customer = () => {
                   >
                     Add Customer <PluseIcon />
                   </button>
-                  <button
+                  {/* <button
                     onClick={handleImportCSV}
                     className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
                   >
                     Import CSV <PluseIcon />
-                  </button>
+                  </button> */}
                 </div>
               </div>
             </div>
@@ -293,10 +367,14 @@ export const Customer = () => {
             <div className="w-full flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-[60dvh]">
               <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center py-1.5 shrink-0 gap-3 sm:gap-0">
                 <div className="flex justify-between sm:justify-center items-center gap-3 w-full sm:w-auto">
-                  <select className="font-[500] mainFont px-4 border-none outline-none text-sm lg:text-base">
-                    <option>All Customers</option>
-                    <option>Active</option>
-                    <option>Inactive</option>
+                  <select
+                    value={statusFilter}
+                    onChange={(e) => setStatusFiler(e.target.value)}
+                    className="font-[500] mainFont px-4 border-none outline-none text-sm lg:text-base"
+                  >
+                    <option value="">All Customers</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
                   </select>
                   <div className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-[1.8dvw] lg:w-[1.8dvw] bg-[#F8A61B] rounded-full flex justify-center items-center min-w-[1.5rem] min-h-[1.5rem] sm:min-w-[1.75rem] sm:min-h-[1.75rem] md:min-w-[2rem] md:min-h-[2rem]">
                     <p className="text-xs sm:text-xs md:text-sm lg:text-[1dvw] font-[500] text-white">

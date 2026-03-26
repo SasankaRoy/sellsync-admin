@@ -35,7 +35,7 @@ export const getCustomerDetailsById = async (customerId) => {
 }
 
 
-export const getAllCustomerList = async (searchValue) => {
+export const getAllCustomerList = async (searchValue, statusFilter) => {
     try {
         const getAllCustomerList = await axiosInstance.post(
             "/api/v1/customer/list",
@@ -43,6 +43,7 @@ export const getAllCustomerList = async (searchValue) => {
                 page: 1,
                 limit: 100,
                 searchText: searchValue,
+                status: statusFilter
             },
         );
         if (getAllCustomerList.status === 200 && getAllCustomerList.data) {
@@ -55,10 +56,11 @@ export const getAllCustomerList = async (searchValue) => {
     }
 }
 
-export const customersOverviewData = async () => {
+export const customersOverviewData = async (filters) => {
     try {
-        const customersOverviewData = await axiosInstance.get(
-            "/api/v1/customer/dashboard",
+        const customersOverviewData = await axiosInstance.get(filters.default === "CUSTOM" ?
+            `/api/v1/customer/dashboard?filter_type=${filters?.default}&from_date=${filters?.from_date}&to_date=${filters?.to_date}` :
+            `/api/v1/customer/dashboard?filter_type=${filters?.default}`,
         );
         if (customersOverviewData.status === 200 && customersOverviewData.data) {
             return customersOverviewData?.data;

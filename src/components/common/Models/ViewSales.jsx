@@ -31,7 +31,7 @@ const tabPrefix = {
   items: "ITEMS",
 };
 
-export const ViewSales = ({ setViewSale, billID }) => {
+export const ViewSales = ({ setViewSale, billID, viewOnly = false }) => {
   const [currentActiveTab, setCurrentActiveTab] = useState(tabPrefix.amount);
   const [isOpenRefundModal, setIsOpenRefundModal] = useState(false);
   const dispatch = useDispatch();
@@ -346,12 +346,20 @@ export const ViewSales = ({ setViewSale, billID }) => {
                 )}
 
                 {data.status === "PAID" ? (
-                  <button
-                    onClick={handleRefundClick}
-                    className="w-full sm:w-auto px-6 py-2 bg-[var(--Negative-color)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Refund
-                  </button>
+                  <>
+                    {viewOnly ? (
+                      ""
+                    ) : (
+                      <>
+                        <button
+                          onClick={handleRefundClick}
+                          className="w-full sm:w-auto px-6 py-2 bg-[var(--Negative-color)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          Refund
+                        </button>
+                      </>
+                    )}
+                  </>
                 ) : (
                   <>
                     {data.status === "OPEN" ||

@@ -9,11 +9,11 @@ import {
 import { Loading } from "../../../components/UI/Loading/Loading";
 import moment from "moment";
 import PaginationTest from "../../../components/common/PaginationTest/PaginationTest";
-import axiosInstance from "../../../utils/axios-interceptor";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 // Core CSS
 import { AgGridReact } from "ag-grid-react";
-import { Trash } from "lucide-react";
+import { Eye, Trash } from "lucide-react";
+import { ViewSales } from "../../../components/common/Models/ViewSales";
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 const rowSelection = {
@@ -29,37 +29,16 @@ export const CustomerDetails = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [refetching, setRefetching] = useState(false);
   const queryClient = useQueryClient();
+  const [viewUserModel, setViewModel] = useState({
+    state: false,
+    billId: null,
+  });
 
   const [deleteModel, setDeleteModel] = useState({
     state: false,
     productId: null,
     path: "",
   });
-
-  //   const getGroupDetails = async () => {
-  //     try {
-  //       const reqGroupData = await axiosInstance.get(
-  //         `api/v1/group/details/${id}?page=${currentPage}&limit=${pageLimit}`,
-  //       );
-  //       if (reqGroupData.status === 200 && reqGroupData.data) {
-  //         setTotalData(reqGroupData?.data?.groupDetails?.total_products || 0);
-  //         // Calculate total pages based on current total_products and pageLimit
-  //         setTotalPages(
-  //           Math.ceil(
-  //             (reqGroupData?.data?.groupDetails?.total_products || 0) / pageLimit,
-  //           ) || 0,
-  //         );
-  //         return reqGroupData?.data?.groupDetails?.products || [];
-  //       }
-  //       return [];
-  //     } catch (error) {
-  //       console.log(error?.response?.data);
-  //       toast.error(
-  //         error?.response?.data?.message || "Failed to Fetch Group details!",
-  //       );
-  //       return [];
-  //     }
-  //   };
 
   const {
     data: rowData,
@@ -106,6 +85,14 @@ export const CustomerDetails = () => {
       state: true,
       productId: product.id,
       path: `api/v1/group/delete/item?groupId=${id}&productId=${product.id}`,
+    });
+  };
+
+  const onView = (bill) => {
+    console.log(bill);
+    setViewModel({
+      state: true,
+      billId: bill.billId || bill.billId,
     });
   };
 
@@ -205,8 +192,17 @@ export const CustomerDetails = () => {
       headerName: "Actions",
       field: "actions",
       cellRenderer: (props) => {
+        
         return (
           <div className="w-full flex gap-2 sm:gap-4 py-2 justify-center items-center">
+            <button
+              className="font-semibold font-[var(--paraFont)] bg-[var(--button-color1)] text-white p-1 sm:p-1.5 rounded-full border-none cursor-pointer"
+              onClick={() => {
+                onView(props.data);
+              }}
+            >
+              <Eye size={16} className="sm:w-[18px] sm:h-[18px]" />
+            </button>
             <button
               className="font-semibold font-[var(--paraFont)] bg-[var(--Negative-color)] text-white p-1 sm:p-1.5 rounded-full border-none cursor-pointer"
               onClick={() => onDelete(props.data)}
@@ -362,7 +358,10 @@ export const CustomerDetails = () => {
                     Purchase History
                   </h4>
                   <div className="mainFont font-medium text-gray-400">
-                    Total Transactions : <span className="text-[1.2dvw] text-black">{totalData}</span>
+                    Total Transactions :{" "}
+                    <span className="text-[1.2dvw] text-black">
+                      {totalData}
+                    </span>
                   </div>
                 </div>
 
@@ -398,6 +397,9 @@ export const CustomerDetails = () => {
             </div>
           )}
         </>
+      )}
+      {viewUserModel.state && viewUserModel.billId && (
+        <ViewSales setViewSale={setViewModel} billID={viewUserModel.billId} viewOnly={true} />
       )}
     </Layout>
   );
