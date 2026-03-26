@@ -12,8 +12,9 @@ import PaginationTest from "../../../components/common/PaginationTest/Pagination
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 // Core CSS
 import { AgGridReact } from "ag-grid-react";
-import { Eye, Trash } from "lucide-react";
+import { Eye } from "lucide-react";
 import { ViewSales } from "../../../components/common/Models/ViewSales";
+
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 const rowSelection = {
@@ -32,12 +33,6 @@ export const CustomerDetails = () => {
   const [viewUserModel, setViewModel] = useState({
     state: false,
     billId: null,
-  });
-
-  const [deleteModel, setDeleteModel] = useState({
-    state: false,
-    productId: null,
-    path: "",
   });
 
   const {
@@ -78,14 +73,6 @@ export const CustomerDetails = () => {
     });
     setCurrentPage(newPage);
     setRefetching(false);
-  };
-
-  const onDelete = (product) => {
-    setDeleteModel({
-      state: true,
-      productId: product.id,
-      path: `api/v1/group/delete/item?groupId=${id}&productId=${product.id}`,
-    });
   };
 
   const onView = (bill) => {
@@ -192,7 +179,6 @@ export const CustomerDetails = () => {
       headerName: "Actions",
       field: "actions",
       cellRenderer: (props) => {
-        
         return (
           <div className="w-full flex gap-2 sm:gap-4 py-2 justify-center items-center">
             <button
@@ -202,12 +188,6 @@ export const CustomerDetails = () => {
               }}
             >
               <Eye size={16} className="sm:w-[18px] sm:h-[18px]" />
-            </button>
-            <button
-              className="font-semibold font-[var(--paraFont)] bg-[var(--Negative-color)] text-white p-1 sm:p-1.5 rounded-full border-none cursor-pointer"
-              onClick={() => onDelete(props.data)}
-            >
-              <Trash size={16} className="sm:w-[18px] sm:h-[18px]" />
             </button>
           </div>
         );
@@ -399,7 +379,11 @@ export const CustomerDetails = () => {
         </>
       )}
       {viewUserModel.state && viewUserModel.billId && (
-        <ViewSales setViewSale={setViewModel} billID={viewUserModel.billId} viewOnly={true} />
+        <ViewSales
+          setViewSale={setViewModel}
+          billID={viewUserModel.billId}
+          viewOnly={true}
+        />
       )}
     </Layout>
   );

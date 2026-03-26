@@ -1,32 +1,18 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Layout } from "../../../components/common/Layout/Layout";
 import { Overviewcards } from "../../../components/common/Overviewcards/Overviewcards";
 import {
-  BuyPriceIcon,
   CashierIcon,
   DeleteIcon,
-  FilterIcon,
   InventoryManagerIcon,
   PluseIcon,
-  SellPriceIcon,
-  SortIcon,
   StoreManagerIcon,
-  TotalInventoryIcon,
   UsersIcon2,
 } from "../../../assets/Svgs/AllSvgs";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 // Core CSS
 import { AgGridReact } from "ag-grid-react";
-import {
-  CircleX,
-  Edit,
-  Trash,
-  Download,
-  PlusIcon,
-  SearchIcon,
-  Eye,
-  ArrowRight,
-} from "lucide-react";
+import { CircleX, Edit, Trash, Download, Eye } from "lucide-react";
 import { DeleteModel } from "../../../components/common/Models/DeleteMode";
 import { toast } from "react-toastify";
 import axiosInstance from "../../../utils/axios-interceptor";
@@ -108,7 +94,6 @@ export const Customer = () => {
     path: null,
   });
   const bulkDelete = useBulkDelete();
-  // const queryClient = useQueryClient();
 
   // get all customer list...
   const {
@@ -126,9 +111,14 @@ export const Customer = () => {
   const {
     data: customerOverviewdata,
     isLoading: customerOverviewLoading,
-    isError: customerOverviewError,
+    // isError: customerOverviewError,
   } = useQuery({
-    queryKey: ["customer_overview", overviewFilter,customFilter.from_date,customFilter.to_date],
+    queryKey: [
+      "customer_overview",
+      overviewFilter,
+      customFilter.from_date,
+      customFilter.to_date,
+    ],
     queryFn: async () =>
       await customersOverviewData({
         default: overviewFilter,
@@ -164,14 +154,7 @@ export const Customer = () => {
     });
   };
 
-  // const handleImportCSV = () => {
-  //   console.log("Import CSV clicked");
-  //   // Add your import CSV logic here
-  // };
 
-  // const handleExportCSV = () => {
-  //   console.log("Export CSV clicked");
-  // };
 
   // Column Definitions: Defines & controls grid columns.
   const [colDefs] = useState([
@@ -213,7 +196,7 @@ export const Customer = () => {
 
   return (
     <>
-      {isLoading || customerOverviewLoading ? (
+      {isLoading || customerOverviewLoading || isDeleting ? (
         <Loading />
       ) : (
         <Layout>
@@ -227,45 +210,45 @@ export const Customer = () => {
                   Customers
                 </h3>
                 <div className="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-3 sm:gap-5 w-full sm:w-auto lg:flex-row lg:w-auto lg:gap-5">
-                    {overviewFilter === "CUSTOM" && (
-                      <div className="flex justify-center items-center gap-3 transition-all duration-300 ease-linear">
-                        <div className="flex gap-3 justify-start items-center">
-                          <label className="text-sm sm:text-base lg:text-[1dvw] shrink-0 font-normal paraFont">
-                            From :{" "}
-                          </label>
-                          <input
-                            type="date"
-                            value={customFilter.from_date}
-                            onChange={(e) => {
-                              setCustomFilter({
-                                ...customFilter,
-                                from_date: moment(e.target.value).format(
-                                  "YYYY-MM-DD",
-                                ),
-                              });
-                            }}
-                            className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                          />
-                        </div>
-                        <div className="flex gap-3 justify-start items-center">
-                          <label className="text-sm sm:text-base lg:text-[1dvw] shrink-0 font-normal paraFont">
-                            To :{" "}
-                          </label>
-                          <input
-                            type="date"
-                            value={customFilter.to_date}
-                            onChange={(e) => {
-                              setCustomFilter({
-                                ...customFilter,
-                                to_date: moment(e.target.value).format(
-                                  "YYYY-MM-DD",
-                                ),
-                              });
-                            }}
-                            className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
-                          />
-                        </div>
-                        {/* <button
+                  {overviewFilter === "CUSTOM" && (
+                    <div className="flex justify-center items-center gap-3 transition-all duration-300 ease-linear">
+                      <div className="flex gap-3 justify-start items-center">
+                        <label className="text-sm sm:text-base lg:text-[1dvw] shrink-0 font-normal paraFont">
+                          From :{" "}
+                        </label>
+                        <input
+                          type="date"
+                          value={customFilter.from_date}
+                          onChange={(e) => {
+                            setCustomFilter({
+                              ...customFilter,
+                              from_date: moment(e.target.value).format(
+                                "YYYY-MM-DD",
+                              ),
+                            });
+                          }}
+                          className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                        />
+                      </div>
+                      <div className="flex gap-3 justify-start items-center">
+                        <label className="text-sm sm:text-base lg:text-[1dvw] shrink-0 font-normal paraFont">
+                          To :{" "}
+                        </label>
+                        <input
+                          type="date"
+                          value={customFilter.to_date}
+                          onChange={(e) => {
+                            setCustomFilter({
+                              ...customFilter,
+                              to_date: moment(e.target.value).format(
+                                "YYYY-MM-DD",
+                              ),
+                            });
+                          }}
+                          className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                        />
+                      </div>
+                      {/* <button
                           onClick={() => {
                             queryClient.invalidateQueries({
                               queryKey: ["get_report_data"],
@@ -275,10 +258,9 @@ export const Customer = () => {
                         >
                           <ArrowRight size={20} />
                         </button> */}
-                      </div>
-                    )}
+                    </div>
+                  )}
                   <div className="relative w-full sm:w-auto">
-
                     <select
                       value={overviewFilter}
                       onChange={(e) => setOverviewFilter(e.target.value)}
@@ -391,12 +373,6 @@ export const Customer = () => {
                     onChange={(e) => setSearchValue(e.target.value)}
                   />
 
-                  {/*<button className="flex justify-between items-center gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#0052CC] cursor-pointer font-[600]">
-                    Sort <SortIcon />
-                  </button>
-                  <button className="flex justify-between items-center gap-2 px-3 sm:px-4 py-1 text-xs sm:text-sm lg:text-[1dvw] border border-[#0052CC] rounded-full text-[#fff] cursor-pointer font-[600] bg-[#0052CC]">
-                    Filter <FilterIcon />
-                  </button>*/}
                   <button className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-1.5 rounded-full bg-[var(--button-color5)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear">
                     Export CSV <Download size={16} />
                   </button>
