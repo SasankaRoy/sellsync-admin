@@ -60,7 +60,7 @@ export const ViewSales = ({ setViewSale, billID, viewOnly = false }) => {
     }
   };
 
-  const { data, isError, isLoading, isFetching } = useQuery({
+  const { data, isLoading, isFetching } = useQuery({
     queryKey: ["get_bill_details", billID],
     queryFn: async () => await handleGetBillDetails(billID),
   });
@@ -141,7 +141,9 @@ export const ViewSales = ({ setViewSale, billID, viewOnly = false }) => {
     setIsOpenRefundModal(true);
   };
 
-  const handleRefund = async (billId, refundMode) => {
+  const handleRefund = async (
+    billId, //refundMode
+  ) => {
     const reqRefund = await getRefund(billId);
 
     setIsOpenRefundModal(false);

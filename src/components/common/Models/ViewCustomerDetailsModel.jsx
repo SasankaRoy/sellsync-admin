@@ -1,7 +1,6 @@
 import { CircleX, Search } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  clearCurrentBill,
+import { 
   setCurrentCustomerDetails,
 } from "../../../Redux/CurrentBillSlice";
 import { getCustomerDetails } from "../../../utils/apis/handleCustomer";
@@ -30,7 +29,7 @@ export const ViewCustomerDetailsModel = ({ setFindCustomerModel }) => {
     forState: null,
   });
 
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading,  } = useQuery({
     queryKey: ["get_low_stock_threshold"],
     queryFn: async () => {
       const prvData = await getLowStockThreshold();
