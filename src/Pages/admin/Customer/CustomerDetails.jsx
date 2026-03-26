@@ -24,7 +24,7 @@ const rowSelection = {
 export const CustomerDetails = () => {
   const { id } = useParams();
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageLimit] = useState(100);
+  const [pageLimit] = useState(50);
   const [totalData, setTotalData] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [refetching, setRefetching] = useState(false);
@@ -67,31 +67,35 @@ export const CustomerDetails = () => {
     isError: isErrorTransaction,
   } = useQuery({
     queryKey: ["get_group_details", id, currentPage, pageLimit],
-    queryFn: () => getCustomerPurchaseHistory(id),
+    queryFn: async () => {
+      const { transactions, pagination } = await getCustomerPurchaseHistory(
+        id,
+        { pageCount: currentPage, limit: pageLimit },
+      );
+
+      if (pagination) {
+        const { totalTransactions, currentPage, totalPages } = pagination;
+        setCurrentPage(currentPage);
+        // setLowstockPageLimit(limit);
+        setTotalData(totalTransactions);
+        setTotalPages(totalPages);
+      }
+      return transactions || [];
+    },
     refetchInterval: 3000,
     placeholderData: (prev) => prev,
   });
-
-  console.log(rowData);
 
   const handlePageChange = (newPage) => {
     // Prefetch the page after the one we're going to
     setRefetching(true);
     queryClient.prefetchQuery({
       queryKey: ["get_group_details", id, newPage + 1, pageLimit],
-      queryFn: async () => {
-        try {
-          const reqGroupData = await axiosInstance.get(
-            `api/v1/group/details/${id}?page=${newPage + 1}&limit=${pageLimit}`,
-          );
-          if (reqGroupData.status === 200 && reqGroupData.data) {
-            return reqGroupData?.data?.groupDetails?.products || [];
-          }
-          return [];
-        } catch (err) {
-          return [];
-        }
-      },
+      queryFn: async () =>
+        await getCustomerPurchaseHistory(id, {
+          pageCount: newPage + 1,
+          limit: pageLimit,
+        }),
     });
     setCurrentPage(newPage);
     setRefetching(false);
@@ -353,15 +357,20 @@ export const CustomerDetails = () => {
               </div>
 
               <div className="px-3 py-2 bg-white rounded-md my-5 border border-(--border-color)">
-                <h4 className="mainFont text-[1.3dvw] font-semibold text-(--mainText-color)">
-                  Purchase History
-                </h4>
+                <div className="flex justify-between items-center px-">
+                  <h4 className="mainFont text-[1.3dvw] font-semibold text-(--mainText-color)">
+                    Purchase History
+                  </h4>
+                  <div className="mainFont font-medium text-gray-400">
+                    Total Transactions : <span className="text-[1.2dvw] text-black">{totalData}</span>
+                  </div>
+                </div>
 
                 <div className="w-full flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-[80dvh]">
                   <div className="h-full w-full overflow-x-scroll overflow-y-auto">
                     <div className="min-w-[800px] h-full">
                       <AgGridReact
-                        rowData={rowData?.transactions || []}
+                        rowData={rowData || []}
                         columnDefs={colDefs}
                         // loading={loading}
                         defaultColDef={defaultColDef}
@@ -376,6 +385,7 @@ export const CustomerDetails = () => {
                       />
                     </div>
                   </div>
+
                   <PaginationTest
                     page={currentPage}
                     limit={pageLimit}

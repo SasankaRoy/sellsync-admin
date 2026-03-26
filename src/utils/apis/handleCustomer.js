@@ -70,13 +70,13 @@ export const customersOverviewData = async () => {
     }
 }
 
-export const getCustomerPurchaseHistory = async (customerId) => {
+export const getCustomerPurchaseHistory = async (customerId, pagination) => {
     try {
-        const getCustomerPurchaseHistory = await axiosInstance.get(`/api/v1/customer/transaction-details/${customerId}`);
+        const getCustomerPurchaseHistory = await axiosInstance.get(`/api/v1/customer/transaction-details/${customerId}?page=${pagination.pageCount}&limit=${pagination.limit}`);
         if (getCustomerPurchaseHistory.status === 200 && getCustomerPurchaseHistory.data) {
-            return getCustomerPurchaseHistory.data?.product || {};
+            return getCustomerPurchaseHistory.data || {};
         }
-        return getCustomerPurchaseHistory.data?.product || {};
+        return getCustomerPurchaseHistory.data || {};
     } catch (error) {
         console.error(error);
         toast.error(error.response.data.message || error.message || 'Failed to fetch customer purchase history.')
