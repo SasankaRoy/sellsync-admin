@@ -144,7 +144,7 @@ export const getOutOfStockData = async (pagination) => {
             "search_text": ""
         })
 
-      
+
         if (resLowStockData.data || resLowStockData.status === 200) {
             return resLowStockData.data || []
         }
@@ -165,6 +165,23 @@ export const getDashboardSalesReport = async (filter) => {
             return reqSalesReport.data
         }
         return reqSalesReport.data
+    } catch (error) {
+        console.log(error);
+        return error.message || error.response.data.message || 'Failed to fetch sales data'
+    }
+}
+
+export const getTaxData = async (filterType) => {
+    try {
+        const reqTaxData = await axiosInstance.get(`api/v1/common/transaction-tax-report?filter_type=${filterType}`);
+
+
+        if (reqTaxData.status === 200 && reqTaxData.data) {
+            return reqTaxData.data
+        }
+        return reqTaxData.data
+
+
     } catch (error) {
         console.log(error);
         return error.message || error.response.data.message || 'Failed to fetch sales data'

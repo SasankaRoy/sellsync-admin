@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Eye, Download, Trash } from "lucide-react";
 import { Layout } from "../../../components/common/Layout/Layout";
 import { Linechart } from "../../../components/common/charts/Linechart";
 import {
@@ -20,13 +21,15 @@ import {
   getCardData,
   getReportsData,
   getRevenueReport,
+  getTaxData,
 } from "../../../utils/apis/handleReports";
 import { Loading } from "../../../components/UI/Loading/Loading";
 import { TopSellingItems } from "../../../components/common/TopSellingItems/TopSellingItems";
 import moment from "moment";
 import { getAllTransactions } from "../../../utils/apis/getAllTransaction";
-import { ArrowRight, Printer } from "lucide-react";
+import { ArrowBigDownDash, ArrowRight, Ban, Printer, ScrollText } from "lucide-react";
 import { useReactToPrint } from "react-to-print";
+import { ViewSales } from "../../../components/common/Models/ViewSales";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -68,6 +71,42 @@ const saleData = [
   },
 ];
 
+const ActionBtns = (props) => {
+  const { onEdit, onDelete, data } = props;
+  // const { data } = props;
+
+  const handleEdit = () => {
+    onEdit(data);
+  };
+
+  // const handleView = () => {
+  //   onView(data);
+  // };
+  // const handleDelete = () => {
+  //   onDelete(data);
+  // };
+
+  return (
+    <>
+      <div className="w-full flex gap-4 py-2 justify-center items-center">
+        <button
+          className="font-semibold font-[var(--paraFont)] bg-[var(--button-color1)] text-white p-1.5 rounded-full border-none cursor-pointer"
+          onClick={handleEdit}
+        >
+          <Eye size={18} />
+        </button>
+
+        {/* <button
+          className="font-semibold font-[var(--paraFont)] bg-[var(--Negative-color)] text-white p-1.5 rounded-full border-none cursor-pointer"
+          // onClick={handleDelete}
+        >
+          <Trash size={18} />
+        </button> */}
+      </div>
+    </>
+  );
+};
+
 export const Reports = () => {
   const [filter, setFilter] = useState({
     day: "TODAY",
@@ -79,23 +118,25 @@ export const Reports = () => {
     limit: 100,
     search: "",
   });
+  const [viewSale, setViewSale] = useState({
+    state: false,
+    billId: null,
+  });
   const [tableFilters, setTableFilters] = useState({
-    currentCategory: 'Expense',
-    day: 'TODAY',
-    customRange: '',
-    from: '',
-    to: ''
-  })
+    currentCategory: "Sale",
+    day: "LAST_30_DAY",
+    customRange: "",
+    from: "",
+    to: "",
+  });
   const [year, setYear] = useState(new Date().getFullYear());
   const gridRef = useRef();
   const queryClient = useQueryClient();
   const containerRef = useRef(null);
   const printReportFunc = useReactToPrint({
     contentRef: containerRef,
-  })
-
-
-
+  });
+  const [currentTaxType, setCurrentTaxType] = useState('highTaxTransactions');
 
   // Column Definitions: Defines & controls grid columns.
   const [colDefs, setColDefs] = useState([
@@ -148,7 +189,7 @@ export const Reports = () => {
       headerName: "Total Sale",
       field: "Sale",
       cellRenderer: (item) => {
-        const { grandTotal, } = item.data;
+        const { grandTotal } = item.data;
         // console.log(amount.data.grandTotal amount.data.tendered)
         return `$ ${Math.round(Number(grandTotal) * 100) / 100}`;
       },
@@ -190,8 +231,6 @@ export const Reports = () => {
     },
   });
 
-
-
   const profitValue = cardData?.profit || 0;
   const netSalesValue = cardData?.net_sales_amount || 0;
   const buyPriceValue = cardData?.buy_price || 0;
@@ -223,21 +262,28 @@ export const Reports = () => {
   }, [revenueData]);
 
   const { data: rowData, isLoading: reportsDataLoading } = useQuery({
-    queryKey: ['get_report_data', tableFilters.currentCategory, tableFilters.day],
+    queryKey: [
+      "get_report_data",
+      tableFilters.currentCategory,
+      tableFilters.day,
+    ],
     queryFn: async () => {
       const resData = await getReportsData({
         currentReportCategory: tableFilters.currentCategory,
         customRang: {
           from: tableFilters.from,
-          to: tableFilters.to
+          to: tableFilters.to,
         },
         dayFilter: tableFilters.day,
-      })
+      });
 
-      const keys = Object.keys(resData.expenselist[0])
+      const keys = Object.keys(resData.expenselist[0]);
       if (keys.length > 0) {
         const columns = keys
-          .filter((item) => item !== "vendor_details" && item !== "id" && item !== "_id")
+          .filter(
+            (item) =>
+              item !== "vendor_details" && item !== "id" && item !== "_id",
+          )
           .map((item) => ({
             field: item,
             headerName: item.toUpperCase(),
@@ -247,51 +293,73 @@ export const Reports = () => {
         setColDefs(columns);
       }
 
-
-      return resData
-    }
+      return resData;
+    },
   });
+
+  // tax data
+
+  const onEdit = (currentBillData) => {
+    setViewSale({
+      state: true,
+      billId: currentBillData.billId,
+    });
+  };
+
+  const { data: taxData, isLoading: taxDataLoading } = useQuery({
+    queryKey: ['get_tax_data', filter.day],
+    queryFn: async () => await getTaxData(filter.day)
+  })
+
+  const [highTaxColDefs] = useState([
+    { field: "billId", headerName: "Bill Id", flex: 1 },
+    { field: "customer_name", headerName: "Customer Name", flex: 1 },
+    { headerName: "Employee Name", field: "employee_name", flex: 1 },
+    { field: "subtotal", headerName: "Sub Total", flex: 1 },
+    { field: "transactionDate", headerName: "Transaction Date", flex: 1 },
+    {
+      headerName: "Actions",
+      field: "actions",
+      cellRenderer: ActionBtns,
+      flex: 1,
+      cellRendererParams: {
+        onEdit,
+        // onDelete,
+        skinSafe: true,
+      },
+    },
+  ])
+
+
 
   const onGridReady = (params) => {
     params.api.sizeColumnsToFit();
   };
 
-
-
-
-
-
-
-
-
-
-
-
   const handleTableFilterSelectorOnChange = (e) => {
-    if (e.target.value === 'Custom') {
+    if (e.target.value === "Custom") {
       setTableFilters({
         ...tableFilters,
         customRange: e.target.value,
-        day: ''
+        day: "",
       });
       return;
     }
     setTableFilters({
       ...tableFilters,
       day: e.target.value,
-      customRange: '',
-      from: '',
-      to: ''
+      customRange: "",
+      from: "",
+      to: "",
     });
-
-  }
-
-
-
+  };
 
   return (
     <Layout>
-      {isLoading || revenueLoading || transactionLoading || reportsDataLoading ? (
+      {isLoading ||
+        revenueLoading ||
+        transactionLoading ||
+        reportsDataLoading || taxDataLoading ? (
         <Loading />
       ) : (
         <>
@@ -355,11 +423,100 @@ export const Reports = () => {
                   />
                 </div>
 
-                <div className="w-full bg-white p-2 h-[30dvh] flex justify-center items-center overflow-x-hidden">
+                {/* <div className="w-full bg-white p-2 h-[30dvh] flex justify-center items-center overflow-x-hidden">
                   <Linechart aspectRatio={5} chartData={transformedRevenueData} />
+                </div> */}
+
+                <div className="bg-white border border-[#d4d4d4] px-3 py-4 rounded-md">
+                  <h2 className="mainFont font-semibold text-[1.3dvw]">
+                    Taxes Summary
+                  </h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 xl:gap-5 w-full my-4">
+                    <div onClick={() => setCurrentTaxType('highTaxTransactions')} className="flex cursor-pointer justify-between items-center  py-8 px-5  border border-[#d4d4d4] rounded-lg shadow-md relative">
+                      <div className="flex flex-col gap-5 relative z-30">
+                        <h5 className="mainFont text-black text-[1.1dvw] font-medium">
+                          Total High Tax
+                        </h5>
+                        <h2 className="text-[1.5dvw] font-bold text-(--button-color5)">
+                          $ {taxData?.totalHighTax?.toFixed(2) || 0}
+                        </h2>
+                      </div>
+                      <div className="flex flex-col gap-5 relative z-30">
+                        <h5 className="mainFont text-black text-[1.1dvw] font-medium">
+                          Total Items
+                        </h5>
+                        <h2 className="text-[1.5dvw] font-bold text-(--button-color1)">
+                          {taxData?.highTaxTransactions.length || 0}
+                        </h2>
+                      </div>
+
+                      <div className="absolute flex justify-end items-end top-0 right-0 w-full h-full z-10 opacity-30 overflow-hidden TaxCardsBg1 rounded-lg brightness-75 blur-[1px]">
+                        <ScrollText size={200} color="green" />
+                      </div>
+                    </div>
+
+                    <div onClick={() => setCurrentTaxType('lowTaxTransactions')} className="flex cursor-pointer justify-between items-center  py-8 px-5  border border-[#d4d4d4] rounded-lg shadow-md relative">
+                      <div className="flex flex-col gap-5 relative z-30">
+                        <h5 className="mainFont text-black text-[1dvw] font-semibold">
+                          Total Low Tax
+                        </h5>
+                        <h2 className="text-[1.5dvw] font-bold text-(--button-color5)">
+                          $ {taxData?.totalLowTax?.toFixed(2) || 0}
+                        </h2>
+                      </div>
+                      <div className="flex flex-col gap-5 relative z-30">
+                        <h5 className="mainFont text-black text-[1dvw] font-semibold">
+                          Total Items
+                        </h5>
+                        <h2 className="text-[1.5dvw] font-bold text-(--button-color1)">
+                          {taxData?.lowTaxTransactions.length || 0}
+                        </h2>
+                      </div>
+
+                      <div className="absolute flex justify-end items-end top-0 right-0 w-full h-full z-10 opacity-30 overflow-hidden TaxCardsBg2 rounded-lg brightness-75 blur-[1px]">
+                        <ArrowBigDownDash size={200} color="green" />
+                      </div>
+                    </div>
+
+                    <div className="flex justify-between items-center  py-8 px-5  border border-[#d4d4d4] rounded-lg shadow-md relative">
+                      <div className="flex flex-col gap-5 relative z-30">
+                        <h5 className="mainFont text-black text-[1dvw] font-semibold">
+                          Total No Tax
+                        </h5>
+                        <h2 className="text-[1.5dvw] font-bold text-(--button-color5)">
+                          $ 0.00
+                        </h2>
+                      </div>
+                      <div className="flex flex-col gap-5 relative z-30">
+                        <h5 className="mainFont text-black text-[1dvw] font-semibold">
+                          Total Items
+                        </h5>
+                        <h2 className="text-[1.5dvw] font-bold text-(--button-color1)">
+                          1075
+                        </h2>
+                      </div>
+
+                      <div className="absolute flex justify-end items-end top-0 right-0 w-full h-full z-10 opacity-30 overflow-hidden TaxCardsBg3 rounded-lg brightness-75 blur-[1px]">
+                        <Ban size={200} color="green" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h2 className="mainFont font-semibold text-[1.3dvw]"> {currentTaxType === 'highTaxTransactions' ? 'High' : 'Low'} Tax Transactions List</h2>
+                    <div className="w-full h-[30dvh] my-4">
+                      <AgGridReact
+                        rowData={currentTaxType === 'highTaxTransactions' ? taxData?.highTaxTransactions : taxData?.lowTaxTransactions || []}
+                        columnDefs={highTaxColDefs}
+                        defaultColDef={defaultColDef}
+                      />
+                    </div>
+                  </div>
+
+
+
+
                 </div>
-
-
               </div>
 
               {/* <div className="w-[26%] shrink-0">
@@ -368,15 +525,27 @@ export const Reports = () => {
             </div>
             <div className="w-full">
               <div className="flex justify-end items-center mb-2.5">
-                <button onClick={printReportFunc} className="px-5 py-2 bg-(--button-color1) flex justify-center items-center gap-4 cursor-pointer text-white mainFont font-semibold rounded-md">Print <Printer /></button>
+                <button
+                  onClick={printReportFunc}
+                  className="px-5 py-2 bg-(--button-color1) flex justify-center items-center gap-4 cursor-pointer text-white mainFont font-semibold rounded-md"
+                >
+                  Print <Printer />
+                </button>
               </div>
 
-              <div ref={containerRef} id='print-section print-container' className="w-full print-section flex-col flex gap-2  bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-[75dvh]">
+              <div
+                ref={containerRef}
+                id="print-section print-container"
+                className="w-full print-section flex-col flex gap-2  bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-[75dvh]"
+              >
                 <div className="flex justify-between items-center py-1.5 shrink-0">
                   <div className="flex justify-center items-center gap-3">
                     <select
                       onChange={(e) =>
-                        setTableFilters({ ...tableFilters, currentCategory: e.target.value })
+                        setTableFilters({
+                          ...tableFilters,
+                          currentCategory: e.target.value,
+                        })
                       }
                       value={tableFilters.currentCategory}
                       className="font-[500] mainFont px-4 border-none outline-none text-sm lg:text-[1dvw]"
@@ -394,7 +563,9 @@ export const Reports = () => {
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-[1.3dvw] font-bold">Total Amount -  $ {rowData?.totalExpenseAmount}</h3>
+                    <h3 className="text-[1.3dvw] font-bold">
+                      Total Amount - $ {rowData?.totalExpenseAmount}
+                    </h3>
                   </div>
                   <div className="flex gap-4 justify-center items-center">
                     <div className="flex justify-center items-center gap-5 transition-all duration-300 ease-linear">
@@ -410,42 +581,57 @@ export const Reports = () => {
                         <option value="Custom">Custom</option>
                       </select>
 
-                      {
-                        tableFilters.customRange && (
-                          <div className="flex justify-center items-center gap-3 transition-all duration-300 ease-linear">
-                            <div className="flex gap-3 justify-start items-center">
-                              <label className="text-sm sm:text-base lg:text-[1dvw] shrink-0 font-normal paraFont">From : </label>
-                              <input type="date" value={tableFilters.from} onChange={(e) => {
+                      {tableFilters.customRange && (
+                        <div className="flex justify-center items-center gap-3 transition-all duration-300 ease-linear">
+                          <div className="flex gap-3 justify-start items-center">
+                            <label className="text-sm sm:text-base lg:text-[1dvw] shrink-0 font-normal paraFont">
+                              From :{" "}
+                            </label>
+                            <input
+                              type="date"
+                              value={tableFilters.from}
+                              onChange={(e) => {
                                 setTableFilters({
                                   ...tableFilters,
-                                  from: moment(e.target.value).format('YYYY-MM-DD')
-                                })
-                              }} className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3" />
-                            </div>
-                            <div className="flex gap-3 justify-start items-center">
-                              <label className="text-sm sm:text-base lg:text-[1dvw] shrink-0 font-normal paraFont">To : </label>
-                              <input type="date" value={tableFilters.to} onChange={(e) => {
-                                setTableFilters({
-                                  ...tableFilters,
-                                  to: moment(e.target.value).format('YYYY-MM-DD')
-                                })
-                              }} className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3" />
-                            </div>
-                            <button onClick={() => {
-                              queryClient.invalidateQueries({
-                                queryKey: ['get_report_data']
-                              })
-                            }} className="bg-(--button-color1) text-white h-[2dvw] w-[2dvw] rounded-full flex justify-center items-center cursor-pointer">
-                              <ArrowRight size={20} />
-                            </button>
+                                  from: moment(e.target.value).format(
+                                    "YYYY-MM-DD",
+                                  ),
+                                });
+                              }}
+                              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                            />
                           </div>
-                        )
-                      }
-
-
+                          <div className="flex gap-3 justify-start items-center">
+                            <label className="text-sm sm:text-base lg:text-[1dvw] shrink-0 font-normal paraFont">
+                              To :{" "}
+                            </label>
+                            <input
+                              type="date"
+                              value={tableFilters.to}
+                              onChange={(e) => {
+                                setTableFilters({
+                                  ...tableFilters,
+                                  to: moment(e.target.value).format(
+                                    "YYYY-MM-DD",
+                                  ),
+                                });
+                              }}
+                              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+                            />
+                          </div>
+                          <button
+                            onClick={() => {
+                              queryClient.invalidateQueries({
+                                queryKey: ["get_report_data"],
+                              });
+                            }}
+                            className="bg-(--button-color1) text-white h-[2dvw] w-[2dvw] rounded-full flex justify-center items-center cursor-pointer"
+                          >
+                            <ArrowRight size={20} />
+                          </button>
+                        </div>
+                      )}
                     </div>
-
-
                   </div>
                 </div>
                 <div className="h-full w-full">
@@ -465,7 +651,6 @@ export const Reports = () => {
                 </div>
               </div>
             </div>
-
           </div>
 
           {/* Mobile and Tablet Layout */}
@@ -667,6 +852,12 @@ export const Reports = () => {
           </div>
         </>
       )}
+
+
+
+      {viewSale.state && viewSale.billId && (
+            <ViewSales setViewSale={setViewSale} billID={viewSale.billId} />
+          )}
     </Layout>
   );
 };
