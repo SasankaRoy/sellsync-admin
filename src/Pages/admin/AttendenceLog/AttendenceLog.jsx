@@ -94,6 +94,49 @@ export const AttendenceLog = () => {
     // },
   ]);
 
+  const [leaveDefs] = useState([
+    {
+      field: "employee_name",
+      headerName: "Employee Name",
+      flex: 1,
+      cellRenderer: (params) => {
+        return moment(params?.value).format("DD-MM-YYYY");
+      },
+    },
+    {
+      field: "leave_type",
+      headerName: "Leave Type",
+      flex: 1,
+      cellRenderer: (params) => {
+        return moment(params?.value).format("DD-MM-YYYY");
+      },
+    },
+    {
+      field: "leave_days",
+      headerName: "Leave Days",
+      flex: 1,
+      cellRenderer: (params) => {
+        return moment(params?.value).format("DD-MM-YYYY");
+      },
+    },
+    {
+      field: "from_date",
+      headerName: "From Date",
+      flex: 1,
+      cellRenderer: (params) => {
+        return moment(params?.value).format("DD-MM-YYYY");
+      },
+    },
+    {
+      field: "to_date",
+      headerName: "To Date",
+      flex: 1,
+      cellRenderer: (params) => {
+        return moment(params?.value).format("DD-MM-YYYY");
+      },
+    },
+  ]);
+
   const defaultColDef = useMemo(() => {
     return {
       filter: true,
@@ -108,7 +151,7 @@ export const AttendenceLog = () => {
           <div className="w-full">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-0">
               <h3 className="text-2xl sm:text-3xl lg:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
-                Employee Attendance Logs
+                Employee Attendance and Leave Logs
               </h3>
               <Link
                 to="/admin/employees"
@@ -119,33 +162,64 @@ export const AttendenceLog = () => {
             </div>
           </div>
 
-          <div className="w-full flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-[80dvh]">
-            <div className="h-full w-full overflow-x-scroll overflow-y-auto">
-              <div className="min-w-[800px] h-full">
-                <AgGridReact
-                  rowData={rowData || []}
-                  columnDefs={colDefs}
-                  // loading={loading}
-                  defaultColDef={defaultColDef}
-                  pagination={false}
-                  rowSelection={rowSelection}
-                  onSelectionChanged={() => console.log("Row Selected!")}
-                  //   loading={refetching}
-                  onCellValueChanged={(event) =>
-                    console.log(`New Cell Value: ${event.value}`)
-                  }
-                  className="w-full h-full text-sm"
-                />
+          <div className="flex justify-between items-center gap-3 px-2">
+            <div className="w-[55%] flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-[80dvh]">
+              <div className="h-full w-full overflow-x-scroll overflow-y-auto">
+                <div className="min-w-[800px] h-full">
+                  <AgGridReact
+                    rowData={rowData || []}
+                    columnDefs={colDefs}
+                    // loading={loading}
+                    defaultColDef={defaultColDef}
+                    pagination={false}
+                    rowSelection={rowSelection}
+                    onSelectionChanged={() => console.log("Row Selected!")}
+                    //   loading={refetching}
+                    onCellValueChanged={(event) =>
+                      console.log(`New Cell Value: ${event.value}`)
+                    }
+                    className="w-full h-full text-sm"
+                  />
+                </div>
               </div>
-            </div>
 
-            {/* <PaginationTest
+              {/* <PaginationTest
               page={currentPage}
               limit={pageLimit}
               total_records={totalData}
               total_pages={totalPages}
               onPageChange={handlePageChange}
             /> */}
+            </div>
+
+            <div className="w-[45%] flex-col flex gap-2 my-5 bg-[var(--primary-color)] rounded-md border border-[#d4d4d4] px-2.5 py-2 h-[80dvh]">
+              <div className="h-full w-full overflow-x-scroll overflow-y-auto">
+                <div className="min-w-[800px] h-full">
+                  <AgGridReact
+                    rowData={rowData || []}
+                    columnDefs={leaveDefs}
+                    // loading={loading}
+                    defaultColDef={defaultColDef}
+                    pagination={false}
+                    rowSelection={rowSelection}
+                    onSelectionChanged={() => console.log("Row Selected!")}
+                    //   loading={refetching}
+                    onCellValueChanged={(event) =>
+                      console.log(`New Cell Value: ${event.value}`)
+                    }
+                    className="w-full h-full text-sm"
+                  />
+                </div>
+              </div>
+
+              {/* <PaginationTest
+              page={currentPage}
+              limit={pageLimit}
+              total_records={totalData}
+              total_pages={totalPages}
+              onPageChange={handlePageChange}
+            /> */}
+            </div>
           </div>
         </div>
       </Layout>

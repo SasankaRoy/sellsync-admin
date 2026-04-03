@@ -137,6 +137,7 @@ export const Employee = () => {
     { field: "pay_rate", headerName: "Pay Rate", flex: 1 },
     { field: "pay_type", headerName: "Pay Type", flex: 1 },
     { field: "shift_type", headerName: "Shift Type", flex: 1 },
+    { field: "upcoming_shift_type", headerName: "Upcoming Shift Type", flex: 1 },
     { field: "social_security_number", headerName: "SSN", flex: 1 },
     { field: "status", flex: 1 },
     {
