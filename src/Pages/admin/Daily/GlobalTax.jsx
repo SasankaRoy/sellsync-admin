@@ -125,7 +125,7 @@ const Taxes = () => {
                                                 <label className='text-[1.2dvw] shrink-0 text-(--button-color2) font-medium mainFont'>
                                                     No Tax  :-
                                                 </label>
-                                                <input className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-2 px-3 appearance-none" type='number' placeholder='5' onChange={handleOnchange} name='low_tax' value={taxValue.low_tax} />
+                                                <input className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-sm sm:text-base lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-full py-2 px-3 appearance-none" type='number' placeholder='5'  name='low_tax'  />
                                             </div>
                                         </div>
                                         <button

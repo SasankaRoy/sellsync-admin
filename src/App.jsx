@@ -57,6 +57,7 @@ import { TopSellinglist } from "./Pages/admin/TopSellinglist/TopSellinglist";
 import { OutOfStock } from "./Pages/admin/OutOfStock/OutOfStock";
 import { GroupDetails } from "./Pages/admin/Groups/GroupDetails";
 import { CustomerDetails } from "./Pages/admin/Customer/CustomerDetails";
+import { AttendenceLog } from "./Pages/admin/AttendenceLog/AttendenceLog";
 
 function App() {
   // Mirror ringUps into localStorage for customer screen tab to consume
@@ -168,6 +169,10 @@ function App() {
               <Route
                 path="/admin/customer/details/:id"
                 element={<CustomerDetails />}
+              />
+              <Route
+                path="/admin/attendance-logs"
+                element={<AttendenceLog />}
               />
             </Route>
 

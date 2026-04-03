@@ -154,17 +154,13 @@ export const Customer = () => {
     });
   };
 
-
-
   // Column Definitions: Defines & controls grid columns.
   const [colDefs] = useState([
     { field: "name", flex: 1 },
     { field: "email", flex: 1 },
     { field: "mobile", flex: 1 },
     { field: "dob", flex: 1 },
-    { field: "zipcode", flex: 1 },
     { field: "points", flex: 1 },
-    { field: "address", flex: 1 },
     { field: "sms_email_promotions", flex: 1 },
     {
       field: "status",

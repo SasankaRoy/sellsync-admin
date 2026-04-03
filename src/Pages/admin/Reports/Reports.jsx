@@ -357,9 +357,10 @@ export const Reports = () => {
   return (
     <Layout>
       {isLoading ||
-        revenueLoading ||
-        transactionLoading ||
-        reportsDataLoading || taxDataLoading ? (
+      revenueLoading ||
+      transactionLoading ||
+      reportsDataLoading ||
+      taxDataLoading ? (
         <Loading />
       ) : (
         <>
@@ -432,7 +433,10 @@ export const Reports = () => {
                     Taxes Summary
                   </h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 xl:gap-5 w-full my-4">
-                    <div onClick={() => setCurrentTaxType('highTaxTransactions')} className="flex cursor-pointer justify-between items-center  py-8 px-5  border border-[#d4d4d4] rounded-lg shadow-md relative">
+                    <div
+                      onClick={() => setCurrentTaxType("highTaxTransactions")}
+                      className="flex cursor-pointer justify-between items-center  py-8 px-5  border border-[#d4d4d4] rounded-lg shadow-md relative"
+                    >
                       <div className="flex flex-col gap-5 relative z-30">
                         <h5 className="mainFont text-black text-[1.1dvw] font-medium">
                           Total High Tax
@@ -446,7 +450,7 @@ export const Reports = () => {
                           Total Items
                         </h5>
                         <h2 className="text-[1.5dvw] font-bold text-(--button-color1)">
-                          {taxData?.highTaxTransactions.length || 0}
+                          {taxData?.totalHighTaxQty || 0}
                         </h2>
                       </div>
 
@@ -455,7 +459,10 @@ export const Reports = () => {
                       </div>
                     </div>
 
-                    <div onClick={() => setCurrentTaxType('lowTaxTransactions')} className="flex cursor-pointer justify-between items-center  py-8 px-5  border border-[#d4d4d4] rounded-lg shadow-md relative">
+                    <div
+                      onClick={() => setCurrentTaxType("lowTaxTransactions")}
+                      className="flex cursor-pointer justify-between items-center  py-8 px-5  border border-[#d4d4d4] rounded-lg shadow-md relative"
+                    >
                       <div className="flex flex-col gap-5 relative z-30">
                         <h5 className="mainFont text-black text-[1dvw] font-semibold">
                           Total Low Tax
@@ -469,7 +476,7 @@ export const Reports = () => {
                           Total Items
                         </h5>
                         <h2 className="text-[1.5dvw] font-bold text-(--button-color1)">
-                          {taxData?.lowTaxTransactions.length || 0}
+                          {taxData?.totalLowTaxQty || 0}
                         </h2>
                       </div>
 
@@ -503,19 +510,25 @@ export const Reports = () => {
                   </div>
 
                   <div>
-                    <h2 className="mainFont font-semibold text-[1.3dvw]"> {currentTaxType === 'highTaxTransactions' ? 'High' : 'Low'} Tax Transactions List</h2>
+                    <h2 className="mainFont font-semibold text-[1.3dvw]">
+                      {" "}
+                      {currentTaxType === "highTaxTransactions"
+                        ? "High"
+                        : "Low"}{" "}
+                      Tax Transactions List
+                    </h2>
                     <div className="w-full h-[30dvh] my-4">
                       <AgGridReact
-                        rowData={currentTaxType === 'highTaxTransactions' ? taxData?.highTaxTransactions : taxData?.lowTaxTransactions || []}
+                        rowData={
+                          currentTaxType === "highTaxTransactions"
+                            ? taxData?.highTaxTransactions
+                            : taxData?.lowTaxTransactions || []
+                        }
                         columnDefs={highTaxColDefs}
                         defaultColDef={defaultColDef}
                       />
                     </div>
                   </div>
-
-
-
-
                 </div>
               </div>
 
@@ -853,11 +866,9 @@ export const Reports = () => {
         </>
       )}
 
-
-
       {viewSale.state && viewSale.billId && (
-            <ViewSales setViewSale={setViewSale} billID={viewSale.billId} />
-          )}
+        <ViewSales setViewSale={setViewSale} billID={viewSale.billId} />
+      )}
     </Layout>
   );
 };

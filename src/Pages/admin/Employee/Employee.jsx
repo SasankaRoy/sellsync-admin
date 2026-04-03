@@ -16,13 +16,21 @@ import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import { DeleteModel } from "../../../components/common/Models/DeleteMode";
 import EmployeeModal from "../../../components/common/Models/EmployeeModal";
-import { CircleX, Edit, Trash, Download, PlusIcon } from "lucide-react";
+import {
+  CircleX,
+  Edit,
+  Trash,
+  Download,
+  PlusIcon,
+  CalendarCheck2,
+} from "lucide-react";
 import { toast } from "react-toastify";
 import axiosInstance from "../../../utils/axios-interceptor";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loading } from "../../../components/UI/Loading/Loading";
 import { parse, format } from "date-fns";
 import { useBulkDelete } from "../../../utils/apis/BulkDelete";
+import { ManageShift } from "../../../components/common/Models/ManageShift";
 
 // updates
 // create one field for pay rate
@@ -48,6 +56,11 @@ export const Employee = () => {
     status: false,
     productData: null,
     forStatus: null,
+  });
+  const [scheduleModel, setScheduleModel] = useState({
+    status: false,
+    employeeId: null,
+    path: null,
   });
   const bulkDelete = useBulkDelete();
 
@@ -86,6 +99,13 @@ export const Employee = () => {
       forStatus: "Edit",
     });
   };
+  const onSchedule = (model) => {
+    setScheduleModel({
+      status: true,
+      employeeId: model.id || model._id,
+      path: `/api/v1/user/employee-schedule/${model.id}`,
+    });
+  };
   const onDelete = (model) => {
     setDeleteModel({
       status: true,
@@ -97,42 +117,35 @@ export const Employee = () => {
   useEffect(() => {
     if (error) {
       toast.error(
-        error.message || "Something went wrong! while fetch employee list"
+        error.message || "Something went wrong! while fetch employee list",
       );
     }
   }, [error]);
 
   // Column Definitions: Defines & controls grid columns.
-  const [colDefs, setColDefs] = useState([
+  const [colDefs] = useState([
     //{ field: "id" },
-    { field: "name",flex:1 },
-    { field: "email",flex:1 },
+    { field: "name", flex: 1 },
     {
       field: "log_userId",
       headerName: "User ID",
-      valueGetter: (params) => params.data.log_userId || "N/A",flex:1
+      valueGetter: (params) => params.data.log_userId || "N/A",
+      flex: 1,
     },
-    { field: "dob",flex:1 },
-    { field: "mobile",flex:1 },
-    {
-      field: "address",
-      headerName: "Address",
-      valueGetter: (params) => {
-        const { street, city, state, zip } = params.data.address || {};
-        return [street, city, state, zip].filter(Boolean).join(", ");
-      },flex:1
-    },
-    { field: "staff_position", headerName: "Position",flex:1 },
-    { field: "pay_rate", headerName: "Pay Rate",flex:1 },
-    { field: "pay_type", headerName: "Pay Type",flex:1 },
-    { field: "social_security_number", headerName: "SSN",flex:1 },
-    { field: "status",flex:1 },
+    { field: "mobile", flex: 1 },
+    { field: "staff_position", headerName: "Role", flex: 1 },
+    { field: "pay_rate", headerName: "Pay Rate", flex: 1 },
+    { field: "pay_type", headerName: "Pay Type", flex: 1 },
+    { field: "shift_type", headerName: "Shift Type", flex: 1 },
+    { field: "social_security_number", headerName: "SSN", flex: 1 },
+    { field: "status", flex: 1 },
     {
       headerName: "Actions",
       field: "actions",
       cellRenderer: ActionBtns,
       cellRendererParams: {
         onEdit,
+        onSchedule,
         onDelete,
       },
     },
@@ -151,10 +164,10 @@ export const Employee = () => {
     // Add your import CSV logic here
   };
 
-  const handleExportCSV = () => {
-    console.log("Export CSV clicked");
-    // Add your export CSV logic here
-  };
+  // const handleExportCSV = () => {
+  //   console.log("Export CSV clicked");
+  //   // Add your export CSV logic here
+  // };
 
   return (
     <>
@@ -322,12 +335,21 @@ export const Employee = () => {
           productData={editModel.productData}
         />
       )}
+
+      {scheduleModel.status &&
+        scheduleModel.path &&
+        scheduleModel.employeeId && (
+          <ManageShift
+            setScheduleModel={setScheduleModel}
+            scheduleModel={scheduleModel}
+          />
+        )}
     </>
   );
 };
 
 const ActionBtns = (props) => {
-  const { onEdit, onDelete } = props;
+  const { onEdit, onSchedule, onDelete } = props;
   const { data } = props;
 
   const handleEdit = () => {
@@ -336,6 +358,9 @@ const ActionBtns = (props) => {
 
   const handleDelete = () => {
     onDelete(data);
+  };
+  const handleSchedule = () => {
+    onSchedule(data);
   };
 
   return (
@@ -346,6 +371,12 @@ const ActionBtns = (props) => {
           onClick={handleEdit}
         >
           <Edit size={18} />
+        </button>
+        <button
+          className="font-semibold font-[var(--paraFont)] bg-[var(--button-color1)] text-white p-1.5 rounded-full border-none cursor-pointer"
+          onClick={handleSchedule}
+        >
+          <CalendarCheck2 size={18} />
         </button>
 
         <button
