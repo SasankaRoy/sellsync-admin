@@ -19,3 +19,18 @@ export const updateEmployeeShift = async (payload) => {
         return error.message || error.response.data.message || "Something went wrong"
     }
 }
+
+
+
+export const getEmployeeSchedule = async (employeeId) => {
+    try {
+        const reqEmployeeShiftData = await axiosInstance.get(`api/v1/employee/check-employee-upcoming-shift/${employeeId}`)
+        if(reqEmployeeShiftData.status === 200 && reqEmployeeShiftData.data){
+            return reqEmployeeShiftData.data
+        }
+        return reqEmployeeShiftData.data
+    } catch (error) {
+        console.error(error);
+        return error.message || error.response.data.message || 'Something went wrong'
+    }
+}
