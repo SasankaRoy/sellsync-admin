@@ -4,11 +4,11 @@ import {
   BadgeDollarSign,
   CircleX,
   ClipboardMinus,
-  Settings,
-  ClipboardList,
+  Settings,  
   Airplay,
   Tags,
   ShieldUser,
+  BookCheck,
 } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
@@ -99,40 +99,6 @@ export const OffcanvasMenu = ({
           }}
           className="flex flex-col gap-5 my-5"
         >
-          <button
-            onClick={handleTasksClick}
-            className="flex justify-start px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 mainFont font-semibold tracking-wider text-sm sm:text-base lg:text-[1.8dvw] items-center gap-3 sm:gap-4 lg:gap-6 border-b hover:bg-(--button-color5) hover:text-(--primary-color) hover:rounded-md transition-all duration-300 ease-linear cursor-pointer border-(--border-color) text-(--button-color5)"
-          >
-            <span>
-              <ClipboardList
-                size={24}
-                className="sm:w-8 sm:h-8 lg:w-10 lg:h-10"
-              />
-            </span>
-            My Tasks
-          </button>
-          <button
-            onClick={() => {
-              window.open(
-                "/seller/customer-screen",
-                "_blank",
-                "width=600,height=700,scrollbars=yes,resizable=yes"
-              );
-              setShowOffcanvasMenu(varient.exit);
-            }}
-            className="flex justify-start px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 mainFont font-semibold tracking-wider text-sm sm:text-base lg:text-[1.8dvw] items-center gap-3 sm:gap-4 lg:gap-6 border-b hover:bg-(--button-color4) hover:text-(--primary-color) hover:rounded-md transition-all duration-300 ease-linear cursor-pointer border-(--border-color) text-(--button-color4)"
-          >
-            <span>
-              <Airplay size={24} className="sm:w-8 sm:h-8 lg:w-10 lg:h-10" />
-            </span>
-            Customer Screen
-          </button>
-          <button className="flex justify-start px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 mainFont font-semibold tracking-wider text-sm sm:text-base lg:text-[1.8dvw] items-center gap-3 sm:gap-4 lg:gap-6 border-b hover:bg-(--button-color1) hover:text-(--primary-color) hover:rounded-md transition-all duration-300 ease-linear cursor-pointer border-(--border-color) text-(--button-color1)">
-            <span>
-              <Tags size={24} className="sm:w-8 sm:h-8 lg:w-10 lg:h-10" />
-            </span>
-            Get Labels
-          </button>
           <NavLink
             onClick={() => setShowOffcanvasMenu(varient.exit)}
             to="/seller/sales-report"
@@ -145,6 +111,16 @@ export const OffcanvasMenu = ({
               />
             </span>
             Sales
+          </NavLink>
+          <NavLink
+            onClick={() => setShowOffcanvasMenu(varient.exit)}
+            to="/seller/leave-management"
+            className="flex justify-start px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 mainFont font-semibold tracking-wider text-sm sm:text-base lg:text-[1.8dvw] items-center gap-3 sm:gap-4 lg:gap-6 border-b hover:bg-(--button-color2) hover:text-(--primary-color) hover:rounded-md transition-all duration-300 ease-linear cursor-pointer border-(--border-color) text-(--button-color2)"
+          >
+            <span>
+              <BookCheck size={24} className="sm:w-8 sm:h-8 lg:w-10 lg:h-10" />
+            </span>
+            Leave Management
           </NavLink>
           <NavLink
             onClick={() => setShowOffcanvasMenu(varient.exit)}

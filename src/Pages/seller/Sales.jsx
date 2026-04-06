@@ -8,7 +8,7 @@ import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 // Core CSS
 import { AgGridReact } from "ag-grid-react";
 import { useQuery } from "@tanstack/react-query";
-import axiosInstance from "../../utils/axios-interceptor";
+
 import moment from "moment";
 import { Loading } from "../../components/UI/Loading/Loading";
 import { ViewSales } from "../../components/common/Models/ViewSales";

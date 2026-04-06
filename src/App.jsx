@@ -58,6 +58,7 @@ import { OutOfStock } from "./Pages/admin/OutOfStock/OutOfStock";
 import { GroupDetails } from "./Pages/admin/Groups/GroupDetails";
 import { CustomerDetails } from "./Pages/admin/Customer/CustomerDetails";
 import { AttendenceLog } from "./Pages/admin/AttendenceLog/AttendenceLog";
+import { LeaveManagement } from "./Pages/seller/LeaveManagement";
 
 function App() {
   // Mirror ringUps into localStorage for customer screen tab to consume
@@ -183,6 +184,7 @@ function App() {
             <Route path="/seller/reports" element={<AllSalesReports />} />
             <Route path="/seller/inventory" element={<InventorySeller />} />
             <Route path="/seller/settings" element={<SettingSeller />} />
+            <Route path="/seller/leave-management" element={<LeaveManagement />} />
           </Route>
           <Route
             path="/seller/customer-screen"
