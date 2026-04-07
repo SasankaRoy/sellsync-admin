@@ -242,16 +242,7 @@ export const AttendenceLog = () => {
                       className="border border-[#d4d4d4] rounded-full px-4 py-2 text-sm lg:text-base w-full font-semibold"
                       placeholder="search by name, email..."
                     />
-                  </div>
-                  {/* <div className="w-[40%] flex justify-end">
-                  <select className="font-[500] mainFont px-4 border-none outline-none text-sm lg:text-base">
-                    <option value="TODAY">Today</option>
-                    <option value="LAST_3_DAYS">Last 3 Days</option>
-                    <option value="LAST_7_DAYS">Last 7 Days</option>
-                    <option value="LAST_15_DAYS">Last 15 Days</option>
-                    <option value="LAST_30_DAYS">Last 30 Days</option>
-                  </select>
-                </div> */}
+                  </div>                  
                 </div>
                 <div className="h-full w-full overflow-x-scroll overflow-y-auto">
                   <div className="min-w-[800px] h-full">

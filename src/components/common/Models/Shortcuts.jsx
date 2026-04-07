@@ -1,8 +1,8 @@
 import { CircleX, Plus, Trash } from "lucide-react";
-import React, { lazy, Suspense, useState } from "react";
+import React, { lazy, Suspense, useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import ProductImg1 from "../../../assets/images/ProductImg1.png";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "../../../utils/axios-interceptor";
 import { useDispatch, useSelector } from "react-redux";
 import { addNewItem, removeItem } from "../../../Redux/RingUpSlice";
@@ -43,10 +43,10 @@ export const Shortcuts = ({
   showShortcuts,
   setShowShortcuts,
 }) => {
-  const [allData, setAllData] = useState([])
-  const [currentPage, setCurrentPage] = useState(1)
+  const [allData, setAllData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
   const [limit, setLimit] = useState(50);
-  const [totalPages, setTotalPages] = useState(0)
+  const [totalPages, setTotalPages] = useState(0);
   const [currentSliderVarient, setCurrentSliderVarient] = useState(
     categoriesSlideVarient.initial,
   );
@@ -58,22 +58,20 @@ export const Shortcuts = ({
   const dispatch = useDispatch();
   const currentRingUpData = useSelector((state) => state.ringUps);
   const currentBillId = useSelector((state) => state.currentBill.billId);
-  const queryClient = useQueryClient()
-
-  const handleGetLists = async (title, queryName) => {
+  const handleGetLists = async (title, queryName, pageNum) => {
     try {
       if (title === "Shortcuts") {
         const reqList = await axiosInstance.post(
           "/api/v1/product/shortcut-product-list",
           {
-            page: 1,
+            page: pageNum,
             limit: limit,
             // selected_category_id: "",
             // search_text: "",
           },
         );
         if (reqList.status === 200) {
-          // setAllData((prv) => [...prv, ...reqList.data.results])
+          setTotalPages(reqList.data?.total_records || 0);
           return reqList.data.results || [];
         }
         return reqList.data.results || [];
@@ -81,7 +79,7 @@ export const Shortcuts = ({
         const reqList = await axiosInstance.post(
           "/api/v1/employee/category-wise-product-list",
           {
-            page: currentPage,
+            page: pageNum,
             limit: limit,
             selected_category_id: queryName,
             // selected_category_id: '68adb20884f3336f436a8769',
@@ -89,17 +87,11 @@ export const Shortcuts = ({
           },
         );
         if (reqList.status === 200) {
-          setCurrentPage(reqList.data?.page);
-          setTotalPages(reqList.data?.total_records)
-          setAllData((prv) => [...prv, ...reqList.data.results])
+          setTotalPages(reqList.data?.total_records || 0);
           return reqList.data.results || [];
         }
-        setCurrentPage(reqList.data?.page);
-        setTotalPages(reqList.data?.total_records)
-        setAllData((prv) => [...prv, ...reqList.data.results])
         return reqList.data.results || [];
       }
-
     } catch (error) {
       console.error(error);
       return error?.response?.data.message || "Faild to fetch product list";
@@ -116,15 +108,32 @@ export const Shortcuts = ({
       await handleGetLists(
         currentFilterItems.title,
         currentFilterItems.queryName,
+        currentPage,
       ),
     queryKey: [
       "get_shortcuts_list",
       // limit,
       currentFilterItems.title,
       currentFilterItems.queryName,
+      currentPage,
     ],
     refetchInterval: 3000,
   });
+
+  useEffect(() => {
+    if (data && data.length > 0) {
+      setAllData((prev) => {
+        const map = new Map(prev.map((item) => [item.id, item]));
+        data.forEach((item) => map.set(item.id, item));
+        return Array.from(map.values());
+      });
+    }
+  }, [data]);
+
+  useEffect(() => {
+    setAllData([]);
+    setCurrentPage(1);
+  }, [currentFilterItems.title, currentFilterItems.queryName]);
 
   const { data: CurrentTaxVal } = useQuery({
     queryKey: ["get_current_tax_value", currentBillId],
@@ -135,7 +144,14 @@ export const Shortcuts = ({
   });
 
   const handleAddItem = async (curData) => {
-    const { id, name, product_image, product_price, tax_percentage, category_age_verification } = curData;
+    const {
+      id,
+      name,
+      product_image,
+      product_price,
+      tax_percentage,
+      category_age_verification,
+    } = curData;
     if (currentBillId) {
       try {
         // mean the bill is already created and we are adding items to it
@@ -165,7 +181,7 @@ export const Shortcuts = ({
         tax_percentage,
         qty: 1,
         tax: calculateTax(1, tax_percentage, CurrentTaxVal),
-        category_age_verification
+        category_age_verification,
       }),
     );
     localStorage.setItem(
@@ -185,17 +201,19 @@ export const Shortcuts = ({
     return currentRingUpData?.some((item) => item.id === itemId);
   };
 
-  const handleLoadMore = () => {    
-    queryClient.prefetchQuery({
-      queryKey: ["get_shortcuts_list", currentPage + 1],
-      queryFn: async () => await handleGetLists(
-        currentFilterItems.title,
-        currentFilterItems.queryName,
-      ),
-    });
-    // setLimit((prv) => prv + 10)
-    setCurrentPage((prv) => prv + 1)
-  }
+  const handleLoadMore = () => {
+    if (isLoading || isFetching) return;
+    if (allData.length < totalPages) {
+      setCurrentPage((prv) => prv + 1);
+    }
+  };
+
+  const handleScroll = (e) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+    if (scrollHeight - scrollTop <= clientHeight + 50) {
+      handleLoadMore();
+    }
+  };
 
   return (
     <>
@@ -204,7 +222,6 @@ export const Shortcuts = ({
         initial="initial"
         animate={showShortcuts}
         key={showShortcuts}
-
         className="absolute flex flex-col gap-3 sm:gap-4 lg:gap-5 top-0 sm:top-1.5 p-2 sm:p-3 lg:p-4 right-0 sm:right-2 w-full h-full bg-(--primary-color) overflow-x-hidden max-w-full"
       >
         <motion.div
@@ -249,7 +266,7 @@ export const Shortcuts = ({
             </button>
           </div>
         </motion.div>
-        {isLoading ? (
+        {isLoading && allData?.length === 0 ? (
           <div className="w-full h-full flex justify-center items-center gap-2">
             <img src="/logo.png" className="h-[7dvw] w-[5dvw] object-contain" />
             <p className="text-center mainFont text-[1.5dvw] font-semibold animate-pulse">
@@ -258,7 +275,7 @@ export const Shortcuts = ({
           </div>
         ) : (
           <>
-            {data?.length === 0 ? (
+            {allData?.length === 0 ? (
               <div className="w-full h-full flex justify-center items-center gap-2">
                 <img
                   src="/logo.png"
@@ -280,17 +297,18 @@ export const Shortcuts = ({
                   type: "tween",
                   delay: 0.5,
                 }}
-                onScrollEnd={handleLoadMore}
+                onScroll={handleScroll}
                 className=" p-2 grid  scrollCusto grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-2 sm:gap-3 lg:gap-4 w-full max-h-full overflow-y-auto"
               >
-                {data?.map((cur, id) => (
+                {allData?.map((cur, id) => (
                   <>
                     <div
                       key={id}
-                      className={`bg-(--primary-color) cursor-pointer hover:scale-105 transition-all ease-in-out duration-300 border border-(--border-color)/20 flex flex-col gap-2 sm:gap-3 shadow-sm rounded-md p-2 ${isItemInCart(cur.id)
-                        ? "bg-(--sideMenu-color)/15"
-                        : "bg-(--primary-color)"
-                        } ${!cur.qty_on_hand && 'bg-red-200'}`}
+                      className={`bg-(--primary-color) cursor-pointer hover:scale-105 transition-all ease-in-out duration-300 border border-(--border-color)/20 flex flex-col gap-2 sm:gap-3 shadow-sm rounded-md p-2 ${
+                        isItemInCart(cur.id)
+                          ? "bg-(--sideMenu-color)/15"
+                          : "bg-(--primary-color)"
+                      } ${!cur.qty_on_hand && "bg-red-200"}`}
                     >
                       <div className="h-[15vh] sm:h-[18vh] lg:h-[20vh] rounded-md w-full bg-(--secondary-color) py-2 sm:py-3 lg:py-4">
                         <img
@@ -331,16 +349,14 @@ export const Shortcuts = ({
                             </button>
                           ) : (
                             <>
-                              {
-                                cur.qty_on_hand && (
-                                  <button
-                                    onClick={() => handleAddItem(cur)}
-                                    className="px-5 py-1 tracking-wider bg-(--button-color1) text-white mainFont cursor-pointer font-semibold rounded-lg disabled:cursor-not-allowed disabled:ponter-event-none"
-                                  >
-                                    <Plus />
-                                  </button>
-                                )
-                              }
+                              {cur.qty_on_hand && (
+                                <button
+                                  onClick={() => handleAddItem(cur)}
+                                  className="px-5 py-1 tracking-wider bg-(--button-color1) text-white mainFont cursor-pointer font-semibold rounded-lg disabled:cursor-not-allowed disabled:ponter-event-none"
+                                >
+                                  <Plus />
+                                </button>
+                              )}
                             </>
                           )}
                         </div>
@@ -348,6 +364,13 @@ export const Shortcuts = ({
                     </div>
                   </>
                 ))}
+                {isFetching && allData?.length > 0 && (
+                  <div className="col-span-2 sm:col-span-3 lg:col-span-3 w-full flex justify-center items-center py-4">
+                    <p className="text-center mainFont text-[1.2dvw] font-semibold animate-pulse text-(--button-color3)">
+                      Loading more...
+                    </p>
+                  </div>
+                )}
               </motion.div>
             )}
           </>
