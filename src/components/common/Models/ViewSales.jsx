@@ -163,11 +163,11 @@ export const ViewSales = ({ setViewSale, billID, viewOnly = false }) => {
         </>
       ) : (
         <>
-          <div className="fixed top-0 left-0 z-40 w-full h-screen flex justify-center items-center bg-(--mainText-color)/20 backdrop-blur-md">
-            <div className="w-full sm:min-w-[25%] sm:max-w-[70%] max-h-[90vh] sm:max-h-[95%] overflow-y-auto scrollCustom bg-white rounded-md p-3 sm:p-4 lg:p-5 shadow-md">
-              <div className="flex justify-between items-center w-full p-2.5 rounded-md bg-[var(--sideMenu-color)] text-white">
-                <h3 className="text-lg sm:text-xl md:text-2xl lg:text-[1.5dvw] font-semibold">
-                  View Bill Details
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm transition-opacity duration-300">
+            <div className="w-full sm:min-w-[40%] sm:max-w-[70%] max-h-[90vh] sm:max-h-[95vh] overflow-y-auto scrollCustom bg-white sm:rounded-2xl shadow-2xl p-4 sm:p-6 lg:p-8 flex flex-col gap-6 relative">
+              <div className="flex justify-between items-center w-full border-b border-gray-100 pb-4 mb-2">
+                <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800 tracking-tight">
+                  Bill Information
                 </h3>
                 <button
                   onClick={() => {
@@ -176,48 +176,45 @@ export const ViewSales = ({ setViewSale, billID, viewOnly = false }) => {
                       billId: null,
                     });
                   }}
-                  className="hover:text-[var(--Negative-color)] transition-all duration-300 ease-linear cursor-pointer"
+                  className="p-2 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-full transition-all duration-200 cursor-pointer"
                 >
-                  <CircleX size={30} />
+                  <CircleX size={26} />
                 </button>
               </div>
               <div className="my-4">
-                <div className="grid grid-cols-3 w-full  ">
+                <div className="flex w-full mb-6 bg-gray-100 p-1 rounded-xl">
                   <button
-                    onClick={() => {
-                      handleTabSwitch(tabPrefix.amount);
-                    }}
-                    className={` p-3 font-semibold mainFont text-(--mainText-color)/70 cursor-pointer hover:bg-(--button-color1) hover:text-white   flex justify-center items-center ${
-                      currentActiveTab === tabPrefix.amount &&
-                      "bg-(--button-color1) text-white "
-                    } gap-3 transition-all duration-300 ease-linear`}
+                    onClick={() => handleTabSwitch(tabPrefix.amount)}
+                    className={`flex-1 py-2.5 sm:py-3 px-4 font-semibold text-sm sm:text-base rounded-lg flex justify-center items-center gap-2 transition-all duration-300 cursor-pointer ${
+                      currentActiveTab === tabPrefix.amount
+                        ? "bg-white text-[var(--button-color1)] shadow-sm"
+                        : "text-gray-500 hover:text-gray-700 hover:bg-gray-200/50"
+                    }`}
                   >
-                    <BanknoteArrowDown />
-                    Amount and Payments
+                    <BanknoteArrowDown size={18} />
+                    <span className="hidden sm:inline">Amount & Payments</span>
                   </button>
                   <button
-                    onClick={() => {
-                      handleTabSwitch(tabPrefix.items);
-                    }}
-                    className={` p-3 font-semibold mainFont text-(--mainText-color)/70 cursor-pointer hover:bg-(--button-color1) hover:text-white   flex justify-center ${
-                      currentActiveTab === tabPrefix.items &&
-                      "bg-(--button-color1) text-white "
-                    } items-center gap-3 transition-all duration-300 ease-linear`}
+                    onClick={() => handleTabSwitch(tabPrefix.items)}
+                    className={`flex-1 py-2.5 sm:py-3 px-4 font-semibold text-sm sm:text-base rounded-lg flex justify-center items-center gap-2 transition-all duration-300 cursor-pointer ${
+                      currentActiveTab === tabPrefix.items
+                        ? "bg-white text-[var(--button-color1)] shadow-sm"
+                        : "text-gray-500 hover:text-gray-700 hover:bg-gray-200/50"
+                    }`}
                   >
-                    <BaggageClaim />
-                    Items/Products
+                    <BaggageClaim size={18} />
+                    <span className="hidden sm:inline">Products</span>
                   </button>
                   <button
-                    onClick={() => {
-                      handleTabSwitch(tabPrefix.customer);
-                    }}
-                    className={` p-3 font-semibold mainFont text-(--mainText-color)/70 cursor-pointer hover:bg-(--button-color1) hover:text-white   flex justify-center ${
-                      currentActiveTab === tabPrefix.customer &&
-                      "bg-(--button-color1) text-white "
-                    } items-center gap-3 transition-all duration-200 ease-linear`}
+                    onClick={() => handleTabSwitch(tabPrefix.customer)}
+                    className={`flex-1 py-2.5 sm:py-3 px-4 font-semibold text-sm sm:text-base rounded-lg flex justify-center items-center gap-2 transition-all duration-300 cursor-pointer ${
+                      currentActiveTab === tabPrefix.customer
+                        ? "bg-white text-[var(--button-color1)] shadow-sm"
+                        : "text-gray-500 hover:text-gray-700 hover:bg-gray-200/50"
+                    }`}
                   >
-                    <Users />
-                    Customer Info
+                    <Users size={18} />
+                    <span className="hidden sm:inline">Customer</span>
                   </button>
                 </div>
                 <div className="transition-all duration-300 ease-linear">
@@ -225,71 +222,62 @@ export const ViewSales = ({ setViewSale, billID, viewOnly = false }) => {
                 </div>
               </div>
 
-              <div className=" border border-(--border-color) p-3 rounded-md">
-                {/* <h3 className="font-semibold text-[1.3dvw]">OverViews : -</h3> */}
-                <div className="grid grid-cols-3 my-3 border-b-2 border-(--border-color) pb-5">
-                  <div className="flex justify-center items-center gap-5 border-r border-b border-(--border-color) p-4">
-                    <span className="mainFont shrink-0 text-[.9dvw] text-(--mainText-color)/70 font-semibold">
-                      Transcation Status :
+              <div className="bg-gray-50 border border-gray-100 p-4 sm:p-5 rounded-2xl">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-y-6 gap-x-4 mb-6">
+                  <div className="flex flex-col gap-1">
+                    <span className="text-xs sm:text-sm text-gray-500 font-medium uppercase tracking-wider">
+                      Transaction Status
                     </span>
                     <h5
-                      className={`text-[1dvw] shrink-0 font-bold  ${handleStatusColor(
+                      className={`text-sm sm:text-base font-bold inline-block w-max px-3 py-1 rounded-full ${handleStatusColor(
                         data.status,
-                      )} px-3 py-1 rounded`}
+                      )}`}
                     >
                       {data.status}
                     </h5>
                   </div>
-                  <div className="flex justify-center items-center gap-5 border-r border-b border-(--border-color) p-4">
-                    <span className="mainFont shrink-0 text-[.9dvw] text-(--mainText-color)/70 font-semibold">
-                      Bill Date :
+                  <div className="flex flex-col gap-1">
+                    <span className="text-xs sm:text-sm text-gray-500 font-medium uppercase tracking-wider">
+                      Bill Date
                     </span>
-                    <div className="flex shrink-0 justify-center items-center gap-2 overflow-hidden">
-                      <Calendar />
-                      <h5 className="text-[1dvw] font-bold line-clamp-1">
+                    <div className="flex items-center gap-2 text-gray-800">
+                      <Calendar size={16} className="text-gray-400" />
+                      <h5 className="text-sm sm:text-base font-bold line-clamp-1">
                         {moment(data.created_at).format("lll")}
                       </h5>
                     </div>
                   </div>
-                  <div className="flex justify-center items-center gap-5  border-b border-(--border-color) p-4">
-                    <span className="mainFont shrink-0  text-[.9dvw] text-(--mainText-color)/70 font-semibold">
-                      Biller Name:
+                  <div className="flex flex-col gap-1">
+                    <span className="text-xs sm:text-sm text-gray-500 font-medium uppercase tracking-wider">
+                      Biller Name
                     </span>
-                    <div className="flex shrink-0 justify-center items-center gap-2">
-                      <h5 className="text-[1dvw] font-bold line-clamp-1">
-                        {data.created_by_user_name}
-                      </h5>
-                    </div>
+                    <h5 className="text-sm sm:text-base text-gray-800 font-bold line-clamp-1">
+                      {data.created_by_user_name || "N/A"}
+                    </h5>
                   </div>
-                  <div className="flex justify-center items-center gap-5 border-r  border-(--border-color) p-4">
-                    <span className="mainFont shrink-0 text-[.9dvw] text-(--mainText-color)/70 font-semibold">
-                      Bill ID:
+                  <div className="flex flex-col gap-1">
+                    <span className="text-xs sm:text-sm text-gray-500 font-medium uppercase tracking-wider">
+                      Bill ID
                     </span>
-                    <div className="flex shrink-0 justify-center items-center gap-2 overflow-hidden">
-                      <h5 className="text-[1dvw] font-bold line-clamp-1">
-                        {data._id || data.id}
-                      </h5>
-                    </div>
+                    <h5 className="text-sm sm:text-base text-gray-800 font-bold line-clamp-1">
+                      {data._id || data.id}
+                    </h5>
                   </div>
-                  <div className="flex justify-center items-center gap-5 border-r  border-(--border-color) p-4">
-                    <span className="mainFont text-[.9dvw] text-(--mainText-color)/70 font-semibold">
-                      Device Name:
+                  <div className="flex flex-col gap-1">
+                    <span className="text-xs sm:text-sm text-gray-500 font-medium uppercase tracking-wider">
+                      Device Name
                     </span>
-                    <div className="flex justify-center items-center gap-2">
-                      <h5 className="text-[1dvw] font-bold ">
-                        {data.device_location}
-                      </h5>
-                    </div>
+                    <h5 className="text-sm sm:text-base text-gray-800 font-bold line-clamp-1">
+                      {data.device_location || "N/A"}
+                    </h5>
                   </div>
-                  <div className="flex justify-center items-center gap-5   border-(--border-color) p-4">
-                    <span className="mainFont text-[.9dvw] text-(--mainText-color)/70 font-semibold">
-                      Address/Location:
+                  <div className="flex flex-col gap-1">
+                    <span className="text-xs sm:text-sm text-gray-500 font-medium uppercase tracking-wider">
+                      Location
                     </span>
-                    <div className="flex justify-center items-center gap-2">
-                      <h5 className="text-[1dvw] font-bold ">
-                        {data.device_location}
-                      </h5>
-                    </div>
+                    <h5 className="text-sm sm:text-base text-gray-800 font-bold line-clamp-1">
+                      {data.device_location || "N/A"}
+                    </h5>
                   </div>
                 </div>
                 <div>
@@ -399,39 +387,31 @@ const AmountTab = ({ billData }) => {
   const { summary } = billData;
   return (
     <>
-      <div className="w-full grid grid-cols-3 border gap-2  border-(--button-color1)/90 p-5 rounded-b-md">
-        <div className="bg-(--border-color)/30 rounded-sm shadow  py-3 border-(--border-color)">
-          <div className="flex justify-around items-center gap-5 w-full overflow-hidden px-4 py-2">
-            <span className="text-[1dvw] shrink-0 font-bold text-(--mainText-color)/70 mainFont tracking-wide">
-              Sub-Total :-
-            </span>
-            <h5 className="text-[1dvw] shrink-0 font-semibold line-clamp-1">
-              {" "}
-              $ {summary?.subTotal.toFixed(2)}.00
-            </h5>
-          </div>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pb-2">
+        <div className="bg-white border rounded-xl shadow-sm p-4 flex flex-col justify-between">
+          <span className="text-[0.8rem] sm:text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            Sub-Total
+          </span>
+          <h5 className="text-lg sm:text-xl font-bold text-gray-800 mt-2">
+            $ {summary?.subTotal.toFixed(2)}
+          </h5>
         </div>
-        <div className="bg-(--border-color)/30 rounded-sm shadow  py-3 border-(--border-color)">
-          <div className="flex justify-around items-center gap-5 overflow-hidden px-4 py-2">
-            <span className="text-[1dvw] shrink-0 font-bold text-(--mainText-color)/70 mainFont tracking-wide">
-              Discount :-
-            </span>
-            <h5 className="text-[1dvw] shrink-0 line-clamp-1 font-semibold">
-              {summary?.discount.type === "FLAT" ? "$" : "%"}{" "}
-              {summary?.discount.amount}.00
-            </h5>
-          </div>
+        <div className="bg-white border rounded-xl shadow-sm p-4 flex flex-col justify-between">
+          <span className="text-[0.8rem] sm:text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            Discount
+          </span>
+          <h5 className="text-lg sm:text-xl font-bold text-[var(--button-color3)] mt-2">
+            {summary?.discount.type === "FLAT" ? "$" : "%"}{" "}
+            {summary?.discount.amount}.00
+          </h5>
         </div>
-        <div className=" bg-(--border-color)/30 rounded-sm shadow py-3 border-(--border-color)">
-          <div className="flex justify-around items-center gap-5 overflow-hidden px-4 py-2">
-            <span className="text-[1dvw] shrink-0 line-clamp-1 font-bold text-(--mainText-color)/70 mainFont tracking-wide">
-              Total :-
-            </span>
-            <h5 className="text-[1dvw] shrink-0 line-clamp-1 font-semibold">
-              {" "}
-              $ {summary?.grandTotal.toFixed(2)}.00
-            </h5>
-          </div>
+        <div className="bg-[var(--button-color1)] border border-[var(--button-color1)] rounded-xl shadow-md p-4 flex flex-col justify-between text-white">
+          <span className="text-[0.8rem] sm:text-xs font-semibold uppercase tracking-wider opacity-90">
+            Total
+          </span>
+          <h5 className="text-xl sm:text-2xl font-bold mt-2">
+            $ {summary?.grandTotal.toFixed(2)}
+          </h5>
         </div>
       </div>
     </>
@@ -442,64 +422,46 @@ const ItemsTab = ({ billData }) => {
 
   return (
     <>
-      <div className="w-full border  border-(--button-color1)/90 p-1.5 rounded-md ">
-        <div className="grid grid-cols-5 w-full border-b-2 border-(--button-color1)">
-          <div className="flex justify-center items-center p-3 border-r border-(--border-color)">
-            <h5 className="font-semibold text-(--mainText-color)/70 text-[1dvw]">
-              QTY.
-            </h5>
+      <div className="w-full border rounded-xl overflow-hidden shadow-sm bg-white">
+        <div className="grid grid-cols-5 w-full bg-gray-50 border-b border-gray-200">
+          <div className="flex justify-center items-center p-3 sm:py-4 border-r border-gray-200">
+            <h5 className="font-semibold text-gray-500 text-xs sm:text-sm uppercase tracking-wider">QTY</h5>
           </div>
-          <div className="flex justify-center items-center p-3 border-r border-(--border-color)">
-            <h5 className="font-semibold text-(--mainText-color)/70 text-[1dvw]">
-              Product
-            </h5>
+          <div className="flex justify-center items-center p-3 sm:py-4 border-r border-gray-200">
+            <h5 className="font-semibold text-gray-500 text-xs sm:text-sm uppercase tracking-wider">Product</h5>
           </div>
-          <div className="flex justify-center items-center p-3 border-r border-(--border-color)">
-            <h5 className="font-semibold text-(--mainText-color)/70 text-[1dvw]">
-              Tax
-            </h5>
+          <div className="flex justify-center items-center p-3 sm:py-4 border-r border-gray-200">
+            <h5 className="font-semibold text-gray-500 text-xs sm:text-sm uppercase tracking-wider">Tax</h5>
           </div>
-          <div className="flex justify-center items-center p-3 border-r border-(--border-color)">
-            <h5 className="font-semibold text-(--mainText-color)/70 text-[1dvw]">
-              Price
-            </h5>
+          <div className="flex justify-center items-center p-3 sm:py-4 border-r border-gray-200">
+            <h5 className="font-semibold text-gray-500 text-xs sm:text-sm uppercase tracking-wider">Price</h5>
           </div>
-          <div className="flex justify-center items-center p-3">
-            <h5 className="font-semibold text-(--mainText-color)/70 text-[1dvw]">
-              Total
-            </h5>
+          <div className="flex justify-center items-center p-3 sm:py-4">
+            <h5 className="font-semibold text-gray-500 text-xs sm:text-sm uppercase tracking-wider">Total</h5>
           </div>
         </div>
-        <div className="w-full flex flex-col">
+        <div className="w-full flex flex-col max-h-[30vh] md:max-h-[35vh] overflow-y-auto scrollCustom">
           {items.map((cur, id) => (
             <div
               key={id}
-              className="grid grid-cols-5 w-full border-b border-(--border-color)"
+              className="grid grid-cols-5 w-full border-b border-gray-100 hover:bg-gray-50/50 transition-colors"
             >
-              <div className="flex justify-center items-center p-3 border-r w-full border-(--border-color)">
-                <h5 className="font-semibold text-(--mainText-color)/70 text-[1dvw]">
-                  {cur.qty}
+              <div className="flex justify-center items-center p-3 sm:py-4 border-r border-gray-100">
+                <h5 className="font-semibold text-gray-800 text-sm sm:text-base">{cur.qty}</h5>
+              </div>
+              <div className="flex justify-center items-center p-3 sm:py-4 border-r border-gray-100 text-center">
+                <h5 className="font-semibold text-gray-800 text-sm sm:text-base line-clamp-2">
+                  {cur.name || cur.productId?.name || cur.productId?.product_name || "Unknown Product"}
                 </h5>
               </div>
-              <div className="flex justify-center items-center p-3 border-r w-full border-(--border-color)">
-                <h5 className="font-semibold text-(--mainText-color)/70 text-[1dvw] line-clamp-1">
-                  {cur.name || cur.productId.name || cur.productId.product_name}
-                </h5>
+              <div className="flex justify-center items-center p-3 sm:py-4 border-r border-gray-100">
+                <h5 className="font-medium text-gray-600 text-sm sm:text-base">${cur.taxAmount}.00</h5>
               </div>
-              <div className="flex justify-center items-center p-3 border-r w-full border-(--border-color)">
-                <h5 className="font-semibold text-(--mainText-color)/70 text-[1dvw]">
-                  $ {cur.taxAmount}.00
-                </h5>
+              <div className="flex justify-center items-center p-3 sm:py-4 border-r border-gray-100">
+                <h5 className="font-medium text-gray-600 text-sm sm:text-base">${cur.price}.00</h5>
               </div>
-              <div className="flex justify-center items-center p-3 border-r w-full border-(--border-color)">
-                <h5 className="font-semibold text-(--mainText-color)/70 text-[1dvw]">
-                  $ {cur.price}.00
-                </h5>
-              </div>
-              <div className="flex justify-center items-center p-3  w-full">
-                <h5 className="font-semibold text-(--mainText-color)/70 text-[1dvw]">
-                  $ {cur.total}.00
-                </h5>
+              <div className="flex justify-center items-center p-3 sm:py-4">
+                <h5 className="font-bold text-[var(--button-color1)] text-sm sm:text-base">${cur.total}.00</h5>
               </div>
             </div>
           ))}
@@ -512,38 +474,22 @@ const CustomerTab = ({ billData }) => {
   const customerInfo = billData?.customerInfo;
   return (
     <>
-      <div className="w-full grid grid-cols-2 gap-5 p-5 border border-(--button-color1) rounded-b-md">
-        <div className="bg-(--border-color)/30 flex justify-start rounded-sm shadow gap-5 p-4 items-center">
-          <span className="text-[1dvw] font-semibold mainFont text-(--mainText-color)/70">
-            Name
-          </span>
-          <h3 className="font-semibold text-[1.2dvw] mainFont">
-            {customerInfo?.name || "N/A"}
-          </h3>{" "}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-2">
+        <div className="bg-white border rounded-xl p-4 flex flex-col gap-1 relative overflow-hidden group hover:border-[var(--button-color1)] transition-colors shadow-sm">
+          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Name</span>
+          <h3 className="text-base sm:text-lg font-bold text-gray-800">{customerInfo?.name || "N/A"}</h3>
         </div>
-        <div className="bg-(--border-color)/30 flex justify-start rounded-sm shadow gap-5 p-4 items-center">
-          <span className="text-[1dvw] font-semibold mainFont text-(--mainText-color)/70">
-            Phone Number
-          </span>
-          <h3 className="font-semibold text-[1.2dvw] mainFont">
-            {customerInfo?.phone || "N/A"}
-          </h3>{" "}
+        <div className="bg-white border rounded-xl p-4 flex flex-col gap-1 relative overflow-hidden group hover:border-[var(--button-color1)] transition-colors shadow-sm">
+          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Phone Number</span>
+          <h3 className="text-base sm:text-lg font-bold text-gray-800">{customerInfo?.phone || "N/A"}</h3>
         </div>
-        <div className="bg-(--border-color)/30 flex justify-start rounded-sm shadow gap-5 p-4 items-center">
-          <span className="text-[1dvw] font-semibold mainFont text-(--mainText-color)/70">
-            Email
-          </span>
-          <h3 className="font-semibold text-[1.2dvw] mainFont">
-            {customerInfo?.email || "N/A"}
-          </h3>{" "}
+        <div className="bg-white border rounded-xl p-4 flex flex-col gap-1 relative overflow-hidden group hover:border-[var(--button-color1)] transition-colors shadow-sm">
+          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Email</span>
+          <h3 className="text-base sm:text-lg font-bold text-gray-800">{customerInfo?.email || "N/A"}</h3>
         </div>
-        <div className="bg-(--border-color)/30 flex justify-start rounded-sm shadow gap-5 p-4 items-center">
-          <span className="text-[1dvw] font-semibold mainFont text-(--mainText-color)/70">
-            Address
-          </span>
-          <h3 className="font-semibold text-[1.2dvw] mainFont">
-            {customerInfo?.address || "N/A"}
-          </h3>{" "}
+        <div className="bg-white border rounded-xl p-4 flex flex-col gap-1 relative overflow-hidden group hover:border-[var(--button-color1)] transition-colors shadow-sm">
+          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Address</span>
+          <h3 className="text-base sm:text-lg font-bold text-gray-800">{customerInfo?.address || "N/A"}</h3>
         </div>
       </div>
     </>

@@ -55,6 +55,22 @@ export const Shortcuts = ({
     queryName: "",
     totalItems: "20",
   });
+  const [prevFilter, setPrevFilter] = useState({
+    title: "Shortcuts",
+    queryName: "",
+  });
+
+  if (
+    currentFilterItems.title !== prevFilter.title ||
+    currentFilterItems.queryName !== prevFilter.queryName
+  ) {
+    setPrevFilter({
+      title: currentFilterItems.title,
+      queryName: currentFilterItems.queryName,
+    });
+    setAllData([]);
+    setCurrentPage(1);
+  }
   const dispatch = useDispatch();
   const currentRingUpData = useSelector((state) => state.ringUps);
   const currentBillId = useSelector((state) => state.currentBill.billId);
@@ -129,11 +145,6 @@ export const Shortcuts = ({
       });
     }
   }, [data]);
-
-  useEffect(() => {
-    setAllData([]);
-    setCurrentPage(1);
-  }, [currentFilterItems.title, currentFilterItems.queryName]);
 
   const { data: CurrentTaxVal } = useQuery({
     queryKey: ["get_current_tax_value", currentBillId],
@@ -304,60 +315,88 @@ export const Shortcuts = ({
                   <>
                     <div
                       key={id}
-                      className={`bg-(--primary-color) cursor-pointer hover:scale-105 transition-all ease-in-out duration-300 border border-(--border-color)/20 flex flex-col gap-2 sm:gap-3 shadow-sm rounded-md p-2 ${
+                      className={`group min-h-[40dvh] flex flex-col gap-2 sm:gap-3 overflow-hidden rounded-xl border bg-(--primary-color) shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg p-2 ${
                         isItemInCart(cur.id)
-                          ? "bg-(--sideMenu-color)/15"
-                          : "bg-(--primary-color)"
-                      } ${!cur.qty_on_hand && "bg-red-200"}`}
+                          ? "border-(--button-color1) ring-1 ring-(--button-color1)/30 bg-(--primary-color)"
+                          : "border-(--border-color)/20"
+                      } ${!cur.qty_on_hand ? "opacity-90" : ""}`}
                     >
-                      <div className="h-[15vh] sm:h-[18vh] lg:h-[20vh] rounded-md w-full bg-(--secondary-color) py-2 sm:py-3 lg:py-4">
+                      {/* Image Region: EXACT SAME HEIGHT CLASSES */}
+                      <div className="relative flex h-[15vh] w-full items-center justify-center overflow-hidden rounded-lg bg-(--secondary-color)/20 p-2 sm:h-[18vh] sm:p-3 lg:h-[20vh] lg:p-4">
+                        {!cur.qty_on_hand && (
+                          <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/40 backdrop-blur-[1.5px]">
+                            <div className="rounded border border-red-200 bg-red-50/90 px-2 py-1 text-[0.65rem] font-bold uppercase tracking-wider text-red-600 shadow-sm sm:px-3 sm:text-xs">
+                              Out of Stock
+                            </div>
+                          </div>
+                        )}
                         <img
-                          className="w-full h-full object-contain"
+                          className={`h-full w-full object-contain transition-transform duration-300 group-hover:scale-105 ${!cur.qty_on_hand ? "grayscale opacity-75" : ""}`}
                           src={cur.product_image || ProductImg1}
                           alt="product-image"
                         />
+                        {isItemInCart(cur.id) && (
+                          <div className="absolute left-2 top-2 z-10 rounded bg-(--button-color1) px-1.5 py-0.5 text-[0.6rem] font-bold uppercase tracking-wider text-white shadow-sm lg:text-[0.65dvw]">
+                            In Cart
+                          </div>
+                        )}
                       </div>
-                      <div className="flex flex-col gap-1 px-1 sm:px-2 py-1">
-                        <div className="flex flex-col gap-.5">
-                          <h3 className="text-xs sm:text-sm lg:text-[1dvw] font-semibold line-clamp-2 mainFont">
+
+                      {/* Content Region */}
+                      <div className="flex flex-col gap-1 px-1 sm:px-2 pb-1">
+                        <div className="flex flex-col gap-1">
+                          <h3 className="line-clamp-2 text-xs font-semibold sm:text-sm lg:text-[1dvw] mainFont">
                             {cur.name}
                           </h3>
-                          <p className="paraFont text-xs sm:text-sm lg:text-[.9dvw] text-(--button-color4) line-clamp-1 my-2">
-                            Size {cur.product_size}
+
+                          <div className="flex flex-wrap items-center gap-1.5 paraFont mt-1">
+                            {cur.product_size && (
+                              <span className="rounded bg-(--border-color)/10 px-1.5 py-0.5 text-[0.65rem] font-medium text-(--button-color4) sm:text-xs lg:text-[0.8dvw]">
+                                Size {cur.product_size}
+                              </span>
+                            )}
                             {cur.qty_on_hand !== undefined && (
-                              <span className="ml-2">
-                                • Stock: {cur.qty_on_hand}
+                              <span
+                                className={`rounded px-1.5 py-0.5 text-[0.65rem] font-medium sm:text-xs lg:text-[0.8dvw] ${cur.qty_on_hand > 5 ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600"}`}
+                              >
+                                Stock: {cur.qty_on_hand}
                               </span>
                             )}
                             {cur.tax_percentage !== undefined && (
-                              <span className="ml-2">
-                                • Tax: {cur.tax_percentage}
+                              <span className="rounded bg-(--border-color)/10 px-1.5 py-0.5 text-[0.65rem] font-medium text-(--button-color4) sm:text-xs lg:text-[0.8dvw]">
+                                Tax: {cur.tax_percentage}%
                               </span>
                             )}
-                          </p>
+                          </div>
                         </div>
-                        <div className="flex justify-between items-center">
+
+                        <div className="mt-2 flex items-center justify-between border-t border-(--border-color)/10 pt-2">
                           <h3 className="font-semibold text-sm sm:text-base lg:text-[1.2dvw]">
                             $ {cur.product_price}
                           </h3>
                           {isItemInCart(cur.id) ? (
                             <button
                               onClick={() => handleRemoveItem(cur.id)}
-                              className="px-5 py-1 tracking-wider bg-(--Negative-color) text-white mainFont cursor-pointer font-semibold text-[.95dvw] rounded-lg"
+                              className="flex items-center justify-center rounded-lg bg-(--Negative-color)/10 px-4 py-1.5 text-(--Negative-color) transition-all hover:bg-(--Negative-color) hover:text-white mainFont font-semibold text-[.9dvw]"
+                              title="Remove from Cart"
                             >
-                              <Trash />
+                              <Trash size={16} className="sm:mr-1" />
+                              <span className="hidden sm:inline-block">
+                                Remove
+                              </span>
                             </button>
                           ) : (
-                            <>
-                              {cur.qty_on_hand && (
-                                <button
-                                  onClick={() => handleAddItem(cur)}
-                                  className="px-5 py-1 tracking-wider bg-(--button-color1) text-white mainFont cursor-pointer font-semibold rounded-lg disabled:cursor-not-allowed disabled:ponter-event-none"
-                                >
-                                  <Plus />
-                                </button>
-                              )}
-                            </>
+                            <button
+                              onClick={() => handleAddItem(cur)}
+                              disabled={!cur.qty_on_hand}
+                              className="flex items-center justify-center rounded-lg bg-(--button-color1) px-4 py-1.5 text-white shadow-sm transition-all hover:bg-opacity-90 active:scale-95 disabled:pointer-events-none disabled:opacity-50 mainFont font-semibold text-[.9dvw]"
+                              title="Add to Cart"
+                            >
+                              <Plus size={16} className="sm:mr-1" />
+                              <span className="hidden sm:inline-block">
+                                Add
+                              </span>
+                            </button>
                           )}
                         </div>
                       </div>
