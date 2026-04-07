@@ -1,21 +1,16 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Layout } from "../../../components/common/Layout/Layout";
-import { Overviewcards } from "../../../components/common/Overviewcards/Overviewcards";
+
 import {
-  BuyPriceIcon,
   DeleteIcon,
-  FilterIcon,
   LowStockIcon,
   OutOfStockIcon,
-  SellPriceIcon,
-  SortIcon,
-  TotalInventoryIcon,
 } from "../../../assets/Svgs/AllSvgs";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
-import ProductImg1 from "../../../assets/images/ProductImg1.png";
+
 import { Doughtchart } from "../../../components/common/charts/Doughtchart";
-import { CircleX, Edit, Eye, Plus, Trash, Upload } from "lucide-react";
+import { Edit, Eye, Trash, Upload } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getAllProductList } from "../../../utils/apis/handleProducts";
 import { Loading } from "../../../components/UI/Loading/Loading";
@@ -273,7 +268,7 @@ export const Inventory = () => {
       return results || [];
     },
     refetchInterval: 800,
-    placeholderData: (prv) => prv
+    placeholderData: (prv) => prv,
   });
 
   const handlePageChangeProductList = (newPage) => {

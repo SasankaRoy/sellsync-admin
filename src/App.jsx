@@ -16,7 +16,7 @@ import { ItemsList } from "./Pages/admin/ItemsList/ItemsList";
 import { Category } from "./Pages/admin/Category/Category";
 import { Supplier } from "./Pages/admin/Suppliers/Supplier";
 import { Orders } from "./Pages/admin/Orders/Orders";
-import { Receive } from "./Pages/admin/Receive/Receive";
+
 import { ItemReport } from "./Pages/admin/ItemReport/ItemReport";
 import { Login } from "./Pages/auth/Login";
 import { Register } from "./Pages/auth/Register";
@@ -91,7 +91,7 @@ function App() {
               <Route path="/admin/inventory/groups" element={<Groups />} />
 
               <Route path="/admin/inventory/suppliers" element={<Supplier />} />
-              <Route path="/admin/inventory/receive" element={<Receive />} />
+             
               <Route path="/admin/inventory/order" element={<Orders />} />
               <Route path="/admin/reports" element={<Reports />} />
               <Route path="/admin/customers" element={<Customer />} />
