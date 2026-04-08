@@ -322,18 +322,19 @@ export const ViewSales = ({ setViewSale, billID, viewOnly = false }) => {
                 <button className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color2)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300">
                   {data.status === "PAID" ? "Reprint Bill" : "Print Bill"}
                 </button>
-                {data.status === "OPEN" && (
-                  <button
-                    disabled={
-                      data.status === "PAID" ||
-                      loggedUser?.id !== data?.created_by
-                    }
-                    onClick={handleCompleteTranscation}
-                    className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Complete Transcation
-                  </button>
-                )}
+                {data.status === "OPEN" ||
+                  (data.status === "HOLD" && (
+                    <button
+                      disabled={
+                        data.status === "PAID" ||
+                        loggedUser?.id !== data?.created_by
+                      }
+                      onClick={handleCompleteTranscation}
+                      className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Complete Transcation
+                    </button>
+                  ))}
 
                 {data.status === "PAID" ? (
                   <>
@@ -425,19 +426,29 @@ const ItemsTab = ({ billData }) => {
       <div className="w-full border rounded-xl overflow-hidden shadow-sm bg-white">
         <div className="grid grid-cols-5 w-full bg-gray-50 border-b border-gray-200">
           <div className="flex justify-center items-center p-3 sm:py-4 border-r border-gray-200">
-            <h5 className="font-semibold text-gray-500 text-xs sm:text-sm uppercase tracking-wider">QTY</h5>
+            <h5 className="font-semibold text-gray-500 text-xs sm:text-sm uppercase tracking-wider">
+              QTY
+            </h5>
           </div>
           <div className="flex justify-center items-center p-3 sm:py-4 border-r border-gray-200">
-            <h5 className="font-semibold text-gray-500 text-xs sm:text-sm uppercase tracking-wider">Product</h5>
+            <h5 className="font-semibold text-gray-500 text-xs sm:text-sm uppercase tracking-wider">
+              Product
+            </h5>
           </div>
           <div className="flex justify-center items-center p-3 sm:py-4 border-r border-gray-200">
-            <h5 className="font-semibold text-gray-500 text-xs sm:text-sm uppercase tracking-wider">Tax</h5>
+            <h5 className="font-semibold text-gray-500 text-xs sm:text-sm uppercase tracking-wider">
+              Tax
+            </h5>
           </div>
           <div className="flex justify-center items-center p-3 sm:py-4 border-r border-gray-200">
-            <h5 className="font-semibold text-gray-500 text-xs sm:text-sm uppercase tracking-wider">Price</h5>
+            <h5 className="font-semibold text-gray-500 text-xs sm:text-sm uppercase tracking-wider">
+              Price
+            </h5>
           </div>
           <div className="flex justify-center items-center p-3 sm:py-4">
-            <h5 className="font-semibold text-gray-500 text-xs sm:text-sm uppercase tracking-wider">Total</h5>
+            <h5 className="font-semibold text-gray-500 text-xs sm:text-sm uppercase tracking-wider">
+              Total
+            </h5>
           </div>
         </div>
         <div className="w-full flex flex-col max-h-[30vh] md:max-h-[35vh] overflow-y-auto scrollCustom">
@@ -447,21 +458,32 @@ const ItemsTab = ({ billData }) => {
               className="grid grid-cols-5 w-full border-b border-gray-100 hover:bg-gray-50/50 transition-colors"
             >
               <div className="flex justify-center items-center p-3 sm:py-4 border-r border-gray-100">
-                <h5 className="font-semibold text-gray-800 text-sm sm:text-base">{cur.qty}</h5>
+                <h5 className="font-semibold text-gray-800 text-sm sm:text-base">
+                  {cur.qty}
+                </h5>
               </div>
               <div className="flex justify-center items-center p-3 sm:py-4 border-r border-gray-100 text-center">
                 <h5 className="font-semibold text-gray-800 text-sm sm:text-base line-clamp-2">
-                  {cur.name || cur.productId?.name || cur.productId?.product_name || "Unknown Product"}
+                  {cur.name ||
+                    cur.productId?.name ||
+                    cur.productId?.product_name ||
+                    "Unknown Product"}
                 </h5>
               </div>
               <div className="flex justify-center items-center p-3 sm:py-4 border-r border-gray-100">
-                <h5 className="font-medium text-gray-600 text-sm sm:text-base">${cur.taxAmount}.00</h5>
+                <h5 className="font-medium text-gray-600 text-sm sm:text-base">
+                  ${cur.taxAmount}.00
+                </h5>
               </div>
               <div className="flex justify-center items-center p-3 sm:py-4 border-r border-gray-100">
-                <h5 className="font-medium text-gray-600 text-sm sm:text-base">${cur.price}.00</h5>
+                <h5 className="font-medium text-gray-600 text-sm sm:text-base">
+                  ${cur.price}.00
+                </h5>
               </div>
               <div className="flex justify-center items-center p-3 sm:py-4">
-                <h5 className="font-bold text-[var(--button-color1)] text-sm sm:text-base">${cur.total}.00</h5>
+                <h5 className="font-bold text-[var(--button-color1)] text-sm sm:text-base">
+                  ${cur.total}.00
+                </h5>
               </div>
             </div>
           ))}
@@ -476,20 +498,36 @@ const CustomerTab = ({ billData }) => {
     <>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-2">
         <div className="bg-white border rounded-xl p-4 flex flex-col gap-1 relative overflow-hidden group hover:border-[var(--button-color1)] transition-colors shadow-sm">
-          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Name</span>
-          <h3 className="text-base sm:text-lg font-bold text-gray-800">{customerInfo?.name || "N/A"}</h3>
+          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            Name
+          </span>
+          <h3 className="text-base sm:text-lg font-bold text-gray-800">
+            {customerInfo?.name || "N/A"}
+          </h3>
         </div>
         <div className="bg-white border rounded-xl p-4 flex flex-col gap-1 relative overflow-hidden group hover:border-[var(--button-color1)] transition-colors shadow-sm">
-          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Phone Number</span>
-          <h3 className="text-base sm:text-lg font-bold text-gray-800">{customerInfo?.phone || "N/A"}</h3>
+          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            Phone Number
+          </span>
+          <h3 className="text-base sm:text-lg font-bold text-gray-800">
+            {customerInfo?.phone || "N/A"}
+          </h3>
         </div>
         <div className="bg-white border rounded-xl p-4 flex flex-col gap-1 relative overflow-hidden group hover:border-[var(--button-color1)] transition-colors shadow-sm">
-          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Email</span>
-          <h3 className="text-base sm:text-lg font-bold text-gray-800">{customerInfo?.email || "N/A"}</h3>
+          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            Email
+          </span>
+          <h3 className="text-base sm:text-lg font-bold text-gray-800">
+            {customerInfo?.email || "N/A"}
+          </h3>
         </div>
         <div className="bg-white border rounded-xl p-4 flex flex-col gap-1 relative overflow-hidden group hover:border-[var(--button-color1)] transition-colors shadow-sm">
-          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Address</span>
-          <h3 className="text-base sm:text-lg font-bold text-gray-800">{customerInfo?.address || "N/A"}</h3>
+          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            Address
+          </span>
+          <h3 className="text-base sm:text-lg font-bold text-gray-800">
+            {customerInfo?.address || "N/A"}
+          </h3>
         </div>
       </div>
     </>
