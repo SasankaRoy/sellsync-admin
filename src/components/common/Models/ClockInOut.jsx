@@ -9,10 +9,10 @@ export const ClockInOut = ({
   time,
   setCurrentStateOutter,
   setCurrentStateInner,
-
   currentStateOutter,
   currentStateInner,
   setPunchInTime,
+  punchInTime:isPunchedIn,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [punchStatus, setPunchStatus] = useState(null); // "punched-in", "on-break", null
@@ -36,7 +36,7 @@ export const ClockInOut = ({
       // Try to get punch status from punch-in endpoint
       const response = await axiosInstance.post(
         "/api/v1/employee/punch-in",
-        {}
+        {},
       );
       // If successful, they haven't punched in yet
       if (response.status === 200 && response.data.workTime?.punch_in_time) {
@@ -85,7 +85,7 @@ export const ClockInOut = ({
     try {
       const response = await axiosInstance.post(
         "/api/v1/employee/punch-in",
-        {}
+        {},
       );
       if (response.status === 200) {
         toast.success("Punched In Successfully");
@@ -232,8 +232,8 @@ export const ClockInOut = ({
               {punchStatus === "completed"
                 ? "Work Completed"
                 : punchStatus === "punched-in"
-                ? "Manage Work"
-                : "Clock In"}
+                  ? "Manage Work"
+                  : "Clock In"}
             </h3>
             <button
               onClick={(e) => {
@@ -384,10 +384,10 @@ export const ClockInOut = ({
                         {(() => {
                           const hours = Math.floor(totalBreakTime / 3600000);
                           const minutes = Math.floor(
-                            (totalBreakTime % 3600000) / 60000
+                            (totalBreakTime % 3600000) / 60000,
                           );
                           const seconds = Math.floor(
-                            (totalBreakTime % 60000) / 1000
+                            (totalBreakTime % 60000) / 1000,
                           );
                           return `${hours}h ${minutes}m ${seconds}s`;
                         })()}
@@ -413,32 +413,12 @@ export const ClockInOut = ({
             )}
 
             <div className="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-2 sm:gap-3 lg:gap-5">
-              {!punchStatus && (
-                <button
-                  onClick={handlePunchIn}
-                  disabled={isLoading}
-                  className="w-full py-2.5 sm:py-3 rounded-md text-sm sm:text-base lg:text-[1.3dvw] cursor-pointer bg-(--button-color1) text-(--primary-color) font-semibold mainFont flex justify-center items-center gap-2 sm:gap-3 lg:gap-5 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-transform"
-                >
-                  <span className="p-1 sm:p-1.5 bg-(--primary-color) flex justify-center items-center rounded-full text-(--mainText-color)">
-                    {isLoading ? (
-                      <Loader
-                        size={16}
-                        className="sm:w-5 sm:h-5 animate-spin"
-                      />
-                    ) : (
-                      <LogIn size={16} className="sm:w-5 sm:h-5" />
-                    )}
-                  </span>
-                  {isLoading ? "Punching In..." : "Clock In"}
-                </button>
-              )}
-
-              {punchStatus === "punched-in" && (
-                <>
+              {(!punchStatus &&
+                !isPunchedIn) && (
                   <button
-                    onClick={handlePunchOut}
+                    onClick={handlePunchIn}
                     disabled={isLoading}
-                    className="w-full py-2.5 sm:py-3 rounded-md text-sm sm:text-base lg:text-[1.3dvw] cursor-pointer bg-(--Negative-color) text-(--primary-color) font-semibold mainFont flex justify-center items-center gap-2 sm:gap-3 lg:gap-5 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-transform"
+                    className="w-full py-2.5 sm:py-3 rounded-md text-sm sm:text-base lg:text-[1.3dvw] cursor-pointer bg-(--button-color1) text-(--primary-color) font-semibold mainFont flex justify-center items-center gap-2 sm:gap-3 lg:gap-5 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-transform"
                   >
                     <span className="p-1 sm:p-1.5 bg-(--primary-color) flex justify-center items-center rounded-full text-(--mainText-color)">
                       {isLoading ? (
@@ -447,36 +427,61 @@ export const ClockInOut = ({
                           className="sm:w-5 sm:h-5 animate-spin"
                         />
                       ) : (
-                        <LogOut size={16} className="sm:w-5 sm:h-5" />
+                        <LogIn size={16} className="sm:w-5 sm:h-5" />
                       )}
                     </span>
-                    <span className="hidden sm:inline">
-                      {isLoading ? "Punching Out..." : "Clock Out"}
-                    </span>
-                    <span className="sm:hidden">
-                      {isLoading ? "..." : "Out"}
-                    </span>
+                    {isLoading ? "Punching In..." : "Clock In"}
                   </button>
+                )}
 
-                  <button
-                    onClick={handleBreakTime}
-                    disabled={isLoading}
-                    className="w-full py-2.5 sm:py-3 rounded-md text-sm sm:text-base lg:text-[1.3dvw] cursor-pointer bg-(--button-color3) text-(--primary-color) font-semibold mainFont flex justify-center items-center gap-2 sm:gap-3 lg:gap-5 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-transform"
-                  >
-                    <span className="p-1 sm:p-1.5 bg-(--primary-color) flex justify-center items-center rounded-full text-(--mainText-color)">
-                      {isLoading ? (
-                        <Loader
-                          size={16}
-                          className="sm:w-5 sm:h-5 animate-spin"
-                        />
-                      ) : (
-                        <UtensilsCrossed size={16} className="sm:w-5 sm:h-5" />
-                      )}
-                    </span>
-                    {isLoading ? "Starting..." : "Break"}
-                  </button>
-                </>
-              )}
+              {punchStatus === "punched-in" ||
+                (isPunchedIn && (
+                  <>
+                    <button
+                      onClick={handlePunchOut}
+                      disabled={isLoading}
+                      className="w-full py-2.5 sm:py-3 rounded-md text-sm sm:text-base lg:text-[1.3dvw] cursor-pointer bg-(--Negative-color) text-(--primary-color) font-semibold mainFont flex justify-center items-center gap-2 sm:gap-3 lg:gap-5 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-transform"
+                    >
+                      <span className="p-1 sm:p-1.5 bg-(--primary-color) flex justify-center items-center rounded-full text-(--mainText-color)">
+                        {isLoading ? (
+                          <Loader
+                            size={16}
+                            className="sm:w-5 sm:h-5 animate-spin"
+                          />
+                        ) : (
+                          <LogOut size={16} className="sm:w-5 sm:h-5" />
+                        )}
+                      </span>
+                      <span className="hidden sm:inline">
+                        {isLoading ? "Punching Out..." : "Clock Out"}
+                      </span>
+                      <span className="sm:hidden">
+                        {isLoading ? "..." : "Out"}
+                      </span>
+                    </button>
+
+                    <button
+                      onClick={handleBreakTime}
+                      disabled={isLoading}
+                      className="w-full py-2.5 sm:py-3 rounded-md text-sm sm:text-base lg:text-[1.3dvw] cursor-pointer bg-(--button-color3) text-(--primary-color) font-semibold mainFont flex justify-center items-center gap-2 sm:gap-3 lg:gap-5 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-transform"
+                    >
+                      <span className="p-1 sm:p-1.5 bg-(--primary-color) flex justify-center items-center rounded-full text-(--mainText-color)">
+                        {isLoading ? (
+                          <Loader
+                            size={16}
+                            className="sm:w-5 sm:h-5 animate-spin"
+                          />
+                        ) : (
+                          <UtensilsCrossed
+                            size={16}
+                            className="sm:w-5 sm:h-5"
+                          />
+                        )}
+                      </span>
+                      {isLoading ? "Starting..." : "Break"}
+                    </button>
+                  </>
+                ))}
 
               {punchStatus === "on-break" && (
                 <>

@@ -17,6 +17,8 @@ export const getAllCategoryList = async () => {
     }
 }
 
+
+
 export const getCategoryDetails = async (id) => {
     try {
         const categoryDetails = await axiosInstance.get(`/api/v1/common/category-details/${id}`)

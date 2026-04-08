@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import axiosInstance from "../../../utils/axios-interceptor";
+
 import { CircleX } from "lucide-react";
 import { motion } from "framer-motion";
+import { getAllCategoryList } from "../../../utils/apis/handleCategory";
 
 const AllCategoryListSlide = ({
   variants,
@@ -10,32 +11,32 @@ const AllCategoryListSlide = ({
   setCurrentFilterItems,
   setAllData
 }) => {
-  const handleGetCategoryList = async () => {
-    try {
-      const reqCategoryList = await axiosInstance.post(
-        "/api/v1/common/category-list",
-        {
-          page: 1,
-          limit: 10,
-          // search_text: "",
-        }
-      );
+  // const handleGetCategoryList = async () => {
+  //   try {
+  //     const reqCategoryList = await axiosInstance.post(
+  //       "/api/v1/common/category-list",
+  //       {
+  //         page: 1,
+  //         limit: 100,
+  //         // search_text: "",
+  //       }
+  //     );
 
-      if (reqCategoryList.status === 200) {
-        return reqCategoryList.data.results || [];
-      }
-      return reqCategoryList.data.results || [];
-    } catch (error) {
-      console.log(error);
-      return error?.response.data.message || "Faild to get Category list";
-    }
-  };
+  //     if (reqCategoryList.status === 200) {
+  //       return reqCategoryList.data.results || [];
+  //     }
+  //     return reqCategoryList.data.results || [];
+  //   } catch (error) {
+  //     console.log(error);
+  //     return error?.response.data.message || "Faild to get Category list";
+  //   }
+  // };
 
   const { data, isError, isLoading, isFetching } = useQuery({
     queryKey: ["get_categories"],
-    queryFn: async () => await handleGetCategoryList(),
+    queryFn: async () => await getAllCategoryList(),
     // staleTime: 3 * 60 * 1000,
-    refetchInterval: 3000
+    refetchInterval: 3000,
   });
   // console.log(data)
 

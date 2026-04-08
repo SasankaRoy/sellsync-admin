@@ -2,6 +2,23 @@ import { toast } from "react-toastify";
 import axiosInstance from "../axios-interceptor";
 import Cookies from "js-cookie";
 
+
+export const getPunchInInfo = async () => {
+    try {
+        const isPunchIned = await axiosInstance.post('/api/v1/employee/check-punch-in')
+        if (isPunchIned.status === 200 && isPunchIned.data) {
+         
+            return isPunchIned.data || ''
+        }
+        return isPunchIned.data || ''
+    } catch (error) {
+        console.error(error);
+        return error.message || error.response.data.message || 'Something went wrong'
+    }
+}
+
+
+
 export const handleLogOut = async (closeRegister) => {
     const { startingCash, employeeId, currency, totalTaking, totalNotationAmount, totalBalance, cashNotation } = closeRegister
 

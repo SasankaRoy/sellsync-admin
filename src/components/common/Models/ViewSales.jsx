@@ -297,8 +297,9 @@ export const ViewSales = ({ setViewSale, billID, viewOnly = false }) => {
                 </div>
               </div>
               <div className="flex justify-end items-center gap-4 my-3">
-                {navigate.pathname !== "/seller/sales-report" &&
-                  userType !== "admin" && (
+                {
+                  navigate.pathname !== "/seller/sales-report" && (
+                    // userType !== "admin" && (
                     <button
                       onClick={() => {
                         router(`/seller/sales-report`);
@@ -307,7 +308,9 @@ export const ViewSales = ({ setViewSale, billID, viewOnly = false }) => {
                     >
                       View Sales <BadgeDollarSign />
                     </button>
-                  )}
+                  )
+                  // )
+                }
                 <button
                   onClick={() => {
                     setViewSale({
@@ -319,22 +322,26 @@ export const ViewSales = ({ setViewSale, billID, viewOnly = false }) => {
                 >
                   Cancel
                 </button>
-                <button className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color2)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300">
-                  {data.status === "PAID" ? "Reprint Bill" : "Print Bill"}
-                </button>
-                {data.status === "OPEN" ||
-                  (data.status === "HOLD" && (
-                    <button
-                      disabled={
-                        data.status === "PAID" ||
-                        loggedUser?.id !== data?.created_by
-                      }
-                      onClick={handleCompleteTranscation}
-                      className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      Complete Transcation
-                    </button>
+                {data.status === "PAID" ||
+                  (data.status === "REFUNDED" && (
+                    <>
+                      <button className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color2)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300">
+                        {data.status === "PAID" ? "Reprint Bill" : "Print Bill"}
+                      </button>
+                    </>
                   ))}
+                {(data.status === "OPEN" || data.status === "HOLD") && (
+                  <button
+                    disabled={
+                      data.status === "PAID" ||
+                      loggedUser?.id !== data?.created_by
+                    }
+                    onClick={handleCompleteTranscation}
+                    className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Complete Transcation
+                  </button>
+                )}
 
                 {data.status === "PAID" ? (
                   <>
@@ -353,16 +360,15 @@ export const ViewSales = ({ setViewSale, billID, viewOnly = false }) => {
                   </>
                 ) : (
                   <>
-                    {data.status === "OPEN" ||
-                      (data.status === "HOLD" && (
-                        <button
-                          disabled={data.status === "PAID"}
-                          onClick={handleCancelTranscation}
-                          className="w-full sm:w-auto px-6 py-2 bg-[var(--Negative-color)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          Cancel Transcation
-                        </button>
-                      ))}
+                    {(data.status === "OPEN" || data.status === "HOLD") && (
+                      <button
+                        disabled={data.status === "PAID"}
+                        onClick={handleCancelTranscation}
+                        className="w-full sm:w-auto px-6 py-2 bg-[var(--Negative-color)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Cancel Transcation
+                      </button>
+                    )}
                   </>
                 )}
               </div>
@@ -386,6 +392,7 @@ export const ViewSales = ({ setViewSale, billID, viewOnly = false }) => {
 
 const AmountTab = ({ billData }) => {
   const { summary } = billData;
+
   return (
     <>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pb-2">
@@ -399,11 +406,14 @@ const AmountTab = ({ billData }) => {
         </div>
         <div className="bg-white border rounded-xl shadow-sm p-4 flex flex-col justify-between">
           <span className="text-[0.8rem] sm:text-xs font-semibold text-gray-500 uppercase tracking-wider">
-            Discount
+            Discount{" "}
+            <span className="font-semibold text-[1.1dvw]">
+              {summary?.discount.type === "FLAT" ? "$" : "%"}
+            </span>
           </span>
           <h5 className="text-lg sm:text-xl font-bold text-[var(--button-color3)] mt-2">
-            {summary?.discount.type === "FLAT" ? "$" : "%"}{" "}
-            {summary?.discount.amount}.00
+            {/* {summary?.discount.type === "FLAT" ? "$" : "%"}{" "} */}
+            {summary?.discount.amount.toFixed(2)}
           </h5>
         </div>
         <div className="bg-[var(--button-color1)] border border-[var(--button-color1)] rounded-xl shadow-md p-4 flex flex-col justify-between text-white">
@@ -472,17 +482,17 @@ const ItemsTab = ({ billData }) => {
               </div>
               <div className="flex justify-center items-center p-3 sm:py-4 border-r border-gray-100">
                 <h5 className="font-medium text-gray-600 text-sm sm:text-base">
-                  ${cur.taxAmount}.00
+                  $ {cur.taxAmount.toFixed(2)}
                 </h5>
               </div>
               <div className="flex justify-center items-center p-3 sm:py-4 border-r border-gray-100">
                 <h5 className="font-medium text-gray-600 text-sm sm:text-base">
-                  ${cur.price}.00
+                  $ {cur.price.toFixed(2)}
                 </h5>
               </div>
               <div className="flex justify-center items-center p-3 sm:py-4">
                 <h5 className="font-bold text-[var(--button-color1)] text-sm sm:text-base">
-                  ${cur.total}.00
+                  $ {cur.total.toFixed(2)}
                 </h5>
               </div>
             </div>
