@@ -187,3 +187,18 @@ export const getTaxData = async (filterType) => {
         return error.message || error.response.data.message || 'Failed to fetch sales data'
     }
 }
+
+export const getSalesReportByCategory = async (filterType = "ALL") => {
+    try {
+        const resReport = await axiosInstance.get(`api/v1/bills/sales-by-category?filter_type=${filterType}`);
+        if (resReport.status === 200 && resReport.data) {
+            return resReport.data;
+        }
+        return resReport.data;
+
+
+    } catch (error) {
+        console.error(error);
+        return error.message || error.response.data.message || 'Something went wrong'
+    }
+}

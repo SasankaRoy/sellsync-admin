@@ -5,29 +5,15 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 // Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-export const Doughtchart = ({ aspectRatio }) => {
+export const Doughtchart = ({ aspectRatio, saleData = [], RColors }) => {
   const data = {
-    labels: ["Beer", "Gin", "Whiskey", "Rum", "Scotch", "Wine"],
+    labels: saleData.slice(0, 10).map((lable) => lable.category_name),
     datasets: [
       {
-        label: "Sample Data",
-        data: [2344, 2004, 1988, 1540, 1340, 840],
-        backgroundColor: [
-          "#13A34B",
-          "#0052CC", 
-          "#420088",
-          "#00C7E6",
-          "#F59E0B",
-          "#FACC15",
-        ],
-        borderColor: [
-          "#13A34B",
-          "#0052CC",
-          "#420088",
-          "#00C7E6",
-          "#F59E0B",
-          "#FACC15",
-        ],
+        label: "Sales Data",
+        data: saleData.slice(0, 10).map((item) => item.total_amount),
+        backgroundColor: RColors,
+        borderColor: RColors,
         borderWidth: 1,
       },
     ],
