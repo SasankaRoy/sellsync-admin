@@ -76,7 +76,7 @@ export const AdminDashboard = () => {
         count: categorySaleData?.data.length,
         luminosity: "bright",
       }),
-    [categorySaleData.data],
+    [categorySaleData?.data],
   );
 
   return (
