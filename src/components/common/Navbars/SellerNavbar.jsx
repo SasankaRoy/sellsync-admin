@@ -255,21 +255,23 @@ export const SellerNavbar = ({ showPunchInModal, setShowPunchInModal }) => {
     }
   }, [punchInTime]);
 
-  const { isLoading } = useQuery({
-    queryKey: ["get_punchin_info"],
-    queryFn: async () => {
-      const res = await getPunchInInfo();
-      if (res) {
-        // console.log(new Date(res.workTime.punch_in_time),'dgfads')
-        if (res.workTime.status === "punched-in") {
-          setPunchInTime(new Date(res.workTime.punch_in_time));
-        }
-        return res.workTime || null;
-      }
-      return null;
-    },
-    refetchInterval: 8000,
-  });
+  const isLoading=false
+
+  // const { isLoading } = useQuery({
+  //   queryKey: ["get_punchin_info"],
+  //   queryFn: async () => {
+  //     const res = await getPunchInInfo();
+  //     if (res) {
+  //       // console.log(new Date(res.workTime.punch_in_time),'dgfads')
+  //       if (res.workTime.status === "punched-in") {
+  //         setPunchInTime(new Date(res.workTime.punch_in_time));
+  //       }
+  //       return res.workTime || null;
+  //     }
+  //     return null;
+  //   },
+  //   refetchInterval: 8000,
+  // });
 
   return (
     <>

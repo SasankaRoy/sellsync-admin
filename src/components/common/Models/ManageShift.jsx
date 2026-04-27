@@ -170,7 +170,7 @@ export const ManageShift = ({ setScheduleModel, scheduleModel }) => {
                   disabled={isLoading}
                   className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300 disabled:opacity-80 disabled:pointer-events-none disabled:cursor-not-allowed"
                 >
-                  {shiftData.upcomingShift?.id ? (
+                  {shiftData?.upcomingShift?.id ? (
                     <>{isLoading ? "Updating..." : "Update"}</>
                   ) : (
                     <>{isLoading ? "Adding..." : "Add"}</>
