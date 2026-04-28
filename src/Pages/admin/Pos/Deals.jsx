@@ -1,11 +1,17 @@
 import React, { useMemo, useState } from "react";
-import { DeleteIcon, FilterIcon, SortIcon } from "../../../assets/Svgs/AllSvgs";
+import {
+  DeleteIcon,
+  FilterIcon,
+  PluseIcon,
+  SortIcon,
+} from "../../../assets/Svgs/AllSvgs";
 import { Edit, Trash, Download } from "lucide-react";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 // Core CSS
 import { AgGridReact } from "ag-grid-react";
 
 import { Layout } from "../../../components/common/Layout/Layout";
+import { CreateDeal } from "../../../components/common/Models/CreateDeal";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -16,7 +22,8 @@ const rowSelection = {
 
 export const Deals = () => {
   const [selectedRowData, setSelectedRowData] = useState([]);
-  
+  const [newDeal, setNewDeal] = useState(false);
+
   const [rowData, setRowData] = useState([
     {
       DealName: "Buy 1 Get 1 Free",
@@ -125,7 +132,7 @@ export const Deals = () => {
       editable: false,
     };
   }, []);
-  
+
   return (
     <>
       <Layout>
@@ -135,6 +142,14 @@ export const Deals = () => {
               <h3 className="text-2xl md:text-xl lg:text-[1.4dvw] font-semibold text-[var(--mainText-color)]">
                 POS / Deals
               </h3>
+              <button
+                onClick={() => {
+                  setNewDeal(true);
+                }}
+                className="px-4 sm:px-5 2xl:py-1.5 xl:py-1.5 lg:py-1.5 md:portrait:py-1.5 md:landscape:py-1.5 py-3 rounded-full bg-[var(--button-color1)] flex justify-center items-center gap-2 sm:gap-4 text-white mainFont font-[500] cursor-pointer text-sm md:text-sm lg:text-[1dvw] hover:bg-[#F8A61B] transition-all duration-300 ease-linear"
+              >
+                Create a Deal <PluseIcon className="w-4 h-4" />
+              </button>
             </div>
           </div>
 
@@ -178,7 +193,9 @@ export const Deals = () => {
                     rowSelection={rowSelection}
                     onSelectionChanged={(event) => {
                       const selectedNodes = event.api.getSelectedNodes();
-                      const selectedData = selectedNodes.map(node => node.data);
+                      const selectedData = selectedNodes.map(
+                        (node) => node.data,
+                      );
                       setSelectedRowData(selectedData);
                       console.log("Selected data updated:", selectedData);
                     }}
@@ -193,6 +210,7 @@ export const Deals = () => {
           </div>
         </div>
       </Layout>
+      {newDeal && <CreateDeal setNewDeal={setNewDeal} />}
     </>
   );
 };
