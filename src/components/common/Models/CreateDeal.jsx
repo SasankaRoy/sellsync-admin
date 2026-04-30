@@ -1,7 +1,29 @@
 import { CircleX } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
+import { createDeal } from "../../../utils/apis/handleDeals";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const CreateDeal = ({ setNewDeal }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [dealData, setDealsData] = useState({
+    deal_name: "",
+    deal_type: "",
+    start_date: "",
+    end_date: "",
+    deal_quantity: "",
+    deal_price: "",
+    status: "active",
+  });
+  const queryClient = useQueryClient();
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setDealsData({
+      ...dealData,
+      [name]: value,
+    });
+  };
+
   return (
     <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-lg z-40 flex justify-center items-center">
       <div className="bg-white w-[95%] sm:w-[80%] md:w-[70%] lg:w-[50%] p-4 sm:p-5 rounded-lg shadow-md max-h-[90vh] overflow-y-auto">
@@ -25,6 +47,8 @@ export const CreateDeal = ({ setNewDeal }) => {
               Deal Name
             </label>
             <input
+              onChange={handleChange}
+              value={dealData.deal_name}
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-base sm:text-lg md:text-xl lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="text"
               placeholder="Enter Deal Name..."
@@ -38,6 +62,8 @@ export const CreateDeal = ({ setNewDeal }) => {
               Deal Type
             </label>
             <select
+              onChange={handleChange}
+              value={dealData.deal_type}
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-base sm:text-lg md:text-xl lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               name="deal_type"
               required
@@ -55,11 +81,11 @@ export const CreateDeal = ({ setNewDeal }) => {
               Start Date
             </label>
             <input
+              onChange={handleChange}
+              value={dealData.start_date}
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-base sm:text-lg md:text-xl lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="date"
               name="start_date"
-              max={new Date().toISOString().split("T")[0]}
-              pattern="\d{4}-\d{2}-\d{2}"
               required
             />
           </div>
@@ -68,11 +94,11 @@ export const CreateDeal = ({ setNewDeal }) => {
               End Date
             </label>
             <input
+              onChange={handleChange}
+              value={dealData.end_date}
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-base sm:text-lg md:text-xl lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="date"
               name="end_date"
-              max={new Date().toISOString().split("T")[0]}
-              pattern="\d{4}-\d{2}-\d{2}"
               required
             />
           </div>
@@ -81,6 +107,9 @@ export const CreateDeal = ({ setNewDeal }) => {
               Deal Quantity
             </label>
             <input
+              onChange={handleChange}
+              value={dealData.deal_quantity}
+              name="deal_quantity"
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-base sm:text-lg md:text-xl lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="number"
               placeholder="Enter Quantity"
@@ -92,11 +121,30 @@ export const CreateDeal = ({ setNewDeal }) => {
               Deal price
             </label>
             <input
+              onChange={handleChange}
+              value={dealData.deal_price}
               className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-base sm:text-lg md:text-xl lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
               type="number"
               placeholder="Enter Price"
+              name="deal_price"
               required
             />
+          </div>
+
+          <div className="w-full my-4 flex flex-col gap-2 col-span-2">
+            <label className="text-base sm:text-lg md:text-xl lg:text-[1dvw] font-normal paraFont">
+              Status
+            </label>
+            <select
+              onChange={handleChange}
+              value={dealData.status}
+              className="bg-[#F3F3F3] w-full font-semibold font-[var(--paraFont)] placeholder:text-[#333333]/40 text-base sm:text-lg md:text-xl lg:text-[1.1dvw] border border-[#d4d4d4] active:outline transition-all duration-300 ease-linear active:outline-[var(--button-color1)] focus:outline focus:outline-[var(--button-color1)] rounded-xl py-1.5 px-3"
+              name="status"
+              required
+            >
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
           </div>
         </div>
 
@@ -111,11 +159,20 @@ export const CreateDeal = ({ setNewDeal }) => {
             Cancel
           </button>
           <button
+            onClick={async () => {
+              setIsLoading(true);
+              const result = await createDeal(dealData);
+              if (result) {
+                queryClient.invalidateQueries(["getDeals_list"]);
+                setNewDeal(false);
+              }
+              setIsLoading(false);
+            }}
             type="button"
             className="w-full sm:w-auto px-6 py-2 bg-[var(--button-color5)] cursor-pointer text-white paraFont rounded-md font-semibold hover:opacity-80 transition-all duration-300 disabled:opacity-80 disabled:pointer-events-none disabled:cursor-not-allowed"
-            // disabled={isLoading}
+            disabled={isLoading}
           >
-            Add
+            {isLoading ? "Adding..." : "Add"}
           </button>
         </div>
       </div>
